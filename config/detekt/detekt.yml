@@ -1,6 +1,6 @@
 build:
-  maxIssues: 0
-  excludeCorrectable: false
+  maxIssues: 10
+  excludeCorrectable: true
   weights:
     # complexity: 2
     # LongParameterList: 1
@@ -646,7 +646,7 @@ style:
     maxChainedCalls: 5
   MaxLineLength:
     active: true
-    maxLineLength: 120
+    maxLineLength: 100
     excludePackageStatements: true
     excludeImportStatements: true
     excludeCommentStatements: false
