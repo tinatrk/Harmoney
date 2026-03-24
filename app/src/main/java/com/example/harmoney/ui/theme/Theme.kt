@@ -1,58 +1,119 @@
 package com.example.harmoney.ui.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+private val LightColorPalette = HarmColors(
+    surface = HarmColor.Gray50,
+    surfaceContainer = HarmColor.Purple50,
+    onSurface = HarmColor.Gray900,
+    onSurfaceContainer = HarmColor.Gray900,
+    onSurfaceContainerLow = HarmColor.Gray600,
+    primary = HarmColor.Purple400,
+    primaryVariant = HarmColor.Purple100,
+    onPrimary = HarmColor.White,
+    onPrimaryVariant = HarmColor.Purple400,
+    error = HarmColor.Red400,
+    errorContainer = HarmColor.Red50,
+    info = HarmColor.Green600,
+    isDark = false
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+private val DarkColorPalette = HarmColors(
+    surface = HarmColor.Gray900,
+    surfaceContainer = HarmColor.Gray800,
+    onSurface = HarmColor.White,
+    onSurfaceContainer = HarmColor.White,
+    onSurfaceContainerLow = HarmColor.Gray400,
+    primary = HarmColor.Purple800,
+    primaryVariant = HarmColor.Purple100,
+    onPrimary = HarmColor.White,
+    onPrimaryVariant = HarmColor.Purple400,
+    error = HarmColor.Red400,
+    errorContainer = HarmColor.Red50,
+    info = HarmColor.Green600,
+    isDark = true
 )
 
 @Composable
-fun HarmoneyTheme(
+fun HarmTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val customColors = if (darkTheme) DarkColorPalette else LightColorPalette
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+
+    ProvideTheme(customColors) {
+        MaterialTheme(
+            colorScheme = debugColors(),
+            content = content
+        )
     }
+}
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
+object HarmTheme {
+    val colors: HarmColors
+        @Composable
+        get() = LocalHarmColors.current
+}
+
+@Composable
+fun ProvideTheme(
+    colors: HarmColors,
+    content: @Composable () -> Unit,
+) {
+    CompositionLocalProvider(
+        LocalHarmColors provides colors,
         content = content
     )
 }
+
+private val LocalHarmColors = staticCompositionLocalOf<HarmColors> {
+    error("No ColorPalette provided")
+}
+
+fun debugColors(
+    debugColor: Color = Color.Magenta
+) = ColorScheme(
+    primary = debugColor,
+    onPrimary = debugColor,
+    primaryContainer = debugColor,
+    onPrimaryContainer = debugColor,
+    inversePrimary = debugColor,
+    secondary = debugColor,
+    onSecondary = debugColor,
+    secondaryContainer = debugColor,
+    onSecondaryContainer = debugColor,
+    tertiary = debugColor,
+    onTertiary = debugColor,
+    tertiaryContainer = debugColor,
+    onTertiaryContainer = debugColor,
+    background = debugColor,
+    onBackground = debugColor,
+    surface = debugColor,
+    onSurface = debugColor,
+    surfaceVariant = debugColor,
+    onSurfaceVariant = debugColor,
+    surfaceTint = debugColor,
+    inverseSurface = debugColor,
+    inverseOnSurface = debugColor,
+    error = debugColor,
+    onError = debugColor,
+    errorContainer = debugColor,
+    onErrorContainer = debugColor,
+    outline = debugColor,
+    outlineVariant = debugColor,
+    scrim = debugColor,
+    surfaceBright = debugColor,
+    surfaceDim = debugColor,
+    surfaceContainer = debugColor,
+    surfaceContainerHigh = debugColor,
+    surfaceContainerHighest = debugColor,
+    surfaceContainerLow = debugColor,
+    surfaceContainerLowest = debugColor,
+)
