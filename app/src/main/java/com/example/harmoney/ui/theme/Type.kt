@@ -1,34 +1,40 @@
 package com.example.harmoney.ui.theme
 
-import androidx.compose.material3.Typography
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 
-// Set of Material typography styles to start with
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
-)
+@Stable
+class Type(
+    titleLarge: TextStyle,
+    titleMedium: TextStyle,
+    titleSmall: TextStyle,
+
+    bodyLarge: TextStyle,
+    bodyMedium: TextStyle,
+    bodySmall: TextStyle,
+
+    labelLarge: TextStyle,
+    labelMedium: TextStyle
+) {
+    var titleLarge by mutableStateOf(titleLarge)
+        private set
+    var titleMedium by mutableStateOf(titleMedium)
+        private set
+    var titleSmall by mutableStateOf(titleSmall)
+        private set
+
+    var bodyLarge by mutableStateOf(bodyLarge)
+        private set
+    var bodyMedium by mutableStateOf(bodyMedium)
+        private set
+    var bodySmall by mutableStateOf(bodySmall)
+        private set
+
+    var labelLarge by mutableStateOf(labelLarge)
+        private set
+    var labelMedium by mutableStateOf(labelMedium)
+        private set
+}

@@ -32,26 +32,32 @@ class HarmColors(
         private set
     var surfaceContainer by mutableStateOf(surfaceContainer)
         private set
+
     var onSurface by mutableStateOf(onSurface)
         private set
     var onSurfaceContainer by mutableStateOf(onSurfaceContainer)
         private set
     var onSurfaceContainerLow by mutableStateOf(onSurfaceContainerLow)
         private set
+
     var primary by mutableStateOf(primary)
         private set
     var primaryVariant by mutableStateOf(primaryVariant)
         private set
+
     var onPrimary by mutableStateOf(onPrimary)
         private set
     var onPrimaryVariant by mutableStateOf(onPrimaryVariant)
         private set
+
     var error by mutableStateOf(error)
         private set
     var errorContainer by mutableStateOf(errorContainer)
         private set
+
     var info by mutableStateOf(info)
         private set
+
     var isDark by mutableStateOf(isDark)
         private set
 
