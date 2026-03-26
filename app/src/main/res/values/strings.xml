@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Harmoney</string>
+
+    <string name="category_icon_sub_type_finance">Финансы</string>
+    <string name="category_icon_sub_type_home">Дом</string>
+    <string name="category_icon_sub_type_health">Красота и здоровье</string>
+    <string name="category_icon_sub_type_transport">Транспорт</string>
+    <string name="category_icon_sub_type_sport">Спорт</string>
+    <string name="category_icon_sub_type_animals">Животные</string>
+    <string name="category_icon_sub_type_hobby">Хобби</string>
+    <string name="category_icon_sub_type_events">События</string>
+    <string name="category_icon_sub_type_common">Общее</string>
+    <string name="category_icon_sub_type_other">Другое</string>
 </resources>
