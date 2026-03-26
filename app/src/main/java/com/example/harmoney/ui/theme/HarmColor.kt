@@ -49,23 +49,4 @@ object HarmColor {
     val Red400 = Color(0xFFED405B)
     val Red50 = Color(0xFFFDEBEE)
     val Green600 = Color(0xFF18A75A)
-
-    // цвета категорий
-    val Blue100 = Color(0xFFB2EBF2)
-    val Blue100_2 = Color(0xFFC5CAE9)
-    val Blue100_3 = Color(0xFFB3E5FC)
-    val Green100 = Color(0xFFC8E6C9)
-    val Green100_2 = Color(0xFFDCEDC8)
-    val Purple100_3 = Color(0xFFE1BEE7)
-    val Purple200 = Color(0xFFB39DDB)
-    val Pink100 = Color(0xFFF8BBD0)
-    val Red100 = Color(0xFFFFCDD2)
-    val Red100_2 = Color(0xFFFFCCBC)
-    val Yellow100 = Color(0xFFFFECB3)
-    val Yellow100_2 = Color(0xFFFFF9C4)
-    val Yellow200 = Color(0xFFE6EE9C)
-    val Orange100 = Color(0xFFFFE0B2)
-    val Orange100_2 = Color(0xFFFFECB3)
-    val Gray100_2 = Color(0xFFCFD8DC)
-    val Gray100_3 = Color(0xFFD7CCC8)
 }
