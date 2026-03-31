@@ -9,53 +9,86 @@ import androidx.compose.ui.graphics.Color
 @Stable
 class HarmColors(
     surface: Color,
-    surfaceContainer: Color,
-
     onSurface: Color,
+    surfaceContainer: Color,
     onSurfaceContainer: Color,
     onSurfaceContainerLow: Color,
+    surfaceVariant: Color,
+    onSurfaceVariant: Color,
 
     primary: Color,
-    primaryVariant: Color,
-
     onPrimary: Color,
-    onPrimaryVariant: Color,
+    primaryContainer: Color,
+    onPrimaryContainer: Color,
+
+    secondary: Color,
+    onSecondary: Color,
+    secondaryContainer: Color,
+    onSecondaryContainer: Color,
+
+    outline: Color,
+    outlineVariant: Color,
 
     error: Color,
+    onError: Color,
     errorContainer: Color,
+    onErrorContainer: Color,
 
     info: Color,
+    onInfo: Color,
 
     isDark: Boolean
 ) {
     var surface by mutableStateOf(surface)
         private set
-    var surfaceContainer by mutableStateOf(surfaceContainer)
-        private set
-
     var onSurface by mutableStateOf(onSurface)
+        private set
+    var surfaceContainer by mutableStateOf(surfaceContainer)
         private set
     var onSurfaceContainer by mutableStateOf(onSurfaceContainer)
         private set
     var onSurfaceContainerLow by mutableStateOf(onSurfaceContainerLow)
         private set
+    var surfaceVariant by mutableStateOf(surfaceVariant)
+        private set
+    var onSurfaceVariant by mutableStateOf(onSurfaceVariant)
+        private set
 
     var primary by mutableStateOf(primary)
         private set
-    var primaryVariant by mutableStateOf(primaryVariant)
-        private set
-
     var onPrimary by mutableStateOf(onPrimary)
         private set
-    var onPrimaryVariant by mutableStateOf(onPrimaryVariant)
+    var primaryContainer by mutableStateOf(primaryContainer)
+        private set
+    var onPrimaryContainer by mutableStateOf(onPrimaryContainer)
+        private set
+
+    var secondary by mutableStateOf(secondary)
+        private set
+    var onSecondary by mutableStateOf(onSecondary)
+        private set
+    var secondaryContainer by mutableStateOf(secondaryContainer)
+        private set
+    var onSecondaryContainer by mutableStateOf(onSecondaryContainer)
+        private set
+
+    var outline by mutableStateOf(outline)
+        private set
+    var outlineVariant by mutableStateOf(outlineVariant)
         private set
 
     var error by mutableStateOf(error)
         private set
+    var onError by mutableStateOf(onError)
+        private set
     var errorContainer by mutableStateOf(errorContainer)
+        private set
+    var onErrorContainer by mutableStateOf(onErrorContainer)
         private set
 
     var info by mutableStateOf(info)
+        private set
+    var onInfo by mutableStateOf(onInfo)
         private set
 
     var isDark by mutableStateOf(isDark)
@@ -63,18 +96,34 @@ class HarmColors(
 
     fun update(other: HarmColors) {
         surface = other.surface
-        surfaceContainer = other.surfaceContainer
         onSurface = other.onSurface
+        surfaceContainer = other.surfaceContainer
         onSurfaceContainer = other.onSurfaceContainer
         onSurfaceContainerLow = other.onSurfaceContainerLow
+        surfaceVariant = other.surfaceVariant
+        onSurfaceVariant = other.onSurfaceVariant
+
         primary = other.primary
-        primaryVariant = other.primaryVariant
         onPrimary = other.onPrimary
-        onPrimaryVariant = other.onPrimaryVariant
+        primaryContainer = other.primaryContainer
+        onPrimaryContainer = other.onPrimaryContainer
+
+        secondary = other.secondary
+        onSecondary = other.onSecondary
+        secondaryContainer = other.secondaryContainer
+        onSecondaryContainer = other.onSecondaryContainer
+
+        outline = other.outline
+        outlineVariant = other.outlineVariant
+
         error = other.error
+        onError = other.onError
         errorContainer = other.errorContainer
+        onErrorContainer = other.onErrorContainer
+
         info = other.info
+        onInfo = other.onInfo
+
         isDark = other.isDark
     }
 }
-
