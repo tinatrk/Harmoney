@@ -2,6 +2,8 @@ package com.example.harmoney.core.uilibrary.buttons
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -13,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.example.harmoney.ui.theme.HarmTheme
 
 object HarmButton {
-    /** TopBar IconButton*/
+    /** TopBar IconButton */
     @Composable
     fun HarmTopBarIconButton(
         @DrawableRes iconRes: Int,
@@ -28,6 +30,28 @@ object HarmButton {
                 contentColor = HarmTheme.colors.onSurfaceContainer
             ),
             onClick = onClick
+        ) {
+            Icon(
+                painter = painterResource(iconRes),
+                contentDescription = contentDescription
+            )
+        }
+    }
+
+    /** Floating action button */
+    @Composable
+    fun HarmFloatingActionButton(
+        @DrawableRes iconRes: Int,
+        onClick: () -> Unit,
+        contentDescription: String?,
+        modifier: Modifier = Modifier,
+    ) {
+        FloatingActionButton(
+            modifier = modifier,
+            containerColor = HarmTheme.colors.primary,
+            contentColor = HarmTheme.colors.onPrimary,
+            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp),
+            onClick = onClick,
         ) {
             Icon(
                 painter = painterResource(iconRes),

@@ -16,4 +16,6 @@
     <!--content description для иконок -->
     <string name="ic_arrow_back_desc">Вернуться на предыдущий экран</string>
     <string name="ic_settings_desc">Открыть экран настроек</string>
+    <string name="ic_add_transaction_desc">Создать транзакцию</string>
+    <string name="ic_add_category_desc">Создать категорию</string>
 </resources>
