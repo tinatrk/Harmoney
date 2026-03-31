@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Harmoney</string>
 
+    <!--Типы категорий -->
+    <string name="category_type_expenses_title">Расходы</string>
+    <string name="category_type_income_title">Доходы</string>
+
+    <!--Подкатегории иконок (для экрана выбора иконки при создании категории) -->
     <string name="category_icon_sub_type_finance">Финансы</string>
     <string name="category_icon_sub_type_home">Дом</string>
     <string name="category_icon_sub_type_health">Красота и здоровье</string>
@@ -11,4 +16,19 @@
     <string name="category_icon_sub_type_events">События</string>
     <string name="category_icon_sub_type_common">Общее</string>
     <string name="category_icon_sub_type_other">Другое</string>
+
+    <!--content description для иконок -->
+    <string name="ic_arrow_back_desc">Вернуться на предыдущий экран</string>
+    <string name="ic_settings_desc">Открыть экран настроек</string>
+    <string name="ic_add_transaction_desc">Создать транзакцию</string>
+    <string name="ic_add_category_desc">Создать категорию</string>
+    <string name="choice_category_icon_for_category_desc">Выбрать эту иконку для категории транзакций</string>
+    <string name="choice_category_icon_for_transaction_desc">Выбрать эту категорию транзакции</string>
+    <string name="choice_color_for_category_icon_desc">Выбрать этот цвет для категории</string>
+    <string name="ic_edit_desc">Редактировать</string>
+    <string name="ic_delete_desc">Удалить</string>
+    <string name="ic_radio_button_on_desc">Выбрано</string>
+    <string name="ic_radio_button_off_desc">Не выбрано</string>
+
+    <string name="common_button_save_text">Сохранить</string>
 </resources>
