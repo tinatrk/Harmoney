@@ -21,4 +21,8 @@
     <string name="choice_category_icon_for_category_desc">Выбрать эту иконку для категории транзакций</string>
     <string name="choice_category_icon_for_transaction_desc">Выбрать эту категорию транзакции</string>
     <string name="choice_color_for_category_icon_desc">Выбрать этот цвет для категории</string>
+    <string name="ic_edit_desc">Редактировать</string>
+    <string name="ic_delete_desc">Удалить</string>
+
+    <string name="common_button_save_text">Сохранить</string>
 </resources>

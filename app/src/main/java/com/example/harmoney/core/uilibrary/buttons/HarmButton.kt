@@ -8,10 +8,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -150,6 +155,33 @@ object HarmButton {
                     HarmTheme.colors.primary
                 } else HarmTheme.colors.onSurfaceContainer,
                 style = HarmTheme.typography.labelLarge
+            )
+        }
+    }
+
+    /** Common button */
+    @Composable
+    fun HarmCommonButton(
+        text: String,
+        onClick: () -> Unit,
+        modifier: Modifier = Modifier,
+        enabled: Boolean = true,
+    ) {
+        Button(
+            modifier = modifier.fillMaxWidth(),
+            onClick = onClick,
+            shape = RoundedCornerShape(corner = CornerSize(54.dp)),
+            enabled = enabled,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = HarmTheme.colors.primary,
+                contentColor = HarmTheme.colors.onPrimary,
+                disabledContainerColor = HarmTheme.colors.surfaceVariant,
+                disabledContentColor = HarmTheme.colors.onSurfaceVariant
+            )
+        ) {
+            Text(
+                text = text,
+                style = HarmTheme.typography.bodyLargeSemiBold,
             )
         }
     }
