@@ -18,4 +18,7 @@
     <string name="ic_settings_desc">Открыть экран настроек</string>
     <string name="ic_add_transaction_desc">Создать транзакцию</string>
     <string name="ic_add_category_desc">Создать категорию</string>
+    <string name="choice_category_icon_for_category_desc">Выбрать эту иконку для категории транзакций</string>
+    <string name="choice_category_icon_for_transaction_desc">Выбрать эту категорию транзакции</string>
+    <string name="choice_color_for_category_icon_desc">Выбрать этот цвет для категории</string>
 </resources>
