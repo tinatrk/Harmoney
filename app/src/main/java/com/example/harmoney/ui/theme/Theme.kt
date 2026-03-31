@@ -60,9 +60,23 @@ fun HarmTheme(
             lineHeight = 28.sp,
             letterSpacing = 0.sp
         ),
+        titleLargeSemiBold = TextStyle(
+            fontFamily = FontFamily.Default,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 22.sp,
+            lineHeight = 28.sp,
+            letterSpacing = 0.sp
+        ),
         titleMedium = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+            lineHeight = 24.sp,
+            letterSpacing = 0.sp
+        ),
+        titleMediumSemiBold = TextStyle(
+            fontFamily = FontFamily.Default,
+            fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
             lineHeight = 24.sp,
             letterSpacing = 0.sp
@@ -78,6 +92,13 @@ fun HarmTheme(
         bodyLarge = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+            lineHeight = 24.sp,
+            letterSpacing = 0.sp
+        ),
+        bodyLargeSemiBold = TextStyle(
+            fontFamily = FontFamily.Default,
+            fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
             lineHeight = 24.sp,
             letterSpacing = 0.sp
