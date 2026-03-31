@@ -9,10 +9,13 @@ import androidx.compose.ui.text.TextStyle
 @Stable
 class Type(
     titleLarge: TextStyle,
+    titleLargeSemiBold: TextStyle,
     titleMedium: TextStyle,
+    titleMediumSemiBold: TextStyle,
     titleSmall: TextStyle,
 
     bodyLarge: TextStyle,
+    bodyLargeSemiBold: TextStyle,
     bodyMedium: TextStyle,
     bodySmall: TextStyle,
 
@@ -21,12 +24,18 @@ class Type(
 ) {
     var titleLarge by mutableStateOf(titleLarge)
         private set
+    var titleLargeSemiBold by mutableStateOf(titleLargeSemiBold)
+        private set
     var titleMedium by mutableStateOf(titleMedium)
+        private set
+    var titleMediumSemiBold by mutableStateOf(titleMediumSemiBold)
         private set
     var titleSmall by mutableStateOf(titleSmall)
         private set
 
     var bodyLarge by mutableStateOf(bodyLarge)
+        private set
+    var bodyLargeSemiBold by mutableStateOf(bodyLargeSemiBold)
         private set
     var bodyMedium by mutableStateOf(bodyMedium)
         private set
