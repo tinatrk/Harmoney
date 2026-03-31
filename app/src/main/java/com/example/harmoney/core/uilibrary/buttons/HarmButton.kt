@@ -185,4 +185,29 @@ object HarmButton {
             )
         }
     }
+
+    /** Card IconButton*/
+    @Composable
+    fun HarmCardIconButton(
+        @DrawableRes iconRes: Int,
+        onClick: () -> Unit,
+        contentDescription: String?,
+        modifier: Modifier = Modifier,
+    ) {
+        IconButton(
+            modifier = modifier.size(40.dp),
+            onClick = onClick,
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = Color.Transparent,
+                contentColor = HarmTheme.colors.onSurfaceContainerLow,
+                disabledContainerColor = Color.Transparent,
+                disabledContentColor = HarmTheme.colors.onSurfaceContainerLow,
+            )
+        ) {
+            Icon(
+                painter = painterResource(iconRes),
+                contentDescription = contentDescription
+            )
+        }
+    }
 }
