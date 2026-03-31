@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Harmoney</string>
 
+    <!--Типы категорий -->
+    <string name="category_type_expenses_title">Расходы</string>
+    <string name="category_type_income_title">Доходы</string>
+
     <!--Подкатегории иконок (для экрана выбора иконки при создании категории) -->
     <string name="category_icon_sub_type_finance">Финансы</string>
     <string name="category_icon_sub_type_home">Дом</string>
@@ -23,6 +27,8 @@
     <string name="choice_color_for_category_icon_desc">Выбрать этот цвет для категории</string>
     <string name="ic_edit_desc">Редактировать</string>
     <string name="ic_delete_desc">Удалить</string>
+    <string name="ic_radio_button_on_desc">Выбрано</string>
+    <string name="ic_radio_button_off_desc">Не выбрано</string>
 
     <string name="common_button_save_text">Сохранить</string>
 </resources>

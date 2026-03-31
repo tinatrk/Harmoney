@@ -7,11 +7,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,7 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.harmoney.R
 import com.example.harmoney.presentation.category.models.CategoryColors
 import com.example.harmoney.ui.theme.HarmColor
 import com.example.harmoney.ui.theme.HarmTheme
@@ -87,7 +91,7 @@ object HarmButton {
         @DrawableRes iconRes: Int?,
         contentDescription: String?,
         modifier: Modifier = Modifier,
-        iconBackground: Color = CategoryColors.CyanT88.color,
+        iconBackground: Color = CategoryColors.CYAN_T88.color,
         selected: Boolean = false,
     ) {
         Box(
@@ -125,7 +129,7 @@ object HarmButton {
         }
     }
 
-    /** Circular iconButton with title*/
+    /** Circular iconButton with title */
     @Composable
     fun HarmCircularIconButtonWithTitle(
         @DrawableRes iconRes: Int,
@@ -186,7 +190,7 @@ object HarmButton {
         }
     }
 
-    /** Card IconButton*/
+    /** Card IconButton */
     @Composable
     fun HarmCardIconButton(
         @DrawableRes iconRes: Int,
@@ -207,6 +211,61 @@ object HarmButton {
             Icon(
                 painter = painterResource(iconRes),
                 contentDescription = contentDescription
+            )
+        }
+    }
+
+    /** Circular checkbox */
+    @Composable
+    fun HarmCircularCheckBox(
+        checked: Boolean,
+        contentDescription: String?
+    ) {
+        Icon(
+            painter = if (checked) {
+                painterResource(R.drawable.ic_radio_button_on_24px)
+            } else {
+                painterResource(R.drawable.ic_radio_button_off_24px)
+            },
+            contentDescription = contentDescription,
+            tint = if (checked) {
+                HarmTheme.colors.primary
+            } else {
+                HarmTheme.colors.onSurfaceContainerLow
+            },
+        )
+    }
+
+    /** Checkable icon with title */
+    @Composable
+    fun HarmCheckableIconWithTitle(
+        title: String,
+        checked: Boolean,
+        onCheckChanged: (Boolean) -> Unit,
+        modifier: Modifier = Modifier,
+
+        ) {
+        Row(
+            modifier = modifier
+                .padding(vertical = 8.dp)
+                .clickable {
+                    onCheckChanged(!checked)
+                },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            HarmCircularCheckBox(
+                checked = checked,
+                contentDescription = if (checked) {
+                    stringResource(R.string.ic_radio_button_on_desc)
+                } else {
+                    stringResource(R.string.ic_radio_button_off_desc)
+                },
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = title,
+                style = HarmTheme.typography.bodyMedium,
+                color = HarmTheme.colors.onSurface
             )
         }
     }
