@@ -2,7 +2,11 @@ package com.example.harmoney.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
+import androidx.compose.material3.RippleDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -152,6 +156,7 @@ object HarmTheme {
         get() = LocalHarmTypography.current
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProvideTheme(
     colors: HarmColors,
@@ -160,9 +165,18 @@ fun ProvideTheme(
 ) {
     val harmTypography = remember { typography }
 
+    val rippleColor = colors.onSurfaceContainer
+    val rippleConfig = remember(rippleColor) {
+        RippleConfiguration(
+            color = rippleColor,
+            rippleAlpha = RippleDefaults.RippleAlpha
+        )
+    }
+
     CompositionLocalProvider(
         LocalHarmColors provides colors,
         LocalHarmTypography provides harmTypography,
+        LocalRippleConfiguration provides rippleConfig,
         content = content
     )
 }
