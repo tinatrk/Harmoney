@@ -30,9 +30,11 @@
     <string name="ic_radio_button_on_desc">Выбрано</string>
     <string name="ic_radio_button_off_desc">Не выбрано</string>
     <string name="ic_list_desc">Отобразить транзакции в виде списка</string>
+    <string name="category_icon_desc">Иконка категории %s</string>
 
     <string name="common_button_save_text">Сохранить</string>
 
-    <string name="balance_russian_pattern">%.2f ₽</string>
+    <string name="money_russian_pattern">%.2f ₽</string>
     <string name="balance_title">Текущий баланс</string>
+    <string name="money_percentage_pattern">%.0f%%</string>
 </resources>

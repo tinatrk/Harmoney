@@ -34,8 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
-import com.example.harmoney.presentation.category.models.CategoryColors
-import com.example.harmoney.ui.theme.HarmColor
+import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.ui.theme.HarmTheme
 
 object HarmButton {
@@ -90,7 +89,7 @@ object HarmButton {
         @DrawableRes iconRes: Int?,
         contentDescription: String?,
         modifier: Modifier = Modifier,
-        iconBackground: Color = CategoryColors.CYAN_T88.color,
+        iconBackgroundValue: Long = CategoryColors.CYAN_T88.colorValue,
         selected: Boolean = false,
     ) {
         Box(
@@ -102,7 +101,7 @@ object HarmButton {
                     .size(40.dp)
                     .clip(CircleShape)
                     .clickable { onClick() }
-                    .background(iconBackground)
+                    .background(Color(iconBackgroundValue))
                     .then(
                         if (selected) {
                             Modifier.border(
@@ -111,7 +110,11 @@ object HarmButton {
                                 shape = CircleShape
                             )
                         } else {
-                            Modifier
+                            Modifier.border(
+                                width = 1.dp,
+                                color = HarmTheme.colors.categoryIconTint,
+                                shape = CircleShape
+                            )
                         }
                     ),
                 contentAlignment = Alignment.Center
@@ -121,7 +124,7 @@ object HarmButton {
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(iconRes),
                         contentDescription = contentDescription,
-                        tint = HarmColor.NeutralT0
+                        tint = HarmTheme.colors.categoryIconTint
                     )
                 }
             }
@@ -132,7 +135,7 @@ object HarmButton {
     @Composable
     fun HarmCircularIconButtonWithTitle(
         @DrawableRes iconRes: Int,
-        iconBackground: Color,
+        iconBackgroundValue: Long,
         iconTitle: String,
         onClick: () -> Unit,
         contentDescription: String?,
@@ -146,7 +149,7 @@ object HarmButton {
         ) {
             HarmCircularIconButton(
                 iconRes = iconRes,
-                iconBackground = iconBackground,
+                iconBackgroundValue = iconBackgroundValue,
                 onClick = onClick,
                 contentDescription = contentDescription,
                 selected = selected

@@ -37,6 +37,8 @@ class HarmColors(
     info: Color,
     onInfo: Color,
 
+    categoryIconTint: Color,
+
     isDark: Boolean
 ) {
     var surface by mutableStateOf(surface)
@@ -91,6 +93,9 @@ class HarmColors(
     var onInfo by mutableStateOf(onInfo)
         private set
 
+    var categoryIconTint by mutableStateOf(categoryIconTint)
+        private set
+
     var isDark by mutableStateOf(isDark)
         private set
 
@@ -123,6 +128,8 @@ class HarmColors(
 
         info = other.info
         onInfo = other.onInfo
+
+        categoryIconTint = other.categoryIconTint
 
         isDark = other.isDark
     }
