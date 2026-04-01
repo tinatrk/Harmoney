@@ -19,7 +19,7 @@
 
     <!--content description для иконок -->
     <string name="ic_arrow_back_desc">Вернуться на предыдущий экран</string>
-    <string name="ic_settings_desc">Открыть экран настроек</string>
+    <string name="ic_drawer_menu_desc">Открыть меню с настройками</string>
     <string name="ic_add_transaction_desc">Создать транзакцию</string>
     <string name="ic_add_category_desc">Создать категорию</string>
     <string name="choice_category_icon_for_category_desc">Выбрать эту иконку для категории транзакций</string>
@@ -29,6 +29,10 @@
     <string name="ic_delete_desc">Удалить</string>
     <string name="ic_radio_button_on_desc">Выбрано</string>
     <string name="ic_radio_button_off_desc">Не выбрано</string>
+    <string name="ic_list_desc">Отобразить транзакции в виде списка</string>
 
     <string name="common_button_save_text">Сохранить</string>
+
+    <string name="balance_russian_pattern">%.2f ₽</string>
+    <string name="balance_title">Текущий баланс</string>
 </resources>
