@@ -51,7 +51,6 @@ object HarmButton {
             modifier = modifier.size(48.dp),
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = Color.Transparent,
-                contentColor = HarmTheme.colors.onSurfaceContainer
             ),
             onClick = onClick
         ) {
