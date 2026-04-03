@@ -130,6 +130,13 @@ fun HarmTheme(
             lineHeight = 20.sp,
             letterSpacing = 0.sp
         ),
+        titleSmallSemiBold = TextStyle(
+            fontFamily = FontFamily.Default,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
+            letterSpacing = 0.sp
+        ),
 
         bodyLarge = TextStyle(
             fontFamily = FontFamily.Default,

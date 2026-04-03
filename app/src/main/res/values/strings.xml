@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Harmoney</string>
 
-    <!--Типы категорий -->
+    <!-- Типы категорий -->
     <string name="category_type_expenses_title">Расходы</string>
     <string name="category_type_income_title">Доходы</string>
 
-    <!--Подкатегории иконок (для экрана выбора иконки при создании категории) -->
+    <!-- Подкатегории иконок (для экрана выбора иконки при создании категории) -->
     <string name="category_icon_sub_type_finance">Финансы</string>
     <string name="category_icon_sub_type_home">Дом</string>
     <string name="category_icon_sub_type_health">Красота и здоровье</string>
@@ -17,7 +17,11 @@
     <string name="category_icon_sub_type_common">Общее</string>
     <string name="category_icon_sub_type_other">Другое</string>
 
-    <!--content description для иконок -->
+    <!-- Заголовки для периодов (для статистики) -->
+    <string name="period_last_month">Прошлый месяц</string>
+    <string name="period_current_month">Текущий месяц</string>
+
+    <!-- content description для иконок -->
     <string name="ic_arrow_back_desc">Вернуться на предыдущий экран</string>
     <string name="ic_drawer_menu_desc">Открыть меню с настройками</string>
     <string name="ic_add_transaction_desc">Создать транзакцию</string>
@@ -38,4 +42,7 @@
     <string name="money_russian_pattern">%.2f ₽</string>
     <string name="balance_title">Текущий баланс</string>
     <string name="money_percentage_pattern">%.0f%%</string>
+
+    <!-- Текст для placeholders -->
+    <string name="empty_transaction_list_placeholder">У вас пока нет ни одной транзакции данного типа</string>
 </resources>
