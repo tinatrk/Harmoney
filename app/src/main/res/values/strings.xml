@@ -39,9 +39,14 @@
 
     <string name="common_button_save_text">Сохранить</string>
 
+    <!-- Шаблоны с подстановкой -->
     <string name="money_russian_pattern">%.2f ₽</string>
-    <string name="balance_title">Текущий баланс</string>
     <string name="money_percentage_pattern">%.0f%%</string>
+    <string name="text_with_colon">%s:</string>
+
+    <!-- Заголовки -->
+    <string name="balance_title">Текущий баланс</string>
+    <string name="total_amount_title">Всего:</string>
 
     <!-- Текст для placeholders -->
     <string name="empty_transaction_list_placeholder">У вас пока нет ни одной транзакции данного типа</string>
