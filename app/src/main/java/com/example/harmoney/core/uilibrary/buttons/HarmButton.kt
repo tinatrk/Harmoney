@@ -244,7 +244,9 @@ object HarmButton {
     ) {
         val expanded = remember { mutableStateOf(false) }
 
-        Box() {
+        Box(
+            modifier = modifier,
+        ) {
             HarmCardIconButton(
                 iconRes = iconRes,
                 contentDescription = contentDescription,
