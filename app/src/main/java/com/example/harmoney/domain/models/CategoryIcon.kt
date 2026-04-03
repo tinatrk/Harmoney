@@ -1,6 +1,10 @@
 package com.example.harmoney.domain.models
 
+/**
+ * - ids - объект CategoryIcons, содержащй id иконки и resIconId изображения иконки
+ * - backgroundColor - цвет фона из CategoryColors
+ * */
 data class CategoryIcon(
-    val id: Long = 0,
-    val colorTint: Long,
+    val ids: CategoryIcons,
+    val backgroundColor: CategoryColors,
 )

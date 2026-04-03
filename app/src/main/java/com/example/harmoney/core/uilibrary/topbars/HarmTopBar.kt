@@ -15,6 +15,11 @@ import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.ui.theme.HarmTheme
 
+/**
+ * - `HarmCommonTopBar` - Basic top app bar
+ * - `HarmSimpleTopBar` - Top app bar with navigation button (without actions and subtitle).
+ * By default, back icon is used.
+ */
 object HarmTopBar {
     /** Basic top app bar */
     @OptIn(ExperimentalMaterial3Api::class)

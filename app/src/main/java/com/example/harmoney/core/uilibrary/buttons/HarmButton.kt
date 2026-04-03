@@ -19,13 +19,18 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,10 +39,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
-import com.example.harmoney.presentation.category.models.CategoryColors
-import com.example.harmoney.ui.theme.HarmColor
+import com.example.harmoney.domain.models.CategoryColors
+import com.example.harmoney.presentation.category.models.MenuOptions
 import com.example.harmoney.ui.theme.HarmTheme
 
+/**
+ * - `HarmTopBarIconButton` - IconButton for appTopBar
+ * - `HarmFloatingActionButton` - Floating action button
+ * - `HarmCircularIconButton` - Circular iconButton
+ * - `HarmCircularIconButtonWithTitle` - Circular iconButton with title
+ * - `HarmCommonButton` - Common button
+ * - `HarmCardIconButton` - IconButton for cards
+ * - `HarmDropdownMenuIcon` - IconButton with dropdown menu logic
+ * - `HarmCircularCheckBox` - Circular checkBox
+ * - `HarmCheckableIconWithTitle` - Circular checkBox with title
+ * */
 object HarmButton {
     /** TopBar IconButton */
     @Composable
@@ -90,7 +106,7 @@ object HarmButton {
         @DrawableRes iconRes: Int?,
         contentDescription: String?,
         modifier: Modifier = Modifier,
-        iconBackground: Color = CategoryColors.CYAN_T88.color,
+        iconBackgroundValue: Long = CategoryColors.CYAN_T88.colorValue,
         selected: Boolean = false,
     ) {
         Box(
@@ -102,7 +118,7 @@ object HarmButton {
                     .size(40.dp)
                     .clip(CircleShape)
                     .clickable { onClick() }
-                    .background(iconBackground)
+                    .background(Color(iconBackgroundValue))
                     .then(
                         if (selected) {
                             Modifier.border(
@@ -111,7 +127,11 @@ object HarmButton {
                                 shape = CircleShape
                             )
                         } else {
-                            Modifier
+                            Modifier.border(
+                                width = 1.dp,
+                                color = HarmTheme.colors.categoryIconTint,
+                                shape = CircleShape
+                            )
                         }
                     ),
                 contentAlignment = Alignment.Center
@@ -121,7 +141,7 @@ object HarmButton {
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(iconRes),
                         contentDescription = contentDescription,
-                        tint = HarmColor.NeutralT0
+                        tint = HarmTheme.colors.categoryIconTint
                     )
                 }
             }
@@ -132,7 +152,7 @@ object HarmButton {
     @Composable
     fun HarmCircularIconButtonWithTitle(
         @DrawableRes iconRes: Int,
-        iconBackground: Color,
+        iconBackgroundValue: Long,
         iconTitle: String,
         onClick: () -> Unit,
         contentDescription: String?,
@@ -146,7 +166,7 @@ object HarmButton {
         ) {
             HarmCircularIconButton(
                 iconRes = iconRes,
-                iconBackground = iconBackground,
+                iconBackgroundValue = iconBackgroundValue,
                 onClick = onClick,
                 contentDescription = contentDescription,
                 selected = selected
@@ -211,6 +231,52 @@ object HarmButton {
                 painter = painterResource(iconRes),
                 contentDescription = contentDescription
             )
+        }
+    }
+
+    /** Card Dropdown menu icon */
+    @Composable
+    fun HarmDropdownMenuIcon(
+        @DrawableRes iconRes: Int,
+        menuOptions: List<MenuOptions>,
+        contentDescription: String?,
+        modifier: Modifier = Modifier,
+    ) {
+        val expanded = remember { mutableStateOf(false) }
+
+        Box(
+            modifier = modifier,
+        ) {
+            HarmCardIconButton(
+                iconRes = iconRes,
+                contentDescription = contentDescription,
+                onClick = { expanded.value = !expanded.value }
+            )
+
+            DropdownMenu(
+                expanded = expanded.value,
+                onDismissRequest = { expanded.value = false },
+                containerColor = HarmTheme.colors.surfaceVariant,
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                menuOptions.forEach { option ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = option.text,
+                                style = HarmTheme.typography.bodyMedium
+                            )
+                        },
+                        onClick = {
+                            option.onClick
+                            expanded.value = !expanded.value
+                        },
+                        colors = MenuDefaults.itemColors(
+                            textColor = HarmTheme.colors.onSurfaceVariant,
+                        )
+                    )
+                }
+            }
         }
     }
 

@@ -13,6 +13,7 @@ class Type(
     titleMedium: TextStyle,
     titleMediumSemiBold: TextStyle,
     titleSmall: TextStyle,
+    titleSmallSemiBold: TextStyle,
 
     bodyLarge: TextStyle,
     bodyLargeSemiBold: TextStyle,
@@ -31,6 +32,8 @@ class Type(
     var titleMediumSemiBold by mutableStateOf(titleMediumSemiBold)
         private set
     var titleSmall by mutableStateOf(titleSmall)
+        private set
+    var titleSmallSemiBold by mutableStateOf(titleSmallSemiBold)
         private set
 
     var bodyLarge by mutableStateOf(bodyLarge)

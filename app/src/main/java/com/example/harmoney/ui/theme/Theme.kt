@@ -47,6 +47,8 @@ private val LightColorPalette = HarmColors(
     info = HarmColor.GreenT90,
     onInfo = HarmColor.GreenT43,
 
+    categoryIconTint = HarmColor.NeutralT0,
+
     isDark = false
 )
 
@@ -79,6 +81,8 @@ private val DarkColorPalette = HarmColors(
 
     info = HarmColor.GreenT30,
     onInfo = HarmColor.GreenT79,
+
+    categoryIconTint = HarmColor.NeutralT0,
 
     isDark = true
 )
@@ -122,6 +126,13 @@ fun HarmTheme(
         titleSmall = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
+            letterSpacing = 0.sp
+        ),
+        titleSmallSemiBold = TextStyle(
+            fontFamily = FontFamily.Default,
+            fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
             lineHeight = 20.sp,
             letterSpacing = 0.sp
