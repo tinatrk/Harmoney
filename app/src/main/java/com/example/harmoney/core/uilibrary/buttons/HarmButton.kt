@@ -48,7 +48,8 @@ import com.example.harmoney.ui.theme.HarmTheme
  * - `HarmFloatingActionButton` - Floating action button
  * - `HarmCircularIconButton` - Circular iconButton
  * - `HarmCircularIconButtonWithTitle` - Circular iconButton with title
- * - `HarmCommonButton` - Common button
+ * - `HarmPrimaryButton` - Primary button for the main action on a screen
+ * - `SecondaryButton` - Secondary button for a secondary action on a screen
  * - `HarmCardIconButton` - IconButton for cards
  * - `HarmDropdownMenuIcon` - IconButton with dropdown menu logic
  * - `HarmCircularCheckBox` - Circular checkBox
@@ -182,16 +183,16 @@ object HarmButton {
         }
     }
 
-    /** Common button */
+    /** Primary button for the main action on a screen*/
     @Composable
-    fun HarmCommonButton(
+    fun HarmPrimaryButton(
         text: String,
         onClick: () -> Unit,
         modifier: Modifier = Modifier,
         enabled: Boolean = true,
     ) {
         Button(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier,
             onClick = onClick,
             shape = RoundedCornerShape(corner = CornerSize(54.dp)),
             enabled = enabled,
@@ -200,6 +201,33 @@ object HarmButton {
                 contentColor = HarmTheme.colors.onPrimary,
                 disabledContainerColor = HarmTheme.colors.surfaceVariant,
                 disabledContentColor = HarmTheme.colors.onSurfaceVariant
+            )
+        ) {
+            Text(
+                text = text,
+                style = HarmTheme.typography.bodyLargeSemiBold,
+            )
+        }
+    }
+
+    /** Secondary button for a secondary action on a screen */
+    @Composable
+    fun HarmSecondaryButton(
+        text: String,
+        onClick: () -> Unit,
+        modifier: Modifier = Modifier,
+        enabled: Boolean = true,
+    ) {
+        Button(
+            modifier = modifier,
+            onClick = onClick,
+            shape = RoundedCornerShape(corner = CornerSize(54.dp)),
+            enabled = enabled,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = HarmTheme.colors.secondaryContainer,
+                contentColor = HarmTheme.colors.onSecondaryContainer,
+                disabledContainerColor = HarmTheme.colors.surfaceVariant,
+                disabledContentColor = HarmTheme.colors.onSurfaceContainer
             )
         ) {
             Text(

@@ -107,7 +107,7 @@ object HarmCard {
                 Text(
                     modifier = Modifier.wrapContentWidth(),
                     text = stringResource(
-                        R.string.money_percentage_pattern,
+                        R.string.pattern_money_percentage,
                         category.percentage
                     ),
                     style = HarmTheme.typography.bodyLarge
@@ -117,7 +117,7 @@ object HarmCard {
 
                 Text(
                     modifier = Modifier.wrapContentWidth(),
-                    text = stringResource(R.string.money_russian_pattern, category.totalAmount),
+                    text = stringResource(R.string.pattern_money_russian, category.totalAmount),
                     style = HarmTheme.typography.bodyLarge
                 )
             }
@@ -148,7 +148,7 @@ object HarmCard {
 
                 Text(
                     modifier = Modifier.wrapContentWidth(),
-                    text = stringResource(R.string.money_russian_pattern, transactionAmount),
+                    text = stringResource(R.string.pattern_money_russian, transactionAmount),
                     style = HarmTheme.typography.bodyLarge
                 )
             }
@@ -297,7 +297,7 @@ object HarmCard {
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = stringResource(R.string.money_russian_pattern, total),
+                                text = stringResource(R.string.pattern_money_russian, total),
                                 style = HarmTheme.typography.bodyLarge,
                                 color = HarmTheme.colors.onSurfaceContainer,
                                 maxLines = 2,
@@ -306,7 +306,7 @@ object HarmCard {
                         }
                     } else {
                         Text(
-                            text = stringResource(R.string.empty_transaction_list_placeholder),
+                            text = stringResource(R.string.placeholder_empty_transaction_list),
                             style = HarmTheme.typography.titleLarge,
                         )
                     }
@@ -335,14 +335,14 @@ object HarmCard {
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.text_with_colon, data),
+                    text = stringResource(R.string.pattern_text_with_colon, data),
                     style = HarmTheme.typography.titleMedium,
                     color = HarmTheme.colors.onSurfaceContainer,
                     textAlign = TextAlign.Start
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = stringResource(R.string.money_russian_pattern, totalAmount),
+                    text = stringResource(R.string.pattern_money_russian, totalAmount),
                     style = HarmTheme.typography.bodyLarge,
                     color = HarmTheme.colors.onSurface,
                 )
