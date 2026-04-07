@@ -1,11 +1,17 @@
 package com.example.harmoney.core.uilibrary.textfields
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -16,15 +22,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.harmoney.R
+import com.example.harmoney.core.uilibrary.others.HarmOther.HarmDatePickerModal
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
  * - `HarmBaseTextField` - base TextField for simple text or numeric content
+ * - `HarmTextFieldWithDatePicker` - TextField with calendar logic
  */
 object HarmTextField {
     /** Base TextField for simple text or numeric content */
@@ -129,5 +142,56 @@ object HarmTextField {
             isError = isError,
             supportingText = supportingText,
         )
+    }
+
+    /** TextField with calendar logic */
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun HarmTextFieldWithDatePicker(
+        selectedDateString: String,
+        showModalDatePicker: Boolean,
+        selectedDateMillis: Long?,
+        onDismiss: () -> Unit,
+        onTextFieldTouch: () -> Unit,
+        onDateSelected: (Long?) -> Unit,
+        modifier: Modifier = Modifier,
+        focusManager: FocusManager = LocalFocusManager.current,
+        isError: Boolean = false,
+        supportingText: @Composable() (() -> Unit)? = null,
+    ) {
+        HarmBaseTextField(
+            modifier = modifier
+                .fillMaxWidth()
+                .pointerInput(selectedDateMillis) {
+                    awaitEachGesture {
+                        awaitFirstDown(pass = PointerEventPass.Initial)
+                        val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                        if (upEvent != null) {
+                            onTextFieldTouch()
+                        }
+                    }
+                },
+            value = selectedDateString,
+            placeholder = stringResource(R.string.label_text_field_data),
+            label = stringResource(R.string.label_text_field_data),
+            readOnly = true,
+            onValueChange = {},
+            trailingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_calendar_24px),
+                    contentDescription = stringResource(R.string.ic_calendar_desc)
+                )
+            },
+            focusManager = focusManager,
+            isError = isError,
+            supportingText = supportingText,
+        )
+
+        if (showModalDatePicker) {
+            HarmDatePickerModal(
+                onDateSelected = onDateSelected,
+                onDismiss = onDismiss
+            )
+        }
     }
 }
