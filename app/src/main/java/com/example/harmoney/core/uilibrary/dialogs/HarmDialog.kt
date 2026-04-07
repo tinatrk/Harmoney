@@ -2,6 +2,8 @@ package com.example.harmoney.core.uilibrary.dialogs
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -10,8 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
+import com.example.harmoney.core.uilibrary.textfields.HarmTextField
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
@@ -92,7 +96,7 @@ object HarmDialog {
             },
             confirmButton = {
                 HarmButton.HarmPrimaryButton(
-                    text = stringResource(R.string.btn_dialog_ok_text),
+                    text = stringResource(R.string.btn_dialog_yes_text),
                     onClick = onConfirmation
                 )
             },
@@ -111,23 +115,35 @@ object HarmDialog {
     /** A dialog to set the first day of the month */
     @Composable
     fun HarmSetFirstDayMonthDialog(
-        number: Int,
-        onNumberChanged: (Int) -> Unit,
+        numberString: String,
+        onNumberChanged: (String) -> Unit,
         onDismissRequest: () -> Unit,
         onConfirmation: () -> Unit,
         modifier: Modifier = Modifier,
         isError: Boolean = false,
+        supportingText: @Composable() (() -> Unit)? = null,
     ) {
         HarmCommonDialog(
             modifier = modifier,
             onDismissRequest = onDismissRequest,
             dialogContent = {
-                // в будущем задать здесь TextField для ввода чисел
                 Column {
                     Text(
                         text = stringResource(R.string.title_dialog_set_first_day_month),
                         style = HarmTheme.typography.bodyLarge,
-                        color = HarmTheme.colors.onSurfaceContainer
+                        color = HarmTheme.colors.onSurfaceContainer,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    HarmTextField.HarmBaseTextField(
+                        value = numberString,
+                        placeholder = stringResource(R.string.label_text_field_first_day_month),
+                        label = stringResource(R.string.label_text_field_first_day_month),
+                        onValueChange = onNumberChanged,
+                        onlyNumbers = true,
+                        isError = isError,
+                        supportingText = supportingText,
                     )
                 }
 

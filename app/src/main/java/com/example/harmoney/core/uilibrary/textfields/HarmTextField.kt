@@ -1,0 +1,133 @@
+package com.example.harmoney.core.uilibrary.textfields
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import com.example.harmoney.ui.theme.HarmTheme
+
+/**
+ * - `HarmBaseTextField` - base TextField for simple text or numeric content
+ */
+object HarmTextField {
+    /** Base TextField for simple text or numeric content */
+    @Composable
+    fun HarmBaseTextField(
+        value: String,
+        placeholder: String,
+        label: String,
+        onValueChange: (String) -> Unit,
+        modifier: Modifier = Modifier,
+        focusManager: FocusManager = LocalFocusManager.current,
+        onlyNumbers: Boolean = false,
+        readOnly: Boolean = false,
+        isError: Boolean = false,
+        trailingIcon: @Composable() (() -> Unit)? = null,
+        supportingText: @Composable() (() -> Unit)? = null,
+    ) {
+        val isFocused = remember { mutableStateOf(false) }
+        val colors = HarmTheme.colors
+        val typography = HarmTheme.typography
+        val contentColor = if (value.isEmpty()) {
+            colors.onSurfaceContainerLow
+        } else {
+            colors.onSurfaceContainer
+        }
+
+        OutlinedTextField(
+            modifier = modifier
+                .onFocusChanged { focusState ->
+                    isFocused.value = focusState.isFocused
+                },
+            value = value,
+            onValueChange = { newValue ->
+                if (onlyNumbers) {
+                    var filteredValue = newValue.filter { it.isDigit() }
+                    if (filteredValue.length > 1 && filteredValue.startsWith('0')) {
+                        filteredValue = filteredValue.trimStart('0')
+                    }
+                    onValueChange(filteredValue)
+                } else {
+                    onValueChange(newValue)
+                }
+            },
+            readOnly = readOnly,
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    style = typography.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
+            textStyle = typography.bodyLarge,
+            trailingIcon = trailingIcon,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = colors.primary,
+                unfocusedBorderColor = contentColor,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                focusedLabelColor = colors.primary,
+                unfocusedLabelColor = contentColor,
+                disabledLabelColor = contentColor,
+                cursorColor = colors.primary,
+                focusedTrailingIconColor = colors.onSurfaceContainer,
+                unfocusedTrailingIconColor = contentColor,
+                focusedTextColor = colors.onSurfaceContainer,
+                unfocusedTextColor = colors.onSurfaceContainer,
+                focusedPlaceholderColor = colors.onSurfaceContainer,
+                unfocusedPlaceholderColor = colors.onSurfaceContainerLow,
+                errorTextColor = colors.error,
+                errorSupportingTextColor = colors.onError,
+                errorBorderColor = colors.error,
+                errorLabelColor = colors.error,
+                errorCursorColor = colors.primary,
+                errorPlaceholderColor = colors.onSurfaceContainer,
+                selectionColors = TextSelectionColors(
+                    handleColor = colors.primary,
+                    backgroundColor = colors.primary
+                ),
+            ),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = if (onlyNumbers) KeyboardType.Number else KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { focusManager.clearFocus() }
+            ),
+            shape = RoundedCornerShape(12.dp),
+            label = {
+                Column(
+                    modifier = Modifier.background(Color.Transparent)
+                ) {
+                    Text(
+                        text = if (!isFocused.value && value.isEmpty()) placeholder else label,
+                        style = typography.labelLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            },
+            maxLines = 2,
+            isError = isError,
+            supportingText = supportingText,
+        )
+    }
+}
