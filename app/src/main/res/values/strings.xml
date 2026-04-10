@@ -37,10 +37,13 @@
     <string name="category_icon_desc">Иконка категории %s</string>
     <string name="ic_menu_desc">Открыть меню</string>
     <string name="ic_alert_dialog_desc">Предупреждение</string>
+    <string name="ic_calendar_desc">Открыть календарь для выбора даты</string>
+    <string name="ic_calculator_desc">Открыть калькулятор для ввода суммы</string>
 
     <!-- Текст на кнопках -->
     <string name="btn_save_text">Сохранить</string>
-    <string name="btn_dialog_ok_text">Да</string>
+    <string name="btn_dialog_yes_text">Да</string>
+    <string name="btn_dialog_select_text">Выбрать</string>
     <string name="btn_dialog_cancel_text">Отмена</string>
 
     <!-- Шаблоны с подстановкой -->
@@ -61,4 +64,10 @@
 
     <!-- Текст для placeholders -->
     <string name="placeholder_empty_transaction_list">У вас пока нет ни одной транзакции данного типа</string>
+
+    <!-- label для textField -->
+    <string name="label_text_field_data">Дата</string>
+    <string name="label_text_field_amount">Сумма</string>
+    <string name="label_text_field_note">Комментарий</string>
+    <string name="label_text_field_first_day_month">Первый день месяца</string>
 </resources>
