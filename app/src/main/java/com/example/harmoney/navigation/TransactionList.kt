@@ -6,6 +6,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.example.harmoney.ui.screens.TransactionListScreen
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Serializable
 data class TransactionList(val categoryId: Long?)
@@ -18,10 +20,12 @@ fun NavGraphBuilder.transactionListScreen(
     composable<TransactionList> { navBackStackEntry ->
         val route = navBackStackEntry.toRoute<TransactionList>()
         TransactionListScreen(
-            categoryId = route.categoryId,
             onBackClick = onBackClick,
             onNavigateToCreateTransaction = onNavigateToCreateTransaction,
-            onNavigateToOpenTransaction = onNavigateToOpenTransaction
+            onNavigateToOpenTransaction = onNavigateToOpenTransaction,
+            viewModel = koinViewModel() {
+                parametersOf(route.categoryId)
+            }
         )
     }
 }

@@ -9,19 +9,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
+import com.example.harmoney.presentation.transactionList.viewModel.TransactionListViewModel
 import com.example.harmoney.ui.theme.HarmTheme
 
 @Composable
 fun TransactionListScreen(
-    categoryId: Long?,
+    viewModel: TransactionListViewModel,
     onBackClick: () -> Unit,
     onNavigateToCreateTransaction: (categoryId: Long?) -> Unit,
     onNavigateToOpenTransaction: (transactionId: Long?) -> Unit,
 ) {
+
+    val state by viewModel.screenState.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -41,7 +47,7 @@ fun TransactionListScreen(
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "categoryId = $categoryId",
+            text = "categoryId = ${state.categoryId}",
             style = HarmTheme.typography.bodyLarge,
             color = HarmTheme.colors.onSurface,
             textAlign = TextAlign.Center

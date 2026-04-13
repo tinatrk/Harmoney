@@ -9,19 +9,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
+import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
 import com.example.harmoney.ui.theme.HarmTheme
 
 @Composable
 fun CategoryListScreen(
-    categoryTypeId: Long?,
+    viewModel: CategoryListViewModel,
     onBackClick: () -> Unit,
     onNavigateToCreateCategory: (categoryTypeId: Long?) -> Unit,
     onNavigateToOpenCategory: (categoryId: Long?) -> Unit,
 ) {
+    val state by viewModel.screenState.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -41,7 +46,7 @@ fun CategoryListScreen(
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "categoryTypeId = $categoryTypeId",
+            text = "categoryTypeId = ${state.categoryTypeId}",
             style = HarmTheme.typography.bodyLarge,
             color = HarmTheme.colors.onSurface,
             textAlign = TextAlign.Center
@@ -68,7 +73,7 @@ fun CategoryListScreen(
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
             text = "onNavigateToOpenCategory",
-            onClick = { onNavigateToOpenCategory(4) }
+            onClick = { onNavigateToOpenCategory(null) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))

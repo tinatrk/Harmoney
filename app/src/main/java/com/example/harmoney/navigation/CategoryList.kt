@@ -6,6 +6,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.example.harmoney.ui.screens.CategoryListScreen
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Serializable
 data class CategoryList(val categoryTypeId: Long?)
@@ -18,10 +20,12 @@ fun NavGraphBuilder.categoryListScreen(
     composable<CategoryList> { nacBackStackEntry ->
         val route = nacBackStackEntry.toRoute<CategoryList>()
         CategoryListScreen(
-            categoryTypeId = route.categoryTypeId,
             onBackClick = onBackClick,
             onNavigateToCreateCategory = onNavigateToCreateCategory,
-            onNavigateToOpenCategory = onNavigateToOpenCategory
+            onNavigateToOpenCategory = onNavigateToOpenCategory,
+            viewModel = koinViewModel() {
+                parametersOf(route.categoryTypeId)
+            }
         )
     }
 }

@@ -9,18 +9,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
+import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
 import com.example.harmoney.ui.theme.HarmTheme
 
 @Composable
 fun CategoryStatisticsScreen(
+    viewModel: CategoryStatisticsViewModel,
     onNavigateToSettings: () -> Unit,
     onNavigateToTransactionList: (categoryId: Long?) -> Unit,
     onNavigateToCreateTransaction: () -> Unit,
 ) {
+    val state by viewModel.screenState.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()

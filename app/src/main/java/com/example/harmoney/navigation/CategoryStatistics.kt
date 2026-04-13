@@ -4,6 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.harmoney.ui.screens.CategoryStatisticsScreen
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
 
 @Serializable
 object CategoryStatistics
@@ -17,7 +18,8 @@ fun NavGraphBuilder.categoryStatisticsScreen(
         CategoryStatisticsScreen(
             onNavigateToSettings = onNavigateToSettings,
             onNavigateToTransactionList = onNavigateToTransactionList,
-            onNavigateToCreateTransaction = onNavigateToCreateTransaction
+            onNavigateToCreateTransaction = onNavigateToCreateTransaction,
+            viewModel = koinViewModel()
         )
     }
 }

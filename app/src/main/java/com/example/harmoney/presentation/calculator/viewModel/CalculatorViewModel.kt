@@ -1,4 +1,4 @@
-package com.example.harmoney.presentation.calculator.viewmodel
+package com.example.harmoney.presentation.calculator.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.example.harmoney.presentation.calculator.models.CalculatorAction
