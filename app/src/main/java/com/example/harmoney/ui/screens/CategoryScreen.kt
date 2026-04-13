@@ -9,12 +9,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
+import com.example.harmoney.presentation.category.models.CategoryAction
 import com.example.harmoney.presentation.category.viewModel.CategoryViewModel
 import com.example.harmoney.ui.theme.HarmTheme
 
@@ -24,6 +29,18 @@ fun CategoryScreen(
     onBackClick: () -> Unit,
 ) {
     val state by viewModel.screenState.collectAsStateWithLifecycle()
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    LaunchedEffect(Unit) {
+        viewModel.action
+            .flowWithLifecycle(lifecycle, minActiveState = Lifecycle.State.STARTED)
+            .collect { act ->
+                when (act) {
+                    CategoryAction.NavigateBack -> onBackClick()
+                    else -> {}
+                }
+            }
+    }
 
     Column(
         modifier = Modifier
@@ -63,7 +80,7 @@ fun CategoryScreen(
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
             text = "Navigate Back",
-            onClick = { onBackClick() }
+            onClick = { viewModel.onNavigateBack() }
         )
     }
 }

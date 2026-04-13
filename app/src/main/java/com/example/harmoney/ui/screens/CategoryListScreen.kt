@@ -9,12 +9,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
+import com.example.harmoney.presentation.categoryList.models.CategoryListAction
 import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
 import com.example.harmoney.ui.theme.HarmTheme
 
@@ -26,6 +31,26 @@ fun CategoryListScreen(
     onNavigateToOpenCategory: (categoryId: Long?) -> Unit,
 ) {
     val state by viewModel.screenState.collectAsStateWithLifecycle()
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    LaunchedEffect(Unit) {
+        viewModel.action
+            .flowWithLifecycle(lifecycle, minActiveState = Lifecycle.State.STARTED)
+            .collect { act ->
+                when (act) {
+                    is CategoryListAction.NavigateToCreatingCategory -> {
+                        onNavigateToCreateCategory(act.categoryTypeId)
+                    }
+
+                    is CategoryListAction.NavigateToOpeningCategory -> {
+                        onNavigateToOpenCategory(act.categoryId)
+                    }
+
+                    CategoryListAction.NavigateBack -> onBackClick()
+                    else -> {}
+                }
+            }
+    }
 
     Column(
         modifier = Modifier
@@ -55,31 +80,37 @@ fun CategoryListScreen(
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
             text = "Navigate Back",
-            onClick = { onBackClick() }
+            onClick = { viewModel.onNavigateBack() }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+        HarmButton.HarmPrimaryButton(
+            text = "Navigate Back with categoryId = 7",
+            onClick = { viewModel.onCategoryClick(7) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
             text = "Navigate To Create Category",
-            onClick = { onNavigateToCreateCategory(null) }
+            onClick = { viewModel.onCreateCategory(null) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
             text = "Navigate To Create Category with categoryTypeId = 5",
-            onClick = { onNavigateToCreateCategory(5) }
+            onClick = { viewModel.onCreateCategory(5) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
             text = "onNavigateToOpenCategory",
-            onClick = { onNavigateToOpenCategory(null) }
+            onClick = { viewModel.onOpenCategory(null) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
             text = "onNavigateToOpenCategory with categoryId = 6",
-            onClick = { onNavigateToOpenCategory(6) }
+            onClick = { viewModel.onOpenCategory(6) }
         )
     }
 }

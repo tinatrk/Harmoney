@@ -9,14 +9,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
+import com.example.harmoney.presentation.transaction.models.TransactionAction
 import com.example.harmoney.presentation.transaction.viewModel.TransactionViewModel
 import com.example.harmoney.ui.theme.HarmTheme
-import androidx.compose.runtime.getValue
 
 @Composable
 fun TransactionScreen(
@@ -25,6 +31,28 @@ fun TransactionScreen(
     onNavigateToCategoryListScreen: (categoryTypeId: Long?) -> Unit,
 ) {
     val state by viewModel.screenState.collectAsStateWithLifecycle()
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    LaunchedEffect(Unit) {
+        viewModel.action
+            .flowWithLifecycle(lifecycle, minActiveState = Lifecycle.State.STARTED)
+            .collect { act ->
+                when (act) {
+                    TransactionAction.NavigateBack -> onBackClick()
+                    is TransactionAction.NavigateToCategoryListScreen -> {
+                        onNavigateToCategoryListScreen(act.categoryTypeId)
+                    }
+
+                    else -> {}
+                }
+            }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.clearSavedState()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -64,19 +92,19 @@ fun TransactionScreen(
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
             text = "Navigate Back",
-            onClick = { onBackClick() }
+            onClick = { viewModel.onNavigateBack() }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
             text = "Navigate To Category List Screen",
-            onClick = { onNavigateToCategoryListScreen(null) }
+            onClick = { viewModel.onNavigateToCategoryList(null) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
             text = "Navigate To Category List Screen with categoryTypeId = 4",
-            onClick = { onNavigateToCategoryListScreen(4) }
+            onClick = { viewModel.onNavigateToCategoryList(4) }
         )
     }
 }

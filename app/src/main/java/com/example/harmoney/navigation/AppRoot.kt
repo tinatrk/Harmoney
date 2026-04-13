@@ -1,5 +1,7 @@
 package com.example.harmoney.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,7 +17,9 @@ fun AppRoot() {
         NavHost(
             navController = navController,
             startDestination = CategoryStatistics,
-            modifier = Modifier.padding()
+            modifier = Modifier.padding(),
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
         ) {
             categoryStatisticsScreen(
                 onNavigateToSettings = {},//drawer
@@ -54,7 +58,6 @@ fun AppRoot() {
             )
 
             categoryListScreen(
-                onBackClick = { navController.popBackStack() },
                 onNavigateToCreateCategory = { categoryTypeId ->
                     navController.navigateToCategory(
                         categoryId = null,
@@ -66,6 +69,17 @@ fun AppRoot() {
                         categoryId = categoryId,
                         categoryTypeId = null
                     )
+                },
+                onBackWithChosenCategory = {
+                    val result = navController.currentBackStackEntry
+                        ?.savedStateHandle
+                        ?.get<Long>(NavResultKeys.SELECTED_CATEGORY)
+
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set(NavResultKeys.SELECTED_CATEGORY, result)
+
+                    navController.popBackStack()
                 }
             )
 

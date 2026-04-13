@@ -13,19 +13,19 @@ import org.koin.core.parameter.parametersOf
 data class CategoryList(val categoryTypeId: Long?)
 
 fun NavGraphBuilder.categoryListScreen(
-    onBackClick: () -> Unit,
+    onBackWithChosenCategory: () -> Unit,
     onNavigateToCreateCategory: (Long?) -> Unit,
     onNavigateToOpenCategory: (Long?) -> Unit,
 ) {
     composable<CategoryList> { nacBackStackEntry ->
         val route = nacBackStackEntry.toRoute<CategoryList>()
         CategoryListScreen(
-            onBackClick = onBackClick,
             onNavigateToCreateCategory = onNavigateToCreateCategory,
             onNavigateToOpenCategory = onNavigateToOpenCategory,
             viewModel = koinViewModel() {
                 parametersOf(route.categoryTypeId)
-            }
+            },
+            onBackClick = onBackWithChosenCategory
         )
     }
 }
