@@ -7,20 +7,28 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
+import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
+import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
+import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
+import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.theme.HarmTheme
 
 @Composable
@@ -50,17 +58,65 @@ fun CategoryStatisticsScreen(
             }
     }
 
+    Scaffold(
+        topBar = {
+            HarmTopBar.HarmCommonTopBar(
+                title = stringResource(R.string.pattern_money_russian, state.currentBalance),
+                subtitle = stringResource(R.string.title_balance),
+                navigationIconRes = R.drawable.ic_drawer_menu_24px,
+                navigationIconDesc = stringResource(R.string.ic_drawer_menu_desc),
+                onNavigationIconClick = {},
+                actionIconRes = R.drawable.ic_list_24px,
+                actionIconDesc = stringResource(R.string.ic_list_desc),
+                onActionIconClick = {
+                    viewModel.obtainEvent(
+                        CategoryStatisticsEvent
+                            .OnTransactionListIconClick
+                    )
+                },
+                isTitleCenterAlignment = true
+            )
+        },
+        containerColor = HarmTheme.colors.surface
+    ) { paddingValues ->
+        ScreenWithCategoryTypeTabs(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(paddingValues),
+            tabs = CategoryType.entries,
+            selectedTabIndex = state.selectedTabIndex,
+            onTabClick = { categoryType ->
+                viewModel.obtainEvent(
+                    CategoryStatisticsEvent
+                        .OnTabClick(categoryType)
+                )
+            }
+        ) {
+            CategoryStatisticsContent(
+                state = state,
+                onEvent = viewModel::obtainEvent,
+            )
+        }
+    }
+}
+
+@Composable
+fun CategoryStatisticsContent(
+    state: CategoryStatisticsState,
+    onEvent: (CategoryStatisticsEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(HarmTheme.colors.surface)
-            .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "Category Statistics Screen",
-            style = HarmTheme.typography.titleLargeSemiBold,
+            text = state.categoryInfo,
+            style = HarmTheme.typography.bodyLarge,
             color = HarmTheme.colors.onSurface,
             textAlign = TextAlign.Center
         )
@@ -68,21 +124,14 @@ fun CategoryStatisticsScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         HarmButton.HarmPrimaryButton(
-            text = "Navigate to TransactionList",
-            onClick = { viewModel.onNavigateToTransactionList(null) }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        HarmButton.HarmPrimaryButton(
-            text = "Navigate to TransactionList with categoryId = 1",
-            onClick = { viewModel.onNavigateToTransactionList(1) }
+            text = "On category click, categoryId = 1 (transaction list)",
+            onClick = { onEvent(CategoryStatisticsEvent.OnCategoryClick(1)) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
-            text = "Navigate to Transaction",
-            onClick = { viewModel.onNavigateToTransaction() }
+            text = "On Floating button (create transaction)",
+            onClick = { onEvent(CategoryStatisticsEvent.OnFloatingButtonClick) }
         )
     }
 }

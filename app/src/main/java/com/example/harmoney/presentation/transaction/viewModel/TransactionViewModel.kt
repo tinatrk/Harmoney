@@ -3,8 +3,10 @@ package com.example.harmoney.presentation.transaction.viewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.navigation.NavResultKeys
 import com.example.harmoney.presentation.transaction.models.TransactionAction
+import com.example.harmoney.presentation.transaction.models.TransactionEvent
 import com.example.harmoney.presentation.transaction.models.TransactionState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,11 +34,14 @@ class TransactionViewModel(
     val action: SharedFlow<TransactionAction?> = _action.asSharedFlow()
 
     init {
-        _screenState.value =
-            TransactionState(
+        _screenState.update {
+            it.copy(
                 categoryId = categoryId,
-                transactionId = transactionId
+                transactionId = transactionId,
+                categoryInfo = getCategoryInfo(_screenState.value.categoryType),
+                isCreateTransactionScreen = transactionId == null
             )
+        }
 
         viewModelScope.launch {
             navCategory.collect { returnedCategoryId ->
@@ -49,20 +54,48 @@ class TransactionViewModel(
         }
     }
 
-    fun onNavigateToCategoryList(categoryTypeId: Long?) {
+    fun obtainEvent(event: TransactionEvent) {
+        when (event) {
+            is TransactionEvent.OnBackClick -> onNavigateBack()
+            is TransactionEvent.OnTabClick -> onTabClick(event.categoryType)
+            is TransactionEvent.OnMoreCategoriesClick -> onNavigateToCategoryList()
+            is TransactionEvent.OnSaveClick -> onNavigateBack()
+            is TransactionEvent.OnCloseScreen -> clearSavedState()
+        }
+    }
+
+    private fun onTabClick(newCategoryType: CategoryType) {
+        if (_screenState.value.categoryType.id != newCategoryType.id) {
+            _screenState.update {
+                it.copy(
+                    categoryType = newCategoryType,
+                    selectedTabIndex = newCategoryType.ordinal,
+                    categoryInfo = getCategoryInfo(newCategoryType)
+                )
+            }
+        }
+    }
+
+    private fun onNavigateToCategoryList() {
         _action.tryEmit(
             TransactionAction
-                .NavigateToCategoryListScreen(categoryTypeId = categoryTypeId)
+                .NavigateToCategoryListScreen(categoryTypeId = _screenState.value.categoryType.id)
         )
     }
 
-    fun onNavigateBack() {
-        //clearSavedState()
+    private fun onNavigateBack() {
         _action.tryEmit(TransactionAction.NavigateBack)
     }
 
     // вызвать перед выходом с экрана
-    fun clearSavedState() {
+    private fun clearSavedState() {
         savedStateHandle[NavResultKeys.SELECTED_CATEGORY] = null
+    }
+
+    private fun getCategoryInfo(categoryType: CategoryType): String {
+        return when (categoryType) {
+            CategoryType.Expenses -> "Информация по расходам"
+            CategoryType.Income -> "Информация по доходам"
+        }
     }
 }

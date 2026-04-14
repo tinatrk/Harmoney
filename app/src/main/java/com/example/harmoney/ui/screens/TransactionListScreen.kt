@@ -7,20 +7,28 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
+import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
+import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.presentation.transactionList.models.TransactionListAction
+import com.example.harmoney.presentation.transactionList.models.TransactionListEvent
+import com.example.harmoney.presentation.transactionList.models.TransactionListState
 import com.example.harmoney.presentation.transactionList.viewModel.TransactionListViewModel
+import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.theme.HarmTheme
 
 @Composable
@@ -54,8 +62,48 @@ fun TransactionListScreen(
             }
     }
 
+    Scaffold(
+        topBar = {
+            HarmTopBar.HarmCommonTopBar(
+                title = stringResource(R.string.pattern_money_russian, state.currentBalance),
+                subtitle = stringResource(R.string.title_balance),
+                navigationIconRes = R.drawable.ic_arrow_back_24px,
+                navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
+                onNavigationIconClick = { viewModel.obtainEvent(TransactionListEvent.OnBackClick) },
+                isTitleCenterAlignment = true,
+            )
+        },
+        containerColor = HarmTheme.colors.surface
+    ) { paddingValues ->
+        ScreenWithCategoryTypeTabs(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(paddingValues),
+            tabs = CategoryType.entries,
+            selectedTabIndex = state.selectedTabIndex,
+            onTabClick = { categoryType ->
+                viewModel.obtainEvent(
+                    TransactionListEvent
+                        .OnTabClick(categoryType)
+                )
+            }
+        ) {
+            TransactionListContent(
+                state = state,
+                onEvent = viewModel::obtainEvent,
+            )
+        }
+    }
+}
+
+@Composable
+fun TransactionListContent(
+    state: TransactionListState,
+    onEvent: (TransactionListEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(HarmTheme.colors.surface)
             .padding(horizontal = 16.dp, vertical = 16.dp)
@@ -63,8 +111,8 @@ fun TransactionListScreen(
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "Transaction List Screen",
-            style = HarmTheme.typography.titleLargeSemiBold,
+            text = state.categoryInfo,
+            style = HarmTheme.typography.bodyLarge,
             color = HarmTheme.colors.onSurface,
             textAlign = TextAlign.Center
         )
@@ -81,32 +129,20 @@ fun TransactionListScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
-            text = "Navigate Back",
-            onClick = { viewModel.onNavigateBack() }
+            text = "On floating button click (create transaction)",
+            onClick = { onEvent(TransactionListEvent.OnFloatingButtonClick(null)) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
-            text = "Navigate To Create Transaction",
-            onClick = { viewModel.onCreateTransaction(null) }
+            text = "On floating button click (create transaction, categoryId = 2)",
+            onClick = { onEvent(TransactionListEvent.OnFloatingButtonClick(2)) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
-            text = "Navigate To Create Transaction with categoryId = 2",
-            onClick = { viewModel.onCreateTransaction(2) }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-        HarmButton.HarmPrimaryButton(
-            text = "Navigate To Open Transaction",
-            onClick = { viewModel.onOpenTransaction(null) }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-        HarmButton.HarmPrimaryButton(
-            text = "Navigate To Open Transaction with transactionId = 3",
-            onClick = { viewModel.onOpenTransaction(3) }
+            text = "On transaction click (open transaction, transactionId = 3)",
+            onClick = { onEvent(TransactionListEvent.OnTransactionClick(3)) }
         )
     }
 }

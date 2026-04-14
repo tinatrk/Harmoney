@@ -1,6 +1,8 @@
 package com.example.harmoney.presentation.categoryStatistics.viewModel
 
 import androidx.lifecycle.ViewModel
+import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -9,6 +11,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class CategoryStatisticsViewModel() : ViewModel() {
     private val _screenState = MutableStateFlow(CategoryStatisticsState())
@@ -21,18 +24,56 @@ class CategoryStatisticsViewModel() : ViewModel() {
     val action: SharedFlow<CategoryStatisticsAction?> = _action.asSharedFlow()
 
     init {
-        _screenState.value = CategoryStatisticsState(currentBalance = "")
+        _screenState.update {
+            it.copy(
+                categoryInfo = getCategoryInfo(_screenState.value.categoryType)
+            )
+        }
     }
 
-    fun onNavigateToTransactionList(categoryId: Long?) {
+    fun obtainEvent(event: CategoryStatisticsEvent) {
+        when (event) {
+            is CategoryStatisticsEvent.OnTabClick -> onTabClick(event.categoryType)
+            is CategoryStatisticsEvent.OnSettingsIconClick -> onNavigateToSettings()
+            is CategoryStatisticsEvent.OnTransactionListIconClick -> onNavigateToTransactionList(
+                null
+            )
+
+            is CategoryStatisticsEvent.OnFloatingButtonClick -> onNavigateToTransaction()
+            is CategoryStatisticsEvent.OnCategoryClick -> onNavigateToTransactionList(
+                event.categoryId
+            )
+        }
+    }
+
+    private fun onNavigateToTransactionList(categoryId: Long?) {
         _action.tryEmit(CategoryStatisticsAction.NavigateToTransactionList(categoryId))
     }
 
-    fun onNavigateToTransaction() {
+    private fun onNavigateToTransaction() {
         _action.tryEmit(CategoryStatisticsAction.NavigateToTransaction)
     }
 
-    fun onNavigateToSettings() {
+    private fun onNavigateToSettings() {
         _action.tryEmit(CategoryStatisticsAction.NavigateToSettings)
+    }
+
+    private fun onTabClick(newCategoryType: CategoryType) {
+        if (_screenState.value.categoryType.id != newCategoryType.id) {
+            _screenState.update {
+                it.copy(
+                    categoryType = newCategoryType,
+                    categoryInfo = getCategoryInfo(newCategoryType),
+                    selectedTabIndex = newCategoryType.ordinal
+                )
+            }
+        }
+    }
+
+    private fun getCategoryInfo(categoryType: CategoryType): String {
+        return when (categoryType) {
+            CategoryType.Expenses -> "Информация по расходам"
+            CategoryType.Income -> "Информация по доходам"
+        }
     }
 }

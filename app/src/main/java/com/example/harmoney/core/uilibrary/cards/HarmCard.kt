@@ -217,7 +217,7 @@ object HarmCard {
             HarmIcon.HarmCircularCategoryIcon(
                 backgroundColorValue = categoryInfo.icon.backgroundColor.colorValue,
                 iconRes = categoryInfo.icon.ids.resIconId,
-                contentDescription = stringResource(R.string.category_icon_desc, categoryInfo.name),
+                contentDescription = stringResource(R.string.ic_category_desc, categoryInfo.name),
             )
 
             Spacer(modifier = Modifier.width(8.dp))
