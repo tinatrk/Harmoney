@@ -3,6 +3,8 @@ package com.example.harmoney.core.uilibrary.topbars
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -11,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.ui.theme.HarmTheme
@@ -36,11 +39,27 @@ object HarmTopBar {
         onNavigationIconClick: (() -> Unit)? = null,
         onActionIconClick: (() -> Unit)? = null
     ) {
+        // пришлось вручную прописать размер иконок, чтобы правильно центрировать заголовок
+        val topAppBarIconSize = 48.dp
+        val startTitleOffset =
+            if (navigationIconRes == null && actionIconRes != null && isTitleCenterAlignment) {
+                topAppBarIconSize
+            } else {
+                0.dp
+            }
+        val endTitleOffset =
+            if (navigationIconRes != null && actionIconRes == null && isTitleCenterAlignment) {
+                topAppBarIconSize
+            } else {
+                0.dp
+            }
         TopAppBar(
             modifier = modifier,
             title = {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = startTitleOffset, end = endTitleOffset),
                     horizontalAlignment = if (isTitleCenterAlignment) {
                         Alignment.CenterHorizontally
                     } else {
@@ -62,6 +81,7 @@ object HarmTopBar {
             navigationIcon = navigationIconRes?.let {
                 {
                     HarmButton.HarmTopBarIconButton(
+                        modifier = Modifier.size(topAppBarIconSize),
                         iconRes = navigationIconRes,
                         onClick = onNavigationIconClick ?: {},
                         contentDescription = navigationIconDesc
@@ -71,6 +91,7 @@ object HarmTopBar {
             actions = actionIconRes?.let {
                 {
                     HarmButton.HarmTopBarIconButton(
+                        modifier = Modifier.size(topAppBarIconSize),
                         iconRes = actionIconRes,
                         onClick = onActionIconClick ?: {},
                         contentDescription = actionIconDesc

@@ -7,5 +7,7 @@ data class CategoryStatisticsState(
     val categoryType: CategoryType = CategoryType.Expenses,
     val selectedTabIndex: Int = CategoryType.Expenses.ordinal,
     // то, что зависит от выбора таб вкладки
-    val categoryInfo: String = ""
+    val categoryInfo: String = "",
+    val isThemeDark: Boolean = false,
+    val firstDayMonth: Int = 1,
 )

@@ -2,8 +2,8 @@ package com.example.harmoney.presentation.categoryStatistics.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.example.harmoney.domain.models.CategoryType
-import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
+import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +24,7 @@ class CategoryStatisticsViewModel() : ViewModel() {
     val action: SharedFlow<CategoryStatisticsAction?> = _action.asSharedFlow()
 
     init {
+        // считать тему из shared preferences
         _screenState.update {
             it.copy(
                 categoryInfo = getCategoryInfo(_screenState.value.categoryType)
@@ -43,6 +44,22 @@ class CategoryStatisticsViewModel() : ViewModel() {
             is CategoryStatisticsEvent.OnCategoryClick -> onNavigateToTransactionList(
                 event.categoryId
             )
+
+            is CategoryStatisticsEvent.OnChangeTheme -> {
+                // в будущем поменять логику на shared preferences
+                _screenState.update {
+                    it.copy(
+                        isThemeDark = !_screenState.value.isThemeDark
+                    )
+                }
+            }
+
+            is CategoryStatisticsEvent.OnFirstDayMonthClick -> {/* работа с диалоговым окном */
+            }
+
+            is CategoryStatisticsEvent.OnCategoryListClick -> {
+                onNavigateToCategoryList()
+            }
         }
     }
 
@@ -56,6 +73,10 @@ class CategoryStatisticsViewModel() : ViewModel() {
 
     private fun onNavigateToSettings() {
         _action.tryEmit(CategoryStatisticsAction.NavigateToSettings)
+    }
+
+    private fun onNavigateToCategoryList() {
+        _action.tryEmit(CategoryStatisticsAction.NavigateToCategoryList)
     }
 
     private fun onTabClick(newCategoryType: CategoryType) {

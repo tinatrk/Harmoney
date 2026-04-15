@@ -40,6 +40,7 @@
     <string name="ic_calendar_desc">Открыть календарь для выбора даты</string>
     <string name="ic_calculator_desc">Открыть калькулятор для ввода суммы</string>
     <string name="ic_swap_vert_desc">Выбрать режим сортировки</string>
+    <string name="ic_switch_on_desc">Переключатель включен</string>
 
     <!-- Текст на кнопках -->
     <string name="btn_save_text">Сохранить</string>
@@ -60,6 +61,10 @@
     <string name="title_top_app_bar_category_list">Категории транзакций</string>
     <string name="title_top_app_bar_create_category">Создание категории</string>
     <string name="title_top_app_bar_edit_category">Редактирование категории</string>
+    <string name="title_drawer_settings">Настройки</string>
+    <string name="title_drawer_item_theme">Темная тема</string>
+    <string name="title_drawer_item_first_day_month">Первый день месяца</string>
+    <string name="title_drawer_item_category_list">Список категорий</string>
 
     <!-- Заголовки и текст диалоговых окон -->
     <string name="title_dialog_exit">Вы точно хотите выйти?</string>

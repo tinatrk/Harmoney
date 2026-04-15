@@ -22,7 +22,6 @@ fun AppRoot() {
             exitTransition = { ExitTransition.None },
         ) {
             categoryStatisticsScreen(
-                onNavigateToSettings = {},//drawer
                 onNavigateToTransactionList = { categoryId ->
                     navController.navigateToTransactionList(categoryId)
                 },
@@ -31,6 +30,9 @@ fun AppRoot() {
                         transactionId = null,
                         categoryId = null
                     )
+                },
+                onNavigateToCategoryList = {
+                    navController.navigateToCategoryList(categoryTypeId = null)
                 }
             )
 

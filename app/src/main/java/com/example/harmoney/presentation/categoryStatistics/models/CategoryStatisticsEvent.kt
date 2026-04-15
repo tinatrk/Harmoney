@@ -8,4 +8,7 @@ sealed interface CategoryStatisticsEvent {
     data object OnTransactionListIconClick : CategoryStatisticsEvent
     data class OnCategoryClick(val categoryId: Long) : CategoryStatisticsEvent
     data object OnFloatingButtonClick : CategoryStatisticsEvent
+    data object OnChangeTheme : CategoryStatisticsEvent
+    data object OnFirstDayMonthClick : CategoryStatisticsEvent
+    data object OnCategoryListClick : CategoryStatisticsEvent
 }

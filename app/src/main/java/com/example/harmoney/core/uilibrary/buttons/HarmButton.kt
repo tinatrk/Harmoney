@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,6 +26,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +55,7 @@ import com.example.harmoney.ui.theme.HarmTheme
  * - `HarmDropdownMenuIcon` - IconButton with dropdown menu logic
  * - `HarmCircularCheckBox` - Circular checkBox
  * - `HarmCheckableIconWithTitle` - Circular checkBox with title
+ * - `HarmSwitch` - Switch with Harm theme colors
  * */
 object HarmButton {
     /** TopBar IconButton */
@@ -361,5 +363,41 @@ object HarmButton {
                 color = HarmTheme.colors.onSurface
             )
         }
+    }
+
+    /** Switch with Harm theme colors */
+    @Composable
+    fun HarmSwitch(
+        isChecked: Boolean,
+        onClick: () -> Unit,
+        modifier: Modifier = Modifier,
+    ) {
+        val colors = HarmTheme.colors
+
+        Switch(
+            modifier = modifier,
+            checked = isChecked,
+            onCheckedChange = {
+                onClick()
+            },
+            thumbContent = {
+                if (isChecked) {
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        painter = painterResource(R.drawable.ic_ok_24px),
+                        contentDescription = stringResource(R.string.ic_switch_on_desc),
+                        tint = colors.primary
+                    )
+                }
+            },
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = colors.onPrimary,
+                uncheckedThumbColor = colors.outline,
+                checkedTrackColor = colors.primary,
+                uncheckedTrackColor = colors.surfaceContainer,
+                checkedBorderColor = Color.Transparent,
+                uncheckedBorderColor = colors.outline,
+            )
+        )
     }
 }

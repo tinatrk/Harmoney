@@ -10,15 +10,15 @@ import org.koin.androidx.compose.koinViewModel
 object CategoryStatistics
 
 fun NavGraphBuilder.categoryStatisticsScreen(
-    onNavigateToSettings: () -> Unit,
     onNavigateToTransactionList: (categoryId: Long?) -> Unit,
     onNavigateToCreateTransaction: () -> Unit,
+    onNavigateToCategoryList: () -> Unit,
 ) {
     composable<CategoryStatistics> {
         CategoryStatisticsScreen(
-            onNavigateToSettings = onNavigateToSettings,
             onNavigateToTransactionList = onNavigateToTransactionList,
             onNavigateToCreateTransaction = onNavigateToCreateTransaction,
+            onNavigateToCategoryList = onNavigateToCategoryList,
             viewModel = koinViewModel()
         )
     }
