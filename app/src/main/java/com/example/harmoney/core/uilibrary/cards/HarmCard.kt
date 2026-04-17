@@ -65,10 +65,10 @@ object HarmCard {
         Card(
             modifier = modifier.clickable { onCardClick() },
             shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(6.dp),
+            elevation = CardDefaults.cardElevation(2.dp),
             colors = CardDefaults.cardColors(
-                containerColor = HarmTheme.colors.surfaceContainer,
-                contentColor = HarmTheme.colors.onSurfaceContainer,
+                containerColor = HarmTheme.colors.surfaceContainerHigh,
+                contentColor = HarmTheme.colors.onSurface,
             )
         ) {
             Row(
@@ -261,10 +261,10 @@ object HarmCard {
         Card(
             modifier = modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(6.dp),
+            elevation = CardDefaults.cardElevation(2.dp),
             colors = CardDefaults.cardColors(
-                containerColor = HarmTheme.colors.surfaceContainer,
-                contentColor = HarmTheme.colors.onSurfaceContainer,
+                containerColor = HarmTheme.colors.surfaceContainerHigh,
+                contentColor = HarmTheme.colors.onSurface,
             ),
         ) {
             Column(
@@ -299,7 +299,7 @@ object HarmCard {
                             Text(
                                 text = stringResource(R.string.pattern_money_russian, total),
                                 style = HarmTheme.typography.bodyLarge,
-                                color = HarmTheme.colors.onSurfaceContainer,
+                                color = HarmTheme.colors.onSurface,
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -337,7 +337,7 @@ object HarmCard {
                     modifier = Modifier.weight(1f),
                     text = stringResource(R.string.pattern_text_with_colon, data),
                     style = HarmTheme.typography.titleMedium,
-                    color = HarmTheme.colors.onSurfaceContainer,
+                    color = HarmTheme.colors.onSurface,
                     textAlign = TextAlign.Start
                 )
                 Spacer(modifier = Modifier.width(8.dp))

@@ -99,10 +99,10 @@ object HarmTopBar {
                 }
             } ?: {},
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = HarmTheme.colors.surfaceVariant,
-                navigationIconContentColor = HarmTheme.colors.onSurfaceContainer,
-                actionIconContentColor = HarmTheme.colors.onSurfaceContainer,
-                titleContentColor = HarmTheme.colors.onSurfaceContainer
+                containerColor = HarmTheme.colors.surface,
+                navigationIconContentColor = HarmTheme.colors.onSurfaceVariant,
+                actionIconContentColor = HarmTheme.colors.onSurfaceVariant,
+                titleContentColor = HarmTheme.colors.onSurface
             )
         )
     }
@@ -123,7 +123,8 @@ object HarmTopBar {
             modifier = modifier,
             title = title,
             navigationIconRes = navigationIconRes ?: R.drawable.ic_arrow_back_24px,
-            navigationIconDesc = navigationIconDesc ?: stringResource(R.string.ic_arrow_back_desc),
+            navigationIconDesc =
+                navigationIconDesc ?: stringResource(R.string.ic_arrow_back_desc),
             onNavigationIconClick = onNavigationIconClick,
         )
     }

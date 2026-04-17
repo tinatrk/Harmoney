@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.presentation.models.PieChartItem
+import com.example.harmoney.ui.theme.HarmTheme
 
 object HarmGraphic {
     @Composable
@@ -32,6 +33,9 @@ object HarmGraphic {
             )
         }
 
+        val borderColor = HarmTheme.colors.outline
+        val isNeedBorder = !HarmTheme.colors.isDark
+
         Canvas(
             modifier = modifier
                 .padding(additionalPadding.value.dp)
@@ -41,6 +45,16 @@ object HarmGraphic {
             if (total <= 0f) return@Canvas
 
             items.forEach { item ->
+                if (isNeedBorder){
+                    drawArc(
+                        color = borderColor,
+                        startAngle = item.startAngle,
+                        sweepAngle = item.sweepAngle,
+                        useCenter = false,
+                        style = Stroke(width = strokeWidthPx + 4f)
+                    )
+                }
+
                 drawArc(
                     color = Color(item.colorValue),
                     startAngle = item.startAngle,

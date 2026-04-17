@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -50,7 +51,9 @@ import com.example.harmoney.ui.theme.HarmTheme
  * - `HarmCircularIconButton` - Circular iconButton
  * - `HarmCircularIconButtonWithTitle` - Circular iconButton with title
  * - `HarmPrimaryButton` - Primary button for the main action on a screen
- * - `SecondaryButton` - Secondary button for a secondary action on a screen
+ * - `HarmSecondaryButton` - Secondary button for a secondary action on a screen
+ * - `HarmPrimaryTextButton` - Primary text button for a low priority action on a screen
+ * - `HarmSecondaryTextButton` - Secondary button for a low priority action on a screen
  * - `HarmCardIconButton` - IconButton for cards
  * - `HarmDropdownMenuIcon` - IconButton with dropdown menu logic
  * - `HarmCircularCheckBox` - Circular checkBox
@@ -132,7 +135,7 @@ object HarmButton {
                         } else {
                             Modifier.border(
                                 width = 1.dp,
-                                color = HarmTheme.colors.categoryIconTint,
+                                color = HarmTheme.colors.borderAndScrim,
                                 shape = CircleShape
                             )
                         }
@@ -144,7 +147,7 @@ object HarmButton {
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(iconRes),
                         contentDescription = contentDescription,
-                        tint = HarmTheme.colors.categoryIconTint
+                        tint = HarmTheme.colors.borderAndScrim
                     )
                 }
             }
@@ -201,8 +204,8 @@ object HarmButton {
             colors = ButtonDefaults.buttonColors(
                 containerColor = HarmTheme.colors.primary,
                 contentColor = HarmTheme.colors.onPrimary,
-                disabledContainerColor = HarmTheme.colors.surfaceVariant,
-                disabledContentColor = HarmTheme.colors.onSurfaceVariant
+                disabledContainerColor = HarmTheme.colors.surfaceContainerLow,
+                disabledContentColor = HarmTheme.colors.onSurfaceContainerLow
             )
         ) {
             Text(
@@ -226,11 +229,65 @@ object HarmButton {
             shape = RoundedCornerShape(corner = CornerSize(54.dp)),
             enabled = enabled,
             colors = ButtonDefaults.buttonColors(
-                containerColor = HarmTheme.colors.secondaryContainer,
-                contentColor = HarmTheme.colors.onSecondaryContainer,
-                disabledContainerColor = HarmTheme.colors.surfaceVariant,
-                disabledContentColor = HarmTheme.colors.onSurfaceContainer
+                containerColor = HarmTheme.colors.secondary,
+                contentColor = HarmTheme.colors.onSecondary,
+                disabledContainerColor = HarmTheme.colors.surfaceContainerLow,
+                disabledContentColor = HarmTheme.colors.onSurfaceContainerLow
             )
+        ) {
+            Text(
+                text = text,
+                style = HarmTheme.typography.bodyLargeSemiBold,
+            )
+        }
+    }
+
+    /** Primary text button for a low priority action on a screen*/
+    @Composable
+    fun HarmPrimaryTextButton(
+        text: String,
+        onClick: () -> Unit,
+        modifier: Modifier = Modifier,
+        enabled: Boolean = true,
+    ) {
+        Button(
+            modifier = modifier,
+            onClick = onClick,
+            enabled = enabled,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = HarmTheme.colors.primary,
+                disabledContainerColor = Color.Transparent,
+                disabledContentColor = HarmTheme.colors.onSurfaceContainerLow
+            ),
+            contentPadding = PaddingValues(8.dp)
+        ) {
+            Text(
+                text = text,
+                style = HarmTheme.typography.bodyLargeSemiBold,
+            )
+        }
+    }
+
+    /** Secondary text button for a low priority action on a screen */
+    @Composable
+    fun HarmSecondaryTextButton(
+        text: String,
+        onClick: () -> Unit,
+        modifier: Modifier = Modifier,
+        enabled: Boolean = true,
+    ) {
+        Button(
+            modifier = modifier,
+            onClick = onClick,
+            enabled = enabled,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = HarmTheme.colors.onSecondaryContainer,
+                disabledContainerColor = Color.Transparent,
+                disabledContentColor = HarmTheme.colors.onSurfaceContainerLow
+            ),
+            contentPadding = PaddingValues(8.dp)
         ) {
             Text(
                 text = text,
@@ -252,7 +309,7 @@ object HarmButton {
             onClick = onClick,
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = Color.Transparent,
-                contentColor = HarmTheme.colors.onSurfaceContainerLow,
+                contentColor = HarmTheme.colors.onSurfaceVariant,
                 disabledContainerColor = Color.Transparent,
                 disabledContentColor = HarmTheme.colors.onSurfaceContainerLow,
             )
@@ -286,7 +343,7 @@ object HarmButton {
             DropdownMenu(
                 expanded = expanded.value,
                 onDismissRequest = { expanded.value = false },
-                containerColor = HarmTheme.colors.surfaceVariant,
+                containerColor = HarmTheme.colors.surfaceContainer,
                 shape = RoundedCornerShape(12.dp)
             ) {
                 menuOptions.forEach { option ->
@@ -394,7 +451,7 @@ object HarmButton {
                 checkedThumbColor = colors.onPrimary,
                 uncheckedThumbColor = colors.outline,
                 checkedTrackColor = colors.primary,
-                uncheckedTrackColor = colors.surfaceContainer,
+                uncheckedTrackColor = colors.surfaceContainerHighest,
                 checkedBorderColor = Color.Transparent,
                 uncheckedBorderColor = colors.outline,
             )

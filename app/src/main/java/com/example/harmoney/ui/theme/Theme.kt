@@ -19,70 +19,76 @@ import androidx.compose.ui.unit.sp
 
 private val LightColorPalette = HarmColors(
     surface = HarmColor.VioletT98,
-    onSurface = HarmColor.NeutralT11,
-    surfaceContainer = HarmColor.NeutralT89,
+    onSurface = HarmColor.NeutralT10,
+    surfaceContainer = HarmColor.VioletT94,
     onSurfaceContainer = HarmColor.NeutralT10,
-    onSurfaceContainerLow = HarmColor.NeutralT21,
+    surfaceContainerLow = HarmColor.VioletT97,
+    onSurfaceContainerLow = HarmColor.NeutralT30,
+    surfaceContainerHigh = HarmColor.VioletT90,
+    surfaceContainerHighest = HarmColor.VioletT88,
     surfaceVariant = HarmColor.VioletT90,
-    onSurfaceVariant = HarmColor.NeutralT30,
+    onSurfaceVariant = HarmColor.NeutralT21,
 
-    primary = HarmColor.PurpleT43,
-    onPrimary = HarmColor.NeutralT100,
+    primary = HarmColor.PurpleT47,
+    onPrimary = HarmColor.NeutralT94,
     primaryContainer = HarmColor.MagentaT92,
-    onPrimaryContainer = HarmColor.PurpleT18,
+    onPrimaryContainer = HarmColor.PurpleT21,
 
-    secondary = HarmColor.VioletT42,
-    onSecondary = HarmColor.NeutralT100,
+    secondary = HarmColor.VioletT30,
+    onSecondary = HarmColor.NeutralT94,
     secondaryContainer = HarmColor.VioletT91,
     onSecondaryContainer = HarmColor.VioletT13,
 
     outline = HarmColor.NeutralT50,
     outlineVariant = HarmColor.NeutralT80,
 
-    error = HarmColor.RedT40,
-    onError = HarmColor.NeutralT100,
+    error = HarmColor.RedT30,
+    onError = HarmColor.RedT90,
     errorContainer = HarmColor.RedT90,
     onErrorContainer = HarmColor.RedT16,
 
     info = HarmColor.GreenT90,
     onInfo = HarmColor.GreenT43,
 
-    categoryIconTint = HarmColor.NeutralT0,
+    borderAndScrim = HarmColor.NeutralT0,
 
     isDark = false
 )
 
 private val DarkColorPalette = HarmColors(
-    surface = HarmColor.NeutralT11,
-    onSurface = HarmColor.NeutralT89,
-    surfaceContainer = HarmColor.NeutralT23,
-    onSurfaceContainer = HarmColor.NeutralT100,
-    onSurfaceContainerLow = HarmColor.NeutralT78,
-    surfaceVariant = HarmColor.NeutralT30,
-    onSurfaceVariant = HarmColor.NeutralT80,
+    surface = HarmColor.NeutralT12,
+    onSurface = HarmColor.NeutralT94,
+    surfaceContainer = HarmColor.NeutralT17,
+    onSurfaceContainer = HarmColor.NeutralT89,
+    surfaceContainerLow = HarmColor.NeutralT24,
+    onSurfaceContainerLow = HarmColor.NeutralT80,
+    surfaceContainerHigh = HarmColor.NeutralT31,
+    surfaceContainerHighest = HarmColor.NeutralT38,
+    surfaceVariant = HarmColor.NeutralT31,
+    onSurfaceVariant = HarmColor.NeutralT89,
 
     primary = HarmColor.VioletT80,
-    onPrimary = HarmColor.PurpleT27,
-    primaryContainer = HarmColor.PurpleT36,
-    onPrimaryContainer = HarmColor.MagentaT92,
+    onPrimary = HarmColor.PurpleT21,
+    primaryContainer = HarmColor.PurpleT47,
+    onPrimaryContainer = HarmColor.VioletT94,
 
-    secondary = HarmColor.VioletT81,
-    onSecondary = HarmColor.VioletT23,
-    secondaryContainer = HarmColor.VioletT32,
-    onSecondaryContainer = HarmColor.VioletT91,
+    secondary = HarmColor.VioletT56,
+    onSecondary = HarmColor.VioletT13,
+    secondaryContainer = HarmColor.VioletT27,
+    onSecondaryContainer = HarmColor.VioletT88,
 
-    outline = HarmColor.NeutralT60,
-    outlineVariant = HarmColor.NeutralT30,
+    outline = HarmColor.NeutralT80,
+    outlineVariant = HarmColor.NeutralT50,
 
     error = HarmColor.RedT79,
-    onError = HarmColor.RedT23,
+    onError = HarmColor.RedT16,
     errorContainer = HarmColor.RedT30,
     onErrorContainer = HarmColor.RedT90,
 
     info = HarmColor.GreenT30,
     onInfo = HarmColor.GreenT79,
 
-    categoryIconTint = HarmColor.NeutralT0,
+    borderAndScrim = HarmColor.NeutralT0,
 
     isDark = true
 )

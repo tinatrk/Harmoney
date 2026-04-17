@@ -36,11 +36,11 @@ object HarmDrawer {
         ModalNavigationDrawer(
             modifier = modifier,
             drawerState = drawerState,
-            scrimColor = colors.categoryIconTint,
+            scrimColor = colors.borderAndScrim,
             drawerContent = {
                 ModalDrawerSheet(
-                    drawerContainerColor = colors.surface,
-                    drawerContentColor = colors.onSurface
+                    drawerContainerColor = colors.surfaceContainerLow,
+                    drawerContentColor = colors.onSurfaceVariant
                 ) {
                     Column(
                         modifier = Modifier.padding(horizontal = 12.dp)
@@ -50,7 +50,7 @@ object HarmDrawer {
                             modifier = Modifier.padding(16.dp),
                             text = title,
                             style = typography.titleLargeSemiBold,
-                            color = colors.onSurface
+                            color = colors.onSurfaceVariant
                         )
                         HorizontalDivider(thickness = 1.dp, color = colors.outline)
 
@@ -81,21 +81,21 @@ object HarmDrawer {
                 Text(
                     text = label,
                     style = typography.bodyLarge,
-                    color = colors.onSurface
+                    color = colors.onSurfaceVariant
                 )
             },
             selected = selected,
             onClick = onClick,
             badge = badge,
             colors = NavigationDrawerItemDefaults.colors(
-                selectedContainerColor = colors.primaryContainer,
-                unselectedContainerColor = colors.surface,
-                selectedIconColor = colors.onPrimaryContainer,
-                unselectedIconColor = colors.onPrimaryContainer,
-                selectedTextColor = colors.onPrimaryContainer,
-                unselectedTextColor = colors.onPrimaryContainer,
-                selectedBadgeColor = colors.onPrimaryContainer,
-                unselectedBadgeColor = colors.onPrimaryContainer,
+                selectedContainerColor = colors.secondaryContainer,
+                unselectedContainerColor = colors.surfaceContainerLow,
+                selectedIconColor = colors.onSurfaceContainer,
+                unselectedIconColor = colors.surfaceContainerLow,
+                selectedTextColor = colors.onSurfaceContainer,
+                unselectedTextColor = colors.surfaceContainerLow,
+                selectedBadgeColor = colors.onSurfaceContainer,
+                unselectedBadgeColor = colors.surfaceContainerLow,
             )
         )
     }

@@ -35,13 +35,13 @@ object HarmIcon {
                 .border(
                     width = 1.dp,
                     shape = CircleShape,
-                    color = HarmTheme.colors.categoryIconTint
+                    color = HarmTheme.colors.borderAndScrim
                 )
                 .padding(8.dp)
                 .size(24.dp),
             painter = painterResource(iconRes),
             contentDescription = contentDescription,
-            tint = HarmTheme.colors.categoryIconTint
+            tint = HarmTheme.colors.borderAndScrim
         )
     }
 }

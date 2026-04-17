@@ -1,5 +1,6 @@
 package com.example.harmoney.core.uilibrary.calculator
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,8 +12,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -190,13 +191,19 @@ fun CalculatorButton(
     onClick: () -> Unit,
 ) {
     val colors = CalculatorButtonColors(type)
-    IconButton(
+    val borderColor = if (type == CalculatorButtonType.RESULT) {
+        colors.first
+    } else {
+        HarmTheme.colors.outline
+    }
+    Button(
         modifier = modifier.padding(horizontal = 4.dp),
         onClick = onClick,
-        colors = IconButtonDefaults.iconButtonColors(
+        colors = ButtonDefaults.buttonColors(
             containerColor = colors.first,
             contentColor = colors.second
-        )
+        ),
+        border = BorderStroke(1.dp, borderColor)
     ) {
         Text(
             text = symbol,
@@ -211,13 +218,17 @@ fun CalculatorButton(
 fun CalculatorButtonColors(type: CalculatorButtonType): Pair<Color, Color> {
     val colors = HarmTheme.colors
     return when (type) {
-        CalculatorButtonType.DIGIT -> colors.surface to colors.onSurface
+        CalculatorButtonType.DIGIT -> colors.surfaceContainer to colors.onSurfaceContainer
 
-        CalculatorButtonType.MATH_OPERATION -> colors.primary to colors.onPrimary
+        CalculatorButtonType.MATH_OPERATION -> {
+            colors.secondaryContainer to colors.onSecondaryContainer
+        }
 
-        CalculatorButtonType.MANAGEMENT -> colors.outline to colors.surface
+        CalculatorButtonType.MANAGEMENT -> {
+            colors.surfaceContainerHighest to colors.onSurfaceContainer
+        }
 
-        CalculatorButtonType.RESULT -> colors.secondary to colors.onSecondary
+        CalculatorButtonType.RESULT -> colors.primary to colors.onPrimary
     }
 }
 

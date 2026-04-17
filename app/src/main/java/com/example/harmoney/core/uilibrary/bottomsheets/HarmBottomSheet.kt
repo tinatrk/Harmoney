@@ -28,10 +28,11 @@ fun HarmBottomSheet(
             sheetState = sheetState,
             shape = RoundedCornerShape(32.dp),
             tonalElevation = 6.dp,
-            containerColor = HarmTheme.colors.surfaceVariant,
-            contentColor = HarmTheme.colors.onSurface,
+            containerColor = HarmTheme.colors.surfaceContainerLow,
+            contentColor = HarmTheme.colors.onSurfaceVariant,
             scrimColor = Color.Transparent,
-            dragHandle = { BottomSheetDefaults.DragHandle(color = HarmTheme.colors.outline) },
+            dragHandle = { BottomSheetDefaults
+                .DragHandle(color = HarmTheme.colors.onSurfaceContainerLow) },
             content = content
         )
     }
