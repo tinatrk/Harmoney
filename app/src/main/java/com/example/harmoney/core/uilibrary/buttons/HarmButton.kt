@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.presentation.category.models.MenuOptions
+import com.example.harmoney.ui.theme.HarmColor
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
@@ -112,7 +113,7 @@ object HarmButton {
         @DrawableRes iconRes: Int?,
         contentDescription: String?,
         modifier: Modifier = Modifier,
-        iconBackgroundValue: Long = CategoryColors.CYAN_T88.colorValue,
+        iconBackgroundValue: Long = CategoryColors.VIOLET_T68.background,
         selected: Boolean = false,
     ) {
         Box(
@@ -133,11 +134,7 @@ object HarmButton {
                                 shape = CircleShape
                             )
                         } else {
-                            Modifier.border(
-                                width = 1.dp,
-                                color = HarmTheme.colors.borderAndScrim,
-                                shape = CircleShape
-                            )
+                            Modifier
                         }
                     ),
                 contentAlignment = Alignment.Center

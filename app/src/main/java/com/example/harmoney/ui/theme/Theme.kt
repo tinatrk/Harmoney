@@ -50,7 +50,7 @@ private val LightColorPalette = HarmColors(
     info = HarmColor.GreenT90,
     onInfo = HarmColor.GreenT43,
 
-    borderAndScrim = HarmColor.NeutralT0,
+    borderAndScrim = HarmColor.NeutralT10,
 
     isDark = false
 )
@@ -88,7 +88,7 @@ private val DarkColorPalette = HarmColors(
     info = HarmColor.GreenT30,
     onInfo = HarmColor.GreenT79,
 
-    borderAndScrim = HarmColor.NeutralT0,
+    borderAndScrim = HarmColor.NeutralT10,
 
     isDark = true
 )

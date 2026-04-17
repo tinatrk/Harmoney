@@ -215,7 +215,7 @@ object HarmCard {
             verticalAlignment = Alignment.CenterVertically
         ) {
             HarmIcon.HarmCircularCategoryIcon(
-                backgroundColorValue = categoryInfo.icon.backgroundColor.colorValue,
+                backgroundColorValue = categoryInfo.icon.colors.background,
                 iconRes = categoryInfo.icon.ids.resIconId,
                 contentDescription = stringResource(R.string.ic_category_desc, categoryInfo.name),
             )

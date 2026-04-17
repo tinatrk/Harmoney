@@ -2,7 +2,6 @@ package com.example.harmoney.core.uilibrary.icons
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -31,11 +30,6 @@ object HarmIcon {
                 .background(
                     color = Color(backgroundColorValue),
                     shape = CircleShape
-                )
-                .border(
-                    width = 1.dp,
-                    shape = CircleShape,
-                    color = HarmTheme.colors.borderAndScrim
                 )
                 .padding(8.dp)
                 .size(24.dp),
