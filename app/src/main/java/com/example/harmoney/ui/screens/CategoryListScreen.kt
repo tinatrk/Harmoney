@@ -66,7 +66,9 @@ fun CategoryListScreen(
                 title = stringResource(R.string.title_top_app_bar_category_list),
                 navigationIconRes = R.drawable.ic_arrow_back_24px,
                 navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
-                onNavigationIconClick = { viewModel.obtainEvent(CategoryListEvent.OnBackClick) },
+                onNavigationIconClick = {
+                    viewModel.obtainEvent(CategoryListEvent.OnBackClick)
+                },
                 actionIconRes = R.drawable.ic_swap_vert_24px,
                 actionIconDesc = stringResource(R.string.ic_swap_vert_desc),
                 onActionIconClick = {},
@@ -102,6 +104,8 @@ fun CategoryListContent(
     onEvent: (CategoryListEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val testCategoryId = 7L
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -130,7 +134,7 @@ fun CategoryListContent(
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
             text = "Choose category, categoryId = 7",
-            onClick = { onEvent(CategoryListEvent.OnCategoryClick(7)) }
+            onClick = { onEvent(CategoryListEvent.OnCategoryClick(testCategoryId)) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))

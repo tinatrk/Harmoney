@@ -102,6 +102,9 @@ fun TransactionListContent(
     onEvent: (TransactionListEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val testCategoryId = 2L
+    val testTransactionId = 3L
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -136,13 +139,13 @@ fun TransactionListContent(
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
             text = "On floating button click (create transaction, categoryId = 2)",
-            onClick = { onEvent(TransactionListEvent.OnFloatingButtonClick(2)) }
+            onClick = { onEvent(TransactionListEvent.OnFloatingButtonClick(testCategoryId)) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         HarmButton.HarmPrimaryButton(
             text = "On transaction click (open transaction, transactionId = 3)",
-            onClick = { onEvent(TransactionListEvent.OnTransactionClick(3)) }
+            onClick = { onEvent(TransactionListEvent.OnTransactionClick(testTransactionId)) }
         )
     }
 }

@@ -17,7 +17,7 @@ import com.example.harmoney.ui.theme.HarmTheme
 
 /**
  * - `HarmPrimaryTabRow` - PrimaryTabRow with HarmTheme colors
- * - `HarmTab` - Tab with HarmTheme colors
+ * - `HarmCommonTab` - Tab with HarmTheme colors
  * */
 object HarmTab {
     /** PrimaryTabRow with HarmTheme colors */
@@ -45,7 +45,7 @@ object HarmTab {
 
     /** Tab with HarmTheme colors */
     @Composable
-    fun HarmTab(
+    fun HarmCommonTab(
         selected: Boolean = false,
         onClick: () -> Unit,
         text: String,

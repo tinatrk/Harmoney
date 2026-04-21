@@ -119,10 +119,11 @@ fun CalculationDigitsBlock(
         "4", "5", "6",
         "1", "2", "3",
     )
+    val columnCount = 3
 
     Column(modifier = modifier) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+            columns = GridCells.Fixed(columnCount),
             userScrollEnabled = false,
         ) {
             items(numbers) { number ->

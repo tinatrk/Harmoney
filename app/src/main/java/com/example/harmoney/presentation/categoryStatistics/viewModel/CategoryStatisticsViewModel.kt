@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class CategoryStatisticsViewModel() : ViewModel() {
+class CategoryStatisticsViewModel : ViewModel() {
     private val _screenState = MutableStateFlow(CategoryStatisticsState())
     val screenState: StateFlow<CategoryStatisticsState> = _screenState.asStateFlow()
 

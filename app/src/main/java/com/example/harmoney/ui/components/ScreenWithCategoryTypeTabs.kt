@@ -28,7 +28,7 @@ fun ScreenWithCategoryTypeTabs(
             selectedTabIndex = selectedTabIndex
         ) {
             tabs.forEachIndexed { index, tab ->
-                HarmTab.HarmTab(
+                HarmTab.HarmCommonTab(
                     selected = selectedTabIndex == index,
                     onClick = {
                         onTabClick(tab)
