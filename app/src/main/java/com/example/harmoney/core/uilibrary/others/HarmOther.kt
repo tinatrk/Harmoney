@@ -1,5 +1,6 @@
 package com.example.harmoney.core.uilibrary.others
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
@@ -17,9 +19,11 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.presentation.models.StatisticPeriod
 import com.example.harmoney.ui.theme.HarmTheme
@@ -28,6 +32,7 @@ import com.example.harmoney.ui.theme.HarmTheme
  * - `HarmStatisticPeriodList` - Text list of periods for statistic logic
  * - `HarmDatePickerModal` - Date Picker Dialog
  */
+@UiLibrary
 object HarmOther {
     /** Text list of periods for statistic logic */
     @Composable
@@ -46,9 +51,21 @@ object HarmOther {
             horizontalArrangement = Arrangement.Center,
         ) {
             periods.forEach { period ->
+
+                val borderColor = if (period.id == selectedPeriodId) {
+                    HarmTheme.colors.primary
+                } else {
+                    Color.Transparent
+                }
                 Text(
                     modifier = Modifier
                         .padding(horizontal = 6.dp)
+                        .border(
+                            width = 1.dp, color = borderColor,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 6.dp, vertical = 4.dp)
+
                         .clickable { onPeriodClick(period.id) },
                     text = stringResource(period.textRes),
                     style = if (period.id == selectedPeriodId) {
@@ -60,7 +77,7 @@ object HarmOther {
                         HarmTheme.colors.primary
                     } else {
                         HarmTheme.colors.onSurfaceContainer
-                    }
+                    },
                 )
             }
         }
@@ -107,18 +124,18 @@ object HarmOther {
                 )
             },
             colors = DatePickerDefaults.colors(
-                containerColor = colors.surface,
+                containerColor = colors.surfaceContainerHigh,
             ),
         ) {
             DatePicker(
                 state = datePickerState,
                 colors = DatePickerDefaults.colors(
-                    containerColor = colors.surface,
+                    containerColor = colors.surfaceContainerHigh,
                     titleContentColor = colors.onSurface,
                     headlineContentColor = colors.onSurface,
-                    weekdayContentColor = colors.primary,
-                    subheadContentColor = colors.onSurface,
-                    navigationContentColor = colors.primary,
+                    weekdayContentColor = colors.onSurface,
+                    subheadContentColor = colors.onSurfaceVariant,
+                    navigationContentColor = colors.onSurfaceVariant,
 
                     yearContentColor = colors.onSurface,
                     disabledYearContentColor = colors.onSurfaceContainerLow,

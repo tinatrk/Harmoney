@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.textfields.HarmTextField
 import com.example.harmoney.ui.theme.HarmTheme
@@ -23,6 +24,7 @@ import com.example.harmoney.ui.theme.HarmTheme
  * - `HarmConfirmingDialog` - A dialog with a question for user and ok/cancel buttons
  * - `HarmSetFirstDayMonthDialog` - A dialog to set the first day of the month
  */
+@UiLibrary
 object HarmDialog {
     /** Base dialog with title, buttons and content */
     @Composable
@@ -60,14 +62,10 @@ object HarmDialog {
             onDismissRequest = onDismissRequest,
             confirmButton = confirmButton,
             dismissButton = dismissButton,
-            containerColor = if (HarmTheme.colors.isDark) {
-                HarmTheme.colors.surfaceContainer
-            } else {
-                HarmTheme.colors.surface
-            },
-            iconContentColor = HarmTheme.colors.onSurfaceContainer,
-            titleContentColor = HarmTheme.colors.onSurfaceContainer,
-            textContentColor = HarmTheme.colors.onSurfaceContainer,
+            containerColor = HarmTheme.colors.surfaceContainerHigh,
+            iconContentColor = HarmTheme.colors.secondary,
+            titleContentColor = HarmTheme.colors.onSurface,
+            textContentColor = HarmTheme.colors.onSurfaceVariant,
         )
     }
 
@@ -89,13 +87,13 @@ object HarmDialog {
             iconId = iconId,
             iconContentDescription = iconContentDescription,
             dismissButton = {
-                HarmButton.HarmSecondaryButton(
+                HarmButton.HarmSecondaryTextButton(
                     text = stringResource(R.string.btn_dialog_cancel_text),
                     onClick = onDismissRequest
                 )
             },
             confirmButton = {
-                HarmButton.HarmPrimaryButton(
+                HarmButton.HarmPrimaryTextButton(
                     text = stringResource(R.string.btn_dialog_yes_text),
                     onClick = onConfirmation
                 )
@@ -149,13 +147,13 @@ object HarmDialog {
 
             },
             dismissButton = {
-                HarmButton.HarmSecondaryButton(
+                HarmButton.HarmSecondaryTextButton(
                     text = stringResource(R.string.btn_dialog_cancel_text),
                     onClick = onDismissRequest
                 )
             },
             confirmButton = {
-                HarmButton.HarmPrimaryButton(
+                HarmButton.HarmPrimaryTextButton(
                     text = stringResource(R.string.btn_save_text),
                     onClick = onConfirmation
                 )

@@ -12,7 +12,10 @@ class HarmColors(
     onSurface: Color,
     surfaceContainer: Color,
     onSurfaceContainer: Color,
+    surfaceContainerLow: Color,
     onSurfaceContainerLow: Color,
+    surfaceContainerHigh: Color,
+    surfaceContainerHighest: Color,
     surfaceVariant: Color,
     onSurfaceVariant: Color,
 
@@ -37,7 +40,7 @@ class HarmColors(
     info: Color,
     onInfo: Color,
 
-    categoryIconTint: Color,
+    borderAndScrim: Color,
 
     isDark: Boolean
 ) {
@@ -49,7 +52,13 @@ class HarmColors(
         private set
     var onSurfaceContainer by mutableStateOf(onSurfaceContainer)
         private set
+    var surfaceContainerLow by mutableStateOf(surfaceContainerLow)
+        private set
     var onSurfaceContainerLow by mutableStateOf(onSurfaceContainerLow)
+        private set
+    var surfaceContainerHigh by mutableStateOf(surfaceContainerHigh)
+        private set
+    var surfaceContainerHighest by mutableStateOf(surfaceContainerHighest)
         private set
     var surfaceVariant by mutableStateOf(surfaceVariant)
         private set
@@ -93,7 +102,7 @@ class HarmColors(
     var onInfo by mutableStateOf(onInfo)
         private set
 
-    var categoryIconTint by mutableStateOf(categoryIconTint)
+    var borderAndScrim by mutableStateOf(borderAndScrim)
         private set
 
     var isDark by mutableStateOf(isDark)
@@ -104,7 +113,10 @@ class HarmColors(
         onSurface = other.onSurface
         surfaceContainer = other.surfaceContainer
         onSurfaceContainer = other.onSurfaceContainer
+        surfaceContainerLow = other.surfaceContainerLow
         onSurfaceContainerLow = other.onSurfaceContainerLow
+        surfaceContainerHigh = other.surfaceContainerHigh
+        surfaceContainerHighest = other.surfaceContainerHighest
         surfaceVariant = other.surfaceVariant
         onSurfaceVariant = other.onSurfaceVariant
 
@@ -129,7 +141,7 @@ class HarmColors(
         info = other.info
         onInfo = other.onInfo
 
-        categoryIconTint = other.categoryIconTint
+        borderAndScrim = other.borderAndScrim
 
         isDark = other.isDark
     }

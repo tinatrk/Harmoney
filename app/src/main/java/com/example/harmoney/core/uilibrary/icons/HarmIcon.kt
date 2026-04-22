@@ -2,7 +2,6 @@ package com.example.harmoney.core.uilibrary.icons
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -12,11 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
  * - `HarmCircularCategoryIcon` - Not clickable circular category icon without title
  */
+@UiLibrary
 object HarmIcon {
     /** Not clickable circular category icon without title */
     @Composable
@@ -32,16 +33,11 @@ object HarmIcon {
                     color = Color(backgroundColorValue),
                     shape = CircleShape
                 )
-                .border(
-                    width = 1.dp,
-                    shape = CircleShape,
-                    color = HarmTheme.colors.categoryIconTint
-                )
                 .padding(8.dp)
                 .size(24.dp),
             painter = painterResource(iconRes),
             contentDescription = contentDescription,
-            tint = HarmTheme.colors.categoryIconTint
+            tint = HarmTheme.colors.borderAndScrim
         )
     }
 }

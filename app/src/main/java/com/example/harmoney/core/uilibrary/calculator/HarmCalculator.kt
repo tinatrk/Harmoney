@@ -1,5 +1,6 @@
 package com.example.harmoney.core.uilibrary.calculator
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,17 +12,19 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.presentation.calculator.models.CalculatorAction
 import com.example.harmoney.presentation.calculator.models.CalculatorOperation
 import com.example.harmoney.presentation.calculator.models.CalculatorState
+import com.example.harmoney.presentation.calculator.models.CalculatorSymbol
 import com.example.harmoney.ui.theme.HarmTheme
 
 /** HarmCalculator
@@ -31,6 +34,7 @@ import com.example.harmoney.ui.theme.HarmTheme
  * - onCalculateClick - additional functionality is expected here when you click on "="
  * (for example, close the area with the calculator)
  * */
+@UiLibrary
 @Composable
 fun HarmCalculator(
     state: CalculatorState,
@@ -67,14 +71,18 @@ fun HarmCalculator(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
-                modifier = Modifier.weight(3f), // 3/4
+                modifier = Modifier.weight(
+                    Const.MANAGEMENT_WIDTH_IN_BUTTONS / Const.CALCULATOR_WIDTH_IN_BUTTONS
+                ), // 3/4
             ) {
                 CalculatorManagementBlock(onAction = onAction)
                 CalculationDigitsBlock(onAction = onAction)
             }
 
             CalculatingMathBlock(
-                modifier = Modifier.weight(1f), // 1/4
+                modifier = Modifier.weight(
+                    Const.OPERATION_WIDTH_IN_BUTTONS / Const.CALCULATOR_WIDTH_IN_BUTTONS
+                ), // 1/4
                 onAction = onAction,
                 onCalculateClick
             )
@@ -83,51 +91,56 @@ fun HarmCalculator(
 }
 
 @Composable
-fun CalculatorManagementBlock(
+private fun CalculatorManagementBlock(
     modifier: Modifier = Modifier,
     onAction: (CalculatorAction) -> Unit
 ) {
     Row(modifier = modifier) {
         CalculatorButton(
-            modifier = Modifier.weight(1f), // 1/3
-            symbol = "C",
+            modifier = Modifier.weight(
+                Const.COMMON_BUTTON_WIDTH / Const.MANAGEMENT_WIDTH_IN_BUTTONS
+            ), // 1/3
+            symbol = CalculatorSymbol.CLEAR.symbol,
             type = CalculatorButtonType.MANAGEMENT
         ) { onAction(CalculatorAction.Clear) }
 
         CalculatorButton(
-            modifier = Modifier.weight(1f), // 1/3
-            symbol = "Del",
+            modifier = Modifier.weight(
+                Const.COMMON_BUTTON_WIDTH / Const.MANAGEMENT_WIDTH_IN_BUTTONS
+            ), // 1/3
+            symbol = CalculatorSymbol.DELETE_LAST.symbol,
             type = CalculatorButtonType.MANAGEMENT
         ) { onAction(CalculatorAction.Delete) }
 
         CalculatorButton(
-            modifier = Modifier.weight(1f), // 1/3
-            symbol = "( )",
+            modifier = Modifier.weight(
+                Const.COMMON_BUTTON_WIDTH / Const.MANAGEMENT_WIDTH_IN_BUTTONS
+            ), // 1/3
+            symbol = CalculatorSymbol.PARENTHESIS_OPEN.symbol + " "
+                    + CalculatorSymbol.PARENTHESIS_CLOSED.symbol,
             type = CalculatorButtonType.MANAGEMENT
         ) { onAction(CalculatorAction.Parenthesis) }
     }
 }
 
 @Composable
-fun CalculationDigitsBlock(
+private fun CalculationDigitsBlock(
     modifier: Modifier = Modifier,
     onAction: (CalculatorAction) -> Unit
 ) {
-    val numbers = listOf(
-        "7", "8", "9",
-        "4", "5", "6",
-        "1", "2", "3",
-    )
+    val symbolsWithoutLostRow = CalculatorSymbol.getNumbers()
+        .filter { it.symbol != CalculatorSymbol.ZERO.symbol }
+        .map { it.symbol }
 
     Column(modifier = modifier) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+            columns = GridCells.Fixed(Const.NUMBERS_WIDTH_IN_BUTTONS.toInt()),
             userScrollEnabled = false,
         ) {
-            items(numbers) { number ->
+            items(symbolsWithoutLostRow) { number ->
                 CalculatorButton(
                     symbol = number,
-                    type = CalculatorButtonType.DIGIT
+                    type = CalculatorButtonType.NUMBER
                 ) { onAction(CalculatorAction.Number(number)) }
             }
         }
@@ -135,21 +148,25 @@ fun CalculationDigitsBlock(
             modifier = Modifier.fillMaxWidth()
         ) {
             CalculatorButton(
-                modifier = modifier.weight(2f), // 2/3
-                symbol = "0",
-                type = CalculatorButtonType.DIGIT
-            ) { onAction(CalculatorAction.Number("0")) }
+                modifier = modifier.weight(
+                    Const.DOUBLE_BUTTON_WIDTH / Const.NUMBERS_WIDTH_IN_BUTTONS
+                ), // 2/3
+                symbol = CalculatorSymbol.ZERO.symbol,
+                type = CalculatorButtonType.NUMBER,
+            ) { onAction(CalculatorAction.Number(CalculatorSymbol.ZERO.symbol)) }
             CalculatorButton(
-                modifier = modifier.weight(1f), // 1/3
-                symbol = ".",
-                type = CalculatorButtonType.DIGIT
+                modifier = modifier.weight(
+                    Const.COMMON_BUTTON_WIDTH / Const.NUMBERS_WIDTH_IN_BUTTONS
+                ), // 1/3
+                symbol = CalculatorSymbol.DOT.symbol,
+                type = CalculatorButtonType.NUMBER,
             ) { onAction(CalculatorAction.Decimal) }
         }
     }
 }
 
 @Composable
-fun CalculatingMathBlock(
+private fun CalculatingMathBlock(
     modifier: Modifier,
     onAction: (CalculatorAction) -> Unit,
     onCalculateClick: () -> Unit,
@@ -167,14 +184,14 @@ fun CalculatingMathBlock(
             CalculatorButton(
                 modifier = Modifier.fillMaxWidth(),
                 symbol = operation.symbol,
-                type = CalculatorButtonType.MATH_OPERATION
+                type = CalculatorButtonType.OPERATION
             ) { onAction(CalculatorAction.Operation(operation)) }
         }
 
         CalculatorButton(
             modifier = Modifier.fillMaxWidth(),
-            symbol = "=",
-            type = CalculatorButtonType.RESULT
+            symbol = CalculatorSymbol.EQUALITY.symbol,
+            type = CalculatorButtonType.EQUALITY
         ) {
             onAction(CalculatorAction.Calculate)
             onCalculateClick()
@@ -183,20 +200,26 @@ fun CalculatingMathBlock(
 }
 
 @Composable
-fun CalculatorButton(
+private fun CalculatorButton(
     modifier: Modifier = Modifier,
     symbol: String,
     type: CalculatorButtonType,
     onClick: () -> Unit,
 ) {
     val colors = CalculatorButtonColors(type)
-    IconButton(
+    val borderColor = if (type == CalculatorButtonType.EQUALITY) {
+        colors.first
+    } else {
+        HarmTheme.colors.outline
+    }
+    Button(
         modifier = modifier.padding(horizontal = 4.dp),
         onClick = onClick,
-        colors = IconButtonDefaults.iconButtonColors(
+        colors = ButtonDefaults.buttonColors(
             containerColor = colors.first,
             contentColor = colors.second
-        )
+        ),
+        border = BorderStroke(1.dp, borderColor)
     ) {
         Text(
             text = symbol,
@@ -208,22 +231,37 @@ fun CalculatorButton(
 
 /** Pair<BackgroundColor, TintColor> */
 @Composable
-fun CalculatorButtonColors(type: CalculatorButtonType): Pair<Color, Color> {
+private fun CalculatorButtonColors(type: CalculatorButtonType): Pair<Color, Color> {
     val colors = HarmTheme.colors
     return when (type) {
-        CalculatorButtonType.DIGIT -> colors.surface to colors.onSurface
+        CalculatorButtonType.NUMBER -> {
+            colors.surfaceContainer to colors.onSurfaceContainer
+        }
 
-        CalculatorButtonType.MATH_OPERATION -> colors.primary to colors.onPrimary
+        CalculatorButtonType.OPERATION -> {
+            colors.secondaryContainer to colors.onSecondaryContainer
+        }
 
-        CalculatorButtonType.MANAGEMENT -> colors.outline to colors.surface
+        CalculatorButtonType.MANAGEMENT -> {
+            colors.surfaceContainerHighest to colors.onSurfaceContainer
+        }
 
-        CalculatorButtonType.RESULT -> colors.secondary to colors.onSecondary
+        CalculatorButtonType.EQUALITY -> colors.primary to colors.onPrimary
     }
 }
 
-enum class CalculatorButtonType {
-    DIGIT,
-    MATH_OPERATION,
+private enum class CalculatorButtonType {
+    NUMBER,
+    OPERATION,
     MANAGEMENT,
-    RESULT
+    EQUALITY,
+}
+
+private object Const {
+    const val CALCULATOR_WIDTH_IN_BUTTONS = 4f
+    const val MANAGEMENT_WIDTH_IN_BUTTONS = 3f
+    const val OPERATION_WIDTH_IN_BUTTONS = 1f
+    const val NUMBERS_WIDTH_IN_BUTTONS = 3f
+    const val DOUBLE_BUTTON_WIDTH = 2f
+    const val COMMON_BUTTON_WIDTH = 1f
 }

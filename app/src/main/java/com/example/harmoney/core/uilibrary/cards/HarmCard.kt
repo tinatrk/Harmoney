@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.graphics.HarmGraphic
 import com.example.harmoney.core.uilibrary.icons.HarmIcon
@@ -53,6 +54,7 @@ import com.example.harmoney.ui.theme.HarmTheme
  * of each category)
  * - `HarmCardTransactionList` - A list with data and transactions for one day
  */
+@UiLibrary
 object HarmCard {
     /** A card for displaying all types of category cards */
     @Composable
@@ -65,10 +67,10 @@ object HarmCard {
         Card(
             modifier = modifier.clickable { onCardClick() },
             shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(6.dp),
+            elevation = CardDefaults.cardElevation(2.dp),
             colors = CardDefaults.cardColors(
-                containerColor = HarmTheme.colors.surfaceContainer,
-                contentColor = HarmTheme.colors.onSurfaceContainer,
+                containerColor = HarmTheme.colors.surfaceContainerHigh,
+                contentColor = HarmTheme.colors.onSurface,
             )
         ) {
             Row(
@@ -215,9 +217,9 @@ object HarmCard {
             verticalAlignment = Alignment.CenterVertically
         ) {
             HarmIcon.HarmCircularCategoryIcon(
-                backgroundColorValue = categoryInfo.icon.backgroundColor.colorValue,
+                backgroundColorValue = categoryInfo.icon.colors.background,
                 iconRes = categoryInfo.icon.ids.resIconId,
-                contentDescription = stringResource(R.string.category_icon_desc, categoryInfo.name),
+                contentDescription = stringResource(R.string.ic_category_desc, categoryInfo.name),
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -261,10 +263,10 @@ object HarmCard {
         Card(
             modifier = modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(6.dp),
+            elevation = CardDefaults.cardElevation(2.dp),
             colors = CardDefaults.cardColors(
-                containerColor = HarmTheme.colors.surfaceContainer,
-                contentColor = HarmTheme.colors.onSurfaceContainer,
+                containerColor = HarmTheme.colors.surfaceContainerHigh,
+                contentColor = HarmTheme.colors.onSurface,
             ),
         ) {
             Column(
@@ -299,7 +301,7 @@ object HarmCard {
                             Text(
                                 text = stringResource(R.string.pattern_money_russian, total),
                                 style = HarmTheme.typography.bodyLarge,
-                                color = HarmTheme.colors.onSurfaceContainer,
+                                color = HarmTheme.colors.onSurface,
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -337,7 +339,7 @@ object HarmCard {
                     modifier = Modifier.weight(1f),
                     text = stringResource(R.string.pattern_text_with_colon, data),
                     style = HarmTheme.typography.titleMedium,
-                    color = HarmTheme.colors.onSurfaceContainer,
+                    color = HarmTheme.colors.onSurface,
                     textAlign = TextAlign.Start
                 )
                 Spacer(modifier = Modifier.width(8.dp))
