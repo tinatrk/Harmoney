@@ -10,8 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.ui.theme.HarmTheme
 
+@UiLibrary
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HarmBottomSheet(
@@ -31,8 +33,10 @@ fun HarmBottomSheet(
             containerColor = HarmTheme.colors.surfaceContainerLow,
             contentColor = HarmTheme.colors.onSurfaceVariant,
             scrimColor = Color.Transparent,
-            dragHandle = { BottomSheetDefaults
-                .DragHandle(color = HarmTheme.colors.onSurfaceContainerLow) },
+            dragHandle = {
+                BottomSheetDefaults
+                    .DragHandle(color = HarmTheme.colors.onSurfaceContainerLow)
+            },
             content = content
         )
     }

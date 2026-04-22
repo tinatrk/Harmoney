@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.ui.theme.HarmTheme
 
@@ -23,6 +24,7 @@ import com.example.harmoney.ui.theme.HarmTheme
  * - `HarmSimpleTopBar` - Top app bar with navigation button (without actions and subtitle).
  * By default, back icon is used.
  */
+@UiLibrary
 object HarmTopBar {
     /** Basic top app bar */
     @OptIn(ExperimentalMaterial3Api::class)
@@ -41,18 +43,20 @@ object HarmTopBar {
     ) {
         // пришлось вручную прописать размер иконок, чтобы правильно центрировать заголовок
         val topAppBarIconSize = 48.dp
-        val startTitleOffset =
-            if (navigationIconRes == null && actionIconRes != null && isTitleCenterAlignment) {
+
+        // Сделала variable переменные, чтобы complexity функции была меньше 15
+        var titleAlignment = Alignment.Start
+        var startTitleOffset = 0.dp
+        var endTitleOffset = 0.dp
+
+        if (isTitleCenterAlignment) {
+            titleAlignment = Alignment.CenterHorizontally
+            if (navigationIconRes == null && actionIconRes != null) startTitleOffset =
                 topAppBarIconSize
-            } else {
-                0.dp
-            }
-        val endTitleOffset =
-            if (navigationIconRes != null && actionIconRes == null && isTitleCenterAlignment) {
+            if (navigationIconRes != null && actionIconRes == null) endTitleOffset =
                 topAppBarIconSize
-            } else {
-                0.dp
-            }
+        }
+
         TopAppBar(
             modifier = modifier,
             title = {
@@ -60,11 +64,7 @@ object HarmTopBar {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = startTitleOffset, end = endTitleOffset),
-                    horizontalAlignment = if (isTitleCenterAlignment) {
-                        Alignment.CenterHorizontally
-                    } else {
-                        Alignment.Start
-                    }
+                    horizontalAlignment = titleAlignment
                 ) {
                     Text(
                         text = title,

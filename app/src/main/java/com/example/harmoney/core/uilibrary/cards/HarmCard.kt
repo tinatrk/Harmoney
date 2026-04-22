@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.graphics.HarmGraphic
 import com.example.harmoney.core.uilibrary.icons.HarmIcon
@@ -53,6 +54,7 @@ import com.example.harmoney.ui.theme.HarmTheme
  * of each category)
  * - `HarmCardTransactionList` - A list with data and transactions for one day
  */
+@UiLibrary
 object HarmCard {
     /** A card for displaying all types of category cards */
     @Composable

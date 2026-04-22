@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.presentation.models.StatisticPeriod
 import com.example.harmoney.ui.theme.HarmTheme
@@ -31,6 +32,7 @@ import com.example.harmoney.ui.theme.HarmTheme
  * - `HarmStatisticPeriodList` - Text list of periods for statistic logic
  * - `HarmDatePickerModal` - Date Picker Dialog
  */
+@UiLibrary
 object HarmOther {
     /** Text list of periods for statistic logic */
     @Composable

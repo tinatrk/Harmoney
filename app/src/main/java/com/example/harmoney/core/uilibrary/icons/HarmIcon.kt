@@ -11,11 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
  * - `HarmCircularCategoryIcon` - Not clickable circular category icon without title
  */
+@UiLibrary
 object HarmIcon {
     /** Not clickable circular category icon without title */
     @Composable

@@ -13,12 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
  * - `HarmPrimaryTabRow` - PrimaryTabRow with HarmTheme colors
  * - `HarmCommonTab` - Tab with HarmTheme colors
  * */
+@UiLibrary
 object HarmTab {
     /** PrimaryTabRow with HarmTheme colors */
     @Composable

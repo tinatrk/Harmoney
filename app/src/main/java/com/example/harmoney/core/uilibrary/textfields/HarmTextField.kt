@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.others.HarmOther.HarmDatePickerModal
 import com.example.harmoney.ui.theme.HarmTheme
 
@@ -39,6 +40,7 @@ import com.example.harmoney.ui.theme.HarmTheme
  * - `HarmBaseTextField` - base TextField for simple text or numeric content
  * - `HarmTextFieldWithDatePicker` - TextField with calendar logic
  */
+@UiLibrary
 object HarmTextField {
     /** Base TextField for simple text or numeric content */
     @Composable

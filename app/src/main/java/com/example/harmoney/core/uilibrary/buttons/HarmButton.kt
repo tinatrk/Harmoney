@@ -41,9 +41,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.presentation.category.models.MenuOptions
-import com.example.harmoney.ui.theme.HarmColor
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
@@ -61,6 +61,7 @@ import com.example.harmoney.ui.theme.HarmTheme
  * - `HarmCheckableIconWithTitle` - Circular checkBox with title
  * - `HarmSwitch` - Switch with Harm theme colors
  * */
+@UiLibrary
 object HarmButton {
     /** TopBar IconButton */
     @Composable

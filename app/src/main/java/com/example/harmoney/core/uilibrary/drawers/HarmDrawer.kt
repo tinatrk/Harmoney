@@ -14,12 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
  * - `HarmModalDrawer` - ModalNavigationDrawer with Harm theme colors
  * - `HarmDrawerItem` - NavigationDrawerItem with Harm theme colors
  * */
+@UiLibrary
 object HarmDrawer {
     /** ModalNavigationDrawer with Harm theme colors */
     @Composable
