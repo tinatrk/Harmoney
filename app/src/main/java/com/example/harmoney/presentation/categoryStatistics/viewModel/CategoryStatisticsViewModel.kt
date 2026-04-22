@@ -1,6 +1,6 @@
 package com.example.harmoney.presentation.categoryStatistics.viewModel
 
-import androidx.lifecycle.ViewModel
+import com.example.harmoney.base.BaseViewModel
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
@@ -13,26 +13,21 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class CategoryStatisticsViewModel : ViewModel() {
-    private val _screenState = MutableStateFlow(CategoryStatisticsState())
-    val screenState: StateFlow<CategoryStatisticsState> = _screenState.asStateFlow()
-
-    private val _action = MutableSharedFlow<CategoryStatisticsAction?>(
-        replay = 0,
-        extraBufferCapacity = 1
-    )
-    val action: SharedFlow<CategoryStatisticsAction?> = _action.asSharedFlow()
+class CategoryStatisticsViewModel : BaseViewModel<CategoryStatisticsEvent, CategoryStatisticsAction, CategoryStatisticsState>(
+    state = CategoryStatisticsState()
+) {
+    override val tag: String = CategoryStatisticsViewModel::class.java.simpleName ?: ""
 
     init {
         // считать тему из shared preferences
-        _screenState.update {
+        _state.update {
             it.copy(
-                categoryInfo = getCategoryInfo(_screenState.value.categoryType)
+                categoryInfo = getCategoryInfo(_state.value.categoryType)
             )
         }
     }
 
-    fun obtainEvent(event: CategoryStatisticsEvent) {
+    override fun obtainEvent(event: CategoryStatisticsEvent) {
         when (event) {
             is CategoryStatisticsEvent.OnTabClick -> onTabClick(event.categoryType)
             is CategoryStatisticsEvent.OnSettingsIconClick -> onNavigateToSettings()
@@ -47,9 +42,9 @@ class CategoryStatisticsViewModel : ViewModel() {
 
             is CategoryStatisticsEvent.OnChangeTheme -> {
                 // в будущем поменять логику на shared preferences
-                _screenState.update {
+                _state.update {
                     it.copy(
-                        isThemeDark = !_screenState.value.isThemeDark
+                        isThemeDark = !_state.value.isThemeDark
                     )
                 }
             }
@@ -80,8 +75,8 @@ class CategoryStatisticsViewModel : ViewModel() {
     }
 
     private fun onTabClick(newCategoryType: CategoryType) {
-        if (_screenState.value.categoryType.id != newCategoryType.id) {
-            _screenState.update {
+        if (_state.value.categoryType.id != newCategoryType.id) {
+            _state.update {
                 it.copy(
                     categoryType = newCategoryType,
                     categoryInfo = getCategoryInfo(newCategoryType),
