@@ -24,6 +24,7 @@ koin = "4.0.2"
 
 # Other
 exp4j = "0.4.8"
+kotlinxCollectionsImmutable = "0.3.7"
 
 [libraries]
 #AndroidX
@@ -58,6 +59,7 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", versi
 
 # Other
 objecthunter_exp4j = { group = "net.objecthunter", name = "exp4j", version.ref = "exp4j" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

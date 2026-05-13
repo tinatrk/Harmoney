@@ -49,7 +49,7 @@
     <string name="btn_dialog_cancel_text">Отмена</string>
 
     <!-- Шаблоны с подстановкой -->
-    <string name="pattern_money_russian">%.2f ₽</string>
+    <string name="pattern_money_with_currency">%s ₽</string>
     <string name="pattern_money_percentage">%.0f%%</string>
     <string name="pattern_text_with_colon">%s:</string>
 
