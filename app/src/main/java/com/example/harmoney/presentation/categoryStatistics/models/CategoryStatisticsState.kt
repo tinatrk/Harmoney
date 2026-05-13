@@ -22,8 +22,10 @@ data class CategoryStatisticsState(
     val isThemeDark: Boolean = false,
 
     val firstDayMonth: Int = 1,
-    val firstDayMonthDialogOpen: Boolean = false,
+    val isOpenedFirstDayMonthDialog: Boolean = false,
+    val firstDayMonthText: String = firstDayMonth.toString(),
+    val isFirstDayMonthError: Boolean = false,
+    val firstDayMonthSupportText: String = "",
 
     val currency: Currency = Currency.USD
-    // выпадающий список выбора валюты?
 )

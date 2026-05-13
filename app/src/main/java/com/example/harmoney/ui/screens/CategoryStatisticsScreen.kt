@@ -34,6 +34,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.cards.HarmCard
+import com.example.harmoney.core.uilibrary.dialogs.HarmDialog
 import com.example.harmoney.core.uilibrary.drawers.HarmDrawer
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
 import com.example.harmoney.domain.models.CategoryColors
@@ -46,7 +47,6 @@ import com.example.harmoney.presentation.categoryStatistics.models.CategoryStati
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
 import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.CategoryUi
-import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.coroutines.launch
@@ -122,10 +122,7 @@ fun CategoryStatisticsScreen(
             modifier = modifier,
             topBar = {
                 HarmTopBar.HarmCommonTopBar(
-                    title = state.currentBalance,/*stringResource(
-                        R.string.pattern_money_with_currency,
-                        state.currentBalance
-                    ),*/
+                    title = state.currentBalance,
                     subtitle = stringResource(R.string.title_balance),
                     navigationIconRes = R.drawable.ic_drawer_menu_24px,
                     navigationIconDesc = stringResource(R.string.ic_drawer_menu_desc),
@@ -266,12 +263,38 @@ fun CategoryStatisticsContent(
                         modifier = Modifier.fillMaxWidth(),
                         category = category,
                         onCardClick = {
-                            onEvent(CategoryStatisticsEvent.OnCategoryClick(category.category.id))
+                            onEvent(
+                                CategoryStatisticsEvent.OnCategoryClick(
+                                    category.category.id
+                                )
+                            )
                         }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
             }
+        }
+
+        if (state.isOpenedFirstDayMonthDialog) {
+            HarmDialog.HarmSetFirstDayMonthDialog(
+                numberString = state.firstDayMonthText,
+                onNumberChanged = { newText ->
+                    onEvent(
+                        CategoryStatisticsEvent.OnFirstDayMonthTextChanged(
+                            newText
+                        )
+                    )
+                },
+                onConfirmation = { onEvent(CategoryStatisticsEvent.OnFirstDayMonthDialogConfirm) },
+                onDismissRequest = {
+                    onEvent(CategoryStatisticsEvent.OnFirstDayMonthDialogDismiss)
+                },
+                onTextFieldDoneAction = {
+                    onEvent(CategoryStatisticsEvent.OnFirstDayMonthDialogConfirm)
+                },
+                isError = state.isFirstDayMonthError,
+                supportingText = state.firstDayMonthSupportText,
+            )
         }
     }
 }

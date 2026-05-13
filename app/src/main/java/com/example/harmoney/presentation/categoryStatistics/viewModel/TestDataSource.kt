@@ -1,15 +1,12 @@
 package com.example.harmoney.presentation.categoryStatistics.viewModel
 
 import com.example.harmoney.domain.models.Category
-import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
+import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Transaction
-import com.example.harmoney.presentation.models.CategoryUi
-import com.example.harmoney.presentation.models.CategoryStatisticsUi
-import com.example.harmoney.presentation.models.OneDayTransactionsUI
 import com.example.harmoney.presentation.models.StatisticPeriod
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -243,50 +240,57 @@ class TestDataSource {
         }
     }
 
-    fun getCategoriesForStatistics(statisticPeriod: StatisticPeriod, categoryType: CategoryType): List<CategoryStatistics> {
+    fun getCategoriesForStatistics(
+        statisticPeriod: StatisticPeriod,
+        categoryType: CategoryType
+    ): List<CategoryStatistics> {
         val filteredTransactions = getTransactions(statisticPeriod, categoryType)
         val total = filteredTransactions.sumOf { it.amount }
 
         val categories = filteredTransactions.map { it.category }.distinct()
 
         return categories.map { category ->
-            val categoryTotal = filteredTransactions.filter { it.category.id == category.id}.sumOf { it.amount }
+            val categoryTotal =
+                filteredTransactions.filter { it.category.id == category.id }.sumOf { it.amount }
             CategoryStatistics(
                 category = category,
                 totalAmount = categoryTotal,
                 percentage = (categoryTotal / total * 100).toFloat()
             )
-        }.sortedByDescending{ it.percentage }
+        }.sortedByDescending { it.percentage }
     }
 
-    private fun getTransactions(statisticPeriod: StatisticPeriod, categoryType: CategoryType, categoryId: Long? = null) : List<Transaction> {
+    private fun getTransactions(
+        statisticPeriod: StatisticPeriod,
+        categoryType: CategoryType,
+        categoryId: Long? = null
+    ): List<Transaction> {
         var firstDay: LocalDate
         var lastDay: LocalDate
 
-        when(statisticPeriod) {
+        when (statisticPeriod) {
             StatisticPeriod.CURRENT_MONTH -> {
                 firstDay = curMonthFirstDay
                 lastDay = curMonthLastDay
             }
+
             StatisticPeriod.LAST_MONTH -> {
                 firstDay = pastMonthFirstDay
                 lastDay = pastMonthLastDay
             }
         }
 
-        val filteredTransactions =  transactions
-            .filter { ((it.date >= firstDay) && (it.date <= lastDay))}
+        val filteredTransactions = transactions
+            .filter { ((it.date >= firstDay) && (it.date <= lastDay)) }
             .filter { it.category.type == categoryType }
 
-            return if (categoryId != null) {
-                filteredTransactions.filter { it.category.id == categoryId }
-            } else {
-                filteredTransactions
-            }
+        return if (categoryId != null) {
+            filteredTransactions.filter { it.category.id == categoryId }
+        } else {
+            filteredTransactions
+        }
 
     }
-
-
 
     private companion object {
         const val DATE_PATTERN = "dd.MM.yyyy"

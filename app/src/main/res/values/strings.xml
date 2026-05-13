@@ -81,4 +81,8 @@
     <string name="label_text_field_amount">Сумма</string>
     <string name="label_text_field_note">Комментарий</string>
     <string name="label_text_field_first_day_month">Первый день месяца</string>
+
+    <!-- errorText для textField -->
+    <string name="error_empty_field">Поле не может быть пустым</string>
+    <string name="error_incorrect_first_day_month_pattern">Введите число в диапазоне от %d до %d</string>
 </resources>
