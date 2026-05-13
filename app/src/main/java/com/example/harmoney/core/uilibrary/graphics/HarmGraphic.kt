@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -22,7 +23,6 @@ object HarmGraphic {
     @Composable
     fun PieChart(
         items: List<PieChartItem>,
-        total: Float,
         modifier: Modifier = Modifier,
     ) {
         val screenDensity = LocalDensity.current.density
@@ -30,18 +30,17 @@ object HarmGraphic {
         // за пределами заявленных размеров области (по всем сторонам).
         // Добавляем отступ (в dp), чтобы всегда получать график в ожидаемом месте.
         val additionalPadding = remember {
-            mutableStateOf(
+            mutableFloatStateOf(
                 (PIE_STROKE_WIDTH_PX / screenDensity) / 2
             )
         }
 
         Canvas(
             modifier = modifier
-                .padding(additionalPadding.value.dp)
+                .padding(additionalPadding.floatValue.dp)
                 .fillMaxWidth(1f/2)
                 .aspectRatio(1f)
         ) {
-            if (total <= 0f) return@Canvas
 
             items.forEach { item ->
                 drawArc(
