@@ -3,10 +3,8 @@ package com.example.harmoney.presentation.models
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data class TransactionUi(
-    val id: Long = 0,
+data class CategoryStatisticsUi(
     val category: CategoryUi,
-    val amount: Float,
-    val note: String = "",
-    val createdAt: Long = 0L,
+    val totalAmount: String,
+    val percentage: String,
 )

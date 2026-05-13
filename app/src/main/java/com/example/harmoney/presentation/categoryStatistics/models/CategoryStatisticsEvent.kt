@@ -11,4 +11,6 @@ sealed interface CategoryStatisticsEvent {
     data object OnChangeTheme : CategoryStatisticsEvent
     data object OnFirstDayMonthClick : CategoryStatisticsEvent
     data object OnCategoryListClick : CategoryStatisticsEvent
+    data class OnStatisticsPeriodClick(val newPeriodId: Long) : CategoryStatisticsEvent
+    // логика работы с валютой
 }
