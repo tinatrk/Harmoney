@@ -24,7 +24,7 @@ class NumbersFormatterImpl : NumbersFormatter {
         return toStringWithCurrency(numberWithSeparator, currency)
     }
 
-    private fun toStringWithThousandSeparator(number: Float): String {
+    private fun toStringWithThousandSeparator(number: Number): String {
         val decimalFormatter = DecimalFormat(
             DECIMAL_FORMAT_PATTERN,
             DecimalFormatSymbols(Locale.GERMANY)
@@ -42,10 +42,10 @@ class NumbersFormatterImpl : NumbersFormatter {
         return "${roundedNumber}$PERCENT"
     }
 
-    private fun roundNumber(number: Double, decimalPlaces: Int): Float {
+    private fun roundNumber(number: Double, decimalPlaces: Int): Number {
         val longres = number.toLong()
         val digits = when {
-            // Если дробная часть равна нулю, то она будет отброшена
+            // Если дробная часть равна нулю, то она будет отброшена (поэтому возвращается Number)
             longres.toDouble() == number -> MIN_DECIMAL_PLACES
             decimalPlaces !in MIN_DECIMAL_PLACES..MAX_DECIMAL_PLACES -> MAX_DECIMAL_PLACES
             else -> decimalPlaces
@@ -58,7 +58,7 @@ class NumbersFormatterImpl : NumbersFormatter {
             (number * сoeff).roundToInt() / сoeff
         }
 
-        return res.toFloat()
+        return res
     }
 
     private companion object {

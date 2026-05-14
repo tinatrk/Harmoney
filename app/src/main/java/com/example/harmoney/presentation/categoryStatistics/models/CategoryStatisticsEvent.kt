@@ -18,5 +18,7 @@ sealed interface CategoryStatisticsEvent {
     data object OnFirstDayMonthDialogConfirm: CategoryStatisticsEvent
     data object OnFirstDayMonthDialogDismiss: CategoryStatisticsEvent
 
+    data object OnCurrencySettingsClick: CategoryStatisticsEvent
     data class OnCurrencyChanged(val newCurrency: Currency) : CategoryStatisticsEvent
+    data object OnCurrencyMenuDismiss: CategoryStatisticsEvent
 }

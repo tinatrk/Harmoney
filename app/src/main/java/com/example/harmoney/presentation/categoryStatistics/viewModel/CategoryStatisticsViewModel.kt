@@ -89,7 +89,9 @@ class CategoryStatisticsViewModel(
                 onFirstDayMonthTextChanged(event.newText)
             }
 
+            is CategoryStatisticsEvent.OnCurrencySettingsClick -> onCurrencySettingsClick()
             is CategoryStatisticsEvent.OnCurrencyChanged -> onCurrencyChanged(event.newCurrency)
+            is CategoryStatisticsEvent.OnCurrencyMenuDismiss -> onCurrencyMenuDismiss()
 
             is CategoryStatisticsEvent.OnCategoryListClick -> {
                 onNavigateToCategoryList()
@@ -280,13 +282,36 @@ class CategoryStatisticsViewModel(
         }
     }
 
+    private fun onCurrencySettingsClick() {
+        _state.update {
+            it.copy(
+                isCurrencyMenuOpened = !it.isCurrencyMenuOpened
+            )
+        }
+    }
+
     private fun onCurrencyChanged(newCurrency: Currency) {
-        // TODO() Добавить логику переключения валюты
+        // TODO: реализовать пересчет баланса, списка категорий и общей суммы для новой валюты
+        if (state.value.currency.code != newCurrency.code) {
+            _state.update {
+                it.copy(
+                    currency = newCurrency,
+                    isCurrencyMenuOpened = false
+                )
+            }
+        }
+    }
+
+    private fun onCurrencyMenuDismiss() {
+        _state.update {
+            it.copy(
+                isCurrencyMenuOpened = false
+            )
+        }
     }
 
     private companion object {
         const val TWO_DECIMAL_PLACES = 2
-        const val ZERO_DECIMAL_PLACES = 0
         const val MIN_FIRST_DAY_MONTH = 1
         const val MAX_FIRST_DAY_MONTH = 28
     }

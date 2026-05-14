@@ -26,7 +26,7 @@ class CategoryStatisticsUiConverterImpl(
             ),
             percentage = numberFormatter.toStringWithPercent(
                 categoryStatistics.percentage.toDouble(),
-                TWO_DECIMAL_PLACES
+                ONE_DECIMAL_PLACE
             )
         )
     }
@@ -39,6 +39,7 @@ class CategoryStatisticsUiConverterImpl(
     }
 
     private companion object {
+        const val ONE_DECIMAL_PLACE = 1
         const val TWO_DECIMAL_PLACES = 2
     }
 }

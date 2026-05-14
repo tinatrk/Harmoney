@@ -36,11 +36,14 @@ import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.cards.HarmCard
 import com.example.harmoney.core.uilibrary.dialogs.HarmDialog
 import com.example.harmoney.core.uilibrary.drawers.HarmDrawer
+import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.Currency
+import com.example.harmoney.presentation.category.models.MenuOptions
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
@@ -114,6 +117,8 @@ fun CategoryStatisticsScreen(
             SettingsDrawerItems(
                 isThemeDark = state.isThemeDark,
                 firstDayMonth = state.firstDayMonth.toString(),
+                isCurrencyMenuOpened = state.isCurrencyMenuOpened,
+                currentCurrency = state.currency.code,
                 onEvent = onEvent
             )
         }
@@ -177,6 +182,8 @@ fun CategoryStatisticsScreen(
 private fun SettingsDrawerItems(
     isThemeDark: Boolean,
     firstDayMonth: String,
+    isCurrencyMenuOpened: Boolean,
+    currentCurrency: String,
     onEvent: (CategoryStatisticsEvent) -> Unit,
 ) {
     HarmDrawer.HarmDrawerItem(
@@ -215,6 +222,33 @@ private fun SettingsDrawerItems(
                 style = HarmTheme.typography.bodyLarge,
                 color = HarmTheme.colors.onSurface
             )
+        }
+    )
+    HarmDrawer.HarmDrawerItem(
+        label = stringResource(R.string.title_drawer_currency),
+        selected = false,
+        onClick = {
+            onEvent(
+                CategoryStatisticsEvent
+                    .OnCurrencySettingsClick
+            )
+        },
+        badge = {
+            HarmMenu.HarmDropdownMenu(
+                expanded = isCurrencyMenuOpened,
+                menuOptions = Currency.entries.sortedBy { it.code }.map {currency ->
+                    MenuOptions(
+                        text = currency.code
+                    ) { onEvent(CategoryStatisticsEvent.OnCurrencyChanged(currency)) }
+                },
+                onDismissRequest = { onEvent(CategoryStatisticsEvent.OnCurrencyMenuDismiss) }
+            ) {
+                Text(
+                    text = currentCurrency,
+                    style = HarmTheme.typography.bodyLarge,
+                    color = HarmTheme.colors.onSurface
+                )
+            }
         }
     )
     HarmDrawer.HarmDrawerItem(

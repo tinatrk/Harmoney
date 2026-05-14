@@ -64,6 +64,7 @@
     <string name="title_drawer_settings">Настройки</string>
     <string name="title_drawer_item_theme">Темная тема</string>
     <string name="title_drawer_item_first_day_month">Первый день месяца</string>
+    <string name="title_drawer_currency">Валюта всех транзакций</string>
     <string name="title_drawer_item_category_list">Список категорий</string>
 
     <!-- Заголовки и текст диалоговых окон -->

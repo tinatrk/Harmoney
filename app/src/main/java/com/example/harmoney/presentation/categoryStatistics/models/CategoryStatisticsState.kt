@@ -27,5 +27,6 @@ data class CategoryStatisticsState(
     val isFirstDayMonthError: Boolean = false,
     val firstDayMonthSupportText: String = "",
 
-    val currency: Currency = Currency.USD
+    val currency: Currency = Currency.USD,
+    val isCurrencyMenuOpened: Boolean = false
 )
