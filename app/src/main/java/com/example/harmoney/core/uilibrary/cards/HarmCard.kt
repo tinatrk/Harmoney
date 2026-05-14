@@ -21,6 +21,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -177,8 +179,11 @@ object HarmCard {
     fun HarmCategoryCardWithMenu(
         category: CategoryStatisticsUi,
         @DrawableRes iconRes: Int,
+        isMenuOpened: Boolean,
         menuOptions: List<MenuOptions>,
         onCardClick: () -> Unit,
+        onMenuClick: () -> Unit,
+        onMenuDismiss: () -> Unit,
         modifier: Modifier = Modifier,
         iconContentDescription: String?,
     ) {
@@ -196,7 +201,10 @@ object HarmCard {
                 HarmButton.HarmDropdownMenuIcon(
                     iconRes = iconRes,
                     contentDescription = iconContentDescription,
-                    menuOptions = menuOptions
+                    menuOptions = menuOptions,
+                    expanded = isMenuOpened,
+                    onMenuClick = onMenuClick,
+                    onMenuDismiss = onMenuDismiss,
                 )
             }
         )
