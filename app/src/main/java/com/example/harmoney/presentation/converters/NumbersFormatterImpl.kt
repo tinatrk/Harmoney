@@ -2,8 +2,6 @@ package com.example.harmoney.presentation.converters
 
 import com.example.harmoney.domain.models.Currency
 import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.Locale
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -25,11 +23,10 @@ class NumbersFormatterImpl : NumbersFormatter {
     }
 
     private fun toStringWithThousandSeparator(number: Number): String {
-        val decimalFormatter = DecimalFormat(
-            DECIMAL_FORMAT_PATTERN,
-            DecimalFormatSymbols(Locale.GERMANY)
-        )
-        return decimalFormatter.format(number)
+        val decimalFormatter = DecimalFormat(DECIMAL_FORMAT_PATTERN)
+        return decimalFormatter
+            .format(number)
+            .replace(SEPARATOR_COMMA, SEPARATOR_SPACE)
     }
 
     private fun toStringWithCurrency(number: String, currency: Currency): String {
@@ -62,7 +59,9 @@ class NumbersFormatterImpl : NumbersFormatter {
     }
 
     private companion object {
-        const val DECIMAL_FORMAT_PATTERN = "#,###"
+        const val SEPARATOR_COMMA = ","
+        const val SEPARATOR_SPACE = " "
+        const val DECIMAL_FORMAT_PATTERN = "#$SEPARATOR_COMMA###"
         const val PERCENT = "%"
         const val MIN_DECIMAL_PLACES = 0
         const val MAX_DECIMAL_PLACES = 6

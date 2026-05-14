@@ -7,13 +7,13 @@ import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.models.StatisticPeriod
 
 data class CategoryStatisticsState(
-    val currentBalance: String = "0,00",
+    val currentBalance: String = "0.00",
     val categoryType: CategoryType = CategoryType.Expenses,
     val selectedTabIndex: Int = CategoryType.Expenses.ordinal,
 
     val categories: List<CategoryStatisticsUi> = emptyList(),
     val pieChartCategories: List<PieChartItem> = emptyList(),
-    val total: String = "0,00",
+    val total: String = "0.00",
 
     val statisticsPeriods: List<StatisticPeriod> = StatisticPeriod.entries,
     val statisticsDate: String = "",
@@ -27,6 +27,6 @@ data class CategoryStatisticsState(
     val isFirstDayMonthError: Boolean = false,
     val firstDayMonthSupportText: String = "",
 
-    val currency: Currency = Currency.USD,
+    val currency: Currency = Currency.RUB,
     val isCurrencyMenuOpened: Boolean = false
 )

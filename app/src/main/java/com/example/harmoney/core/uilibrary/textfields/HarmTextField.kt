@@ -138,7 +138,7 @@ object HarmTextField {
                 ) {
                     Text(
                         text = if (!isFocused.value && value.isEmpty()) placeholder else label,
-                        style = typography.labelLarge,
+                        style = typography.labelMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -147,7 +147,10 @@ object HarmTextField {
             maxLines = 2,
             isError = isError,
             supportingText = {
-                Text(text = supportingText ?: "")
+                Text(
+                    text = supportingText ?: "",
+                    style = typography.labelMedium
+                )
             }
         )
     }

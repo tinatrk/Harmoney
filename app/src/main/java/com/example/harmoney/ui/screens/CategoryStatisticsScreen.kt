@@ -50,6 +50,7 @@ import com.example.harmoney.presentation.categoryStatistics.models.CategoryStati
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
 import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.CategoryUi
+import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.coroutines.launch
@@ -236,7 +237,7 @@ private fun SettingsDrawerItems(
         badge = {
             HarmMenu.HarmDropdownMenu(
                 expanded = isCurrencyMenuOpened,
-                menuOptions = Currency.entries.sortedBy { it.code }.map {currency ->
+                menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
                     MenuOptions(
                         text = currency.code
                     ) { onEvent(CategoryStatisticsEvent.OnCurrencyChanged(currency)) }
@@ -369,7 +370,8 @@ private fun CategoryStatisticsScreenDarkPreviewEmpty() {
             onEvent = {},
             state = CategoryStatisticsState(
                 isThemeDark = true,
-                statisticsDate = "01.03.2026 - 31.03.2026"
+                statisticsDate = "01.03.2026 - 31.03.2026",
+                currentBalance = "0.00 ₽"
             ),
             drawerState = drawerState
         )
@@ -385,20 +387,21 @@ private fun CategoryStatisticsScreenLightPreviewEmpty() {
             onEvent = {},
             state = CategoryStatisticsState(
                 isThemeDark = false,
-                statisticsDate = "01.03.2026 - 31.03.2026"
+                statisticsDate = "01.03.2026 - 31.03.2026",
+                currentBalance = "0.00 ₽"
             ),
             drawerState = drawerState
         )
     }
 }
 
-/*@Preview(showSystemUi = true)
+@Preview(showSystemUi = true)
 @Composable
 private fun CategoryStatisticsScreenDarkPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val categories = getPreviewDataCategoryStatistics()
-    val total = categories.sumOf { it.totalAmount }
-    val pieChartItems = getPreviewDataPieChartCategories(categories, total.toFloat())
+    val total = "26 000 ₽"
+    val pieChartItems = getPreviewDataPieChartCategories()
 
     HarmTheme(darkTheme = true) {
         CategoryStatisticsScreen(
@@ -408,7 +411,8 @@ private fun CategoryStatisticsScreenDarkPreview() {
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 categories = categories,
                 pieChartCategories = pieChartItems,
-                total = total
+                total = total,
+                currentBalance = "20 000 ₽"
             ),
             drawerState = drawerState
         )
@@ -420,8 +424,8 @@ private fun CategoryStatisticsScreenDarkPreview() {
 private fun CategoryStatisticsScreenLightPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val categories = getPreviewDataCategoryStatistics()
-    val total = categories.sumOf { it.totalAmount }
-    val pieChartItems = getPreviewDataPieChartCategories(categories, total.toFloat())
+    val total = "26 000 ₽"
+    val pieChartItems = getPreviewDataPieChartCategories()
 
     HarmTheme(darkTheme = false) {
         CategoryStatisticsScreen(
@@ -431,12 +435,13 @@ private fun CategoryStatisticsScreenLightPreview() {
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 categories = categories,
                 pieChartCategories = pieChartItems,
-                total = total
+                total = total,
+                currentBalance = "20 000 ₽"
             ),
             drawerState = drawerState
         )
     }
-}*/
+}
 
 @Preview(showSystemUi = true)
 @Composable
@@ -446,7 +451,7 @@ private fun CategoryStatisticsScreenDarkPreviewWithSettings() {
         CategoryStatisticsScreen(
             onEvent = {},
             state = CategoryStatisticsState(isThemeDark = true),
-            drawerState = drawerState
+            drawerState = drawerState,
         )
     }
 }
@@ -464,34 +469,86 @@ private fun CategoryStatisticsScreenLightPreviewWithSettings() {
     }
 }
 
+@Preview(showSystemUi = true)
+@Composable
+private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialog() {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+    HarmTheme(darkTheme = true) {
+        CategoryStatisticsScreen(
+            onEvent = {},
+            state = CategoryStatisticsState(
+                isThemeDark = true,
+                isOpenedFirstDayMonthDialog = true
+            ),
+            drawerState = drawerState
+        )
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialog() {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+    HarmTheme(darkTheme = false) {
+        CategoryStatisticsScreen(
+            onEvent = {},
+            state = CategoryStatisticsState(
+                isThemeDark = false,
+                isOpenedFirstDayMonthDialog = true
+            ),
+            drawerState = drawerState
+        )
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialogError() {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+    HarmTheme(darkTheme = true) {
+        CategoryStatisticsScreen(
+            onEvent = {},
+            state = CategoryStatisticsState(
+                isThemeDark = true,
+                isOpenedFirstDayMonthDialog = true,
+                firstDayMonthText = "90",
+                isFirstDayMonthError = true,
+                firstDayMonthSupportText = stringResource(
+                    R.string.error_incorrect_first_day_month_pattern,
+                    1,
+                    28
+                )
+            ),
+            drawerState = drawerState
+        )
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialogError() {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+    HarmTheme(darkTheme = false) {
+        CategoryStatisticsScreen(
+            onEvent = {},
+            state = CategoryStatisticsState(
+                isThemeDark = false,
+                isOpenedFirstDayMonthDialog = true,
+                firstDayMonthText = "90",
+                isFirstDayMonthError = true,
+                firstDayMonthSupportText = stringResource(
+                    R.string.error_incorrect_first_day_month_pattern,
+                    1,
+                    28
+                )
+            ),
+            drawerState = drawerState
+        )
+    }
+}
+
 private fun getPreviewDataCategoryStatistics(): List<CategoryStatisticsUi> {
     return listOf(
-        CategoryStatisticsUi(
-            category = CategoryUi(
-                id = 1,
-                name = "Products",
-                type = CategoryType.Expenses,
-                icon = CategoryIcon(
-                    ids = CategoryIcons.IC_SHOP_CART,
-                    colors = CategoryColors.VIOLET_T68
-                ),
-            ),
-            totalAmount = "3500 ₽",
-            percentage = "13%",
-        ),
-        CategoryStatisticsUi(
-            category = CategoryUi(
-                id = 1,
-                name = "Gifts",
-                type = CategoryType.Expenses,
-                icon = CategoryIcon(
-                    ids = CategoryIcons.IC_GIFT,
-                    colors = CategoryColors.ORANGE_T70
-                ),
-            ),
-            totalAmount = "7500 ₽",
-            percentage = "29%",
-        ),
         CategoryStatisticsUi(
             category = CategoryUi(
                 id = 1,
@@ -502,26 +559,60 @@ private fun getPreviewDataCategoryStatistics(): List<CategoryStatisticsUi> {
                     colors = CategoryColors.BLUE_T80
                 ),
             ),
-            totalAmount = "15000 ₽",
-            percentage = "58%",
-        )
-    ).sortedByDescending { it.totalAmount }
+            totalAmount = "15 000 ₽",
+            percentage = "57.7%",
+        ),
+        CategoryStatisticsUi(
+            category = CategoryUi(
+                id = 2,
+                name = "Gifts",
+                type = CategoryType.Expenses,
+                icon = CategoryIcon(
+                    ids = CategoryIcons.IC_GIFT,
+                    colors = CategoryColors.ORANGE_T70
+                ),
+            ),
+            totalAmount = "7 500 ₽",
+            percentage = "28.8%",
+        ),
+        CategoryStatisticsUi(
+            category = CategoryUi(
+                id = 3,
+                name = "Products",
+                type = CategoryType.Expenses,
+                icon = CategoryIcon(
+                    ids = CategoryIcons.IC_SHOP_CART,
+                    colors = CategoryColors.VIOLET_T68
+                ),
+            ),
+            totalAmount = "3 500 ₽",
+            percentage = "13.5%",
+        ),
+    )
 }
 
-/*private fun getPreviewDataPieChartCategories(
-    categories: List<CategoryStatisticsUi>,
-    total: Float
+private fun getPreviewDataPieChartCategories(
 ): List<PieChartItem> {
-    var startAngle = -90f
-    val gapAngle = 2f
-    return categories.map { category ->
-        val rawSweep = (category.totalAmount.toFloat() / total) * 360f
-        val sweepAngle = (rawSweep - gapAngle).coerceAtLeast(0f)
+    return listOf(
         PieChartItem(
-            value = category.totalAmount.toFloat(),
-            colorValue = category.category.icon.colors.background,
-            startAngle = startAngle,
-            sweepAngle = sweepAngle
-        ).also { startAngle += rawSweep }
-    }
-}*/
+            value = "15 000 ₽",
+            colorValue = CategoryColors.BLUE_T80.background,
+            startAngle = -90f,
+            sweepAngle = 205.69f,
+
+            ),
+        PieChartItem(
+            value = "7 500 ₽",
+            colorValue = CategoryColors.ORANGE_T70.background,
+            startAngle = 117.69f,
+            sweepAngle = 101.84f,
+
+            ),
+        PieChartItem(
+            value = "3 500 ₽",
+            colorValue = CategoryColors.VIOLET_T68.background,
+            startAngle = 221.53f,
+            sweepAngle = 46.46f,
+        )
+    )
+}
