@@ -54,8 +54,9 @@ object HarmTextField {
         onlyNumbers: Boolean = false,
         readOnly: Boolean = false,
         isError: Boolean = false,
+        supportingText: String? = null,
+        onDoneAction: (() -> Unit) = {},
         trailingIcon: @Composable() (() -> Unit)? = null,
-        supportingText: @Composable() (() -> Unit)? = null,
     ) {
         val isFocused = remember { mutableStateOf(false) }
         val colors = HarmTheme.colors
@@ -110,7 +111,7 @@ object HarmTextField {
                 focusedPlaceholderColor = colors.onSurfaceContainer,
                 unfocusedPlaceholderColor = colors.onSurfaceContainerLow,
                 errorTextColor = colors.error,
-                errorSupportingTextColor = colors.onError,
+                errorSupportingTextColor = colors.error,
                 errorBorderColor = colors.error,
                 errorLabelColor = colors.error,
                 errorCursorColor = colors.primary,
@@ -125,7 +126,10 @@ object HarmTextField {
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
-                onDone = { focusManager.clearFocus() }
+                onDone = {
+                    focusManager.clearFocus()
+                    onDoneAction()
+                }
             ),
             shape = RoundedCornerShape(12.dp),
             label = {
@@ -134,7 +138,7 @@ object HarmTextField {
                 ) {
                     Text(
                         text = if (!isFocused.value && value.isEmpty()) placeholder else label,
-                        style = typography.labelLarge,
+                        style = typography.labelMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -142,7 +146,12 @@ object HarmTextField {
             },
             maxLines = 2,
             isError = isError,
-            supportingText = supportingText,
+            supportingText = {
+                Text(
+                    text = supportingText ?: "",
+                    style = typography.labelMedium
+                )
+            }
         )
     }
 
@@ -158,8 +167,8 @@ object HarmTextField {
         onDateSelected: (Long?) -> Unit,
         modifier: Modifier = Modifier,
         focusManager: FocusManager = LocalFocusManager.current,
+        supportingText: String? = null,
         isError: Boolean = false,
-        supportingText: @Composable() (() -> Unit)? = null,
     ) {
         HarmBaseTextField(
             modifier = modifier

@@ -65,7 +65,7 @@ fun TransactionListScreen(
     Scaffold(
         topBar = {
             HarmTopBar.HarmCommonTopBar(
-                title = stringResource(R.string.pattern_money_russian, state.currentBalance),
+                title = stringResource(R.string.pattern_money_with_currency, state.currentBalance),
                 subtitle = stringResource(R.string.title_balance),
                 navigationIconRes = R.drawable.ic_arrow_back_24px,
                 navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),

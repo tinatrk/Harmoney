@@ -49,7 +49,7 @@
     <string name="btn_dialog_cancel_text">Отмена</string>
 
     <!-- Шаблоны с подстановкой -->
-    <string name="pattern_money_russian">%.2f ₽</string>
+    <string name="pattern_money_with_currency">%s ₽</string>
     <string name="pattern_money_percentage">%.0f%%</string>
     <string name="pattern_text_with_colon">%s:</string>
 
@@ -64,6 +64,7 @@
     <string name="title_drawer_settings">Настройки</string>
     <string name="title_drawer_item_theme">Темная тема</string>
     <string name="title_drawer_item_first_day_month">Первый день месяца</string>
+    <string name="title_drawer_currency">Валюта всех транзакций</string>
     <string name="title_drawer_item_category_list">Список категорий</string>
 
     <!-- Заголовки и текст диалоговых окон -->
@@ -81,4 +82,8 @@
     <string name="label_text_field_amount">Сумма</string>
     <string name="label_text_field_note">Комментарий</string>
     <string name="label_text_field_first_day_month">Первый день месяца</string>
+
+    <!-- errorText для textField -->
+    <string name="error_empty_field">Поле не может быть пустым</string>
+    <string name="error_incorrect_first_day_month_pattern">Введите число в диапазоне от %d до %d</string>
 </resources>

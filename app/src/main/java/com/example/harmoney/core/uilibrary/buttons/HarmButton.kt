@@ -19,14 +19,11 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -42,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
+import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.presentation.category.models.MenuOptions
 import com.example.harmoney.ui.theme.HarmTheme
@@ -329,39 +327,17 @@ object HarmButton {
     ) {
         val expanded = remember { mutableStateOf(false) }
 
-        Box(
-            modifier = modifier,
+        HarmMenu.HarmDropdownMenu(
+            expanded = expanded.value,
+            menuOptions = menuOptions,
+            onDismissRequest = {expanded.value = false},
+            modifier = modifier
         ) {
             HarmCardIconButton(
                 iconRes = iconRes,
                 contentDescription = contentDescription,
                 onClick = { expanded.value = !expanded.value }
             )
-
-            DropdownMenu(
-                expanded = expanded.value,
-                onDismissRequest = { expanded.value = false },
-                containerColor = HarmTheme.colors.surfaceContainer,
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                menuOptions.forEach { option ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = option.text,
-                                style = HarmTheme.typography.bodyMedium
-                            )
-                        },
-                        onClick = {
-                            option.onClick
-                            expanded.value = !expanded.value
-                        },
-                        colors = MenuDefaults.itemColors(
-                            textColor = HarmTheme.colors.onSurfaceVariant,
-                        )
-                    )
-                }
-            }
         }
     }
 

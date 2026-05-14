@@ -206,7 +206,7 @@ private fun CalculatorButton(
     type: CalculatorButtonType,
     onClick: () -> Unit,
 ) {
-    val colors = CalculatorButtonColors(type)
+    val colors = calculatorButtonColors(type)
     val borderColor = if (type == CalculatorButtonType.EQUALITY) {
         colors.first
     } else {
@@ -231,7 +231,7 @@ private fun CalculatorButton(
 
 /** Pair<BackgroundColor, TintColor> */
 @Composable
-private fun CalculatorButtonColors(type: CalculatorButtonType): Pair<Color, Color> {
+private fun calculatorButtonColors(type: CalculatorButtonType): Pair<Color, Color> {
     val colors = HarmTheme.colors
     return when (type) {
         CalculatorButtonType.NUMBER -> {

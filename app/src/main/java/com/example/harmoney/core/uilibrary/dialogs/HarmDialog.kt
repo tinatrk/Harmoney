@@ -119,7 +119,8 @@ object HarmDialog {
         onConfirmation: () -> Unit,
         modifier: Modifier = Modifier,
         isError: Boolean = false,
-        supportingText: @Composable() (() -> Unit)? = null,
+        supportingText: String? = null,
+        onTextFieldDoneAction: (() -> Unit) = {},
     ) {
         HarmCommonDialog(
             modifier = modifier,
@@ -139,9 +140,10 @@ object HarmDialog {
                         placeholder = stringResource(R.string.label_text_field_first_day_month),
                         label = stringResource(R.string.label_text_field_first_day_month),
                         onValueChange = onNumberChanged,
+                        onDoneAction = onTextFieldDoneAction,
                         onlyNumbers = true,
                         isError = isError,
-                        supportingText = supportingText,
+                        supportingText = supportingText
                     )
                 }
 

@@ -42,6 +42,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -76,6 +77,7 @@ dependencies {
 
     // region Other
     implementation(libs.objecthunter.exp4j)
+    implementation(libs.kotlinx.collections.immutable)
     // endregion
 }
 

@@ -35,7 +35,7 @@ import com.example.harmoney.core.uilibrary.graphics.HarmGraphic
 import com.example.harmoney.core.uilibrary.icons.HarmIcon
 import com.example.harmoney.core.uilibrary.others.HarmOther
 import com.example.harmoney.presentation.category.models.MenuOptions
-import com.example.harmoney.presentation.models.CategoryInfoUi
+import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.CategoryUi
 import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.models.StatisticPeriod
@@ -91,7 +91,7 @@ object HarmCard {
     /** A card for displaying the total amount of transactions for a category (with percentage) */
     @Composable
     fun HarmCategoryCardSumTransactions(
-        category: CategoryUi,
+        category: CategoryStatisticsUi,
         onCardClick: () -> Unit,
         modifier: Modifier = Modifier,
     ) {
@@ -100,7 +100,7 @@ object HarmCard {
             onCardClick = onCardClick,
             mainContent = {
                 HarmCategoryCardBody(
-                    modifier = Modifier.weight(1f), categoryInfo = category.info
+                    modifier = Modifier.weight(1f), categoryInfo = category.category
                 )
             },
             endContent = {
@@ -108,10 +108,7 @@ object HarmCard {
 
                 Text(
                     modifier = Modifier.wrapContentWidth(),
-                    text = stringResource(
-                        R.string.pattern_money_percentage,
-                        category.percentage
-                    ),
+                    text = category.percentage,
                     style = HarmTheme.typography.bodyLarge
                 )
 
@@ -119,7 +116,7 @@ object HarmCard {
 
                 Text(
                     modifier = Modifier.wrapContentWidth(),
-                    text = stringResource(R.string.pattern_money_russian, category.totalAmount),
+                    text = category.totalAmount,
                     style = HarmTheme.typography.bodyLarge
                 )
             }
@@ -129,8 +126,8 @@ object HarmCard {
     /** A card for displaying one transaction of a category */
     @Composable
     fun HarmCategoryCardOneTransaction(
-        categoryInfo: CategoryInfoUi,
-        transactionAmount: Float,
+        categoryInfo: CategoryUi,
+        transactionAmount: String,
         onCardClick: () -> Unit,
         transactionNote: String?,
         modifier: Modifier = Modifier,
@@ -150,7 +147,7 @@ object HarmCard {
 
                 Text(
                     modifier = Modifier.wrapContentWidth(),
-                    text = stringResource(R.string.pattern_money_russian, transactionAmount),
+                    text = transactionAmount,
                     style = HarmTheme.typography.bodyLarge
                 )
             }
@@ -160,7 +157,7 @@ object HarmCard {
     /** A card for displaying categories when creating a transaction */
     @Composable
     fun HarmSimpleCategoryCard(
-        category: CategoryUi,
+        category: CategoryStatisticsUi,
         onCardClick: () -> Unit,
         modifier: Modifier = Modifier,
     ) {
@@ -169,7 +166,7 @@ object HarmCard {
             onCardClick = onCardClick,
             mainContent = {
                 HarmCategoryCardBody(
-                    modifier = Modifier.weight(1f), categoryInfo = category.info
+                    modifier = Modifier.weight(1f), categoryInfo = category.category
                 )
             },
         )
@@ -178,7 +175,7 @@ object HarmCard {
     /** A card for displaying categories when creating a category (with dropdown menu) */
     @Composable
     fun HarmCategoryCardWithMenu(
-        category: CategoryUi,
+        category: CategoryStatisticsUi,
         @DrawableRes iconRes: Int,
         menuOptions: List<MenuOptions>,
         onCardClick: () -> Unit,
@@ -190,7 +187,7 @@ object HarmCard {
             onCardClick = onCardClick,
             mainContent = {
                 HarmCategoryCardBody(
-                    modifier = Modifier.weight(1f), categoryInfo = category.info
+                    modifier = Modifier.weight(1f), categoryInfo = category.category
                 )
             },
             endContent = {
@@ -208,7 +205,7 @@ object HarmCard {
     /** The main content that is repeated on all category cards */
     @Composable
     private fun HarmCategoryCardBody(
-        categoryInfo: CategoryInfoUi,
+        categoryInfo: CategoryUi,
         modifier: Modifier = Modifier,
         subText: String? = null
     ) {
@@ -219,7 +216,10 @@ object HarmCard {
             HarmIcon.HarmCircularCategoryIcon(
                 backgroundColorValue = categoryInfo.icon.colors.background,
                 iconRes = categoryInfo.icon.ids.resIconId,
-                contentDescription = stringResource(R.string.ic_category_desc, categoryInfo.name),
+                contentDescription = stringResource(
+                    R.string.ic_category_desc,
+                    categoryInfo.name
+                ),
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -255,7 +255,7 @@ object HarmCard {
         periods: List<StatisticPeriod>,
         data: String,
         pieChartItems: List<PieChartItem>,
-        total: Float,
+        total: String,
         selectedPeriodId: Long,
         onPeriodClick: (Long) -> Unit,
         modifier: Modifier = Modifier,
@@ -263,9 +263,19 @@ object HarmCard {
         Card(
             modifier = modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(2.dp),
+            elevation = CardDefaults.cardElevation(
+                if (pieChartItems.isEmpty()) {
+                    0.dp
+                } else {
+                    6.dp
+                }
+            ),
             colors = CardDefaults.cardColors(
-                containerColor = HarmTheme.colors.surfaceContainerHigh,
+                containerColor = if (pieChartItems.isEmpty()) {
+                    Color.Transparent
+                } else {
+                    HarmTheme.colors.surfaceContainerHigh
+                },
                 contentColor = HarmTheme.colors.onSurface,
             ),
         ) {
@@ -289,30 +299,23 @@ object HarmCard {
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (total > 0) {
+                    if (pieChartItems.isNotEmpty()) {
                         HarmGraphic.PieChart(
-                            items = pieChartItems,
-                            total = total
+                            items = pieChartItems
                         )
                         Box(
                             modifier = Modifier.size(110.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = stringResource(R.string.pattern_money_russian, total),
+                                text = total,
                                 style = HarmTheme.typography.bodyLarge,
                                 color = HarmTheme.colors.onSurface,
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis
                             )
                         }
-                    } else {
-                        Text(
-                            text = stringResource(R.string.placeholder_empty_transaction_list),
-                            style = HarmTheme.typography.titleLarge,
-                        )
                     }
-
                 }
             }
         }
@@ -322,7 +325,7 @@ object HarmCard {
     @Composable
     fun HarmCardTransactionList(
         data: String,
-        totalAmount: Float,
+        totalAmount: String,
         transactions: List<TransactionUi>,
         onTransactionClick: (Long) -> Unit,
         modifier: Modifier = Modifier,
@@ -344,7 +347,7 @@ object HarmCard {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = stringResource(R.string.pattern_money_russian, totalAmount),
+                    text = totalAmount,
                     style = HarmTheme.typography.bodyLarge,
                     color = HarmTheme.colors.onSurface,
                 )
@@ -355,7 +358,8 @@ object HarmCard {
             transactions.forEach { transaction ->
                 HarmCategoryCardOneTransaction(
                     categoryInfo = transaction.category,
-                    transactionAmount = transaction.amount,
+                    // позже transaction.amount сам будет String
+                    transactionAmount = transaction.amount.toString(),
                     onCardClick = { onTransactionClick(transaction.id) },
                     transactionNote = transaction.note
                 )
