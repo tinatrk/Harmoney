@@ -108,10 +108,7 @@ object HarmCard {
 
                 Text(
                     modifier = Modifier.wrapContentWidth(),
-                    text = category.percentage/*stringResource(
-                        R.string.pattern_money_percentage,
-                        category.percentage
-                    )*/,
+                    text = category.percentage,
                     style = HarmTheme.typography.bodyLarge
                 )
 
@@ -119,7 +116,7 @@ object HarmCard {
 
                 Text(
                     modifier = Modifier.wrapContentWidth(),
-                    text = category.totalAmount,//stringResource(R.string.pattern_money_with_currency, category.totalAmount),
+                    text = category.totalAmount,
                     style = HarmTheme.typography.bodyLarge
                 )
             }
@@ -150,7 +147,7 @@ object HarmCard {
 
                 Text(
                     modifier = Modifier.wrapContentWidth(),
-                    text = transactionAmount,//stringResource(R.string.pattern_money_with_currency, transactionAmount),
+                    text = transactionAmount,
                     style = HarmTheme.typography.bodyLarge
                 )
             }
@@ -219,7 +216,10 @@ object HarmCard {
             HarmIcon.HarmCircularCategoryIcon(
                 backgroundColorValue = categoryInfo.icon.colors.background,
                 iconRes = categoryInfo.icon.ids.resIconId,
-                contentDescription = stringResource(R.string.ic_category_desc, categoryInfo.name),
+                contentDescription = stringResource(
+                    R.string.ic_category_desc,
+                    categoryInfo.name
+                ),
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -325,7 +325,7 @@ object HarmCard {
     @Composable
     fun HarmCardTransactionList(
         data: String,
-        totalAmount: String,//Float,
+        totalAmount: String,
         transactions: List<TransactionUi>,
         onTransactionClick: (Long) -> Unit,
         modifier: Modifier = Modifier,
@@ -347,7 +347,7 @@ object HarmCard {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = totalAmount,//stringResource(R.string.pattern_money_with_currency, totalAmount),
+                    text = totalAmount,
                     style = HarmTheme.typography.bodyLarge,
                     color = HarmTheme.colors.onSurface,
                 )
@@ -358,7 +358,8 @@ object HarmCard {
             transactions.forEach { transaction ->
                 HarmCategoryCardOneTransaction(
                     categoryInfo = transaction.category,
-                    transactionAmount = transaction.amount.toString(),// позже transaction.amount сам будет String
+                    // позже transaction.amount сам будет String
+                    transactionAmount = transaction.amount.toString(),
                     onCardClick = { onTransactionClick(transaction.id) },
                     transactionNote = transaction.note
                 )

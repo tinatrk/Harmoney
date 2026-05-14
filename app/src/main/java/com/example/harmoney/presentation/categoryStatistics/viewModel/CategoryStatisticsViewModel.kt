@@ -29,7 +29,7 @@ class CategoryStatisticsViewModel(
     init {
         //TODO() считать тему из shared preferences
         //TODO() считать валюту из shared preferences
-        _state.update {
+        baseState.update {
             val categories =
                 test.getCategoriesForStatistics(
                     it.selectedStatisticsPeriod,
@@ -44,7 +44,8 @@ class CategoryStatisticsViewModel(
                 categories = formattedCategories,
                 pieChartCategories = getPieChartCategories(
                     categories = categories,
-                    categoriesAmountString = formattedCategories.map { category -> category.totalAmount }
+                    categoriesAmountString = formattedCategories
+                        .map { category -> category.totalAmount }
                 ),
                 total = numbersFormatter.toStringWithCurrency(
                     number = total,
@@ -83,8 +84,14 @@ class CategoryStatisticsViewModel(
             is CategoryStatisticsEvent.OnChangeTheme -> onThemeChanged()
 
             is CategoryStatisticsEvent.OnFirstDayMonthClick -> onFirstDayMonthClick()
-            is CategoryStatisticsEvent.OnFirstDayMonthDialogConfirm -> onFirstDayMonthDialogConfirm()
-            is CategoryStatisticsEvent.OnFirstDayMonthDialogDismiss -> onFirstDayMonthDialogDismiss()
+            is CategoryStatisticsEvent.OnFirstDayMonthDialogConfirm -> {
+                onFirstDayMonthDialogConfirm()
+            }
+
+            is CategoryStatisticsEvent.OnFirstDayMonthDialogDismiss -> {
+                onFirstDayMonthDialogDismiss()
+            }
+
             is CategoryStatisticsEvent.OnFirstDayMonthTextChanged -> {
                 onFirstDayMonthTextChanged(event.newText)
             }
@@ -100,8 +107,8 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onTabClick(newCategoryType: CategoryType) {
-        if (_state.value.categoryType.id != newCategoryType.id) {
-            _state.update {
+        if (baseState.value.categoryType.id != newCategoryType.id) {
+            baseState.update {
                 val categories =
                     test.getCategoriesForStatistics(
                         statisticPeriod = it.selectedStatisticsPeriod,
@@ -133,23 +140,23 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onNavigateToSettings() {
-        _action.tryEmit(CategoryStatisticsAction.NavigateToSettings)
+        baseAction.tryEmit(CategoryStatisticsAction.NavigateToSettings)
     }
 
     private fun onNavigateToTransactionList(categoryId: Long?) {
-        _action.tryEmit(CategoryStatisticsAction.NavigateToTransactionList(categoryId))
+        baseAction.tryEmit(CategoryStatisticsAction.NavigateToTransactionList(categoryId))
     }
 
     private fun onNavigateToTransaction() {
-        _action.tryEmit(CategoryStatisticsAction.NavigateToTransaction)
+        baseAction.tryEmit(CategoryStatisticsAction.NavigateToTransaction)
     }
 
     private fun onNavigateToCategoryList() {
-        _action.tryEmit(CategoryStatisticsAction.NavigateToCategoryList)
+        baseAction.tryEmit(CategoryStatisticsAction.NavigateToCategoryList)
     }
 
     private fun onStatisticsPeriodClick(newPeriodId: Long) {
-        _state.update {
+        baseState.update {
             val newPeriod = StatisticPeriod.fromId(newPeriodId)
             val categories = test.getCategoriesForStatistics(
                 statisticPeriod = newPeriod,
@@ -182,18 +189,15 @@ class CategoryStatisticsViewModel(
         categories: List<CategoryStatistics>,
         categoriesAmountString: List<String>,
     ): List<PieChartItem> {
-        val startAngle = -90f
-        val gapAngle = 2f
-        val minAngle = 0f
-        val maxAngle = 360f
+        val startAngle = START_ANGLE
 
         val total = categories.sumOf { it.totalAmount }.toFloat()
         val pieChartItems: MutableList<PieChartItem> = mutableListOf()
 
         var curStartAngle = startAngle
         for (i in categories.indices) {
-            val rawSweep = (categories[i].totalAmount.toFloat() / total) * maxAngle
-            val sweepAngle = (rawSweep - gapAngle).coerceAtLeast(minAngle)
+            val rawSweep = (categories[i].totalAmount.toFloat() / total) * MAX_ANGLE
+            val sweepAngle = (rawSweep - GAP_ANGLE).coerceAtLeast(MIN_ANGLE)
 
             pieChartItems.add(
                 PieChartItem(
@@ -211,9 +215,9 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onThemeChanged() {
-        _state.update {
+        baseState.update {
             it.copy(
-                isThemeDark = !_state.value.isThemeDark
+                isThemeDark = !baseState.value.isThemeDark
             )
         }
         //TODO() в будущем поменять логику на shared preferences
@@ -221,7 +225,7 @@ class CategoryStatisticsViewModel(
 
     private fun onFirstDayMonthClick() {
         if (!state.value.isOpenedFirstDayMonthDialog) {
-            _state.update {
+            baseState.update {
                 it.copy(
                     isOpenedFirstDayMonthDialog = true
                 )
@@ -236,7 +240,7 @@ class CategoryStatisticsViewModel(
         } else false
 
         if (isFirstDayCorrect) {
-            _state.update {
+            baseState.update {
                 it.copy(
                     firstDayMonth = firstDay ?: it.firstDayMonth,
                     isFirstDayMonthError = false,
@@ -249,7 +253,7 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onFirstDayMonthDialogDismiss() {
-        _state.update {
+        baseState.update {
             it.copy(
                 firstDayMonthText = it.firstDayMonth.toString(),
                 isFirstDayMonthError = false,
@@ -265,7 +269,7 @@ class CategoryStatisticsViewModel(
             firstDay in MIN_FIRST_DAY_MONTH..MAX_FIRST_DAY_MONTH
         } else false
 
-        _state.update {
+        baseState.update {
             it.copy(
                 firstDayMonthText = newText,
                 isFirstDayMonthError = !isFirstDayCorrect,
@@ -283,7 +287,7 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onCurrencySettingsClick() {
-        _state.update {
+        baseState.update {
             it.copy(
                 isCurrencyMenuOpened = !it.isCurrencyMenuOpened
             )
@@ -291,9 +295,9 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onCurrencyChanged(newCurrency: Currency) {
-        // TODO: реализовать пересчет баланса, списка категорий и общей суммы для новой валюты
+        // TODO() реализовать пересчет баланса, списка категорий и общей суммы для новой валюты
         if (state.value.currency.code != newCurrency.code) {
-            _state.update {
+            baseState.update {
                 it.copy(
                     currency = newCurrency,
                     isCurrencyMenuOpened = false
@@ -303,7 +307,7 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onCurrencyMenuDismiss() {
-        _state.update {
+        baseState.update {
             it.copy(
                 isCurrencyMenuOpened = false
             )
@@ -314,5 +318,10 @@ class CategoryStatisticsViewModel(
         const val TWO_DECIMAL_PLACES = 2
         const val MIN_FIRST_DAY_MONTH = 1
         const val MAX_FIRST_DAY_MONTH = 28
+        const val START_ANGLE = -90f
+        const val GAP_ANGLE = 2f
+        const val MIN_ANGLE = 0f
+        const val MAX_ANGLE = 360f
+
     }
 }

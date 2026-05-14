@@ -2,6 +2,7 @@ package com.example.harmoney.presentation.converters
 
 import com.example.harmoney.domain.models.Currency
 import java.text.DecimalFormat
+import java.util.Locale
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -30,7 +31,7 @@ class NumbersFormatterImpl : NumbersFormatter {
     }
 
     private fun toStringWithCurrency(number: String, currency: Currency): String {
-        return String.format("%s ${currency.symbol}", number)
+        return String.format(Locale.ENGLISH, "%s ${currency.symbol}", number)
     }
 
     override fun toStringWithPercent(number: Double, decimalPlaces: Int): String {

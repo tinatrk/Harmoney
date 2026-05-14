@@ -7,5 +7,8 @@ import kotlinx.collections.immutable.ImmutableList
 
 interface CategoryStatisticsUiConverter {
     fun map(categoryStatistics: CategoryStatistics, currency: Currency): CategoryStatisticsUi
-    fun map(categories: List<CategoryStatistics>, currency: Currency): ImmutableList<CategoryStatisticsUi>
+    fun map(
+        categories: List<CategoryStatistics>,
+        currency: Currency
+    ): ImmutableList<CategoryStatisticsUi>
 }
