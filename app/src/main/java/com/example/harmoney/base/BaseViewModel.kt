@@ -16,14 +16,14 @@ import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<Event, Action, State>(state: State) : ViewModel() {
 
-    protected val baseState = MutableStateFlow(state)
-    val state: StateFlow<State> = baseState.asStateFlow()
+    protected val writableState = MutableStateFlow(state)
+    val state: StateFlow<State> = writableState.asStateFlow()
 
-    protected val baseAction = MutableSharedFlow<Action?>(
+    protected val writableAction = MutableSharedFlow<Action?>(
         replay = 0,
         extraBufferCapacity = 1
     )
-    val action: SharedFlow<Action?> = baseAction.asSharedFlow()
+    val action: SharedFlow<Action?> = writableAction.asSharedFlow()
 
     abstract val tag: String
 

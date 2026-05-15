@@ -4,11 +4,12 @@ import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.PieChartItem
-import com.example.harmoney.presentation.models.StatisticPeriod
+import com.example.harmoney.domain.models.StatisticPeriod
 
 data class CategoryStatisticsState(
     val currentBalance: String = "0.00",
-    val categoryType: CategoryType = CategoryType.Expenses,
+    val categoryTypes: List<CategoryType> = CategoryType.entries,
+    val selectedCategoryType: CategoryType = CategoryType.Expenses,
     val selectedTabIndex: Int = CategoryType.Expenses.ordinal,
 
     val categories: List<CategoryStatisticsUi> = emptyList(),

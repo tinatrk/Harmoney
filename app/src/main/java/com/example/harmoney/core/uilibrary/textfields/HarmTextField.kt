@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
-import com.example.harmoney.core.uilibrary.others.HarmData.HarmDatePickerModal
+import com.example.harmoney.core.uilibrary.date.HarmDate.HarmDatePickerModal
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**

@@ -1,4 +1,4 @@
-package com.example.harmoney.core.uilibrary.others
+package com.example.harmoney.core.uilibrary.date
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
-import com.example.harmoney.presentation.models.StatisticPeriod
+import com.example.harmoney.domain.models.StatisticPeriod
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
@@ -35,7 +35,7 @@ import com.example.harmoney.ui.theme.HarmTheme
  * - `HarmDatePickerModal` - Date Picker Dialog
  */
 @UiLibrary
-object HarmData {
+object HarmDate {
     /** Text list of periods for statistic logic */
     @Composable
     fun HarmStatisticPeriodList(
@@ -174,7 +174,7 @@ object HarmData {
 @Composable
 private fun HarmStatisticPeriodList_DarkPreview() {
     HarmTheme(darkTheme = true) {
-        HarmData.HarmStatisticPeriodList(
+        HarmDate.HarmStatisticPeriodList(
             data = "01.03.2026 - 31.03.2026",
             periods = StatisticPeriod.entries,
             selectedPeriodId = StatisticPeriod.CURRENT_MONTH.id,
@@ -187,7 +187,7 @@ private fun HarmStatisticPeriodList_DarkPreview() {
 @Composable
 private fun HarmStatisticPeriodList_LightPreview() {
     HarmTheme(darkTheme = false) {
-        HarmData.HarmStatisticPeriodList(
+        HarmDate.HarmStatisticPeriodList(
             data = "01.03.2026 - 31.03.2026",
             periods = StatisticPeriod.entries,
             selectedPeriodId = StatisticPeriod.CURRENT_MONTH.id,
@@ -200,7 +200,7 @@ private fun HarmStatisticPeriodList_LightPreview() {
 @Composable
 private fun HarmDatePickerModal_DarkPreview() {
     HarmTheme(darkTheme = true) {
-        HarmData.HarmDatePickerModal(
+        HarmDate.HarmDatePickerModal(
             onDateSelected = {},
             onDismiss = {}
         )
@@ -211,7 +211,7 @@ private fun HarmDatePickerModal_DarkPreview() {
 @Composable
 private fun HarmDatePickerModal_LightPreview() {
     HarmTheme(darkTheme = false) {
-        HarmData.HarmDatePickerModal(
+        HarmDate.HarmDatePickerModal(
             onDateSelected = {},
             onDismiss = {}
         )

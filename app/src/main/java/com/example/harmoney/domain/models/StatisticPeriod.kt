@@ -1,4 +1,4 @@
-package com.example.harmoney.presentation.models
+package com.example.harmoney.domain.models
 
 import androidx.annotation.StringRes
 import com.example.harmoney.R

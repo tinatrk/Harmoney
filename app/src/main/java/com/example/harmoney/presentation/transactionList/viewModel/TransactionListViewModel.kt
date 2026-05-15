@@ -28,7 +28,6 @@ class TransactionListViewModel(categoryId: Long?) : ViewModel() {
         _screenState.update {
             it.copy(
                 categoryId = categoryId,
-                categoryInfo = getCategoryInfo(_screenState.value.categoryType)
             )
         }
     }
@@ -37,9 +36,16 @@ class TransactionListViewModel(categoryId: Long?) : ViewModel() {
         when (event) {
             is TransactionListEvent.OnBackClick -> onNavigateBack()
             is TransactionListEvent.OnTabClick -> onTabClick(event.categoryType)
+            is TransactionListEvent.OnStatisticsPeriodClick -> {
+                onStatisticPeriodClick(event.newPeriodId)
+            }
             is TransactionListEvent.OnFloatingButtonClick -> onCreateTransaction(event.categoryId)
             is TransactionListEvent.OnTransactionClick -> onOpenTransaction(event.transactionId)
         }
+    }
+
+    private fun onNavigateBack() {
+        _action.tryEmit(TransactionListAction.NavigateBack)
     }
 
     private fun onTabClick(newCategoryType: CategoryType) {
@@ -48,10 +54,13 @@ class TransactionListViewModel(categoryId: Long?) : ViewModel() {
                 it.copy(
                     categoryType = newCategoryType,
                     selectedTabIndex = newCategoryType.ordinal,
-                    categoryInfo = getCategoryInfo(newCategoryType),
                 )
             }
         }
+    }
+
+    private fun onStatisticPeriodClick(newPeriodId: Long) {
+
     }
 
     private fun onCreateTransaction(categoryId: Long?) {
@@ -60,16 +69,5 @@ class TransactionListViewModel(categoryId: Long?) : ViewModel() {
 
     private fun onOpenTransaction(transactionId: Long?) {
         _action.tryEmit(TransactionListAction.NavigateToOpeningTransaction(transactionId))
-    }
-
-    private fun onNavigateBack() {
-        _action.tryEmit(TransactionListAction.NavigateBack)
-    }
-
-    private fun getCategoryInfo(categoryType: CategoryType): String {
-        return when (categoryType) {
-            CategoryType.Expenses -> "Информация по расходам"
-            CategoryType.Income -> "Информация по доходам"
-        }
     }
 }

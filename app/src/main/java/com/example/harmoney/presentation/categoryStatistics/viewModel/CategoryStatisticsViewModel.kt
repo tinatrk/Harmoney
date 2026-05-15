@@ -12,7 +12,8 @@ import com.example.harmoney.presentation.categoryStatistics.models.CategoryStati
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverter
 import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.models.PieChartItem
-import com.example.harmoney.presentation.models.StatisticPeriod
+import com.example.harmoney.domain.models.StatisticPeriod
+import com.example.harmoney.presentation.test.TestDataSource
 import kotlinx.coroutines.flow.update
 
 class CategoryStatisticsViewModel(
@@ -29,11 +30,11 @@ class CategoryStatisticsViewModel(
     init {
         //TODO() считать тему из shared preferences
         //TODO() считать валюту из shared preferences
-        baseState.update {
+        writableState.update {
             val categories =
                 test.getCategoriesForStatistics(
                     it.selectedStatisticsPeriod,
-                    it.categoryType
+                    it.selectedCategoryType
                 )
             val formattedCategories = categoryConverter.map(categories, it.currency)
 
@@ -107,8 +108,8 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onTabClick(newCategoryType: CategoryType) {
-        if (baseState.value.categoryType.id != newCategoryType.id) {
-            baseState.update {
+        if (writableState.value.selectedCategoryType.id != newCategoryType.id) {
+            writableState.update {
                 val categories =
                     test.getCategoriesForStatistics(
                         statisticPeriod = it.selectedStatisticsPeriod,
@@ -119,7 +120,7 @@ class CategoryStatisticsViewModel(
                 val total = categories.sumOf { category -> category.totalAmount }
 
                 it.copy(
-                    categoryType = newCategoryType,
+                    selectedCategoryType = newCategoryType,
                     selectedTabIndex = newCategoryType.ordinal,
                     categories = categoryConverter.map(categories, it.currency),
                     pieChartCategories = getPieChartCategories(
@@ -140,27 +141,27 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onNavigateToSettings() {
-        baseAction.tryEmit(CategoryStatisticsAction.NavigateToSettings)
+        writableAction.tryEmit(CategoryStatisticsAction.NavigateToSettings)
     }
 
     private fun onNavigateToTransactionList(categoryId: Long?) {
-        baseAction.tryEmit(CategoryStatisticsAction.NavigateToTransactionList(categoryId))
+        writableAction.tryEmit(CategoryStatisticsAction.NavigateToTransactionList(categoryId))
     }
 
     private fun onNavigateToTransaction() {
-        baseAction.tryEmit(CategoryStatisticsAction.NavigateToTransaction)
+        writableAction.tryEmit(CategoryStatisticsAction.NavigateToTransaction)
     }
 
     private fun onNavigateToCategoryList() {
-        baseAction.tryEmit(CategoryStatisticsAction.NavigateToCategoryList)
+        writableAction.tryEmit(CategoryStatisticsAction.NavigateToCategoryList)
     }
 
     private fun onStatisticsPeriodClick(newPeriodId: Long) {
-        baseState.update {
+        writableState.update {
             val newPeriod = StatisticPeriod.fromId(newPeriodId)
             val categories = test.getCategoriesForStatistics(
                 statisticPeriod = newPeriod,
-                categoryType = it.categoryType
+                categoryType = it.selectedCategoryType
             )
             val formattedCategories = categoryConverter.map(categories, it.currency)
             val total = categories.sumOf { category -> category.totalAmount }
@@ -215,9 +216,9 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onThemeChanged() {
-        baseState.update {
+        writableState.update {
             it.copy(
-                isThemeDark = !baseState.value.isThemeDark
+                isThemeDark = !writableState.value.isThemeDark
             )
         }
         //TODO() в будущем поменять логику на shared preferences
@@ -225,7 +226,7 @@ class CategoryStatisticsViewModel(
 
     private fun onFirstDayMonthClick() {
         if (!state.value.isOpenedFirstDayMonthDialog) {
-            baseState.update {
+            writableState.update {
                 it.copy(
                     isOpenedFirstDayMonthDialog = true
                 )
@@ -240,7 +241,7 @@ class CategoryStatisticsViewModel(
         } else false
 
         if (isFirstDayCorrect) {
-            baseState.update {
+            writableState.update {
                 it.copy(
                     firstDayMonth = firstDay ?: it.firstDayMonth,
                     isFirstDayMonthError = false,
@@ -253,7 +254,7 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onFirstDayMonthDialogDismiss() {
-        baseState.update {
+        writableState.update {
             it.copy(
                 firstDayMonthText = it.firstDayMonth.toString(),
                 isFirstDayMonthError = false,
@@ -269,7 +270,7 @@ class CategoryStatisticsViewModel(
             firstDay in MIN_FIRST_DAY_MONTH..MAX_FIRST_DAY_MONTH
         } else false
 
-        baseState.update {
+        writableState.update {
             it.copy(
                 firstDayMonthText = newText,
                 isFirstDayMonthError = !isFirstDayCorrect,
@@ -287,7 +288,7 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onCurrencySettingsClick() {
-        baseState.update {
+        writableState.update {
             it.copy(
                 isCurrencyMenuOpened = !it.isCurrencyMenuOpened
             )
@@ -297,7 +298,7 @@ class CategoryStatisticsViewModel(
     private fun onCurrencyChanged(newCurrency: Currency) {
         // TODO() реализовать пересчет баланса, списка категорий и общей суммы для новой валюты
         if (state.value.currency.code != newCurrency.code) {
-            baseState.update {
+            writableState.update {
                 it.copy(
                     currency = newCurrency,
                     isCurrencyMenuOpened = false
@@ -309,7 +310,7 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onCurrencyMenuDismiss() {
-        baseState.update {
+        writableState.update {
             it.copy(
                 isCurrencyMenuOpened = false
             )

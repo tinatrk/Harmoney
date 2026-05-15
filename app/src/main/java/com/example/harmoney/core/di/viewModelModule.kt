@@ -7,7 +7,7 @@ import com.example.harmoney.presentation.calculator.viewModel.CalculatorViewMode
 import com.example.harmoney.presentation.category.viewModel.CategoryViewModel
 import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
-import com.example.harmoney.presentation.categoryStatistics.viewModel.TestDataSource
+import com.example.harmoney.presentation.test.TestDataSource
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverter
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverterImpl
 import com.example.harmoney.presentation.converters.CategoryUiConverter

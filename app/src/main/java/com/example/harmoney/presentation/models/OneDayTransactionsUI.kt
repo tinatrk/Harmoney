@@ -1,7 +1,7 @@
 package com.example.harmoney.presentation.models
 
 data class OneDayTransactionsUI(
-    val data: String,
+    val date: String,
     val transactions: List<TransactionUi>,
     val totalAmount: String,
 )

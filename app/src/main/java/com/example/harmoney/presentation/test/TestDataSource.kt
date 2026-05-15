@@ -1,4 +1,4 @@
-package com.example.harmoney.presentation.categoryStatistics.viewModel
+package com.example.harmoney.presentation.test
 
 import com.example.harmoney.domain.models.Category
 import com.example.harmoney.domain.models.CategoryColors
@@ -6,8 +6,9 @@ import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.OneDayTransactions
 import com.example.harmoney.domain.models.Transaction
-import com.example.harmoney.presentation.models.StatisticPeriod
+import com.example.harmoney.domain.models.StatisticPeriod
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -290,6 +291,30 @@ class TestDataSource {
             filteredTransactions
         }
 
+    }
+
+    fun getTransactionList(
+        statisticPeriod: StatisticPeriod,
+        categoryType: CategoryType,
+        categoryId: Long?
+    ) : List<OneDayTransactions> {
+        val filteredTransactions = if (categoryId != null) {
+            getTransactions(statisticPeriod, categoryType).filter { it.category.id == categoryId }
+        } else {
+            getTransactions(statisticPeriod, categoryType)
+        }
+        val total = filteredTransactions.sumOf { it.amount }
+
+        val days = filteredTransactions.map { it.date }.distinct().sortedDescending()
+
+        return days.map { day ->
+            val transactions = filteredTransactions.filter { it.date.isEqual(day) }
+            OneDayTransactions(
+                date = day,
+                transactions = transactions,
+                totalAmount = transactions.sumOf { it.amount }
+            )
+        }
     }
 
     private companion object {

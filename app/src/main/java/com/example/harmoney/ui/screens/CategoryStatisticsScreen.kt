@@ -161,7 +161,7 @@ fun CategoryStatisticsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(paddingValues),
-                tabs = CategoryType.entries,
+                tabs = state.categoryTypes,
                 selectedTabIndex = state.selectedTabIndex,
                 onTabClick = { categoryType ->
                     onEvent(
