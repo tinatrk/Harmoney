@@ -306,7 +306,7 @@ object HarmCard {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(1f / 2),
                     contentAlignment = Alignment.Center
                 ) {
                     if (pieChartItems.isNotEmpty()) {
@@ -630,7 +630,7 @@ private fun getPreviewTransactionList(): List<TransactionUi> {
                     colors = CategoryColors.PINK_T75
                 ),
             ),
-               amount = "2 000 ₽",
+            amount = "2 000 ₽",
             note = "На ужин"
         ),
         TransactionUi(
