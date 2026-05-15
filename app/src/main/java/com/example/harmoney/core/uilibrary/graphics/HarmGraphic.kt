@@ -20,7 +20,7 @@ import com.example.harmoney.ui.theme.HarmTheme
 
 @UiLibrary
 object HarmGraphic {
-    private const val PIE_STROKE_WIDTH_PX = 52f
+    const val PIE_STROKE_WIDTH_PX = 52f
 
     @Composable
     fun PieChart(
