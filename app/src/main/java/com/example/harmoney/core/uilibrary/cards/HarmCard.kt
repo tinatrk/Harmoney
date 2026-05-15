@@ -33,7 +33,7 @@ import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.graphics.HarmGraphic
 import com.example.harmoney.core.uilibrary.icons.HarmIcon
-import com.example.harmoney.core.uilibrary.others.HarmOther
+import com.example.harmoney.core.uilibrary.others.HarmData
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
@@ -296,7 +296,7 @@ object HarmCard {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                HarmOther.HarmStatisticPeriodList(
+                HarmData.HarmStatisticPeriodList(
                     data = data,
                     periods = periods,
                     selectedPeriodId = selectedPeriodId,

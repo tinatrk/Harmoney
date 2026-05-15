@@ -13,10 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
+import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
@@ -126,6 +128,128 @@ object HarmTopBar {
             navigationIconDesc =
                 navigationIconDesc ?: stringResource(R.string.ic_arrow_back_desc),
             onNavigationIconClick = onNavigationIconClick,
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmSimpleTopBar_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmTopBar.HarmSimpleTopBar(
+            title = stringResource(R.string.title_top_app_bar_create_transaction),
+            onNavigationIconClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmSimpleTopBar_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmTopBar.HarmSimpleTopBar(
+            title = stringResource(R.string.title_top_app_bar_create_transaction),
+            onNavigationIconClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun TwoIconsCenterTitleTopBar_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmTopBar.HarmCommonTopBar(
+            title = "100 000 ₽",
+            subtitle = stringResource(R.string.title_balance),
+            navigationIconRes = R.drawable.ic_drawer_menu_24px,
+            navigationIconDesc = stringResource(R.string.ic_drawer_menu_desc),
+            onNavigationIconClick = {},
+            actionIconRes = R.drawable.ic_list_24px,
+            actionIconDesc = stringResource(R.string.ic_list_desc),
+            onActionIconClick = {},
+            isTitleCenterAlignment = true
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun TwoIconsCenterTitleTopBar_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmTopBar.HarmCommonTopBar(
+            title = "100 000 ₽",
+            subtitle = stringResource(R.string.title_balance),
+            navigationIconRes = R.drawable.ic_drawer_menu_24px,
+            navigationIconDesc = stringResource(R.string.ic_drawer_menu_desc),
+            onNavigationIconClick = {},
+            actionIconRes = R.drawable.ic_list_24px,
+            actionIconDesc = stringResource(R.string.ic_list_desc),
+            onActionIconClick = {},
+            isTitleCenterAlignment = true
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun OneIconCenterTitle_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmTopBar.HarmCommonTopBar(
+            title = "100 000 ₽",
+            subtitle = stringResource(R.string.title_balance),
+            navigationIconRes = R.drawable.ic_arrow_back_24px,
+            navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
+            onNavigationIconClick = {},
+            isTitleCenterAlignment = true
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun OneIconCenterTitle_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmTopBar.HarmCommonTopBar(
+            title = "100 000 ₽",
+            subtitle = stringResource(R.string.title_balance),
+            navigationIconRes = R.drawable.ic_arrow_back_24px,
+            navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
+            onNavigationIconClick = {},
+            isTitleCenterAlignment = true
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun TwoIconsTopBar_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmTopBar.HarmCommonTopBar(
+            title = stringResource(R.string.title_top_app_bar_category_list),
+            navigationIconRes = R.drawable.ic_arrow_back_24px,
+            navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
+            onNavigationIconClick = {},
+            actionIconRes = R.drawable.ic_swap_vert_24px,
+            actionIconDesc = stringResource(R.string.ic_swap_vert_desc),
+            onActionIconClick = {},
+            isTitleCenterAlignment = false
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun TwoIconsTopBar_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmTopBar.HarmCommonTopBar(
+            title = stringResource(R.string.title_top_app_bar_category_list),
+            navigationIconRes = R.drawable.ic_arrow_back_24px,
+            navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
+            onNavigationIconClick = {},
+            actionIconRes = R.drawable.ic_swap_vert_24px,
+            actionIconDesc = stringResource(R.string.ic_swap_vert_desc),
+            onActionIconClick = {},
+            isTitleCenterAlignment = false
         )
     }
 }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
@@ -33,7 +35,7 @@ import com.example.harmoney.ui.theme.HarmTheme
  * - `HarmDatePickerModal` - Date Picker Dialog
  */
 @UiLibrary
-object HarmOther {
+object HarmData {
     /** Text list of periods for statistic logic */
     @Composable
     fun HarmStatisticPeriodList(
@@ -43,56 +45,58 @@ object HarmOther {
         onPeriodClick: (Long) -> Unit,
         modifier: Modifier = Modifier,
     ) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            periods.forEach { period ->
+        Column(modifier = modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                periods.forEach { period ->
 
-                val borderColor = if (period.id == selectedPeriodId) {
-                    HarmTheme.colors.primary
-                } else {
-                    Color.Transparent
-                }
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 6.dp)
-                        .border(
-                            width = 1.dp, color = borderColor,
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(horizontal = 6.dp, vertical = 4.dp)
-
-                        .clickable { onPeriodClick(period.id) },
-                    text = stringResource(period.textRes),
-                    style = if (period.id == selectedPeriodId) {
-                        HarmTheme.typography.titleSmallSemiBold
-                    } else {
-                        HarmTheme.typography.titleSmall
-                    },
-                    color = if (period.id == selectedPeriodId) {
+                    val borderColor = if (period.id == selectedPeriodId) {
                         HarmTheme.colors.primary
                     } else {
-                        HarmTheme.colors.onSurfaceContainer
-                    },
+                        Color.Transparent
+                    }
+                    Text(
+                        modifier = Modifier
+                            .padding(horizontal = 6.dp)
+                            .border(
+                                width = 1.dp, color = borderColor,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 6.dp, vertical = 4.dp)
+
+                            .clickable { onPeriodClick(period.id) },
+                        text = stringResource(period.textRes),
+                        style = if (period.id == selectedPeriodId) {
+                            HarmTheme.typography.titleSmallSemiBold
+                        } else {
+                            HarmTheme.typography.titleSmall
+                        },
+                        color = if (period.id == selectedPeriodId) {
+                            HarmTheme.colors.primary
+                        } else {
+                            HarmTheme.colors.onSurfaceContainer
+                        },
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = data,
+                    style = HarmTheme.typography.titleSmall,
+                    color = HarmTheme.colors.onSurface
                 )
             }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = data,
-                style = HarmTheme.typography.titleSmall,
-                color = HarmTheme.colors.onSurface
-            )
         }
     }
 
@@ -163,5 +167,53 @@ object HarmOther {
                 showModeToggle = false,
             )
         }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmStatisticPeriodList_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmData.HarmStatisticPeriodList(
+            data = "01.03.2026 - 31.03.2026",
+            periods = StatisticPeriod.entries,
+            selectedPeriodId = StatisticPeriod.CURRENT_MONTH.id,
+            onPeriodClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmStatisticPeriodList_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmData.HarmStatisticPeriodList(
+            data = "01.03.2026 - 31.03.2026",
+            periods = StatisticPeriod.entries,
+            selectedPeriodId = StatisticPeriod.CURRENT_MONTH.id,
+            onPeriodClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmDatePickerModal_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmData.HarmDatePickerModal(
+            onDateSelected = {},
+            onDismiss = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmDatePickerModal_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmData.HarmDatePickerModal(
+            onDateSelected = {},
+            onDismiss = {}
+        )
     }
 }
