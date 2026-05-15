@@ -30,10 +30,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
-import com.example.harmoney.core.uilibrary.others.HarmOther.HarmDatePickerModal
+import com.example.harmoney.core.uilibrary.others.HarmData.HarmDatePickerModal
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
@@ -146,11 +147,13 @@ object HarmTextField {
             },
             maxLines = 2,
             isError = isError,
-            supportingText = {
-                Text(
-                    text = supportingText ?: "",
-                    style = typography.labelMedium
-                )
+            supportingText = supportingText?.let {
+                {
+                    Text(
+                        text = supportingText,
+                        style = typography.labelMedium
+                    )
+                }
             }
         )
     }
@@ -204,5 +207,119 @@ object HarmTextField {
                 onDismiss = onDismiss
             )
         }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmBaseTextField_EmptyDarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmTextField.HarmBaseTextField(
+            value = "",
+            placeholder = "Введите сумму",
+            label = "Сумма",
+            onValueChange = {},
+            trailingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_calculator_24px),
+                    contentDescription = null
+                )
+            }
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmBaseTextField_EmptyLightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmTextField.HarmBaseTextField(
+            value = "",
+            placeholder = "Введите сумму",
+            label = "Сумма",
+            onValueChange = {},
+            trailingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_calculator_24px),
+                    contentDescription = null
+                )
+            }
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmBaseTextField_UnfocusedDarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmTextField.HarmBaseTextField(
+            value = "5000",
+            placeholder = "Введите сумму",
+            label = "Сумма",
+            onValueChange = {},
+            trailingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_calculator_24px),
+                    contentDescription = null
+                )
+            }
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmBaseTextField_UnfocusedLightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmTextField.HarmBaseTextField(
+            value = "5000",
+            placeholder = "Введите сумму",
+            label = "Сумма",
+            onValueChange = {},
+            trailingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_calculator_24px),
+                    contentDescription = null
+                )
+            }
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmBaseTextField_ErrorDarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmTextField.HarmBaseTextField(
+            value = "90",
+            placeholder = "Введите первый день месяца",
+            label = "Первый день месяца",
+            onValueChange = {},
+            isError = true,
+            supportingText = stringResource(
+                R.string.error_incorrect_first_day_month_pattern,
+                1,
+                28
+            )
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmBaseTextField_ErrorLightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmTextField.HarmBaseTextField(
+            value = "90",
+            placeholder = "Введите первый день месяца",
+            label = "Первый день месяца",
+            onValueChange = {},
+            isError = true,
+            supportingText = stringResource(
+                R.string.error_incorrect_first_day_month_pattern,
+                1,
+                28
+            )
+        )
     }
 }

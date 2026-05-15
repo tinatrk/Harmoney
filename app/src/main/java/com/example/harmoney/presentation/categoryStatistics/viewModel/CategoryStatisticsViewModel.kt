@@ -303,6 +303,8 @@ class CategoryStatisticsViewModel(
                     isCurrencyMenuOpened = false
                 )
             }
+        } else {
+            onCurrencyMenuDismiss()
         }
     }
 

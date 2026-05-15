@@ -10,8 +10,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
+import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
@@ -38,6 +41,30 @@ object HarmIcon {
             painter = painterResource(iconRes),
             contentDescription = contentDescription,
             tint = HarmTheme.colors.borderAndScrim
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCircularCategoryIcon_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmIcon.HarmCircularCategoryIcon(
+            backgroundColorValue = CategoryColors.PINK_T75.background,
+            iconRes = R.drawable.ic_shop_cart_24px,
+            contentDescription = null
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCircularCategoryIcon_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmIcon.HarmCircularCategoryIcon(
+            backgroundColorValue = CategoryColors.PINK_T75.background,
+            iconRes = R.drawable.ic_shop_cart_24px,
+            contentDescription = null
         )
     }
 }

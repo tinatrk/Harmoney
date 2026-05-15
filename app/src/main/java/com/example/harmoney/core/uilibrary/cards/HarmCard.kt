@@ -9,11 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,19 +19,27 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.graphics.HarmGraphic
 import com.example.harmoney.core.uilibrary.icons.HarmIcon
-import com.example.harmoney.core.uilibrary.others.HarmOther
+import com.example.harmoney.core.uilibrary.others.HarmData
+import com.example.harmoney.domain.models.CategoryColors
+import com.example.harmoney.domain.models.CategoryIcon
+import com.example.harmoney.domain.models.CategoryIcons
+import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.presentation.category.models.MenuOptions
 import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.CategoryUi
@@ -75,7 +81,7 @@ object HarmCard {
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -177,8 +183,11 @@ object HarmCard {
     fun HarmCategoryCardWithMenu(
         category: CategoryStatisticsUi,
         @DrawableRes iconRes: Int,
+        isMenuOpened: Boolean,
         menuOptions: List<MenuOptions>,
         onCardClick: () -> Unit,
+        onMenuClick: () -> Unit,
+        onMenuDismiss: () -> Unit,
         modifier: Modifier = Modifier,
         iconContentDescription: String?,
     ) {
@@ -196,7 +205,10 @@ object HarmCard {
                 HarmButton.HarmDropdownMenuIcon(
                     iconRes = iconRes,
                     contentDescription = iconContentDescription,
-                    menuOptions = menuOptions
+                    menuOptions = menuOptions,
+                    expanded = isMenuOpened,
+                    onMenuClick = onMenuClick,
+                    onMenuDismiss = onMenuDismiss,
                 )
             }
         )
@@ -260,6 +272,14 @@ object HarmCard {
         onPeriodClick: (Long) -> Unit,
         modifier: Modifier = Modifier,
     ) {
+        val screenDensity = LocalDensity.current.density
+        // отступ, чтобы total был строго внутри pieChart
+        val additionalPadding = remember {
+            mutableFloatStateOf(
+                (HarmGraphic.PIE_STROKE_WIDTH_PX / screenDensity)
+            )
+        }
+
         Card(
             modifier = modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
@@ -286,7 +306,7 @@ object HarmCard {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                HarmOther.HarmStatisticPeriodList(
+                HarmData.HarmStatisticPeriodList(
                     data = data,
                     periods = periods,
                     selectedPeriodId = selectedPeriodId,
@@ -296,7 +316,7 @@ object HarmCard {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(1f / 2),
                     contentAlignment = Alignment.Center
                 ) {
                     if (pieChartItems.isNotEmpty()) {
@@ -304,7 +324,9 @@ object HarmCard {
                             items = pieChartItems
                         )
                         Box(
-                            modifier = Modifier.size(110.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(additionalPadding.floatValue.dp + 12.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -358,8 +380,7 @@ object HarmCard {
             transactions.forEach { transaction ->
                 HarmCategoryCardOneTransaction(
                     categoryInfo = transaction.category,
-                    // позже transaction.amount сам будет String
-                    transactionAmount = transaction.amount.toString(),
+                    transactionAmount = transaction.amount,
                     onCardClick = { onTransactionClick(transaction.id) },
                     transactionNote = transaction.note
                 )
@@ -367,4 +388,301 @@ object HarmCard {
             }
         }
     }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCategoryCardSumTransactions_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmCard.HarmCategoryCardSumTransactions(
+            category = CategoryStatisticsUi(
+                category = CategoryUi(
+                    id = 0,
+                    name = "Продукты",
+                    type = CategoryType.Expenses,
+                    icon = CategoryIcon(
+                        ids = CategoryIcons.IC_SHOP_CART,
+                        colors = CategoryColors.PINK_T75
+                    )
+                ),
+                totalAmount = "2 000 ₽",
+                percentage = "10.0%"
+            ),
+            onCardClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCategoryCardSumTransactions_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmCard.HarmCategoryCardSumTransactions(
+            category = CategoryStatisticsUi(
+                category = CategoryUi(
+                    id = 0,
+                    name = "Продукты",
+                    type = CategoryType.Expenses,
+                    icon = CategoryIcon(
+                        ids = CategoryIcons.IC_SHOP_CART,
+                        colors = CategoryColors.PINK_T75
+                    )
+                ),
+                totalAmount = "2 000 ₽",
+                percentage = "10.0%"
+            ),
+            onCardClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCategoryCardOneTransaction_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmCard.HarmCategoryCardOneTransaction(
+            categoryInfo = CategoryUi(
+                id = 0,
+                name = "Продукты",
+                type = CategoryType.Expenses,
+                icon = CategoryIcon(
+                    ids = CategoryIcons.IC_SHOP_CART,
+                    colors = CategoryColors.PINK_T75
+                )
+            ),
+            transactionAmount = "2 000 ₽",
+            transactionNote = "На ужин",
+            onCardClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCategoryCardOneTransaction_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmCard.HarmCategoryCardOneTransaction(
+            categoryInfo = CategoryUi(
+                id = 0,
+                name = "Продукты",
+                type = CategoryType.Expenses,
+                icon = CategoryIcon(
+                    ids = CategoryIcons.IC_SHOP_CART,
+                    colors = CategoryColors.PINK_T75
+                )
+            ),
+            transactionAmount = "2 000 ₽",
+            transactionNote = "На ужин",
+            onCardClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmSimpleCategoryCard_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmCard.HarmSimpleCategoryCard(
+            category = CategoryStatisticsUi(
+                category = CategoryUi(
+                    id = 0,
+                    name = "Продукты",
+                    type = CategoryType.Expenses,
+                    icon = CategoryIcon(
+                        ids = CategoryIcons.IC_SHOP_CART,
+                        colors = CategoryColors.PINK_T75
+                    )
+                ),
+                totalAmount = "2 000 ₽",
+                percentage = "10.0%"
+            ),
+            onCardClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmSimpleCategoryCard_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmCard.HarmSimpleCategoryCard(
+            category = CategoryStatisticsUi(
+                category = CategoryUi(
+                    id = 0,
+                    name = "Продукты",
+                    type = CategoryType.Expenses,
+                    icon = CategoryIcon(
+                        ids = CategoryIcons.IC_SHOP_CART,
+                        colors = CategoryColors.PINK_T75
+                    )
+                ),
+                totalAmount = "2 000 ₽",
+                percentage = "10.0%"
+            ),
+            onCardClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCategoryCardWithMenu_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmCard.HarmCategoryCardWithMenu(
+            category = CategoryStatisticsUi(
+                category = CategoryUi(
+                    id = 0,
+                    name = "Продукты",
+                    type = CategoryType.Expenses,
+                    icon = CategoryIcon(
+                        ids = CategoryIcons.IC_SHOP_CART,
+                        colors = CategoryColors.PINK_T75
+                    )
+                ),
+                totalAmount = "2 000 ₽",
+                percentage = "10.0%"
+            ),
+            onCardClick = {},
+            iconRes = R.drawable.ic_menu_24px,
+            iconContentDescription = null,
+            isMenuOpened = true,
+            menuOptions = listOf(
+                MenuOptions(stringResource(R.string.ic_edit_desc), {}),
+                MenuOptions(stringResource(R.string.ic_delete_desc), {}),
+            ),
+            onMenuClick = {},
+            onMenuDismiss = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCategoryCardWithMenu_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmCard.HarmCategoryCardWithMenu(
+            category = CategoryStatisticsUi(
+                category = CategoryUi(
+                    id = 0,
+                    name = "Продукты",
+                    type = CategoryType.Expenses,
+                    icon = CategoryIcon(
+                        ids = CategoryIcons.IC_SHOP_CART,
+                        colors = CategoryColors.PINK_T75
+                    )
+                ),
+                totalAmount = "2 000 ₽",
+                percentage = "10.0%"
+            ),
+            onCardClick = {},
+            iconRes = R.drawable.ic_menu_24px,
+            iconContentDescription = null,
+            isMenuOpened = true,
+            menuOptions = listOf(
+                MenuOptions(stringResource(R.string.ic_edit_desc), {}),
+                MenuOptions(stringResource(R.string.ic_delete_desc), {}),
+            ),
+            onMenuClick = {},
+            onMenuDismiss = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCardTransactionList_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmCard.HarmCardTransactionList(
+            data = "01.03.2026",
+            transactions = getPreviewTransactionList(),
+            onTransactionClick = {},
+            totalAmount = "5 000 ₽"
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCardTransactionList_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmCard.HarmCardTransactionList(
+            data = "01.03.2026",
+            transactions = getPreviewTransactionList(),
+            onTransactionClick = {},
+            totalAmount = "5 000 ₽"
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmStatisticCard_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmCard.HarmStatisticCard(
+            periods = StatisticPeriod.entries,
+            data = "01.03.2026 - 31.03.2026",
+            pieChartItems = getPreviewDataPieChartCategories(),
+            selectedPeriodId = StatisticPeriod.CURRENT_MONTH.id,
+            onPeriodClick = {},
+            total = "5 000 ₽"
+        )
+    }
+}
+
+private fun getPreviewTransactionList(): List<TransactionUi> {
+    return listOf(
+        TransactionUi(
+            id = 1,
+            category = CategoryUi(
+                id = 1,
+                name = "Продукты",
+                type = CategoryType.Expenses,
+                icon = CategoryIcon(
+                    ids = CategoryIcons.IC_SHOP_CART,
+                    colors = CategoryColors.PINK_T75
+                ),
+            ),
+            amount = "2 000 ₽",
+            note = "На ужин"
+        ),
+        TransactionUi(
+            id = 2,
+            category = CategoryUi(
+                id = 2,
+                name = "Подарки",
+                type = CategoryType.Expenses,
+                icon = CategoryIcon(
+                    ids = CategoryIcons.IC_GIFT,
+                    colors = CategoryColors.VIOLET_T68
+                ),
+            ),
+            amount = "3 000 ₽",
+        )
+    )
+}
+
+private fun getPreviewDataPieChartCategories(
+): List<PieChartItem> {
+    return listOf(
+        PieChartItem(
+            value = "15 000 ₽",
+            colorValue = CategoryColors.BLUE_T80.background,
+            startAngle = -90f,
+            sweepAngle = 205.69f,
+
+            ),
+        PieChartItem(
+            value = "7 500 ₽",
+            colorValue = CategoryColors.ORANGE_T70.background,
+            startAngle = 117.69f,
+            sweepAngle = 101.84f,
+
+            ),
+        PieChartItem(
+            value = "3 500 ₽",
+            colorValue = CategoryColors.VIOLET_T68.background,
+            startAngle = 221.53f,
+            sweepAngle = 46.46f,
+        )
+    )
 }

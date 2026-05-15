@@ -28,14 +28,13 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
@@ -321,22 +320,23 @@ object HarmButton {
     @Composable
     fun HarmDropdownMenuIcon(
         @DrawableRes iconRes: Int,
+        expanded: Boolean,
         menuOptions: List<MenuOptions>,
         contentDescription: String?,
+        onMenuClick: () -> Unit,
+        onMenuDismiss: () -> Unit,
         modifier: Modifier = Modifier,
     ) {
-        val expanded = remember { mutableStateOf(false) }
-
         HarmMenu.HarmDropdownMenu(
-            expanded = expanded.value,
+            expanded = expanded,
             menuOptions = menuOptions,
-            onDismissRequest = {expanded.value = false},
+            onDismissRequest = onMenuDismiss,
             modifier = modifier
         ) {
             HarmCardIconButton(
                 iconRes = iconRes,
                 contentDescription = contentDescription,
-                onClick = { expanded.value = !expanded.value }
+                onClick = onMenuClick
             )
         }
     }
@@ -369,8 +369,7 @@ object HarmButton {
         checked: Boolean,
         onCheckChanged: (Boolean) -> Unit,
         modifier: Modifier = Modifier,
-
-        ) {
+    ) {
         Row(
             modifier = modifier
                 .padding(vertical = 8.dp)
@@ -429,6 +428,405 @@ object HarmButton {
                 checkedBorderColor = Color.Transparent,
                 uncheckedBorderColor = colors.outline,
             )
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmTopBarIconButton_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmTopBarIconButton(
+            iconRes = R.drawable.ic_arrow_back_24px,
+            contentDescription = null,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmTopBarIconButton_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmTopBarIconButton(
+            iconRes = R.drawable.ic_arrow_back_24px,
+            contentDescription = null,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmFloatingActionButton_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmFloatingActionButton(
+            iconRes = R.drawable.ic_add_24px,
+            contentDescription = null,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmFloatingActionButton_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmFloatingActionButton(
+            iconRes = R.drawable.ic_add_24px,
+            contentDescription = null,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCircularIconButton_UnselectedPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmCircularIconButton(
+            iconRes = R.drawable.ic_clothes_24px,
+            contentDescription = null,
+            onClick = {},
+            selected = false
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCircularIconButton_SelectedDarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmCircularIconButton(
+            iconRes = R.drawable.ic_clothes_24px,
+            contentDescription = null,
+            onClick = {},
+            selected = true
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCircularIconButton_SelectedLightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmCircularIconButton(
+            iconRes = R.drawable.ic_clothes_24px,
+            contentDescription = null,
+            onClick = {},
+            selected = true
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCircularIconButtonWithTitle_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmCircularIconButtonWithTitle(
+            iconRes = R.drawable.ic_transport_3_24px,
+            contentDescription = null,
+            onClick = {},
+            iconTitle = stringResource(R.string.category_icon_sub_type_transport),
+            iconBackgroundValue = CategoryColors.RED_T53.background
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCircularIconButtonWithTitle_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmCircularIconButtonWithTitle(
+            iconRes = R.drawable.ic_transport_3_24px,
+            contentDescription = null,
+            onClick = {},
+            iconTitle = stringResource(R.string.category_icon_sub_type_transport),
+            iconBackgroundValue = CategoryColors.RED_T53.background
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmPrimaryButton_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmPrimaryButton(
+            text = stringResource(R.string.btn_save_text),
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmPrimaryButton_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmPrimaryButton(
+            text = stringResource(R.string.btn_save_text),
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmSecondaryButton_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmSecondaryButton(
+            text = stringResource(R.string.btn_dialog_cancel_text),
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmSecondaryButton_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmSecondaryButton(
+            text = stringResource(R.string.btn_dialog_cancel_text),
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmPrimaryText_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmPrimaryTextButton(
+            text = stringResource(R.string.btn_save_text),
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmPrimaryText_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmPrimaryTextButton(
+            text = stringResource(R.string.btn_save_text),
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmSecondaryText_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmSecondaryTextButton(
+            text = stringResource(R.string.btn_dialog_cancel_text),
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmSecondaryText_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmSecondaryTextButton(
+            text = stringResource(R.string.btn_dialog_cancel_text),
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCardIconButton_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmCardIconButton(
+            iconRes = R.drawable.ic_delete_24px,
+            contentDescription = null,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCardIconButton_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmCardIconButton(
+            iconRes = R.drawable.ic_delete_24px,
+            contentDescription = null,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmDropdownMenuIcon_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmDropdownMenuIcon(
+            iconRes = R.drawable.ic_menu_24px,
+            contentDescription = null,
+            menuOptions = listOf(
+                MenuOptions(stringResource(R.string.ic_edit_desc), {}),
+                MenuOptions(stringResource(R.string.ic_delete_desc), {}),
+            ),
+            expanded = true,
+            onMenuClick = {},
+            onMenuDismiss = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun HarmDropdownMenuIcon_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmDropdownMenuIcon(
+            iconRes = R.drawable.ic_menu_24px,
+            contentDescription = null,
+            menuOptions = listOf(
+                MenuOptions(stringResource(R.string.ic_edit_desc), {}),
+                MenuOptions(stringResource(R.string.ic_delete_desc), {}),
+            ),
+            expanded = true,
+            onMenuClick = {},
+            onMenuDismiss = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCircularCheckBox_UncheckedDarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmCircularCheckBox(
+            checked = false,
+            contentDescription = null
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCircularCheckBox_CheckedDarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmCircularCheckBox(
+            checked = true,
+            contentDescription = null
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCircularCheckBox_UncheckedLightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmCircularCheckBox(
+            checked = false,
+            contentDescription = null
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCircularCheckBox_CheckedLightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmCircularCheckBox(
+            checked = true,
+            contentDescription = null
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCheckableIconWithTitle_UncheckedDarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmCheckableIconWithTitle(
+            title = stringResource(R.string.category_type_expenses_title),
+            checked = false,
+            onCheckChanged = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCheckableIconWithTitle_CheckedDarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmCheckableIconWithTitle(
+            title = stringResource(R.string.category_type_expenses_title),
+            checked = true,
+            onCheckChanged = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCheckableIconWithTitle_UncheckedLightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmCheckableIconWithTitle(
+            title = stringResource(R.string.category_type_expenses_title),
+            checked = false,
+            onCheckChanged = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCheckableIconWithTitle_CheckedLightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmCheckableIconWithTitle(
+            title = stringResource(R.string.category_type_expenses_title),
+            checked = true,
+            onCheckChanged = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmSwitch_UncheckedDarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmSwitch(
+            isChecked = false,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmSwitch_CheckedDarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmButton.HarmSwitch(
+            isChecked = true,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmSwitch_UncheckedLightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmSwitch(
+            isChecked = false,
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmSwitch_CheckedLightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmButton.HarmSwitch(
+            isChecked = true,
+            onClick = {}
         )
     }
 }

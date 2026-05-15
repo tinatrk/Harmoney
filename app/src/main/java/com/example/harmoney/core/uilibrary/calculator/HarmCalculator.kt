@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.presentation.calculator.models.CalculatorAction
@@ -264,4 +265,32 @@ private object Const {
     const val NUMBERS_WIDTH_IN_BUTTONS = 3f
     const val DOUBLE_BUTTON_WIDTH = 2f
     const val COMMON_BUTTON_WIDTH = 1f
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun CalculatorDarkPreview() {
+    HarmTheme(darkTheme = true){
+        HarmCalculator(
+            state = CalculatorState(
+                equation = "5 + 3",
+                result = "8"
+            ),
+            onAction = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun CalculatorLightPreview() {
+    HarmTheme(darkTheme = false){
+        HarmCalculator(
+            state = CalculatorState(
+                equation = "5 + 3",
+                result = "8"
+            ),
+            onAction = {}
+        )
+    }
 }

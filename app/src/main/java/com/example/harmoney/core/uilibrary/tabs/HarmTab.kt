@@ -11,9 +11,14 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
+import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
@@ -34,11 +39,12 @@ object HarmTab {
             selectedTabIndex = selectedTabIndex,
             containerColor = colors.surfaceContainer,
             contentColor = colors.onSurfaceContainer,
-            indicator = {},
+            indicator = {
+            },
             divider = {
                 HorizontalDivider(
                     thickness = 1.dp,
-                    color = HarmTheme.colors.outline
+                    color = Color.Transparent
                 )
             },
             tabs = tabs
@@ -76,5 +82,93 @@ object HarmTab {
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmPrimaryTabRow_DarkPreview() {
+    val selectedTabIndex = 0
+    HarmTheme(darkTheme = true) {
+        HarmTab.HarmPrimaryTabRow(
+            selectedTabIndex = selectedTabIndex,
+            tabs = {
+                CategoryType.entries.forEachIndexed { index, tab ->
+                    HarmTab.HarmCommonTab(
+                        selected = selectedTabIndex == index,
+                        onClick = {},
+                        text = stringResource(tab.titleId)
+                    )
+                }
+            }
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmPrimaryTabRow_LightPreview() {
+    val selectedTabIndex = 0
+    HarmTheme(darkTheme = false) {
+        HarmTab.HarmPrimaryTabRow(
+            selectedTabIndex = selectedTabIndex,
+            tabs = {
+                CategoryType.entries.forEachIndexed { index, tab ->
+                    HarmTab.HarmCommonTab(
+                        selected = selectedTabIndex == index,
+                        onClick = {},
+                        text = stringResource(tab.titleId)
+                    )
+                }
+            }
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCommonTab_SelectedDarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmTab.HarmCommonTab(
+            selected = true,
+            onClick = {},
+            text = stringResource(R.string.category_type_expenses_title)
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCommonTab_SelectedLightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmTab.HarmCommonTab(
+            selected = true,
+            onClick = {},
+            text = stringResource(R.string.category_type_expenses_title)
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmCommonTab_UnselectedDarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmTab.HarmCommonTab(
+            selected = false,
+            onClick = {},
+            text = stringResource(R.string.category_type_expenses_title)
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmCommonTab_UnselectedLightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmTab.HarmCommonTab(
+            selected = false,
+            onClick = {},
+            text = stringResource(R.string.category_type_expenses_title)
+        )
     }
 }
