@@ -4,11 +4,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.presentation.category.models.MenuOptions
 import com.example.harmoney.ui.theme.HarmTheme
@@ -59,5 +63,51 @@ object HarmMenu {
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmDropdownMenu_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmMenu.HarmDropdownMenu(
+            expanded = true,
+            onDismissRequest = {},
+            menuOptions = listOf(
+                MenuOptions(text = "EUR", {}),
+                MenuOptions(text = "RUB", {}),
+                MenuOptions(text = "USD", {})
+            ),
+            menuSource = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_menu_24px),
+                    contentDescription = null,
+                    tint = HarmTheme.colors.onSurface
+                )
+            }
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmDropdownMenu_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmMenu.HarmDropdownMenu(
+            expanded = true,
+            onDismissRequest = {},
+            menuOptions = listOf(
+                MenuOptions(text = "EUR", {}),
+                MenuOptions(text = "RUB", {}),
+                MenuOptions(text = "USD", {})
+            ),
+            menuSource = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_menu_24px),
+                    contentDescription = null,
+                    tint = HarmTheme.colors.onSurface
+                )
+            }
+        )
     }
 }

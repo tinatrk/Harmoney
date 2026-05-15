@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
@@ -160,6 +161,128 @@ object HarmDialog {
                     onClick = onConfirmation
                 )
             }
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmConfirmingDialog_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmDialog.HarmConfirmingDialog(
+            dialogTitle = stringResource(R.string.title_dialog_delete_transaction),
+            onDismissRequest = {},
+            onConfirmation = {},
+            iconId = R.drawable.ic_warring_24px,
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmConfirmingDialog_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmDialog.HarmConfirmingDialog(
+            dialogTitle = stringResource(R.string.title_dialog_delete_transaction),
+            onDismissRequest = {},
+            onConfirmation = {},
+            iconId = R.drawable.ic_warring_24px,
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmConfirmingDialogWithText_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmDialog.HarmConfirmingDialog(
+            dialogTitle = stringResource(R.string.title_dialog_exit),
+            onDismissRequest = {},
+            onConfirmation = {},
+            iconId = R.drawable.ic_warring_24px,
+            dialogText = stringResource(R.string.text_dialog_exit)
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmConfirmingDialogWithText_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmDialog.HarmConfirmingDialog(
+            dialogTitle = stringResource(R.string.title_dialog_exit),
+            onDismissRequest = {},
+            onConfirmation = {},
+            iconId = R.drawable.ic_warring_24px,
+            dialogText = stringResource(R.string.text_dialog_exit)
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmSetFirstDayMonthDialog_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmDialog.HarmSetFirstDayMonthDialog(
+            numberString = "1",
+            onNumberChanged = {},
+            onConfirmation = {},
+            onDismissRequest = {},
+            isError = false,
+            supportingText = null
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmSetFirstDayMonthDialog_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmDialog.HarmSetFirstDayMonthDialog(
+            numberString = "1",
+            onNumberChanged = {},
+            onConfirmation = {},
+            onDismissRequest = {},
+            isError = false,
+            supportingText = null
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmSetFirstDayMonthDialog_DarkErrorPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmDialog.HarmSetFirstDayMonthDialog(
+            numberString = "90",
+            onNumberChanged = {},
+            onConfirmation = {},
+            onDismissRequest = {},
+            isError = true,
+            supportingText = stringResource(
+                R.string.error_incorrect_first_day_month_pattern,
+                1,
+                28
+            )
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmSetFirstDayMonthDialog_LightErrorPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmDialog.HarmSetFirstDayMonthDialog(
+            numberString = "90",
+            onNumberChanged = {},
+            onConfirmation = {},
+            onDismissRequest = {},
+            isError = true,
+            supportingText = stringResource(
+                R.string.error_incorrect_first_day_month_pattern,
+                1,
+                28
+            )
         )
     }
 }
