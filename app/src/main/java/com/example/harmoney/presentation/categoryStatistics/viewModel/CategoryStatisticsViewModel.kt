@@ -6,19 +6,19 @@ import com.example.harmoney.base.ResourceProvider
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
+import com.example.harmoney.domain.models.StatisticPeriod
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverter
 import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.models.PieChartItem
-import com.example.harmoney.domain.models.StatisticPeriod
 import com.example.harmoney.presentation.test.TestDataSource
 import kotlinx.coroutines.flow.update
 
 class CategoryStatisticsViewModel(
     private val test: TestDataSource,
-    private val categoryConverter: CategoryStatisticsUiConverter,
+    private val categoryStatisticsUiConverter: CategoryStatisticsUiConverter,
     private val numbersFormatter: NumbersFormatter,
     private val resourceProvider: ResourceProvider
 ) :
@@ -36,7 +36,7 @@ class CategoryStatisticsViewModel(
                     it.selectedStatisticsPeriod,
                     it.selectedCategoryType
                 )
-            val formattedCategories = categoryConverter.map(categories, it.currency)
+            val formattedCategories = categoryStatisticsUiConverter.map(categories, it.currency)
 
             val total = categories.sumOf { category -> category.totalAmount }
 
@@ -115,14 +115,14 @@ class CategoryStatisticsViewModel(
                         statisticPeriod = it.selectedStatisticsPeriod,
                         categoryType = newCategoryType
                     )
-                val formattedCategories = categoryConverter.map(categories, it.currency)
+                val formattedCategories = categoryStatisticsUiConverter.map(categories, it.currency)
 
                 val total = categories.sumOf { category -> category.totalAmount }
 
                 it.copy(
                     selectedCategoryType = newCategoryType,
                     selectedTabIndex = newCategoryType.ordinal,
-                    categories = categoryConverter.map(categories, it.currency),
+                    categories = categoryStatisticsUiConverter.map(categories, it.currency),
                     pieChartCategories = getPieChartCategories(
                         categories,
                         formattedCategories.map { category ->
@@ -145,7 +145,11 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onNavigateToTransactionList(categoryId: Long?) {
-        writableAction.tryEmit(CategoryStatisticsAction.NavigateToTransactionList(categoryId))
+        writableAction
+            .tryEmit(
+                CategoryStatisticsAction
+                    .NavigateToTransactionList(categoryId)
+            )
     }
 
     private fun onNavigateToTransaction() {
@@ -163,11 +167,11 @@ class CategoryStatisticsViewModel(
                 statisticPeriod = newPeriod,
                 categoryType = it.selectedCategoryType
             )
-            val formattedCategories = categoryConverter.map(categories, it.currency)
+            val formattedCategories = categoryStatisticsUiConverter.map(categories, it.currency)
             val total = categories.sumOf { category -> category.totalAmount }
 
             it.copy(
-                categories = categoryConverter.map(categories, it.currency),
+                categories = categoryStatisticsUiConverter.map(categories, it.currency),
                 pieChartCategories = getPieChartCategories(
                     categories,
                     formattedCategories.map { category ->

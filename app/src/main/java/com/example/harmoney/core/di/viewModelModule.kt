@@ -14,6 +14,10 @@ import com.example.harmoney.presentation.converters.CategoryUiConverter
 import com.example.harmoney.presentation.converters.CategoryUiConverterImpl
 import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.converters.NumbersFormatterImpl
+import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverter
+import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverterImpl
+import com.example.harmoney.presentation.converters.TransactionUiConverter
+import com.example.harmoney.presentation.converters.TransactionUiConverterImpl
 import com.example.harmoney.presentation.transaction.viewModel.TransactionViewModel
 import com.example.harmoney.presentation.transactionList.viewModel.TransactionListViewModel
 import org.koin.android.ext.koin.androidContext
@@ -24,14 +28,19 @@ val viewModelModule = module {
     viewModel {
         CategoryStatisticsViewModel(
             test = get(),
-            categoryConverter = get(),
+            categoryStatisticsUiConverter = get(),
             numbersFormatter = get(),
             resourceProvider = get()
         )
     }
 
     viewModel { (categoryId: Long?) ->
-        TransactionListViewModel(categoryId = categoryId)
+        TransactionListViewModel(
+            categoryId = categoryId,
+            test = get(),
+            oneDayTransactionsUiConverter = get(),
+            numberFormatter = get()
+        )
     }
 
     viewModel { (categoryId: Long?, transactionId: Long?) ->
@@ -72,6 +81,14 @@ val viewModelModule = module {
 
     factory<NumbersFormatter> {
         NumbersFormatterImpl()
+    }
+
+    factory<OneDayTransactionsUiConverter> {
+        OneDayTransactionsUiConverterImpl(transactionUiConverter = get(), numberFormatter = get())
+    }
+
+    factory<TransactionUiConverter> {
+        TransactionUiConverterImpl(categoryUiConverter = get(), numbersFormatter = get())
     }
 
     single {
