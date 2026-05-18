@@ -1,7 +1,9 @@
 package com.example.harmoney.presentation.transaction.models
 
+import androidx.compose.runtime.Stable
 import com.example.harmoney.domain.models.CategoryType
 
+@Stable
 data class TransactionState(
     val categoryId: Long? = null,
     val transactionId: Long? = null,

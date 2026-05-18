@@ -1,7 +1,9 @@
 package com.example.harmoney.presentation.categoryList.models
 
+import androidx.compose.runtime.Stable
 import com.example.harmoney.domain.models.CategoryType
 
+@Stable
 data class CategoryListState(
     val isChoiceCategoryScreen: Boolean = true,
     val categoryType: CategoryType = CategoryType.Expenses,

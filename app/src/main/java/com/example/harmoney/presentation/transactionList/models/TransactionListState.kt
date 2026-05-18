@@ -1,8 +1,13 @@
 package com.example.harmoney.presentation.transactionList.models
 
+import androidx.compose.runtime.Stable
 import com.example.harmoney.domain.models.CategoryType
-import com.example.harmoney.domain.models.StatisticPeriod
+import com.example.harmoney.domain.models.StatisticsPeriod
+import com.example.harmoney.presentation.models.OneDayTransactionsUi
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
+@Stable
 data class TransactionListState(
     val currentBalance: String = "0.00",
     val categoryId: Long? = null,
@@ -10,9 +15,11 @@ data class TransactionListState(
     val selectedCategoryType: CategoryType = CategoryType.Expenses,
     val selectedTabIndex: Int = CategoryType.Expenses.ordinal,
 
-    val statisticsPeriods: List<StatisticPeriod> = StatisticPeriod.entries,
+    val statisticsPeriods: List<StatisticsPeriod> = StatisticsPeriod.entries,
     val statisticsDate: String = "",
-    val selectedStatisticsPeriod: StatisticPeriod = StatisticPeriod.CURRENT_MONTH,
+    val selectedStatisticsPeriod: StatisticsPeriod = StatisticsPeriod.CURRENT_MONTH,
 
+    val totalAmount: String = "0.00",
+    val oneDayTransactionsList: ImmutableList<OneDayTransactionsUi> = persistentListOf()
     // что-то про фильтрацию
 )

@@ -1,4 +1,4 @@
-package com.example.harmoney.presentation.category.models
+package com.example.harmoney.presentation.models
 
 import androidx.compose.runtime.Immutable
 

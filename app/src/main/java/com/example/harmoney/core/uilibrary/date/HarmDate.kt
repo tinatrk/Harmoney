@@ -27,8 +27,11 @@ import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
-import com.example.harmoney.domain.models.StatisticPeriod
+import com.example.harmoney.domain.models.StatisticsPeriod
+import com.example.harmoney.ui.mappers.StatisticsPeriodUiMapper.toStringRes
 import com.example.harmoney.ui.theme.HarmTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 /**
  * - `HarmStatisticPeriodList` - Text list of periods for statistic logic
@@ -40,7 +43,7 @@ object HarmDate {
     @Composable
     fun HarmStatisticPeriodList(
         data: String,
-        periods: List<StatisticPeriod>,
+        periods: ImmutableList<StatisticsPeriod>,
         selectedPeriodId: Long,
         onPeriodClick: (Long) -> Unit,
         modifier: Modifier = Modifier,
@@ -70,7 +73,7 @@ object HarmDate {
                             .padding(horizontal = 6.dp, vertical = 4.dp)
 
                             .clickable { onPeriodClick(period.id) },
-                        text = stringResource(period.textRes),
+                        text = stringResource(period.toStringRes()),
                         style = if (period.id == selectedPeriodId) {
                             HarmTheme.typography.titleSmallSemiBold
                         } else {
@@ -176,8 +179,8 @@ private fun HarmStatisticPeriodList_DarkPreview() {
     HarmTheme(darkTheme = true) {
         HarmDate.HarmStatisticPeriodList(
             data = "01.03.2026 - 31.03.2026",
-            periods = StatisticPeriod.entries,
-            selectedPeriodId = StatisticPeriod.CURRENT_MONTH.id,
+            periods = StatisticsPeriod.entries.toImmutableList(),
+            selectedPeriodId = StatisticsPeriod.CURRENT_MONTH.id,
             onPeriodClick = {}
         )
     }
@@ -189,8 +192,8 @@ private fun HarmStatisticPeriodList_LightPreview() {
     HarmTheme(darkTheme = false) {
         HarmDate.HarmStatisticPeriodList(
             data = "01.03.2026 - 31.03.2026",
-            periods = StatisticPeriod.entries,
-            selectedPeriodId = StatisticPeriod.CURRENT_MONTH.id,
+            periods = StatisticsPeriod.entries.toImmutableList(),
+            selectedPeriodId = StatisticsPeriod.CURRENT_MONTH.id,
             onPeriodClick = {}
         )
     }

@@ -33,20 +33,24 @@ import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
+import com.example.harmoney.core.uilibrary.date.HarmDate
 import com.example.harmoney.core.uilibrary.graphics.HarmGraphic
 import com.example.harmoney.core.uilibrary.icons.HarmIcon
-import com.example.harmoney.core.uilibrary.date.HarmDate
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
-import com.example.harmoney.presentation.category.models.MenuOptions
+import com.example.harmoney.domain.models.StatisticsPeriod
+import com.example.harmoney.ui.mappers.CategoryIconUiMapper.toDrawableRes
+import com.example.harmoney.presentation.models.MenuOptions
 import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.CategoryUi
 import com.example.harmoney.presentation.models.PieChartItem
-import com.example.harmoney.domain.models.StatisticPeriod
 import com.example.harmoney.presentation.models.TransactionUi
 import com.example.harmoney.ui.theme.HarmTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 /**
  * - `HarmCategoryCard` - A card for displaying all types of category cards
@@ -184,7 +188,7 @@ object HarmCard {
         category: CategoryStatisticsUi,
         @DrawableRes iconRes: Int,
         isMenuOpened: Boolean,
-        menuOptions: List<MenuOptions>,
+        menuOptions: ImmutableList<MenuOptions>,
         onCardClick: () -> Unit,
         onMenuClick: () -> Unit,
         onMenuDismiss: () -> Unit,
@@ -226,8 +230,8 @@ object HarmCard {
             verticalAlignment = Alignment.CenterVertically
         ) {
             HarmIcon.HarmCircularCategoryIcon(
-                backgroundColorValue = categoryInfo.icon.colors.background,
-                iconRes = categoryInfo.icon.ids.resIconId,
+                backgroundColorValue = categoryInfo.icon.color.background,
+                iconRes = categoryInfo.icon.icon.toDrawableRes(),
                 contentDescription = stringResource(
                     R.string.ic_category_desc,
                     categoryInfo.name
@@ -264,9 +268,9 @@ object HarmCard {
     /** A card with a pie chart (shows the total amount of transactions of each category) */
     @Composable
     fun HarmStatisticCard(
-        periods: List<StatisticPeriod>,
+        periods: ImmutableList<StatisticsPeriod>,
         data: String,
-        pieChartItems: List<PieChartItem>,
+        pieChartItems: ImmutableList<PieChartItem>,
         total: String,
         selectedPeriodId: Long,
         onPeriodClick: (Long) -> Unit,
@@ -348,7 +352,7 @@ object HarmCard {
     fun HarmCardTransactionList(
         data: String,
         totalAmount: String,
-        transactions: List<TransactionUi>,
+        transactions: ImmutableList<TransactionUi>,
         onTransactionClick: (Long) -> Unit,
         modifier: Modifier = Modifier,
     ) {
@@ -401,8 +405,8 @@ private fun HarmCategoryCardSumTransactions_DarkPreview() {
                     name = "Продукты",
                     type = CategoryType.Expenses,
                     icon = CategoryIcon(
-                        ids = CategoryIcons.IC_SHOP_CART,
-                        colors = CategoryColors.PINK_T75
+                        icon = CategoryIcons.IC_SHOP_CART,
+                        color = CategoryColors.PINK_T75
                     )
                 ),
                 totalAmount = "2 000 ₽",
@@ -424,8 +428,8 @@ private fun HarmCategoryCardSumTransactions_LightPreview() {
                     name = "Продукты",
                     type = CategoryType.Expenses,
                     icon = CategoryIcon(
-                        ids = CategoryIcons.IC_SHOP_CART,
-                        colors = CategoryColors.PINK_T75
+                        icon = CategoryIcons.IC_SHOP_CART,
+                        color = CategoryColors.PINK_T75
                     )
                 ),
                 totalAmount = "2 000 ₽",
@@ -446,8 +450,8 @@ private fun HarmCategoryCardOneTransaction_DarkPreview() {
                 name = "Продукты",
                 type = CategoryType.Expenses,
                 icon = CategoryIcon(
-                    ids = CategoryIcons.IC_SHOP_CART,
-                    colors = CategoryColors.PINK_T75
+                    icon = CategoryIcons.IC_SHOP_CART,
+                    color = CategoryColors.PINK_T75
                 )
             ),
             transactionAmount = "2 000 ₽",
@@ -467,8 +471,8 @@ private fun HarmCategoryCardOneTransaction_LightPreview() {
                 name = "Продукты",
                 type = CategoryType.Expenses,
                 icon = CategoryIcon(
-                    ids = CategoryIcons.IC_SHOP_CART,
-                    colors = CategoryColors.PINK_T75
+                    icon = CategoryIcons.IC_SHOP_CART,
+                    color = CategoryColors.PINK_T75
                 )
             ),
             transactionAmount = "2 000 ₽",
@@ -489,8 +493,8 @@ private fun HarmSimpleCategoryCard_DarkPreview() {
                     name = "Продукты",
                     type = CategoryType.Expenses,
                     icon = CategoryIcon(
-                        ids = CategoryIcons.IC_SHOP_CART,
-                        colors = CategoryColors.PINK_T75
+                        icon = CategoryIcons.IC_SHOP_CART,
+                        color = CategoryColors.PINK_T75
                     )
                 ),
                 totalAmount = "2 000 ₽",
@@ -512,8 +516,8 @@ private fun HarmSimpleCategoryCard_LightPreview() {
                     name = "Продукты",
                     type = CategoryType.Expenses,
                     icon = CategoryIcon(
-                        ids = CategoryIcons.IC_SHOP_CART,
-                        colors = CategoryColors.PINK_T75
+                        icon = CategoryIcons.IC_SHOP_CART,
+                        color = CategoryColors.PINK_T75
                     )
                 ),
                 totalAmount = "2 000 ₽",
@@ -535,8 +539,8 @@ private fun HarmCategoryCardWithMenu_DarkPreview() {
                     name = "Продукты",
                     type = CategoryType.Expenses,
                     icon = CategoryIcon(
-                        ids = CategoryIcons.IC_SHOP_CART,
-                        colors = CategoryColors.PINK_T75
+                        icon = CategoryIcons.IC_SHOP_CART,
+                        color = CategoryColors.PINK_T75
                     )
                 ),
                 totalAmount = "2 000 ₽",
@@ -546,7 +550,7 @@ private fun HarmCategoryCardWithMenu_DarkPreview() {
             iconRes = R.drawable.ic_menu_24px,
             iconContentDescription = null,
             isMenuOpened = true,
-            menuOptions = listOf(
+            menuOptions = persistentListOf(
                 MenuOptions(stringResource(R.string.ic_edit_desc), {}),
                 MenuOptions(stringResource(R.string.ic_delete_desc), {}),
             ),
@@ -567,8 +571,8 @@ private fun HarmCategoryCardWithMenu_LightPreview() {
                     name = "Продукты",
                     type = CategoryType.Expenses,
                     icon = CategoryIcon(
-                        ids = CategoryIcons.IC_SHOP_CART,
-                        colors = CategoryColors.PINK_T75
+                        icon = CategoryIcons.IC_SHOP_CART,
+                        color = CategoryColors.PINK_T75
                     )
                 ),
                 totalAmount = "2 000 ₽",
@@ -578,7 +582,7 @@ private fun HarmCategoryCardWithMenu_LightPreview() {
             iconRes = R.drawable.ic_menu_24px,
             iconContentDescription = null,
             isMenuOpened = true,
-            menuOptions = listOf(
+            menuOptions = persistentListOf(
                 MenuOptions(stringResource(R.string.ic_edit_desc), {}),
                 MenuOptions(stringResource(R.string.ic_delete_desc), {}),
             ),
@@ -619,18 +623,18 @@ private fun HarmCardTransactionList_LightPreview() {
 private fun HarmStatisticCard_DarkPreview() {
     HarmTheme(darkTheme = true) {
         HarmCard.HarmStatisticCard(
-            periods = StatisticPeriod.entries,
+            periods = StatisticsPeriod.entries.toImmutableList(),
             data = "01.03.2026 - 31.03.2026",
             pieChartItems = getPreviewDataPieChartCategories(),
-            selectedPeriodId = StatisticPeriod.CURRENT_MONTH.id,
+            selectedPeriodId = StatisticsPeriod.CURRENT_MONTH.id,
             onPeriodClick = {},
             total = "5 000 ₽"
         )
     }
 }
 
-private fun getPreviewTransactionList(): List<TransactionUi> {
-    return listOf(
+private fun getPreviewTransactionList(): ImmutableList<TransactionUi> {
+    return persistentListOf(
         TransactionUi(
             id = 1,
             category = CategoryUi(
@@ -638,8 +642,8 @@ private fun getPreviewTransactionList(): List<TransactionUi> {
                 name = "Продукты",
                 type = CategoryType.Expenses,
                 icon = CategoryIcon(
-                    ids = CategoryIcons.IC_SHOP_CART,
-                    colors = CategoryColors.PINK_T75
+                    icon = CategoryIcons.IC_SHOP_CART,
+                    color = CategoryColors.PINK_T75
                 ),
             ),
             amount = "2 000 ₽",
@@ -652,8 +656,8 @@ private fun getPreviewTransactionList(): List<TransactionUi> {
                 name = "Подарки",
                 type = CategoryType.Expenses,
                 icon = CategoryIcon(
-                    ids = CategoryIcons.IC_GIFT,
-                    colors = CategoryColors.VIOLET_T68
+                    icon = CategoryIcons.IC_GIFT,
+                    color = CategoryColors.VIOLET_T68
                 ),
             ),
             amount = "3 000 ₽",
@@ -662,8 +666,8 @@ private fun getPreviewTransactionList(): List<TransactionUi> {
 }
 
 private fun getPreviewDataPieChartCategories(
-): List<PieChartItem> {
-    return listOf(
+): ImmutableList<PieChartItem> {
+    return persistentListOf(
         PieChartItem(
             value = "15 000 ₽",
             colorValue = CategoryColors.BLUE_T80.background,

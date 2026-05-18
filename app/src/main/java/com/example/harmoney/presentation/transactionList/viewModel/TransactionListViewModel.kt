@@ -2,6 +2,7 @@ package com.example.harmoney.presentation.transactionList.viewModel
 
 import com.example.harmoney.base.BaseViewModel
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
 import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverter
@@ -20,17 +21,28 @@ class TransactionListViewModel(
     TransactionListState()
 ) {
     override val tag: String = CategoryStatisticsViewModel::class.java.simpleName ?: ""
+    private val currency: Currency
 
     init {
         val transactions = test.getTransactionList(
-            statisticPeriod = state.value.selectedStatisticsPeriod,
+            statisticsPeriod = state.value.selectedStatisticsPeriod,
             categoryType = state.value.selectedCategoryType,
             categoryId = categoryId
         )
+        val balance = test.getBalance()
+        // TODO() в будущем считывать валюту из sharedPreferences
+        currency = Currency.RUB
 
         writableState.update {
             it.copy(
+                currentBalance = numberFormatter.toStringWithCurrency(
+                    number = balance,
+                    decimalPlaces = TWO_DECIMAL_PLACES,
+                    currency = currency,
+                    isNeededThousandSeparator = true
+                ),
                 categoryId = categoryId,
+                statisticsDate = test.getStatisticsDate(it.selectedStatisticsPeriod)
             )
         }
     }
@@ -73,5 +85,9 @@ class TransactionListViewModel(
 
     private fun onOpenTransaction(transactionId: Long?) {
         writableAction.tryEmit(TransactionListAction.NavigateToOpeningTransaction(transactionId))
+    }
+
+    private companion object {
+        const val TWO_DECIMAL_PLACES = 2
     }
 }

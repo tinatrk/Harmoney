@@ -14,8 +14,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
-import com.example.harmoney.presentation.category.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOptions
 import com.example.harmoney.ui.theme.HarmTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 /**
  * `HarmDropdownMenu`
@@ -31,7 +33,7 @@ object HarmMenu {
     @Composable
     fun HarmDropdownMenu(
         expanded: Boolean,
-        menuOptions: List<MenuOptions>,
+        menuOptions: ImmutableList<MenuOptions>,
         onDismissRequest: () -> Unit,
         modifier: Modifier = Modifier,
         menuSource: @Composable (() -> Unit)? = null
@@ -73,7 +75,7 @@ private fun HarmDropdownMenu_DarkPreview() {
         HarmMenu.HarmDropdownMenu(
             expanded = true,
             onDismissRequest = {},
-            menuOptions = listOf(
+            menuOptions = persistentListOf(
                 MenuOptions(text = "EUR", {}),
                 MenuOptions(text = "RUB", {}),
                 MenuOptions(text = "USD", {})
@@ -96,7 +98,7 @@ private fun HarmDropdownMenu_LightPreview() {
         HarmMenu.HarmDropdownMenu(
             expanded = true,
             onDismissRequest = {},
-            menuOptions = listOf(
+            menuOptions = persistentListOf(
                 MenuOptions(text = "EUR", {}),
                 MenuOptions(text = "RUB", {}),
                 MenuOptions(text = "USD", {})

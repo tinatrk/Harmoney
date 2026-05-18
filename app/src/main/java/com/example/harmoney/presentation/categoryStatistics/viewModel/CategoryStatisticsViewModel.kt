@@ -1,26 +1,26 @@
 package com.example.harmoney.presentation.categoryStatistics.viewModel
 
-import com.example.harmoney.R
 import com.example.harmoney.base.BaseViewModel
-import com.example.harmoney.base.ResourceProvider
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
-import com.example.harmoney.domain.models.StatisticPeriod
+import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
+import com.example.harmoney.presentation.categoryStatistics.models.FirstDayMonthError
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverter
 import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.test.TestDataSource
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.update
 
 class CategoryStatisticsViewModel(
     private val test: TestDataSource,
     private val categoryStatisticsUiConverter: CategoryStatisticsUiConverter,
     private val numbersFormatter: NumbersFormatter,
-    private val resourceProvider: ResourceProvider
 ) :
     BaseViewModel<CategoryStatisticsEvent, CategoryStatisticsAction, CategoryStatisticsState>(
         state = CategoryStatisticsState()
@@ -112,7 +112,7 @@ class CategoryStatisticsViewModel(
             writableState.update {
                 val categories =
                     test.getCategoriesForStatistics(
-                        statisticPeriod = it.selectedStatisticsPeriod,
+                        statisticsPeriod = it.selectedStatisticsPeriod,
                         categoryType = newCategoryType
                     )
                 val formattedCategories = categoryStatisticsUiConverter.map(categories, it.currency)
@@ -162,9 +162,9 @@ class CategoryStatisticsViewModel(
 
     private fun onStatisticsPeriodClick(newPeriodId: Long) {
         writableState.update {
-            val newPeriod = StatisticPeriod.fromId(newPeriodId)
+            val newPeriod = StatisticsPeriod.fromId(newPeriodId)
             val categories = test.getCategoriesForStatistics(
-                statisticPeriod = newPeriod,
+                statisticsPeriod = newPeriod,
                 categoryType = it.selectedCategoryType
             )
             val formattedCategories = categoryStatisticsUiConverter.map(categories, it.currency)
@@ -193,7 +193,7 @@ class CategoryStatisticsViewModel(
     private fun getPieChartCategories(
         categories: List<CategoryStatistics>,
         categoriesAmountString: List<String>,
-    ): List<PieChartItem> {
+    ): ImmutableList<PieChartItem> {
         val startAngle = START_ANGLE
 
         val total = categories.sumOf { it.totalAmount }.toFloat()
@@ -207,7 +207,7 @@ class CategoryStatisticsViewModel(
             pieChartItems.add(
                 PieChartItem(
                     value = categoriesAmountString[i],
-                    colorValue = categories[i].category.icon.colors.background,
+                    colorValue = categories[i].category.icon.color.background,
                     startAngle = curStartAngle,
                     sweepAngle = sweepAngle
                 )
@@ -216,7 +216,7 @@ class CategoryStatisticsViewModel(
             curStartAngle += rawSweep
         }
 
-        return pieChartItems
+        return pieChartItems.toImmutableList()
     }
 
     private fun onThemeChanged() {
@@ -248,8 +248,7 @@ class CategoryStatisticsViewModel(
             writableState.update {
                 it.copy(
                     firstDayMonth = firstDay ?: it.firstDayMonth,
-                    isFirstDayMonthError = false,
-                    firstDayMonthSupportText = "",
+                    firstDayMonthError = FirstDayMonthError.None,
                     isOpenedFirstDayMonthDialog = false
                 )
             }
@@ -261,8 +260,7 @@ class CategoryStatisticsViewModel(
         writableState.update {
             it.copy(
                 firstDayMonthText = it.firstDayMonth.toString(),
-                isFirstDayMonthError = false,
-                firstDayMonthSupportText = "",
+                firstDayMonthError = FirstDayMonthError.None,
                 isOpenedFirstDayMonthDialog = false
             )
         }
@@ -277,15 +275,13 @@ class CategoryStatisticsViewModel(
         writableState.update {
             it.copy(
                 firstDayMonthText = newText,
-                isFirstDayMonthError = !isFirstDayCorrect,
-                firstDayMonthSupportText = if (isFirstDayCorrect) {
-                    ""
-                } else {
-                    resourceProvider.getString(
-                        R.string.error_incorrect_first_day_month_pattern,
+                firstDayMonthError = if (!isFirstDayCorrect) {
+                    FirstDayMonthError.IncorrectInput(
                         MIN_FIRST_DAY_MONTH,
                         MAX_FIRST_DAY_MONTH
                     )
+                } else {
+                    FirstDayMonthError.None
                 }
             )
         }

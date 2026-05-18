@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.ui.mappers.CategoryTypeUiMapper.toStringRes
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
@@ -97,7 +98,7 @@ private fun HarmPrimaryTabRow_DarkPreview() {
                     HarmTab.HarmCommonTab(
                         selected = selectedTabIndex == index,
                         onClick = {},
-                        text = stringResource(tab.titleId)
+                        text = stringResource(tab.toStringRes())
                     )
                 }
             }
@@ -117,7 +118,7 @@ private fun HarmPrimaryTabRow_LightPreview() {
                     HarmTab.HarmCommonTab(
                         selected = selectedTabIndex == index,
                         onClick = {},
-                        text = stringResource(tab.titleId)
+                        text = stringResource(tab.toStringRes())
                     )
                 }
             }

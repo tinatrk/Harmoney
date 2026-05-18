@@ -1,13 +1,11 @@
 package com.example.harmoney.core.di
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.harmoney.base.ResourceProvider
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorHandler
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorViewModel
 import com.example.harmoney.presentation.category.viewModel.CategoryViewModel
 import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
-import com.example.harmoney.presentation.test.TestDataSource
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverter
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverterImpl
 import com.example.harmoney.presentation.converters.CategoryUiConverter
@@ -18,9 +16,9 @@ import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverte
 import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverterImpl
 import com.example.harmoney.presentation.converters.TransactionUiConverter
 import com.example.harmoney.presentation.converters.TransactionUiConverterImpl
+import com.example.harmoney.presentation.test.TestDataSource
 import com.example.harmoney.presentation.transaction.viewModel.TransactionViewModel
 import com.example.harmoney.presentation.transactionList.viewModel.TransactionListViewModel
-import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -30,7 +28,6 @@ val viewModelModule = module {
             test = get(),
             categoryStatisticsUiConverter = get(),
             numbersFormatter = get(),
-            resourceProvider = get()
         )
     }
 
@@ -89,10 +86,6 @@ val viewModelModule = module {
 
     factory<TransactionUiConverter> {
         TransactionUiConverterImpl(categoryUiConverter = get(), numbersFormatter = get())
-    }
-
-    single {
-        ResourceProvider(androidContext())
     }
 
     //временный класс

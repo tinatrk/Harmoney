@@ -17,6 +17,8 @@ import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.ui.theme.HarmTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @UiLibrary
 object HarmGraphic {
@@ -24,7 +26,7 @@ object HarmGraphic {
 
     @Composable
     fun PieChart(
-        items: List<PieChartItem>,
+        items: ImmutableList<PieChartItem>,
         modifier: Modifier = Modifier,
     ) {
         val screenDensity = LocalDensity.current.density
@@ -62,7 +64,7 @@ object HarmGraphic {
 private fun PieChart_DarkPreview() {
     HarmTheme(darkTheme = true) {
         HarmGraphic.PieChart(
-            items = listOf(
+            items = persistentListOf(
                 PieChartItem(
                     value = "15 000 ₽",
                     colorValue = CategoryColors.BLUE_T80.background,
@@ -93,7 +95,7 @@ private fun PieChart_DarkPreview() {
 private fun PieChart_LightPreview() {
     HarmTheme(darkTheme = false) {
         HarmGraphic.PieChart(
-            items = listOf(
+            items = persistentListOf(
                 PieChartItem(
                     value = "15 000 ₽",
                     colorValue = CategoryColors.BLUE_T80.background,

@@ -30,6 +30,7 @@ import com.example.harmoney.presentation.transactionList.models.TransactionListS
 import com.example.harmoney.presentation.transactionList.viewModel.TransactionListViewModel
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.theme.HarmTheme
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun TransactionListScreen(
@@ -79,7 +80,7 @@ fun TransactionListScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(paddingValues),
-            tabs = CategoryType.entries,
+            tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = state.selectedTabIndex,
             onTabClick = { categoryType ->
                 viewModel.obtainEvent(

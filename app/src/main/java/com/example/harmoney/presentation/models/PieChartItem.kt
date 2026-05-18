@@ -1,5 +1,8 @@
 package com.example.harmoney.presentation.models
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class PieChartItem(
     val value: String,
     val colorValue: Long,

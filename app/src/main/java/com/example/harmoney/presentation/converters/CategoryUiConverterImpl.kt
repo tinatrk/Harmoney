@@ -5,7 +5,7 @@ import com.example.harmoney.presentation.models.CategoryUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
-class CategoryUiConverterImpl : CategoryUiConverter {
+class CategoryUiConverterImpl() : CategoryUiConverter {
     override fun map(category: Category): CategoryUi {
         return CategoryUi(
             id = category.id,

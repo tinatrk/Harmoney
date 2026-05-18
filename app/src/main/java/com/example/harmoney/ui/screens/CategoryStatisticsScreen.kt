@@ -43,16 +43,20 @@ import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
-import com.example.harmoney.presentation.category.models.MenuOptions
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
+import com.example.harmoney.presentation.categoryStatistics.models.FirstDayMonthError
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
 import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.CategoryUi
+import com.example.harmoney.presentation.models.MenuOptions
 import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.theme.HarmTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
 @Composable
@@ -239,9 +243,9 @@ private fun SettingsDrawerItems(
                 expanded = isCurrencyMenuOpened,
                 menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
                     MenuOptions(
-                        text = currency.code
+                        text = currency.code,
                     ) { onEvent(CategoryStatisticsEvent.OnCurrencyChanged(currency)) }
-                },
+                }.toImmutableList(),
                 onDismissRequest = { onEvent(CategoryStatisticsEvent.OnCurrencyMenuDismiss) }
             ) {
                 Text(
@@ -270,6 +274,18 @@ fun CategoryStatisticsContent(
     onEvent: (CategoryStatisticsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val supportText =
+        when (val error = state.firstDayMonthError) {
+            is FirstDayMonthError.None -> ""
+            is FirstDayMonthError.IncorrectInput -> {
+                stringResource(
+                    R.string.error_incorrect_first_day_month_pattern,
+                    error.minDay,
+                    error.maxDay
+                )
+            }
+        }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -327,8 +343,8 @@ fun CategoryStatisticsContent(
                 onTextFieldDoneAction = {
                     onEvent(CategoryStatisticsEvent.OnFirstDayMonthDialogConfirm)
                 },
-                isError = state.isFirstDayMonthError,
-                supportingText = state.firstDayMonthSupportText,
+                isError = (state.firstDayMonthError != FirstDayMonthError.None),
+                supportingText = supportText,
             )
         }
     }
@@ -512,12 +528,7 @@ private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialogError() {
                 isThemeDark = true,
                 isOpenedFirstDayMonthDialog = true,
                 firstDayMonthText = "90",
-                isFirstDayMonthError = true,
-                firstDayMonthSupportText = stringResource(
-                    R.string.error_incorrect_first_day_month_pattern,
-                    1,
-                    28
-                )
+                firstDayMonthError = FirstDayMonthError.IncorrectInput(1, 28),
             ),
             drawerState = drawerState
         )
@@ -535,28 +546,23 @@ private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialogError() {
                 isThemeDark = false,
                 isOpenedFirstDayMonthDialog = true,
                 firstDayMonthText = "90",
-                isFirstDayMonthError = true,
-                firstDayMonthSupportText = stringResource(
-                    R.string.error_incorrect_first_day_month_pattern,
-                    1,
-                    28
-                )
+                firstDayMonthError = FirstDayMonthError.IncorrectInput(1, 28),
             ),
             drawerState = drawerState
         )
     }
 }
 
-private fun getPreviewDataCategoryStatistics(): List<CategoryStatisticsUi> {
-    return listOf(
+private fun getPreviewDataCategoryStatistics(): ImmutableList<CategoryStatisticsUi> {
+    return persistentListOf(
         CategoryStatisticsUi(
             category = CategoryUi(
                 id = 1,
                 name = "Vacation",
                 type = CategoryType.Expenses,
                 icon = CategoryIcon(
-                    ids = CategoryIcons.IC_VACATION_1,
-                    colors = CategoryColors.BLUE_T80
+                    icon = CategoryIcons.IC_VACATION_1,
+                    color = CategoryColors.BLUE_T80
                 ),
             ),
             totalAmount = "15 000 ₽",
@@ -568,8 +574,8 @@ private fun getPreviewDataCategoryStatistics(): List<CategoryStatisticsUi> {
                 name = "Gifts",
                 type = CategoryType.Expenses,
                 icon = CategoryIcon(
-                    ids = CategoryIcons.IC_GIFT,
-                    colors = CategoryColors.ORANGE_T70
+                    icon = CategoryIcons.IC_GIFT,
+                    color = CategoryColors.ORANGE_T70
                 ),
             ),
             totalAmount = "7 500 ₽",
@@ -581,8 +587,8 @@ private fun getPreviewDataCategoryStatistics(): List<CategoryStatisticsUi> {
                 name = "Products",
                 type = CategoryType.Expenses,
                 icon = CategoryIcon(
-                    ids = CategoryIcons.IC_SHOP_CART,
-                    colors = CategoryColors.VIOLET_T68
+                    icon = CategoryIcons.IC_SHOP_CART,
+                    color = CategoryColors.VIOLET_T68
                 ),
             ),
             totalAmount = "3 500 ₽",
@@ -592,8 +598,8 @@ private fun getPreviewDataCategoryStatistics(): List<CategoryStatisticsUi> {
 }
 
 private fun getPreviewDataPieChartCategories(
-): List<PieChartItem> {
-    return listOf(
+): ImmutableList<PieChartItem> {
+    return persistentListOf(
         PieChartItem(
             value = "15 000 ₽",
             colorValue = CategoryColors.BLUE_T80.background,
