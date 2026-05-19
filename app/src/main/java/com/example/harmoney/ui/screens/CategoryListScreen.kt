@@ -28,15 +28,17 @@ import com.example.harmoney.presentation.categoryList.models.CategoryListAction
 import com.example.harmoney.presentation.categoryList.models.CategoryListEvent
 import com.example.harmoney.presentation.categoryList.models.CategoryListState
 import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
+import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun CategoryListScreen(
+    sharedCategoryTypeVM: SharedCategoryTypeViewModel,
     viewModel: CategoryListViewModel,
     onBackClick: () -> Unit,
-    onNavigateToCreateCategory: (categoryTypeId: Long?) -> Unit,
+    onNavigateToCreateCategory: () -> Unit,
     onNavigateToOpenCategory: (categoryId: Long?) -> Unit,
 ) {
     val state by viewModel.screenState.collectAsStateWithLifecycle()
@@ -48,7 +50,7 @@ fun CategoryListScreen(
             .collect { act ->
                 when (act) {
                     is CategoryListAction.NavigateToCreatingCategory -> {
-                        onNavigateToCreateCategory(act.categoryTypeId)
+                        onNavigateToCreateCategory()
                     }
 
                     is CategoryListAction.NavigateToOpeningCategory -> {
@@ -126,7 +128,7 @@ fun CategoryListContent(
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "categoryTypeId = ${state.categoryType.id}",
+            text = "categoryTypeId = ${state.selectedCategoryType.id}",
             style = HarmTheme.typography.bodyLarge,
             color = HarmTheme.colors.onSurface,
             textAlign = TextAlign.Center

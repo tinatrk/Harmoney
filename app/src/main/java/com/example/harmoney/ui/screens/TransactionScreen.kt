@@ -25,6 +25,7 @@ import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.presentation.transaction.models.TransactionAction
 import com.example.harmoney.presentation.transaction.models.TransactionEvent
 import com.example.harmoney.presentation.transaction.models.TransactionState
@@ -35,9 +36,10 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun TransactionScreen(
+    sharedCategoryTypeViewModel: SharedCategoryTypeViewModel,
     viewModel: TransactionViewModel,
     onBackClick: () -> Unit,
-    onNavigateToCategoryListScreen: (categoryTypeId: Long?) -> Unit,
+    onNavigateToCategoryListScreen: () -> Unit,
 ) {
     val state by viewModel.screenState.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -49,7 +51,7 @@ fun TransactionScreen(
                 when (act) {
                     TransactionAction.NavigateBack -> onBackClick()
                     is TransactionAction.NavigateToCategoryListScreen -> {
-                        onNavigateToCategoryListScreen(act.categoryTypeId)
+                        onNavigateToCategoryListScreen()
                     }
 
                     else -> {}

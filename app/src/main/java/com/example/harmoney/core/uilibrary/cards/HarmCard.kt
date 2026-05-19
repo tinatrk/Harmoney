@@ -272,8 +272,8 @@ object HarmCard {
         data: String,
         pieChartItems: ImmutableList<PieChartItem>,
         total: String,
-        selectedPeriodId: Long,
-        onPeriodClick: (Long) -> Unit,
+        selectedPeriod: StatisticsPeriod,
+        onPeriodClick: (StatisticsPeriod) -> Unit,
         modifier: Modifier = Modifier,
     ) {
         val screenDensity = LocalDensity.current.density
@@ -313,7 +313,7 @@ object HarmCard {
                 HarmDate.HarmStatisticPeriodList(
                     data = data,
                     periods = periods,
-                    selectedPeriodId = selectedPeriodId,
+                    selectedPeriod = selectedPeriod,
                     onPeriodClick = onPeriodClick
                 )
 
@@ -362,7 +362,7 @@ object HarmCard {
                 .background(color = Color.Transparent)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
@@ -626,7 +626,7 @@ private fun HarmStatisticCard_DarkPreview() {
             periods = StatisticsPeriod.entries.toImmutableList(),
             data = "01.03.2026 - 31.03.2026",
             pieChartItems = getPreviewDataPieChartCategories(),
-            selectedPeriodId = StatisticsPeriod.CURRENT_MONTH.id,
+            selectedPeriod = StatisticsPeriod.CURRENT_MONTH,
             onPeriodClick = {},
             total = "5 000 ₽"
         )

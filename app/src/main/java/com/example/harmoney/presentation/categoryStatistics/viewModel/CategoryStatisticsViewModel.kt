@@ -1,5 +1,6 @@
 package com.example.harmoney.presentation.categoryStatistics.viewModel
 
+import android.util.Log
 import com.example.harmoney.base.BaseViewModel
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
@@ -18,16 +19,24 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.update
 
 class CategoryStatisticsViewModel(
+    categoryType: CategoryType,
+    statisticsPeriod: StatisticsPeriod,
     private val test: TestDataSource,
     private val categoryStatisticsUiConverter: CategoryStatisticsUiConverter,
     private val numbersFormatter: NumbersFormatter,
 ) :
     BaseViewModel<CategoryStatisticsEvent, CategoryStatisticsAction, CategoryStatisticsState>(
-        state = CategoryStatisticsState()
+        state = CategoryStatisticsState(
+            selectedCategoryType = categoryType,
+            selectedTabIndex = categoryType.ordinal,
+            selectedStatisticsPeriod = statisticsPeriod
+        )
     ) {
     override val tag: String = CategoryStatisticsViewModel::class.java.simpleName ?: ""
 
     init {
+
+        Log.d("HarmAppTag", "CategoryStatisticsViewModel -> init -> categoryType = ${state.value.selectedCategoryType}")
         //TODO() считать тему из shared preferences
         //TODO() считать валюту из shared preferences
         writableState.update {
@@ -41,6 +50,8 @@ class CategoryStatisticsViewModel(
             val total = categories.sumOf { category -> category.totalAmount }
 
             it.copy(
+                selectedCategoryType = categoryType,
+                selectedStatisticsPeriod = statisticsPeriod,
                 statisticsDate = test.getStatisticsDate(it.selectedStatisticsPeriod),
                 categories = formattedCategories,
                 pieChartCategories = getPieChartCategories(
@@ -79,7 +90,7 @@ class CategoryStatisticsViewModel(
             )
 
             is CategoryStatisticsEvent.OnStatisticsPeriodClick -> {
-                onStatisticsPeriodClick(event.newPeriodId)
+                onStatisticsPeriodClick(event.newPeriod)
             }
 
             is CategoryStatisticsEvent.OnChangeTheme -> onThemeChanged()
@@ -160,33 +171,34 @@ class CategoryStatisticsViewModel(
         writableAction.tryEmit(CategoryStatisticsAction.NavigateToCategoryList)
     }
 
-    private fun onStatisticsPeriodClick(newPeriodId: Long) {
-        writableState.update {
-            val newPeriod = StatisticsPeriod.fromId(newPeriodId)
-            val categories = test.getCategoriesForStatistics(
-                statisticsPeriod = newPeriod,
-                categoryType = it.selectedCategoryType
-            )
-            val formattedCategories = categoryStatisticsUiConverter.map(categories, it.currency)
-            val total = categories.sumOf { category -> category.totalAmount }
+    private fun onStatisticsPeriodClick(newPeriod: StatisticsPeriod) {
+        if (newPeriod.id != state.value.selectedStatisticsPeriod.id) {
+            writableState.update {
+                val categories = test.getCategoriesForStatistics(
+                    statisticsPeriod = newPeriod,
+                    categoryType = it.selectedCategoryType
+                )
+                val formattedCategories = categoryStatisticsUiConverter.map(categories, it.currency)
+                val total = categories.sumOf { category -> category.totalAmount }
 
-            it.copy(
-                categories = categoryStatisticsUiConverter.map(categories, it.currency),
-                pieChartCategories = getPieChartCategories(
-                    categories,
-                    formattedCategories.map { category ->
-                        category.totalAmount
-                    }
-                ),
-                total = numbersFormatter.toStringWithCurrency(
-                    number = total,
-                    decimalPlaces = TWO_DECIMAL_PLACES,
-                    currency = it.currency,
-                    isNeededThousandSeparator = true
-                ),
-                statisticsDate = test.getStatisticsDate(newPeriod),
-                selectedStatisticsPeriod = newPeriod
-            )
+                it.copy(
+                    categories = categoryStatisticsUiConverter.map(categories, it.currency),
+                    pieChartCategories = getPieChartCategories(
+                        categories,
+                        formattedCategories.map { category ->
+                            category.totalAmount
+                        }
+                    ),
+                    total = numbersFormatter.toStringWithCurrency(
+                        number = total,
+                        decimalPlaces = TWO_DECIMAL_PLACES,
+                        currency = it.currency,
+                        isNeededThousandSeparator = true
+                    ),
+                    statisticsDate = test.getStatisticsDate(newPeriod),
+                    selectedStatisticsPeriod = newPeriod
+                )
+            }
         }
     }
 

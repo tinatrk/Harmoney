@@ -1,8 +1,6 @@
 package com.example.harmoney.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,11 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -43,6 +38,7 @@ import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
+import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
@@ -52,6 +48,9 @@ import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.CategoryUi
 import com.example.harmoney.presentation.models.MenuOptions
 import com.example.harmoney.presentation.models.PieChartItem
+import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
+import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
+import com.example.harmoney.ui.components.EmptyScreen
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.collections.immutable.ImmutableList
@@ -61,15 +60,28 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CategoryStatisticsScreen(
+    sharedCategoryTypeVM: SharedCategoryTypeViewModel,
+    sharedStatisticsPeriodVM: SharedStatisticsPeriodViewModel,
     viewModel: CategoryStatisticsViewModel,
     onNavigateToTransactionList: (categoryId: Long?) -> Unit,
     onNavigateToCreateTransaction: () -> Unit,
     onNavigateToCategoryList: () -> Unit,
 ) {
+    val categoryType by sharedCategoryTypeVM.selectedCategoryType.collectAsStateWithLifecycle()
+    val statisticsPeriod by sharedStatisticsPeriodVM
+        .selectedStatisticsPeriod.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(categoryType) {
+        viewModel.obtainEvent(CategoryStatisticsEvent.OnTabClick(categoryType = categoryType))
+    }
+
+    LaunchedEffect(statisticsPeriod) {
+        viewModel.obtainEvent(CategoryStatisticsEvent.OnStatisticsPeriodClick(statisticsPeriod))
+    }
 
     LaunchedEffect(Unit) {
         viewModel.action
@@ -104,6 +116,8 @@ fun CategoryStatisticsScreen(
     CategoryStatisticsScreen(
         state = state,
         onEvent = viewModel::obtainEvent,
+        onCategoryTypeChanged = sharedCategoryTypeVM::categoryTypeChanged,
+        onStatisticsPeriodChanged = sharedStatisticsPeriodVM::statisticsPeriodChanged,
         drawerState = drawerState
     )
 }
@@ -113,6 +127,8 @@ fun CategoryStatisticsScreen(
     state: CategoryStatisticsState,
     drawerState: DrawerState,
     onEvent: (CategoryStatisticsEvent) -> Unit,
+    onCategoryTypeChanged: (CategoryType) -> Unit,
+    onStatisticsPeriodChanged: (StatisticsPeriod) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HarmDrawer.HarmModalDrawer(
@@ -168,15 +184,17 @@ fun CategoryStatisticsScreen(
                 tabs = state.categoryTypes,
                 selectedTabIndex = state.selectedTabIndex,
                 onTabClick = { categoryType ->
-                    onEvent(
+                    onCategoryTypeChanged(categoryType)
+                    /*onEvent(
                         CategoryStatisticsEvent
                             .OnTabClick(categoryType)
-                    )
+                    )*/
                 }
             ) {
                 CategoryStatisticsContent(
                     state = state,
                     onEvent = onEvent,
+                    onStatisticsPeriodChanged = onStatisticsPeriodChanged
                 )
             }
         }
@@ -272,6 +290,7 @@ private fun SettingsDrawerItems(
 fun CategoryStatisticsContent(
     state: CategoryStatisticsState,
     onEvent: (CategoryStatisticsEvent) -> Unit,
+    onStatisticsPeriodChanged: (StatisticsPeriod) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val supportText =
@@ -296,9 +315,9 @@ fun CategoryStatisticsContent(
             data = state.statisticsDate,
             pieChartItems = state.pieChartCategories,
             total = state.total,
-            selectedPeriodId = state.selectedStatisticsPeriod.id,
-            onPeriodClick = { newPeriodId ->
-                onEvent(CategoryStatisticsEvent.OnStatisticsPeriodClick(newPeriodId))
+            selectedPeriod = state.selectedStatisticsPeriod,
+            onPeriodClick = { newPeriod ->
+                onStatisticsPeriodChanged(newPeriod)
             }
         )
 
@@ -322,6 +341,9 @@ fun CategoryStatisticsContent(
                         }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
+                }
+                item {
+                    Spacer(modifier = Modifier.height(56.dp))
                 }
             }
         }
@@ -350,33 +372,6 @@ fun CategoryStatisticsContent(
     }
 }
 
-@Composable
-fun EmptyScreen(
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(R.drawable.im_empty_screen),
-            contentDescription = stringResource(R.string.placeholder_empty_transaction_list)
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(R.string.placeholder_empty_transaction_list),
-            style = HarmTheme.typography.titleMediumSemiBold,
-            color = HarmTheme.colors.onSurface,
-            textAlign = TextAlign.Center
-        )
-        Spacer(Modifier.height(16.dp))
-    }
-}
-
 @Preview(showSystemUi = true)
 @Composable
 private fun CategoryStatisticsScreenDarkPreviewEmpty() {
@@ -384,6 +379,8 @@ private fun CategoryStatisticsScreenDarkPreviewEmpty() {
     HarmTheme(darkTheme = true) {
         CategoryStatisticsScreen(
             onEvent = {},
+            onCategoryTypeChanged = {},
+            onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
                 isThemeDark = true,
                 statisticsDate = "01.03.2026 - 31.03.2026",
@@ -401,6 +398,8 @@ private fun CategoryStatisticsScreenLightPreviewEmpty() {
     HarmTheme(darkTheme = false) {
         CategoryStatisticsScreen(
             onEvent = {},
+            onCategoryTypeChanged = {},
+            onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
                 isThemeDark = false,
                 statisticsDate = "01.03.2026 - 31.03.2026",
@@ -422,6 +421,8 @@ private fun CategoryStatisticsScreenDarkPreview() {
     HarmTheme(darkTheme = true) {
         CategoryStatisticsScreen(
             onEvent = {},
+            onCategoryTypeChanged = {},
+            onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
                 isThemeDark = true,
                 statisticsDate = "01.03.2026 - 31.03.2026",
@@ -446,6 +447,8 @@ private fun CategoryStatisticsScreenLightPreview() {
     HarmTheme(darkTheme = false) {
         CategoryStatisticsScreen(
             onEvent = {},
+            onCategoryTypeChanged = {},
+            onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
                 isThemeDark = false,
                 statisticsDate = "01.03.2026 - 31.03.2026",
@@ -466,6 +469,8 @@ private fun CategoryStatisticsScreenDarkPreviewWithSettings() {
     HarmTheme(darkTheme = true) {
         CategoryStatisticsScreen(
             onEvent = {},
+            onCategoryTypeChanged = {},
+            onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(isThemeDark = true),
             drawerState = drawerState,
         )
@@ -479,6 +484,8 @@ private fun CategoryStatisticsScreenLightPreviewWithSettings() {
     HarmTheme(darkTheme = false) {
         CategoryStatisticsScreen(
             onEvent = {},
+            onCategoryTypeChanged = {},
+            onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(isThemeDark = false),
             drawerState = drawerState
         )
@@ -492,6 +499,8 @@ private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialog() {
     HarmTheme(darkTheme = true) {
         CategoryStatisticsScreen(
             onEvent = {},
+            onCategoryTypeChanged = {},
+            onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
                 isThemeDark = true,
                 isOpenedFirstDayMonthDialog = true
@@ -508,6 +517,8 @@ private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialog() {
     HarmTheme(darkTheme = false) {
         CategoryStatisticsScreen(
             onEvent = {},
+            onCategoryTypeChanged = {},
+            onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
                 isThemeDark = false,
                 isOpenedFirstDayMonthDialog = true
@@ -524,6 +535,8 @@ private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialogError() {
     HarmTheme(darkTheme = true) {
         CategoryStatisticsScreen(
             onEvent = {},
+            onCategoryTypeChanged = {},
+            onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
                 isThemeDark = true,
                 isOpenedFirstDayMonthDialog = true,
@@ -542,6 +555,8 @@ private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialogError() {
     HarmTheme(darkTheme = false) {
         CategoryStatisticsScreen(
             onEvent = {},
+            onCategoryTypeChanged = {},
+            onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
                 isThemeDark = false,
                 isOpenedFirstDayMonthDialog = true,

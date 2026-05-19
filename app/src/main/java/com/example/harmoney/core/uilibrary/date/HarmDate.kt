@@ -44,8 +44,8 @@ object HarmDate {
     fun HarmStatisticPeriodList(
         data: String,
         periods: ImmutableList<StatisticsPeriod>,
-        selectedPeriodId: Long,
-        onPeriodClick: (Long) -> Unit,
+        selectedPeriod: StatisticsPeriod,
+        onPeriodClick: (StatisticsPeriod) -> Unit,
         modifier: Modifier = Modifier,
     ) {
         Column(modifier = modifier.fillMaxWidth()) {
@@ -58,7 +58,7 @@ object HarmDate {
             ) {
                 periods.forEach { period ->
 
-                    val borderColor = if (period.id == selectedPeriodId) {
+                    val borderColor = if (period.id == selectedPeriod.id) {
                         HarmTheme.colors.primary
                     } else {
                         Color.Transparent
@@ -72,14 +72,14 @@ object HarmDate {
                             )
                             .padding(horizontal = 6.dp, vertical = 4.dp)
 
-                            .clickable { onPeriodClick(period.id) },
+                            .clickable { onPeriodClick(period) },
                         text = stringResource(period.toStringRes()),
-                        style = if (period.id == selectedPeriodId) {
+                        style = if (period.id == selectedPeriod.id) {
                             HarmTheme.typography.titleSmallSemiBold
                         } else {
                             HarmTheme.typography.titleSmall
                         },
-                        color = if (period.id == selectedPeriodId) {
+                        color = if (period.id == selectedPeriod.id) {
                             HarmTheme.colors.primary
                         } else {
                             HarmTheme.colors.onSurfaceContainer
@@ -180,7 +180,7 @@ private fun HarmStatisticPeriodList_DarkPreview() {
         HarmDate.HarmStatisticPeriodList(
             data = "01.03.2026 - 31.03.2026",
             periods = StatisticsPeriod.entries.toImmutableList(),
-            selectedPeriodId = StatisticsPeriod.CURRENT_MONTH.id,
+            selectedPeriod = StatisticsPeriod.CURRENT_MONTH,
             onPeriodClick = {}
         )
     }
@@ -193,7 +193,7 @@ private fun HarmStatisticPeriodList_LightPreview() {
         HarmDate.HarmStatisticPeriodList(
             data = "01.03.2026 - 31.03.2026",
             periods = StatisticsPeriod.entries.toImmutableList(),
-            selectedPeriodId = StatisticsPeriod.CURRENT_MONTH.id,
+            selectedPeriod = StatisticsPeriod.CURRENT_MONTH,
             onPeriodClick = {}
         )
     }

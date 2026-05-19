@@ -1,6 +1,8 @@
 package com.example.harmoney.core.di
 
 import androidx.lifecycle.SavedStateHandle
+import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorHandler
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorViewModel
 import com.example.harmoney.presentation.category.viewModel.CategoryViewModel
@@ -16,6 +18,8 @@ import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverte
 import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverterImpl
 import com.example.harmoney.presentation.converters.TransactionUiConverter
 import com.example.harmoney.presentation.converters.TransactionUiConverterImpl
+import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
+import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
 import com.example.harmoney.presentation.test.TestDataSource
 import com.example.harmoney.presentation.transaction.viewModel.TransactionViewModel
 import com.example.harmoney.presentation.transactionList.viewModel.TransactionListViewModel
@@ -23,16 +27,20 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    viewModel {
+    viewModel { (categoryType: CategoryType, statisticsPeriod: StatisticsPeriod) ->
         CategoryStatisticsViewModel(
+            categoryType = categoryType,
+            statisticsPeriod = statisticsPeriod,
             test = get(),
             categoryStatisticsUiConverter = get(),
             numbersFormatter = get(),
         )
     }
 
-    viewModel { (categoryId: Long?) ->
+    viewModel { (categoryType: CategoryType, statisticsPeriod: StatisticsPeriod, categoryId: Long?) ->
         TransactionListViewModel(
+            categoryType = categoryType,
+            statisticsPeriod = statisticsPeriod,
             categoryId = categoryId,
             test = get(),
             oneDayTransactionsUiConverter = get(),
@@ -40,20 +48,33 @@ val viewModelModule = module {
         )
     }
 
-    viewModel { (categoryId: Long?, transactionId: Long?) ->
+    viewModel { (categoryType: CategoryType, categoryId: Long?, transactionId: Long?) ->
         TransactionViewModel(
+            categoryType = categoryType,
             categoryId = categoryId,
             transactionId = transactionId,
             savedStateHandle = get()
         )
     }
 
-    viewModel { (categoryTypeId: Long?) ->
-        CategoryListViewModel(categoryTypeId = categoryTypeId, savedStateHandle = get())
+    viewModel { (categoryType: CategoryType, isCategorySelectionMode: Boolean) ->
+        CategoryListViewModel(
+            categoryType = categoryType,
+            isCategorySelectionMode = isCategorySelectionMode,
+            savedStateHandle = get(),
+        )
     }
 
-    viewModel { (categoryId: Long?, categoryTypeId: Long?) ->
-        CategoryViewModel(categoryId = categoryId, categoryTypeId = categoryTypeId)
+    viewModel { (categoryType: CategoryType, categoryId: Long?) ->
+        CategoryViewModel(categoryType = categoryType, categoryId = categoryId)
+    }
+
+    viewModel {
+        SharedCategoryTypeViewModel()
+    }
+
+    viewModel {
+        SharedStatisticsPeriodViewModel()
     }
 
     single {

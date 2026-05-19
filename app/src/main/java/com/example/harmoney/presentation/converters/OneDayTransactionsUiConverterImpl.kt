@@ -5,9 +5,8 @@ import com.example.harmoney.domain.models.OneDayTransactions
 import com.example.harmoney.presentation.models.OneDayTransactionsUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.util.Locale
+import java.time.format.DateTimeFormatter
 
 class OneDayTransactionsUiConverterImpl(
     private val transactionUiConverter: TransactionUiConverter,
@@ -34,12 +33,13 @@ class OneDayTransactionsUiConverterImpl(
     }
 
     private fun dateToString(date: LocalDate): String {
-        val formatter = SimpleDateFormat(DATE_PATTERN, Locale.getDefault())
-        return formatter.format(date)
+        val formatter = DateTimeFormatter.ofPattern(DATE_PATTERN_2)
+        val res = date.format(formatter)
+        return res
     }
 
     private companion object {
         const val TWO_DECIMAL_PLACES = 2
-        const val DATE_PATTERN = "dd MMMM"
+        const val DATE_PATTERN_2 = "dd MMMM"
     }
 }

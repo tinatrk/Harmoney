@@ -5,8 +5,8 @@ import com.example.harmoney.domain.models.CategoryType
 
 @Stable
 data class CategoryListState(
-    val isChoiceCategoryScreen: Boolean = true,
-    val categoryType: CategoryType = CategoryType.Expenses,
+    val isCategorySelectionMode: Boolean = true,
+    val selectedCategoryType: CategoryType = CategoryType.Expenses,
     val selectedTabIndex: Int = CategoryType.Expenses.ordinal,
     // то, что зависит от выбора таб вкладки
     val categoryInfo: String = ""

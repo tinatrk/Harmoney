@@ -7,5 +7,6 @@ import com.example.harmoney.domain.models.CategoryType
 data class CategoryState(
     val categoryId: Long? = null,
     val isCreateCategoryScreen: Boolean = true,
-    val categoryType: CategoryType = CategoryType.Expenses,
+    val selectedCategoryType: CategoryType = CategoryType.Expenses,
+    val selectedTabIndex: Int = CategoryType.Expenses.ordinal,
 )
