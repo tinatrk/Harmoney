@@ -13,8 +13,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class CategoryViewModel(categoryId: Long?, categoryTypeId: Long?) : ViewModel() {
-    private val _screenState = MutableStateFlow(CategoryState())
+class CategoryViewModel(categoryType: CategoryType, categoryId: Long?) : ViewModel() {
+    private val _screenState = MutableStateFlow(CategoryState(
+        selectedCategoryType = categoryType,
+        selectedTabIndex = categoryType.ordinal,))
     val screenState: StateFlow<CategoryState> = _screenState.asStateFlow()
 
     private val _action = MutableSharedFlow<CategoryAction?>(
@@ -24,12 +26,10 @@ class CategoryViewModel(categoryId: Long?, categoryTypeId: Long?) : ViewModel() 
     val action: SharedFlow<CategoryAction?> = _action.asSharedFlow()
 
     init {
-        val categoryType =
-            categoryTypeId?.let { CategoryType.fromId(categoryTypeId) } ?: CategoryType.Expenses
         _screenState.update {
             it.copy(
                 categoryId = categoryId,
-                categoryType = categoryType,
+                selectedCategoryType = categoryType,
                 isCreateCategoryScreen = categoryId == null
             )
         }

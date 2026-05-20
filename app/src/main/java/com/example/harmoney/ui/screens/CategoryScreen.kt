@@ -22,19 +22,27 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
+import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.presentation.category.models.CategoryAction
 import com.example.harmoney.presentation.category.models.CategoryEvent
 import com.example.harmoney.presentation.category.models.CategoryState
 import com.example.harmoney.presentation.category.viewModel.CategoryViewModel
+import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.ui.theme.HarmTheme
 
 @Composable
 fun CategoryScreen(
+    sharedCategoryTypeVM: SharedCategoryTypeViewModel,
     viewModel: CategoryViewModel,
     onBackClick: () -> Unit,
 ) {
+    val categoryType by sharedCategoryTypeVM.selectedCategoryType.collectAsStateWithLifecycle()
     val state by viewModel.screenState.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    LaunchedEffect(categoryType) {
+        viewModel.obtainEvent(CategoryEvent.OnChangeCategoryTypeClick(categoryType))
+    }
 
     LaunchedEffect(Unit) {
         viewModel.action
@@ -70,7 +78,8 @@ fun CategoryScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
             state = state,
-            onEvent = viewModel::obtainEvent
+            onEvent = viewModel::obtainEvent,
+            onCategoryTypeChanged = sharedCategoryTypeVM::categoryTypeChanged
         )
     }
 }
@@ -79,6 +88,7 @@ fun CategoryScreen(
 fun CategoryContent(
     state: CategoryState,
     onEvent: (CategoryEvent) -> Unit,
+    onCategoryTypeChanged: (CategoryType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -100,7 +110,7 @@ fun CategoryContent(
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "categoryTypeId = ${state.categoryType.id}",
+            text = "categoryType = ${state.selectedCategoryType.name}",
             style = HarmTheme.typography.bodyLarge,
             color = HarmTheme.colors.onSurface,
             textAlign = TextAlign.Center

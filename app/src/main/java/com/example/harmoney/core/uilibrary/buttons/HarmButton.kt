@@ -40,8 +40,10 @@ import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.domain.models.CategoryColors
-import com.example.harmoney.presentation.category.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOptions
 import com.example.harmoney.ui.theme.HarmTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 /**
  * - `HarmTopBarIconButton` - IconButton for appTopBar
@@ -321,7 +323,7 @@ object HarmButton {
     fun HarmDropdownMenuIcon(
         @DrawableRes iconRes: Int,
         expanded: Boolean,
-        menuOptions: List<MenuOptions>,
+        menuOptions: ImmutableList<MenuOptions>,
         contentDescription: String?,
         onMenuClick: () -> Unit,
         onMenuDismiss: () -> Unit,
@@ -666,7 +668,7 @@ private fun HarmDropdownMenuIcon_DarkPreview() {
         HarmButton.HarmDropdownMenuIcon(
             iconRes = R.drawable.ic_menu_24px,
             contentDescription = null,
-            menuOptions = listOf(
+            menuOptions = persistentListOf(
                 MenuOptions(stringResource(R.string.ic_edit_desc), {}),
                 MenuOptions(stringResource(R.string.ic_delete_desc), {}),
             ),
@@ -684,7 +686,7 @@ private fun HarmDropdownMenuIcon_LightPreview() {
         HarmButton.HarmDropdownMenuIcon(
             iconRes = R.drawable.ic_menu_24px,
             contentDescription = null,
-            menuOptions = listOf(
+            menuOptions = persistentListOf(
                 MenuOptions(stringResource(R.string.ic_edit_desc), {}),
                 MenuOptions(stringResource(R.string.ic_delete_desc), {}),
             ),

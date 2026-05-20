@@ -1,4 +1,4 @@
-package com.example.harmoney.core.uilibrary.others
+package com.example.harmoney.core.uilibrary.date
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,22 +27,25 @@ import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
-import com.example.harmoney.presentation.models.StatisticPeriod
+import com.example.harmoney.domain.models.StatisticsPeriod
+import com.example.harmoney.ui.mappers.StatisticsPeriodUiMapper.toStringRes
 import com.example.harmoney.ui.theme.HarmTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 /**
  * - `HarmStatisticPeriodList` - Text list of periods for statistic logic
  * - `HarmDatePickerModal` - Date Picker Dialog
  */
 @UiLibrary
-object HarmData {
+object HarmDate {
     /** Text list of periods for statistic logic */
     @Composable
     fun HarmStatisticPeriodList(
         data: String,
-        periods: List<StatisticPeriod>,
-        selectedPeriodId: Long,
-        onPeriodClick: (Long) -> Unit,
+        periods: ImmutableList<StatisticsPeriod>,
+        selectedPeriod: StatisticsPeriod,
+        onPeriodClick: (StatisticsPeriod) -> Unit,
         modifier: Modifier = Modifier,
     ) {
         Column(modifier = modifier.fillMaxWidth()) {
@@ -55,7 +58,7 @@ object HarmData {
             ) {
                 periods.forEach { period ->
 
-                    val borderColor = if (period.id == selectedPeriodId) {
+                    val borderColor = if (period.id == selectedPeriod.id) {
                         HarmTheme.colors.primary
                     } else {
                         Color.Transparent
@@ -69,14 +72,14 @@ object HarmData {
                             )
                             .padding(horizontal = 6.dp, vertical = 4.dp)
 
-                            .clickable { onPeriodClick(period.id) },
-                        text = stringResource(period.textRes),
-                        style = if (period.id == selectedPeriodId) {
+                            .clickable { onPeriodClick(period) },
+                        text = stringResource(period.toStringRes()),
+                        style = if (period.id == selectedPeriod.id) {
                             HarmTheme.typography.titleSmallSemiBold
                         } else {
                             HarmTheme.typography.titleSmall
                         },
-                        color = if (period.id == selectedPeriodId) {
+                        color = if (period.id == selectedPeriod.id) {
                             HarmTheme.colors.primary
                         } else {
                             HarmTheme.colors.onSurfaceContainer
@@ -174,10 +177,10 @@ object HarmData {
 @Composable
 private fun HarmStatisticPeriodList_DarkPreview() {
     HarmTheme(darkTheme = true) {
-        HarmData.HarmStatisticPeriodList(
+        HarmDate.HarmStatisticPeriodList(
             data = "01.03.2026 - 31.03.2026",
-            periods = StatisticPeriod.entries,
-            selectedPeriodId = StatisticPeriod.CURRENT_MONTH.id,
+            periods = StatisticsPeriod.entries.toImmutableList(),
+            selectedPeriod = StatisticsPeriod.CURRENT_MONTH,
             onPeriodClick = {}
         )
     }
@@ -187,10 +190,10 @@ private fun HarmStatisticPeriodList_DarkPreview() {
 @Composable
 private fun HarmStatisticPeriodList_LightPreview() {
     HarmTheme(darkTheme = false) {
-        HarmData.HarmStatisticPeriodList(
+        HarmDate.HarmStatisticPeriodList(
             data = "01.03.2026 - 31.03.2026",
-            periods = StatisticPeriod.entries,
-            selectedPeriodId = StatisticPeriod.CURRENT_MONTH.id,
+            periods = StatisticsPeriod.entries.toImmutableList(),
+            selectedPeriod = StatisticsPeriod.CURRENT_MONTH,
             onPeriodClick = {}
         )
     }
@@ -200,7 +203,7 @@ private fun HarmStatisticPeriodList_LightPreview() {
 @Composable
 private fun HarmDatePickerModal_DarkPreview() {
     HarmTheme(darkTheme = true) {
-        HarmData.HarmDatePickerModal(
+        HarmDate.HarmDatePickerModal(
             onDateSelected = {},
             onDismiss = {}
         )
@@ -211,7 +214,7 @@ private fun HarmDatePickerModal_DarkPreview() {
 @Composable
 private fun HarmDatePickerModal_LightPreview() {
     HarmTheme(darkTheme = false) {
-        HarmData.HarmDatePickerModal(
+        HarmDate.HarmDatePickerModal(
             onDateSelected = {},
             onDismiss = {}
         )

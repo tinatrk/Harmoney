@@ -18,10 +18,19 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TransactionViewModel(
-    categoryId: Long?, transactionId: Long?,
+    categoryType: CategoryType,
+    categoryId: Long?,
+    transactionId: Long?,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val _screenState = MutableStateFlow(TransactionState())
+    private val _screenState = MutableStateFlow(
+        TransactionState(
+            categoryId = categoryId,
+            transactionId = transactionId,
+            selectedCategoryType = categoryType,
+            selectedTabIndex = categoryType.ordinal,
+        )
+    )
     val screenState: StateFlow<TransactionState> = _screenState.asStateFlow()
 
     private val navCategory: StateFlow<Long?> =
@@ -36,9 +45,7 @@ class TransactionViewModel(
     init {
         _screenState.update {
             it.copy(
-                categoryId = categoryId,
-                transactionId = transactionId,
-                categoryInfo = getCategoryInfo(_screenState.value.categoryType),
+                categoryInfo = getCategoryInfo(_screenState.value.selectedCategoryType),
                 isCreateTransactionScreen = transactionId == null
             )
         }
@@ -65,10 +72,10 @@ class TransactionViewModel(
     }
 
     private fun onTabClick(newCategoryType: CategoryType) {
-        if (_screenState.value.categoryType.id != newCategoryType.id) {
+        if (_screenState.value.selectedCategoryType.id != newCategoryType.id) {
             _screenState.update {
                 it.copy(
-                    categoryType = newCategoryType,
+                    selectedCategoryType = newCategoryType,
                     selectedTabIndex = newCategoryType.ordinal,
                     categoryInfo = getCategoryInfo(newCategoryType)
                 )
@@ -78,8 +85,7 @@ class TransactionViewModel(
 
     private fun onNavigateToCategoryList() {
         _action.tryEmit(
-            TransactionAction
-                .NavigateToCategoryListScreen(categoryTypeId = _screenState.value.categoryType.id)
+            TransactionAction.NavigateToCategoryListScreen
         )
     }
 

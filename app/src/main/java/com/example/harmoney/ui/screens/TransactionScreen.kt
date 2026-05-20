@@ -25,21 +25,30 @@ import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.presentation.transaction.models.TransactionAction
 import com.example.harmoney.presentation.transaction.models.TransactionEvent
 import com.example.harmoney.presentation.transaction.models.TransactionState
 import com.example.harmoney.presentation.transaction.viewModel.TransactionViewModel
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.theme.HarmTheme
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun TransactionScreen(
+    sharedCategoryTypeViewModel: SharedCategoryTypeViewModel,
     viewModel: TransactionViewModel,
     onBackClick: () -> Unit,
-    onNavigateToCategoryListScreen: (categoryTypeId: Long?) -> Unit,
+    onNavigateToCategoryListScreen: () -> Unit,
 ) {
+    val categoryType by sharedCategoryTypeViewModel.selectedCategoryType
+        .collectAsStateWithLifecycle()
     val state by viewModel.screenState.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    LaunchedEffect(categoryType) {
+        viewModel.obtainEvent(TransactionEvent.OnTabClick(categoryType))
+    }
 
     LaunchedEffect(Unit) {
         viewModel.action
@@ -48,7 +57,7 @@ fun TransactionScreen(
                 when (act) {
                     TransactionAction.NavigateBack -> onBackClick()
                     is TransactionAction.NavigateToCategoryListScreen -> {
-                        onNavigateToCategoryListScreen(act.categoryTypeId)
+                        onNavigateToCategoryListScreen()
                     }
 
                     else -> {}
@@ -84,13 +93,10 @@ fun TransactionScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(paddingValues),
-            tabs = CategoryType.entries,
+            tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = state.selectedTabIndex,
             onTabClick = { categoryType ->
-                viewModel.obtainEvent(
-                    TransactionEvent
-                        .OnTabClick(categoryType)
-                )
+                sharedCategoryTypeViewModel.categoryTypeChanged(categoryType)
             }
         ) {
             TransactionContent(

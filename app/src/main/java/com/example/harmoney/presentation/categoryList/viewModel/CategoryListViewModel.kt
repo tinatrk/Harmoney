@@ -16,10 +16,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class CategoryListViewModel(
-    categoryTypeId: Long?,
+    categoryType: CategoryType,
+    private val isCategorySelectionMode: Boolean,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val _screenState = MutableStateFlow(CategoryListState())
+    private val _screenState = MutableStateFlow(
+        CategoryListState(
+            isCategorySelectionMode = isCategorySelectionMode,
+            selectedCategoryType = categoryType,
+            selectedTabIndex = categoryType.ordinal,
+        )
+    )
     val screenState: StateFlow<CategoryListState> = _screenState.asStateFlow()
 
     private val _action = MutableSharedFlow<CategoryListAction?>(
@@ -29,14 +36,12 @@ class CategoryListViewModel(
     val action: SharedFlow<CategoryListAction?> = _action.asSharedFlow()
 
     init {
-        val categoryType =
-            categoryTypeId?.let { CategoryType.fromId(categoryTypeId) } ?: CategoryType.Expenses
         _screenState.update {
             it.copy(
-                categoryType = categoryType,
+                selectedCategoryType = categoryType,
                 selectedTabIndex = categoryType.ordinal,
                 categoryInfo = getCategoryInfo(categoryType),
-                isChoiceCategoryScreen = categoryTypeId != null
+                isCategorySelectionMode = isCategorySelectionMode
             )
         }
     }
@@ -46,7 +51,7 @@ class CategoryListViewModel(
             is CategoryListEvent.OnBackClick -> onNavigateBack()
             is CategoryListEvent.OnTabClick -> onTabClick(event.categoryType)
             is CategoryListEvent.OnCategoryClick -> {
-                if (_screenState.value.isChoiceCategoryScreen) {
+                if (_screenState.value.isCategorySelectionMode) {
                     onChoiceCategory(event.categoryId)
                 } else {
                     onOpenCategory(event.categoryId)
@@ -58,10 +63,10 @@ class CategoryListViewModel(
     }
 
     private fun onTabClick(newCategoryType: CategoryType) {
-        if (_screenState.value.categoryType.id != newCategoryType.id) {
+        if (_screenState.value.selectedCategoryType.id != newCategoryType.id) {
             _screenState.update {
                 it.copy(
-                    categoryType = newCategoryType,
+                    selectedCategoryType = newCategoryType,
                     selectedTabIndex = newCategoryType.ordinal,
                     categoryInfo = getCategoryInfo(newCategoryType)
                 )
@@ -72,7 +77,7 @@ class CategoryListViewModel(
     private fun onCreateCategory() {
         _action.tryEmit(
             CategoryListAction
-                .NavigateToCreatingCategory(_screenState.value.categoryType.id)
+                .NavigateToCreatingCategory(_screenState.value.selectedCategoryType.id)
         )
     }
 

@@ -41,6 +41,7 @@
     <string name="ic_calculator_desc">Открыть калькулятор для ввода суммы</string>
     <string name="ic_swap_vert_desc">Выбрать режим сортировки</string>
     <string name="ic_switch_on_desc">Переключатель включен</string>
+    <string name="ic_filter_desc">Выбрать фильтр для транзакций</string>
 
     <!-- Текст на кнопках -->
     <string name="btn_save_text">Сохранить</string>

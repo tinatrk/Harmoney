@@ -249,6 +249,7 @@ private fun HarmSetFirstDayMonthDialog_LightPreview() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showBackground = true, backgroundColor = 0xFF201923)
 @Composable
 private fun HarmSetFirstDayMonthDialog_DarkErrorPreview() {
@@ -268,6 +269,7 @@ private fun HarmSetFirstDayMonthDialog_DarkErrorPreview() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
 @Composable
 private fun HarmSetFirstDayMonthDialog_LightErrorPreview() {

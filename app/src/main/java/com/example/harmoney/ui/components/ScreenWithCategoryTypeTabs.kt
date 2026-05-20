@@ -21,11 +21,14 @@ import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.tabs.HarmTab
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.ui.mappers.CategoryTypeUiMapper.toStringRes
 import com.example.harmoney.ui.theme.HarmTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun ScreenWithCategoryTypeTabs(
-    tabs: List<CategoryType>,
+    tabs: ImmutableList<CategoryType>,
     selectedTabIndex: Int,
     onTabClick: (categoryType: CategoryType) -> Unit,
     modifier: Modifier = Modifier,
@@ -43,7 +46,7 @@ fun ScreenWithCategoryTypeTabs(
                     onClick = {
                         onTabClick(tab)
                     },
-                    text = stringResource(tab.titleId)
+                    text = stringResource(tab.toStringRes())
                 )
             }
         }
@@ -64,7 +67,7 @@ fun ScreenWithCategoryTypeTabs(
 private fun ScreenWithCategoryTypeTabs_DarkPreview() {
     HarmTheme(darkTheme = true) {
         ScreenWithCategoryTypeTabs(
-            tabs = CategoryType.entries,
+            tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = 0,
             onTabClick = {}
         ) {
@@ -99,7 +102,7 @@ private fun ScreenWithCategoryTypeTabs_DarkPreview() {
 private fun ScreenWithCategoryTypeTabs_LightPreview() {
     HarmTheme(darkTheme = false) {
         ScreenWithCategoryTypeTabs(
-            tabs = CategoryType.entries,
+            tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = 0,
             onTabClick = {}
         ) {

@@ -23,8 +23,9 @@ import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.domain.models.Currency
-import com.example.harmoney.presentation.category.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOptions
 import com.example.harmoney.ui.theme.HarmTheme
+import kotlinx.collections.immutable.toImmutableList
 
 /**
  * - `HarmModalDrawer` - ModalNavigationDrawer with Harm theme colors
@@ -193,7 +194,7 @@ private fun PreviewDrawerItems(
                     MenuOptions(
                         text = currency.code
                     ) {}
-                },
+                }.toImmutableList(),
                 onDismissRequest = {}
             ) {
                 Text(

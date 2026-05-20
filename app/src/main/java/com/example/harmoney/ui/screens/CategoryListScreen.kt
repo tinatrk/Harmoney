@@ -28,18 +28,26 @@ import com.example.harmoney.presentation.categoryList.models.CategoryListAction
 import com.example.harmoney.presentation.categoryList.models.CategoryListEvent
 import com.example.harmoney.presentation.categoryList.models.CategoryListState
 import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
+import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.theme.HarmTheme
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun CategoryListScreen(
+    sharedCategoryTypeVM: SharedCategoryTypeViewModel,
     viewModel: CategoryListViewModel,
     onBackClick: () -> Unit,
-    onNavigateToCreateCategory: (categoryTypeId: Long?) -> Unit,
+    onNavigateToCreateCategory: () -> Unit,
     onNavigateToOpenCategory: (categoryId: Long?) -> Unit,
 ) {
+    val categoryType by sharedCategoryTypeVM.selectedCategoryType.collectAsStateWithLifecycle()
     val state by viewModel.screenState.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    LaunchedEffect(categoryType) {
+        viewModel.obtainEvent(CategoryListEvent.OnTabClick(categoryType))
+    }
 
     LaunchedEffect(Unit) {
         viewModel.action
@@ -47,7 +55,7 @@ fun CategoryListScreen(
             .collect { act ->
                 when (act) {
                     is CategoryListAction.NavigateToCreatingCategory -> {
-                        onNavigateToCreateCategory(act.categoryTypeId)
+                        onNavigateToCreateCategory()
                     }
 
                     is CategoryListAction.NavigateToOpeningCategory -> {
@@ -81,13 +89,10 @@ fun CategoryListScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(paddingValues),
-            tabs = CategoryType.entries,
+            tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = state.selectedTabIndex,
             onTabClick = { categoryType ->
-                viewModel.obtainEvent(
-                    CategoryListEvent
-                        .OnTabClick(categoryType)
-                )
+                sharedCategoryTypeVM.categoryTypeChanged(categoryType)
             }
         ) {
             CategoryListContent(
@@ -125,7 +130,7 @@ fun CategoryListContent(
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-            text = "categoryTypeId = ${state.categoryType.id}",
+            text = "categoryTypeId = ${state.selectedCategoryType.id}",
             style = HarmTheme.typography.bodyLarge,
             color = HarmTheme.colors.onSurface,
             textAlign = TextAlign.Center

@@ -1,4 +1,4 @@
-package com.example.harmoney.presentation.categoryStatistics.viewModel
+package com.example.harmoney.presentation.test
 
 import com.example.harmoney.domain.models.Category
 import com.example.harmoney.domain.models.CategoryColors
@@ -6,8 +6,10 @@ import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.OneDayTransactions
+import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.domain.models.Transaction
-import com.example.harmoney.presentation.models.StatisticPeriod
+import com.example.harmoney.domain.models.TransactionsFilter
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -20,8 +22,8 @@ class TestDataSource {
             name = "Products",
             type = CategoryType.Expenses,
             icon = CategoryIcon(
-                ids = CategoryIcons.IC_SHOP_CART,
-                colors = CategoryColors.VIOLET_T68
+                icon = CategoryIcons.IC_SHOP_CART,
+                color = CategoryColors.VIOLET_T68
             ),
             createdAt = 1L,
             userOrder = 100.0,
@@ -31,8 +33,8 @@ class TestDataSource {
             name = "Gifts",
             type = CategoryType.Expenses,
             icon = CategoryIcon(
-                ids = CategoryIcons.IC_GIFT,
-                colors = CategoryColors.ORANGE_T70
+                icon = CategoryIcons.IC_GIFT,
+                color = CategoryColors.ORANGE_T70
             ),
             createdAt = 2L,
             userOrder = 200.0,
@@ -42,8 +44,8 @@ class TestDataSource {
             name = "Vacation",
             type = CategoryType.Expenses,
             icon = CategoryIcon(
-                ids = CategoryIcons.IC_VACATION_1,
-                colors = CategoryColors.BLUE_T80
+                icon = CategoryIcons.IC_VACATION_1,
+                color = CategoryColors.BLUE_T80
             ),
             createdAt = 3L,
             userOrder = 300.0,
@@ -53,8 +55,8 @@ class TestDataSource {
             name = "Education",
             type = CategoryType.Expenses,
             icon = CategoryIcon(
-                ids = CategoryIcons.IC_EDUCATION,
-                colors = CategoryColors.ROSE_T62
+                icon = CategoryIcons.IC_EDUCATION,
+                color = CategoryColors.ROSE_T62
             ),
             createdAt = 4L,
             userOrder = 400.0,
@@ -64,8 +66,8 @@ class TestDataSource {
             name = "Salary",
             type = CategoryType.Income,
             icon = CategoryIcon(
-                ids = CategoryIcons.IC_MONEY_1,
-                colors = CategoryColors.GREEN_T70
+                icon = CategoryIcons.IC_MONEY_1,
+                color = CategoryColors.GREEN_T70
             ),
             createdAt = 5L,
             userOrder = 500.0,
@@ -75,8 +77,8 @@ class TestDataSource {
             name = "Gifts",
             type = CategoryType.Income,
             icon = CategoryIcon(
-                ids = CategoryIcons.IC_MONEY_3,
-                colors = CategoryColors.GREEN_T53
+                icon = CategoryIcons.IC_MONEY_3,
+                color = CategoryColors.GREEN_T53
             ),
             createdAt = 6L,
             userOrder = 600.0,
@@ -86,8 +88,8 @@ class TestDataSource {
             name = "Other",
             type = CategoryType.Income,
             icon = CategoryIcon(
-                ids = CategoryIcons.IC_MONEY_2,
-                colors = CategoryColors.GREEN_T60
+                icon = CategoryIcons.IC_MONEY_2,
+                color = CategoryColors.GREEN_T60
             ),
             createdAt = 7L,
             userOrder = 700.0,
@@ -230,8 +232,8 @@ class TestDataSource {
 
     }
 
-    fun getStatisticsDate(statisticPeriod: StatisticPeriod): String {
-        return if (statisticPeriod == StatisticPeriod.CURRENT_MONTH) {
+    fun getStatisticsDate(statisticsPeriod: StatisticsPeriod): String {
+        return if (statisticsPeriod == StatisticsPeriod.CURRENT_MONTH) {
             parseStringFromDate(curMonthFirstDay) + " - " +
                     parseStringFromDate(curMonthLastDay)
         } else {
@@ -241,10 +243,10 @@ class TestDataSource {
     }
 
     fun getCategoriesForStatistics(
-        statisticPeriod: StatisticPeriod,
+        statisticsPeriod: StatisticsPeriod,
         categoryType: CategoryType
     ): List<CategoryStatistics> {
-        val filteredTransactions = getTransactions(statisticPeriod, categoryType)
+        val filteredTransactions = getTransactions(statisticsPeriod, categoryType)
         val total = filteredTransactions.sumOf { it.amount }
 
         val categories = filteredTransactions.map { it.category }.distinct()
@@ -261,20 +263,20 @@ class TestDataSource {
     }
 
     private fun getTransactions(
-        statisticPeriod: StatisticPeriod,
+        statisticsPeriod: StatisticsPeriod,
         categoryType: CategoryType,
         categoryId: Long? = null
     ): List<Transaction> {
         var firstDay: LocalDate
         var lastDay: LocalDate
 
-        when (statisticPeriod) {
-            StatisticPeriod.CURRENT_MONTH -> {
+        when (statisticsPeriod) {
+            StatisticsPeriod.CURRENT_MONTH -> {
                 firstDay = curMonthFirstDay
                 lastDay = curMonthLastDay
             }
 
-            StatisticPeriod.LAST_MONTH -> {
+            StatisticsPeriod.LAST_MONTH -> {
                 firstDay = pastMonthFirstDay
                 lastDay = pastMonthLastDay
             }
@@ -290,6 +292,49 @@ class TestDataSource {
             filteredTransactions
         }
 
+    }
+
+    fun getTransactionList(
+        statisticsPeriod: StatisticsPeriod,
+        categoryType: CategoryType,
+        filterId: Long?
+    ): List<OneDayTransactions> {
+        val filteredTransactions = if (filterId != null && filterId > 0) {
+            getTransactions(statisticsPeriod, categoryType).filter { it.category.id == filterId }
+        } else {
+            getTransactions(statisticsPeriod, categoryType)
+        }
+        val total = filteredTransactions.sumOf { it.amount }
+
+        val days = filteredTransactions.map { it.date }.distinct().sortedDescending()
+
+        return days.map { day ->
+            val transactions = filteredTransactions.filter { it.date.isEqual(day) }
+            OneDayTransactions(
+                date = day,
+                transactions = transactions,
+                totalAmount = transactions.sumOf { it.amount }
+            )
+        }
+    }
+
+    fun getTransactionFilters(
+        categoryType: CategoryType,
+    ): List<TransactionsFilter> {
+        val categories = categories.filter { it.type == categoryType }
+        val filters = categories.map {
+            TransactionsFilter(
+                id = it.id,
+                name = it.name
+            )
+        }
+
+        return listOf(
+            TransactionsFilter(
+                id = 0,
+                name = "Все категории",
+            )
+        ) + filters
     }
 
     private companion object {

@@ -2,13 +2,14 @@ package com.example.harmoney.presentation.categoryStatistics.models
 
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
+import com.example.harmoney.domain.models.StatisticsPeriod
 
 sealed interface CategoryStatisticsEvent {
     data class OnTabClick(val categoryType: CategoryType) : CategoryStatisticsEvent
     data object OnSettingsIconClick : CategoryStatisticsEvent
     data object OnTransactionListIconClick : CategoryStatisticsEvent
 
-    data class OnStatisticsPeriodClick(val newPeriodId: Long) : CategoryStatisticsEvent
+    data class OnStatisticsPeriodClick(val newPeriod: StatisticsPeriod) : CategoryStatisticsEvent
     data class OnCategoryClick(val categoryId: Long) : CategoryStatisticsEvent
     data object OnFloatingButtonClick : CategoryStatisticsEvent
 
