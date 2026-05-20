@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class SharedStatisticsPeriodViewModel() : ViewModel() {
+class SharedStatisticsPeriodViewModel : ViewModel() {
     private val _selectedStatisticsPeriod = MutableStateFlow(StatisticsPeriod.CURRENT_MONTH)
     val selectedStatisticsPeriod: StateFlow<StatisticsPeriod> =
         _selectedStatisticsPeriod.asStateFlow()

@@ -1,6 +1,5 @@
 package com.example.harmoney.presentation.categoryStatistics.viewModel
 
-import android.util.Log
 import com.example.harmoney.base.BaseViewModel
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
@@ -35,8 +34,6 @@ class CategoryStatisticsViewModel(
     override val tag: String = CategoryStatisticsViewModel::class.java.simpleName ?: ""
 
     init {
-
-        Log.d("HarmAppTag", "CategoryStatisticsViewModel -> init -> categoryType = ${state.value.selectedCategoryType}")
         //TODO() считать тему из shared preferences
         //TODO() считать валюту из shared preferences
         writableState.update {

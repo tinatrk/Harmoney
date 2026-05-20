@@ -10,3 +10,4 @@ object StatisticsPeriodUiMapper {
             StatisticsPeriod.CURRENT_MONTH -> R.string.period_current_month
         }
 }
+
