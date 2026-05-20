@@ -281,6 +281,7 @@ fun TransactionListContent(
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showSystemUi = true)
 @Composable
 private fun TransactionListScreen_DarkEmptyPreview() {
@@ -301,6 +302,7 @@ private fun TransactionListScreen_DarkEmptyPreview() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showSystemUi = true)
 @Composable
 fun TransactionListScreen_LightEmptyPreview() {
@@ -321,6 +323,7 @@ fun TransactionListScreen_LightEmptyPreview() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showSystemUi = true)
 @Composable
 private fun TransactionListScreen_DarkPreview() {
@@ -341,6 +344,7 @@ private fun TransactionListScreen_DarkPreview() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showSystemUi = true)
 @Composable
 private fun TransactionListScreen_LightPreview() {
@@ -361,6 +365,7 @@ private fun TransactionListScreen_LightPreview() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showSystemUi = true)
 @Composable
 private fun TransactionListScreen_DarkMenuPreview() {
@@ -383,6 +388,7 @@ private fun TransactionListScreen_DarkMenuPreview() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showSystemUi = true)
 @Composable
 private fun TransactionListScreen_LightMenuPreview() {
@@ -405,6 +411,7 @@ private fun TransactionListScreen_LightMenuPreview() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showSystemUi = true)
 @Composable
 private fun TransactionListScreen_DarkFilteredPreview() {
@@ -426,6 +433,7 @@ private fun TransactionListScreen_DarkFilteredPreview() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showSystemUi = true)
 @Composable
 private fun TransactionListScreen_LightFilteredPreview() {
@@ -447,6 +455,7 @@ private fun TransactionListScreen_LightFilteredPreview() {
     }
 }
 
+@Suppress("detekt:MagicNumber", "detekt:LongMethod")
 private fun getExpensesTransactions(): ImmutableList<OneDayTransactionsUi> {
     return persistentListOf(
         OneDayTransactionsUi(
@@ -559,6 +568,7 @@ private fun getExpensesTransactions(): ImmutableList<OneDayTransactionsUi> {
     )
 }
 
+@Suppress("detekt:MagicNumber")
 private fun getTransactionsFilter(): ImmutableList<TransactionsFilterUi> {
     return persistentListOf(
         TransactionsFilterUi(id = 0, name = "Все категории"),
@@ -568,6 +578,7 @@ private fun getTransactionsFilter(): ImmutableList<TransactionsFilterUi> {
     ).sortedBy { it.name }.toImmutableList()
 }
 
+@Suppress("detekt:MagicNumber", "detekt:LongMethod")
 private fun getFilteredTransactions(): ImmutableList<OneDayTransactionsUi> {
     return persistentListOf(
         OneDayTransactionsUi(

@@ -524,6 +524,7 @@ private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialog() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showSystemUi = true)
 @Composable
 private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialogError() {
@@ -544,6 +545,7 @@ private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialogError() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showSystemUi = true)
 @Composable
 private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialogError() {
@@ -564,6 +566,7 @@ private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialogError() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 private fun getPreviewDataCategoryStatistics(): ImmutableList<CategoryStatisticsUi> {
     return persistentListOf(
         CategoryStatisticsUi(
@@ -608,6 +611,7 @@ private fun getPreviewDataCategoryStatistics(): ImmutableList<CategoryStatistics
     )
 }
 
+@Suppress("detekt:MagicNumber")
 private fun getPreviewDataPieChartCategories(
 ): ImmutableList<PieChartItem> {
     return persistentListOf(

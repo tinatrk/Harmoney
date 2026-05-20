@@ -14,6 +14,7 @@ import com.example.harmoney.presentation.transactionList.models.TransactionListE
 import com.example.harmoney.presentation.transactionList.models.TransactionListState
 import kotlinx.coroutines.flow.update
 
+@Suppress("detekt:LongParameterList", "detekt:TooManyFunctions")
 class TransactionListViewModel(
     categoryType: CategoryType,
     statisticsPeriod: StatisticsPeriod,

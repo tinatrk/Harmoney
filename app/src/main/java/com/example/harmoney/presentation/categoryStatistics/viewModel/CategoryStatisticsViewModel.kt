@@ -17,6 +17,8 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.update
 
+@Suppress("detekt:LongParameterList", "detekt:TooManyFunctions",
+    "detekt:CyclomaticComplexMethod")
 class CategoryStatisticsViewModel(
     categoryType: CategoryType,
     statisticsPeriod: StatisticsPeriod,

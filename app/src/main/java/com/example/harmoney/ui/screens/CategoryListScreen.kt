@@ -41,8 +41,13 @@ fun CategoryListScreen(
     onNavigateToCreateCategory: () -> Unit,
     onNavigateToOpenCategory: (categoryId: Long?) -> Unit,
 ) {
+    val categoryType by sharedCategoryTypeVM.selectedCategoryType.collectAsStateWithLifecycle()
     val state by viewModel.screenState.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    LaunchedEffect(categoryType) {
+        viewModel.obtainEvent(CategoryListEvent.OnTabClick(categoryType))
+    }
 
     LaunchedEffect(Unit) {
         viewModel.action
@@ -87,10 +92,7 @@ fun CategoryListScreen(
             tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = state.selectedTabIndex,
             onTabClick = { categoryType ->
-                viewModel.obtainEvent(
-                    CategoryListEvent
-                        .OnTabClick(categoryType)
-                )
+                sharedCategoryTypeVM.categoryTypeChanged(categoryType)
             }
         ) {
             CategoryListContent(

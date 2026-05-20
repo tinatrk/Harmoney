@@ -286,6 +286,7 @@ private fun HarmBaseTextField_UnfocusedLightPreview() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showBackground = true, backgroundColor = 0xFF201923)
 @Composable
 private fun HarmBaseTextField_ErrorDarkPreview() {
@@ -305,6 +306,7 @@ private fun HarmBaseTextField_ErrorDarkPreview() {
     }
 }
 
+@Suppress("detekt:MagicNumber")
 @Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
 @Composable
 private fun HarmBaseTextField_ErrorLightPreview() {

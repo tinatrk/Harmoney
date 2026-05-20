@@ -3,6 +3,7 @@ package com.example.harmoney.ui.mappers
 import com.example.harmoney.R
 import com.example.harmoney.domain.models.CategoryIcons
 
+@Suppress("detekt:CyclomaticComplexMethod", "detekt:LongMethod")
 object CategoryIconUiMapper {
     fun CategoryIcons.toDrawableRes(): Int =
         when (this) {
