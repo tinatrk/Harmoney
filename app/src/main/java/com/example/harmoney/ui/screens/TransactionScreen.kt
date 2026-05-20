@@ -41,8 +41,14 @@ fun TransactionScreen(
     onBackClick: () -> Unit,
     onNavigateToCategoryListScreen: () -> Unit,
 ) {
+    val categoryType by sharedCategoryTypeViewModel.selectedCategoryType
+        .collectAsStateWithLifecycle()
     val state by viewModel.screenState.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    LaunchedEffect(categoryType) {
+        viewModel.obtainEvent(TransactionEvent.OnTabClick(categoryType))
+    }
 
     LaunchedEffect(Unit) {
         viewModel.action
@@ -90,10 +96,7 @@ fun TransactionScreen(
             tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = state.selectedTabIndex,
             onTabClick = { categoryType ->
-                viewModel.obtainEvent(
-                    TransactionEvent
-                        .OnTabClick(categoryType)
-                )
+                sharedCategoryTypeViewModel.categoryTypeChanged(categoryType)
             }
         ) {
             TransactionContent(
