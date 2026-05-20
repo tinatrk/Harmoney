@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.presentation.models.OneDayTransactionsUi
+import com.example.harmoney.presentation.models.TransactionsFilterUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -22,6 +23,9 @@ data class TransactionListState(
     val selectedStatisticsPeriod: StatisticsPeriod = StatisticsPeriod.CURRENT_MONTH,
 
     val totalAmount: String = "0.00",
-    val oneDayTransactionsList: ImmutableList<OneDayTransactionsUi> = persistentListOf()
-    // что-то про фильтрацию
+    val oneDayTransactionsList: ImmutableList<OneDayTransactionsUi> = persistentListOf(),
+
+    val transactionsFilters: ImmutableList<TransactionsFilterUi> = persistentListOf(),
+    val isFilterMenuOpened: Boolean = false,
+    val selectedFilter: TransactionsFilterUi = TransactionsFilterUi(id = -1, name = "")
 )

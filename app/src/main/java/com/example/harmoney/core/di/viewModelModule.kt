@@ -18,6 +18,8 @@ import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverte
 import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverterImpl
 import com.example.harmoney.presentation.converters.TransactionUiConverter
 import com.example.harmoney.presentation.converters.TransactionUiConverterImpl
+import com.example.harmoney.presentation.converters.TransactionsFilterUiConverter
+import com.example.harmoney.presentation.converters.TransactionsFilterUiConverterImpl
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
 import com.example.harmoney.presentation.test.TestDataSource
@@ -37,14 +39,18 @@ val viewModelModule = module {
         )
     }
 
-    viewModel { (categoryType: CategoryType, statisticsPeriod: StatisticsPeriod, categoryId: Long?) ->
+    viewModel { (
+                    categoryType: CategoryType,
+                    statisticsPeriod: StatisticsPeriod,
+                    categoryId: Long?) ->
         TransactionListViewModel(
             categoryType = categoryType,
             statisticsPeriod = statisticsPeriod,
             categoryId = categoryId,
             test = get(),
             oneDayTransactionsUiConverter = get(),
-            numberFormatter = get()
+            numberFormatter = get(),
+            transactionsFilterUiConverter = get()
         )
     }
 
@@ -107,6 +113,10 @@ val viewModelModule = module {
 
     factory<TransactionUiConverter> {
         TransactionUiConverterImpl(categoryUiConverter = get(), numbersFormatter = get())
+    }
+
+    factory<TransactionsFilterUiConverter> {
+        TransactionsFilterUiConverterImpl()
     }
 
     //временный класс

@@ -7,8 +7,9 @@ import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.OneDayTransactions
-import com.example.harmoney.domain.models.Transaction
 import com.example.harmoney.domain.models.StatisticsPeriod
+import com.example.harmoney.domain.models.Transaction
+import com.example.harmoney.domain.models.TransactionsFilter
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -296,10 +297,10 @@ class TestDataSource {
     fun getTransactionList(
         statisticsPeriod: StatisticsPeriod,
         categoryType: CategoryType,
-        categoryId: Long?
-    ) : List<OneDayTransactions> {
-        val filteredTransactions = if (categoryId != null) {
-            getTransactions(statisticsPeriod, categoryType).filter { it.category.id == categoryId }
+        filterId: Long?
+    ): List<OneDayTransactions> {
+        val filteredTransactions = if (filterId != null && filterId > 0) {
+            getTransactions(statisticsPeriod, categoryType).filter { it.category.id == filterId }
         } else {
             getTransactions(statisticsPeriod, categoryType)
         }
@@ -315,6 +316,25 @@ class TestDataSource {
                 totalAmount = transactions.sumOf { it.amount }
             )
         }
+    }
+
+    fun getTransactionFilters(
+        categoryType: CategoryType,
+    ): List<TransactionsFilter> {
+        val categories = categories.filter { it.type == categoryType }
+        val filters = categories.map {
+            TransactionsFilter(
+                id = it.id,
+                name = it.name
+            )
+        }
+
+        return listOf(
+            TransactionsFilter(
+                id = 0,
+                name = "Все категории",
+            )
+        ) + filters
     }
 
     private companion object {

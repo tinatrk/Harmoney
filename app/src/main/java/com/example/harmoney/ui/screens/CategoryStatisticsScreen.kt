@@ -185,10 +185,6 @@ fun CategoryStatisticsScreen(
                 selectedTabIndex = state.selectedTabIndex,
                 onTabClick = { categoryType ->
                     onCategoryTypeChanged(categoryType)
-                    /*onEvent(
-                        CategoryStatisticsEvent
-                            .OnTabClick(categoryType)
-                    )*/
                 }
             ) {
                 CategoryStatisticsContent(

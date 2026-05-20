@@ -1,6 +1,10 @@
 package com.example.harmoney.core.uilibrary.menus
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -8,7 +12,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,32 +43,51 @@ object HarmMenu {
         menuOptions: ImmutableList<MenuOptions>,
         onDismissRequest: () -> Unit,
         modifier: Modifier = Modifier,
-        menuSource: @Composable (() -> Unit)? = null
+        menuSource: @Composable (() -> Unit)? = null,
     ) {
+        val scrollState = rememberScrollState()
+
         Box(
-            modifier = modifier,
+            modifier = modifier
+                .wrapContentWidth()
+                .background(Color.Unspecified),
+            contentAlignment = Alignment.CenterEnd
         ) {
             menuSource?.let { menuSource() }
 
             DropdownMenu(
+                modifier = modifier
+                    .align(Alignment.CenterEnd)
+                    .background(Color.Unspecified),
                 expanded = expanded,
                 onDismissRequest = onDismissRequest,
                 containerColor = HarmTheme.colors.surfaceContainer,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                scrollState = scrollState,
             ) {
-                menuOptions.forEach { option ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = option.text,
-                                style = HarmTheme.typography.bodyMedium
+                Column(
+                    modifier = Modifier.background(Color.Unspecified)
+                ) {
+                    menuOptions.forEach { option ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    modifier = Modifier.background(Color.Unspecified),
+                                    text = option.text,
+                                    style = HarmTheme.typography.bodyMedium
+                                )
+                            },
+                            onClick = option.onClick,
+                            colors = MenuDefaults.itemColors(
+                                textColor = HarmTheme.colors.onSurfaceVariant,
                             )
-                        },
-                        onClick = option.onClick,
-                        colors = MenuDefaults.itemColors(
-                            textColor = HarmTheme.colors.onSurfaceVariant,
                         )
-                    )
+                    }
+                }
+                LaunchedEffect(expanded) {
+                    if (expanded) {
+                        scrollState.scrollTo(scrollState.maxValue)
+                    }
                 }
             }
         }
