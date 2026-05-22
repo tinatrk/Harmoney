@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@Suppress("detekt:LongParameterList", "detekt:TooManyFunctions",
+    "detekt:CyclomaticComplexMethod")
 class TransactionViewModel(
     categoryType: CategoryType,
     categoryId: Long?,
@@ -25,8 +27,8 @@ class TransactionViewModel(
 ) : ViewModel() {
     private val _screenState = MutableStateFlow(
         TransactionState(
-            categoryId = categoryId,
-            transactionId = transactionId,
+            selectedCategoryId = categoryId ?: ZERO_ID,
+            isCreateTransactionScreen = transactionId == null,
             selectedCategoryType = categoryType,
             selectedTabIndex = categoryType.ordinal,
         )
@@ -45,7 +47,6 @@ class TransactionViewModel(
     init {
         _screenState.update {
             it.copy(
-                categoryInfo = getCategoryInfo(_screenState.value.selectedCategoryType),
                 isCreateTransactionScreen = transactionId == null
             )
         }
@@ -54,7 +55,7 @@ class TransactionViewModel(
             navCategory.collect { returnedCategoryId ->
                 if (returnedCategoryId != null && returnedCategoryId != categoryId) {
                     _screenState.update { state ->
-                        state.copy(categoryId = returnedCategoryId)
+                        state.copy(selectedCategoryId = returnedCategoryId)
                     }
                 }
             }
@@ -64,9 +65,30 @@ class TransactionViewModel(
     fun obtainEvent(event: TransactionEvent) {
         when (event) {
             is TransactionEvent.OnBackClick -> onNavigateBack()
+            is TransactionEvent.OnBackDialogConfirm -> {}
+            is TransactionEvent.OnBackDialogDismiss -> {}
+
             is TransactionEvent.OnTabClick -> onTabClick(event.categoryType)
+
+            is TransactionEvent.OnDateDialogOpen -> {}
+            is TransactionEvent.OnDateDialogConfirm -> {}
+            is TransactionEvent.OnDateDialogDismiss -> {}
+            is TransactionEvent.OnDateErrorDialogDismiss -> {}
+
+            is TransactionEvent.OnCalculatorOpen -> {}
+            is TransactionEvent.OnAmountChanged -> {}
+            is TransactionEvent.OnCalculatorDismiss -> {}
+            is TransactionEvent.OnCurrencyClick -> {}
+            is TransactionEvent.OnCurrencyChanged -> {}
+            is TransactionEvent.OnCurrencyDismiss -> {}
+
+            is TransactionEvent.OnNoteChanged -> {}
+
+            is TransactionEvent.OnCategoryClick -> {}
             is TransactionEvent.OnMoreCategoriesClick -> onNavigateToCategoryList()
+
             is TransactionEvent.OnSaveClick -> onNavigateBack()
+            is TransactionEvent.OnSaveDialogDismiss -> {}
             is TransactionEvent.OnCloseScreen -> clearSavedState()
         }
     }
@@ -77,7 +99,6 @@ class TransactionViewModel(
                 it.copy(
                     selectedCategoryType = newCategoryType,
                     selectedTabIndex = newCategoryType.ordinal,
-                    categoryInfo = getCategoryInfo(newCategoryType)
                 )
             }
         }
@@ -98,10 +119,7 @@ class TransactionViewModel(
         savedStateHandle[NavResultKeys.SELECTED_CATEGORY] = null
     }
 
-    private fun getCategoryInfo(categoryType: CategoryType): String {
-        return when (categoryType) {
-            CategoryType.Expenses -> "Информация по расходам"
-            CategoryType.Income -> "Информация по доходам"
-        }
+    private companion object {
+        const val ZERO_ID = 0L
     }
 }

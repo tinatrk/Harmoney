@@ -87,4 +87,5 @@
     <!-- errorText для textField -->
     <string name="error_empty_field">Поле не может быть пустым</string>
     <string name="error_incorrect_first_day_month_pattern">Введите число в диапазоне от %d до %d</string>
+    <string name="error_incorrect_date">Выберите дату в рамках текущего финансового месяца</string>
 </resources>

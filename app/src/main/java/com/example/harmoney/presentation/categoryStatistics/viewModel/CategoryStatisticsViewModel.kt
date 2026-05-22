@@ -287,7 +287,7 @@ class CategoryStatisticsViewModel(
             it.copy(
                 firstDayMonthText = newText,
                 firstDayMonthError = if (!isFirstDayCorrect) {
-                    FirstDayMonthError.IncorrectInput(
+                    FirstDayMonthError.OutOfRange(
                         MIN_FIRST_DAY_MONTH,
                         MAX_FIRST_DAY_MONTH
                     )

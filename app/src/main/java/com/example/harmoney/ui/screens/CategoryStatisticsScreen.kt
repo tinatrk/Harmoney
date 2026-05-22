@@ -292,7 +292,7 @@ fun CategoryStatisticsContent(
     val supportText =
         when (val error = state.firstDayMonthError) {
             is FirstDayMonthError.None -> ""
-            is FirstDayMonthError.IncorrectInput -> {
+            is FirstDayMonthError.OutOfRange -> {
                 stringResource(
                     R.string.error_incorrect_first_day_month_pattern,
                     error.minDay,
@@ -538,7 +538,7 @@ private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialogError() {
                 isThemeDark = true,
                 isOpenedFirstDayMonthDialog = true,
                 firstDayMonthText = "90",
-                firstDayMonthError = FirstDayMonthError.IncorrectInput(1, 28),
+                firstDayMonthError = FirstDayMonthError.OutOfRange(1, 28),
             ),
             drawerState = drawerState
         )
@@ -559,7 +559,7 @@ private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialogError() {
                 isThemeDark = false,
                 isOpenedFirstDayMonthDialog = true,
                 firstDayMonthText = "90",
-                firstDayMonthError = FirstDayMonthError.IncorrectInput(1, 28),
+                firstDayMonthError = FirstDayMonthError.OutOfRange(1, 28),
             ),
             drawerState = drawerState
         )
