@@ -474,7 +474,8 @@ private fun getExpensesTransactions(): ImmutableList<OneDayTransactionsUi> {
                         ),
                     ),
                     amount = "2 000 ₽",
-                    note = "Маме на 8 марта"
+                    note = "Маме на 8 марта",
+                    date = "06 Марта"
                 ),
                 TransactionUi(
                     id = 2,
@@ -488,7 +489,8 @@ private fun getExpensesTransactions(): ImmutableList<OneDayTransactionsUi> {
                         ),
                     ),
                     amount = "1 500 ₽",
-                    note = "Бабушке на 8 марта"
+                    note = "Бабушке на 8 марта",
+                    date = "06 Марта"
                 ),
                 TransactionUi(
                     id = 3,
@@ -502,7 +504,8 @@ private fun getExpensesTransactions(): ImmutableList<OneDayTransactionsUi> {
                         ),
                     ),
                     amount = "1 500 ₽",
-                    note = "Чемодан"
+                    note = "Чемодан",
+                    date = "06 Марта"
                 ),
             )
         ),
@@ -522,6 +525,7 @@ private fun getExpensesTransactions(): ImmutableList<OneDayTransactionsUi> {
                         ),
                     ),
                     amount = "2 000 ₽",
+                    date = "15 Марта"
                 ),
             )
         ),
@@ -541,7 +545,8 @@ private fun getExpensesTransactions(): ImmutableList<OneDayTransactionsUi> {
                         ),
                     ),
                     amount = "30 000 ₽",
-                    note = "Билеты"
+                    note = "Билеты",
+                    date = "20 Марта"
                 ),
             )
         ),
@@ -561,7 +566,8 @@ private fun getExpensesTransactions(): ImmutableList<OneDayTransactionsUi> {
                         ),
                     ),
                     amount = "25 000 ₽",
-                    note = "Жилье"
+                    note = "Жилье",
+                    date = "25 Марта"
                 ),
             )
         ),
@@ -597,7 +603,8 @@ private fun getFilteredTransactions(): ImmutableList<OneDayTransactionsUi> {
                         ),
                     ),
                     amount = "1 500 ₽",
-                    note = "Чемодан"
+                    note = "Чемодан",
+                    date = "06 Марта"
                 ),
             )
         ),
@@ -617,7 +624,8 @@ private fun getFilteredTransactions(): ImmutableList<OneDayTransactionsUi> {
                         ),
                     ),
                     amount = "30 000 ₽",
-                    note = "Билеты"
+                    note = "Билеты",
+                    date = "20 Марта"
                 ),
             )
         ),
@@ -637,7 +645,8 @@ private fun getFilteredTransactions(): ImmutableList<OneDayTransactionsUi> {
                         ),
                     ),
                     amount = "25 000 ₽",
-                    note = "Жилье"
+                    note = "Жилье",
+                    date = "25 Марта"
                 ),
             )
         ),

@@ -10,11 +10,12 @@ import java.time.format.DateTimeFormatter
 
 class OneDayTransactionsUiConverterImpl(
     private val transactionUiConverter: TransactionUiConverter,
-    private val numberFormatter: NumbersFormatter
+    private val numberFormatter: NumbersFormatter,
+    private val dateFormatter: DateFormatter
 ) : OneDayTransactionsUiConverter {
     override fun map(day: OneDayTransactions, currency: Currency): OneDayTransactionsUi {
         return OneDayTransactionsUi(
-            date = dateToString(day.date),
+            date = dateFormatter.millisToString(day.dateMillis, DATE_PATTERN),
             transactions = transactionUiConverter.map(day.transactions, currency),
             totalAmount = numberFormatter.toStringWithCurrency(
                 number = day.totalAmount,
@@ -32,14 +33,8 @@ class OneDayTransactionsUiConverterImpl(
         return days.map { map(it, currency) }.toImmutableList()
     }
 
-    private fun dateToString(date: LocalDate): String {
-        val formatter = DateTimeFormatter.ofPattern(DATE_PATTERN_2)
-        val res = date.format(formatter)
-        return res
-    }
-
     private companion object {
         const val TWO_DECIMAL_PLACES = 2
-        const val DATE_PATTERN_2 = "dd MMMM"
+        const val DATE_PATTERN = "dd MMMM"
     }
 }

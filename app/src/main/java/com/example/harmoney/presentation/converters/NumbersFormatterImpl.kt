@@ -34,6 +34,19 @@ class NumbersFormatterImpl : NumbersFormatter {
         return String.format(Locale.ENGLISH, "%s ${currency.symbol}", number)
     }
 
+    override fun toString(
+        number: Double,
+        decimalPlaces: Int,
+        isNeededThousandSeparator: Boolean
+    ): String {
+        val roundedNumber = roundNumber(number, decimalPlaces)
+        return if (isNeededThousandSeparator) {
+            toStringWithThousandSeparator(roundedNumber)
+        } else {
+            roundedNumber.toString()
+        }
+    }
+
     override fun toStringWithPercent(number: Double, decimalPlaces: Int): String {
         val roundedNumber = roundNumber(number, decimalPlaces)
         // Используется не String.format, чтобы сохранить округление

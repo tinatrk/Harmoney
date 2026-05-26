@@ -2,7 +2,6 @@ package com.example.harmoney.presentation.transaction.models
 
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
-import java.time.LocalDate
 
 sealed interface TransactionEvent {
     data object OnBackClick : TransactionEvent
@@ -11,7 +10,7 @@ sealed interface TransactionEvent {
     data class OnTabClick(val categoryType: CategoryType) : TransactionEvent
 
     data object OnDateDialogOpen: TransactionEvent
-    data class OnDateDialogConfirm(val newDate: LocalDate): TransactionEvent
+    data class OnDateDialogConfirm(val newDateMillis: Long?): TransactionEvent
     data object OnDateDialogDismiss : TransactionEvent
     data object OnDateErrorDialogDismiss: TransactionEvent
 

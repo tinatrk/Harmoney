@@ -647,7 +647,8 @@ private fun getPreviewTransactionList(): ImmutableList<TransactionUi> {
                 ),
             ),
             amount = "2 000 ₽",
-            note = "На ужин"
+            note = "На ужин",
+            date = "01.03.2026"
         ),
         TransactionUi(
             id = 2,
@@ -661,6 +662,7 @@ private fun getPreviewTransactionList(): ImmutableList<TransactionUi> {
                 ),
             ),
             amount = "3 000 ₽",
+            date = "03.03.2026"
         )
     )
 }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.Immutable
 data class TransactionUi(
     val id: Long = 0,
     val category: CategoryUi,
+    val date: String,
     val amount: String,
     val note: String = "",
     val createdAt: Long = 0L,

@@ -16,23 +16,26 @@ data class TransactionState(
     val selectedCategoryType: CategoryType = CategoryType.Expenses,
     val selectedTabIndex: Int = CategoryType.Expenses.ordinal,
 
-    val selectedDate: String = "", // по-умолчанию сегодняшняя
+    val selectedDate: String = "",
+    //val selectedDateMillis: Long = 0,
     val isDatePickerOpened: Boolean = false,
     val isDateErrorDialogOpen: Boolean = false,
     val dateError: TransactionDateError = TransactionDateError.None,
 
-    // amount field
     val amountInLocalCurrency: String = "",
     val amountInGlobalCurrency: String = "",
+    val isUsedCurrencyExchange: Boolean = false,
     val isCalculatorOpen: Boolean = false,
     val amountError: TransactionAmountError = TransactionAmountError.None,
     val isCurrencyMenuOpened: Boolean = false,
+    val globalCurrency: Currency = Currency.RUB,
     val localCurrency: Currency = Currency.RUB,
 
     val note: String = "",
 
     val categories: ImmutableList<CategoryUi> = persistentListOf(),
-    val selectedCategoryId: Long = 0,
+    val selectedCategoryId: Long? = null,
+    val isCategoryError: Boolean = false,
 
     val isSaveTransactionErrorDialogOpened: Boolean = false,
     val isTransactionNotSavedDialogOpened: Boolean = false,

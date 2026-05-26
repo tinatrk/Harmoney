@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.toImmutableList
 class TransactionUiConverterImpl(
     private val categoryUiConverter: CategoryUiConverter,
     private val numbersFormatter: NumbersFormatter,
+    private val dateFormatter: DateFormatter
 ) : TransactionUiConverter {
     override fun map(transaction: Transaction, currency: Currency): TransactionUi {
         return TransactionUi(
@@ -20,6 +21,7 @@ class TransactionUiConverterImpl(
                 isNeededThousandSeparator = true,
                 currency = currency
             ),
+            date = dateFormatter.millisToString(transaction.dateMillis, DATE_PATTERN),
             note = transaction.note,
             createdAt = transaction.createdAt
         )
@@ -34,5 +36,6 @@ class TransactionUiConverterImpl(
 
     private companion object {
         const val TWO_DECIMAL_PLACES = 2
+        const val DATE_PATTERN = "dd MMMM"
     }
 }

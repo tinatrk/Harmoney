@@ -164,7 +164,7 @@ object HarmTextField {
     fun HarmTextFieldWithDatePicker(
         selectedDateString: String,
         showModalDatePicker: Boolean,
-        selectedDateMillis: Long?,
+        //selectedDateMillis: Long?,
         onDismiss: () -> Unit,
         onTextFieldTouch: () -> Unit,
         onDateSelected: (Long?) -> Unit,
@@ -176,7 +176,7 @@ object HarmTextField {
         HarmBaseTextField(
             modifier = modifier
                 .fillMaxWidth()
-                .pointerInput(selectedDateMillis) {
+                .pointerInput(selectedDateString) {
                     awaitEachGesture {
                         awaitFirstDown(pass = PointerEventPass.Initial)
                         val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
