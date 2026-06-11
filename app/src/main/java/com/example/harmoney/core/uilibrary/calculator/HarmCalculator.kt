@@ -22,7 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.annotation.UiLibrary
-import com.example.harmoney.presentation.calculator.models.CalculatorAction
+import com.example.harmoney.presentation.calculator.models.CalculatorEvent
 import com.example.harmoney.presentation.calculator.models.CalculatorOperation
 import com.example.harmoney.presentation.calculator.models.CalculatorState
 import com.example.harmoney.presentation.calculator.models.CalculatorSymbol
@@ -39,7 +39,7 @@ import com.example.harmoney.ui.theme.HarmTheme
 @Composable
 fun HarmCalculator(
     state: CalculatorState,
-    onAction: (CalculatorAction) -> Unit,
+    onEvent: (CalculatorEvent) -> Unit,
     modifier: Modifier = Modifier,
     onCalculateClick: (() -> Unit) = {}
 ) {
@@ -53,7 +53,7 @@ fun HarmCalculator(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = state.equation.ifEmpty { state.result },
+            text = state.equation.ifEmpty { state.resultString },
             style = HarmTheme.typography.titleLarge,
             color = colors.onSurface,
             textAlign = TextAlign.End
@@ -61,7 +61,7 @@ fun HarmCalculator(
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = if (state.equation.isNotEmpty()) state.result else "",
+            text = if (state.equation.isNotEmpty()) state.resultString else "",
             style = HarmTheme.typography.titleMedium,
             color = colors.onSurfaceContainerLow,
             textAlign = TextAlign.End
@@ -76,15 +76,15 @@ fun HarmCalculator(
                     Const.MANAGEMENT_WIDTH_IN_BUTTONS / Const.CALCULATOR_WIDTH_IN_BUTTONS
                 ), // 3/4
             ) {
-                CalculatorManagementBlock(onAction = onAction)
-                CalculationDigitsBlock(onAction = onAction)
+                CalculatorManagementBlock(onEvent = onEvent)
+                CalculationDigitsBlock(onEvent = onEvent)
             }
 
             CalculatingMathBlock(
                 modifier = Modifier.weight(
                     Const.OPERATION_WIDTH_IN_BUTTONS / Const.CALCULATOR_WIDTH_IN_BUTTONS
                 ), // 1/4
-                onAction = onAction,
+                onEvent = onEvent,
                 onCalculateClick
             )
         }
@@ -94,7 +94,7 @@ fun HarmCalculator(
 @Composable
 private fun CalculatorManagementBlock(
     modifier: Modifier = Modifier,
-    onAction: (CalculatorAction) -> Unit
+    onEvent: (CalculatorEvent) -> Unit,
 ) {
     Row(modifier = modifier) {
         CalculatorButton(
@@ -103,7 +103,7 @@ private fun CalculatorManagementBlock(
             ), // 1/3
             symbol = CalculatorSymbol.CLEAR.symbol,
             type = CalculatorButtonType.MANAGEMENT
-        ) { onAction(CalculatorAction.Clear) }
+        ) { onEvent(CalculatorEvent.OnClearClick) }
 
         CalculatorButton(
             modifier = Modifier.weight(
@@ -111,7 +111,7 @@ private fun CalculatorManagementBlock(
             ), // 1/3
             symbol = CalculatorSymbol.DELETE_LAST.symbol,
             type = CalculatorButtonType.MANAGEMENT
-        ) { onAction(CalculatorAction.Delete) }
+        ) { onEvent(CalculatorEvent.OnDeleteClick) }
 
         CalculatorButton(
             modifier = Modifier.weight(
@@ -120,14 +120,14 @@ private fun CalculatorManagementBlock(
             symbol = CalculatorSymbol.PARENTHESIS_OPEN.symbol + " "
                     + CalculatorSymbol.PARENTHESIS_CLOSED.symbol,
             type = CalculatorButtonType.MANAGEMENT
-        ) { onAction(CalculatorAction.Parenthesis) }
+        ) { onEvent(CalculatorEvent.OnEnterParenthesis) }
     }
 }
 
 @Composable
 private fun CalculationDigitsBlock(
     modifier: Modifier = Modifier,
-    onAction: (CalculatorAction) -> Unit
+    onEvent: (CalculatorEvent) -> Unit,
 ) {
     val symbolsWithoutLostRow = CalculatorSymbol.getNumbers()
         .filter { it.symbol != CalculatorSymbol.ZERO.symbol }
@@ -142,7 +142,7 @@ private fun CalculationDigitsBlock(
                 CalculatorButton(
                     symbol = number,
                     type = CalculatorButtonType.NUMBER
-                ) { onAction(CalculatorAction.Number(number)) }
+                ) { onEvent(CalculatorEvent.OnEnterNumber(number)) }
             }
         }
         Row(
@@ -154,14 +154,14 @@ private fun CalculationDigitsBlock(
                 ), // 2/3
                 symbol = CalculatorSymbol.ZERO.symbol,
                 type = CalculatorButtonType.NUMBER,
-            ) { onAction(CalculatorAction.Number(CalculatorSymbol.ZERO.symbol)) }
+            ) { onEvent(CalculatorEvent.OnEnterNumber(CalculatorSymbol.ZERO.symbol)) }
             CalculatorButton(
                 modifier = modifier.weight(
                     Const.COMMON_BUTTON_WIDTH / Const.NUMBERS_WIDTH_IN_BUTTONS
                 ), // 1/3
                 symbol = CalculatorSymbol.DOT.symbol,
                 type = CalculatorButtonType.NUMBER,
-            ) { onAction(CalculatorAction.Decimal) }
+            ) { onEvent(CalculatorEvent.OnEnterDecimalDot) }
         }
     }
 }
@@ -169,7 +169,7 @@ private fun CalculationDigitsBlock(
 @Composable
 private fun CalculatingMathBlock(
     modifier: Modifier,
-    onAction: (CalculatorAction) -> Unit,
+    onEvent: (CalculatorEvent) -> Unit,
     onCalculateClick: () -> Unit,
 ) {
     val operations = listOf(
@@ -186,7 +186,7 @@ private fun CalculatingMathBlock(
                 modifier = Modifier.fillMaxWidth(),
                 symbol = operation.symbol,
                 type = CalculatorButtonType.OPERATION
-            ) { onAction(CalculatorAction.Operation(operation)) }
+            ) { onEvent(CalculatorEvent.OnEnterOperation(operation)) }
         }
 
         CalculatorButton(
@@ -194,7 +194,7 @@ private fun CalculatingMathBlock(
             symbol = CalculatorSymbol.EQUALITY.symbol,
             type = CalculatorButtonType.EQUALITY
         ) {
-            onAction(CalculatorAction.Calculate)
+            onEvent(CalculatorEvent.OnCalculateClick)
             onCalculateClick()
         }
     }
@@ -270,13 +270,13 @@ private object Const {
 @Preview(showBackground = true, backgroundColor = 0xFF201923)
 @Composable
 private fun CalculatorDarkPreview() {
-    HarmTheme(darkTheme = true){
+    HarmTheme(darkTheme = true) {
         HarmCalculator(
             state = CalculatorState(
                 equation = "5 + 3",
-                result = "8"
+                resultString = "8"
             ),
-            onAction = {}
+            onEvent = {}
         )
     }
 }
@@ -284,13 +284,13 @@ private fun CalculatorDarkPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
 @Composable
 private fun CalculatorLightPreview() {
-    HarmTheme(darkTheme = false){
+    HarmTheme(darkTheme = false) {
         HarmCalculator(
             state = CalculatorState(
                 equation = "5 + 3",
-                result = "8"
+                resultString = "8"
             ),
-            onAction = {}
+            onEvent = {}
         )
     }
 }

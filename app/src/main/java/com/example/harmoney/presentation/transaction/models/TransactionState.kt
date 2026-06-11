@@ -17,9 +17,7 @@ data class TransactionState(
     val selectedTabIndex: Int = CategoryType.Expenses.ordinal,
 
     val selectedDate: String = "",
-    //val selectedDateMillis: Long = 0,
     val isDatePickerOpened: Boolean = false,
-    val isDateErrorDialogOpen: Boolean = false,
     val dateError: TransactionDateError = TransactionDateError.None,
 
     val amountInLocalCurrency: String = "",
@@ -34,9 +32,11 @@ data class TransactionState(
     val note: String = "",
 
     val categories: ImmutableList<CategoryUi> = persistentListOf(),
-    val selectedCategoryId: Long? = null,
+    val selectedCategory: CategoryUi? = null,
     val isCategoryError: Boolean = false,
+    val isCategoriesBottomSheetOpened: Boolean = false,
 
     val isSaveTransactionErrorDialogOpened: Boolean = false,
     val isTransactionNotSavedDialogOpened: Boolean = false,
+    val isTransactionDeleteDialogOpened: Boolean = false
 )

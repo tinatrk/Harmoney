@@ -40,7 +40,7 @@ fun AppRoot() {
                 sharedCategoryTypeVM = sharedCategoryTypeVM,
                 onBackClick = { navController.popBackStack() },
                 onNavigateToCategoryListScreen = {
-                    navController.navigateToCategoryList(isCategorySelectionMode = true)
+                    navController.navigateToCategoryList()
                 }
             )
 
@@ -56,17 +56,7 @@ fun AppRoot() {
                         categoryId = categoryId
                     )
                 },
-                onBackWithChosenCategory = {
-                    val result = navController.currentBackStackEntry
-                        ?.savedStateHandle
-                        ?.get<Long>(NavResultKeys.SELECTED_CATEGORY)
-
-                    navController.previousBackStackEntry
-                        ?.savedStateHandle
-                        ?.set(NavResultKeys.SELECTED_CATEGORY, result)
-
-                    navController.popBackStack()
-                }
+                onBackClick = { navController.popBackStack() }
             )
 
             categoryScreen(
@@ -110,7 +100,7 @@ fun StatisticsPeriodFlow(
                 )
             },
             onNavigateToCategoryList = {
-                parentNavController.navigateToCategoryList(isCategorySelectionMode = false)
+                parentNavController.navigateToCategoryList()
             }
         )
 

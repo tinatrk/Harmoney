@@ -8,7 +8,7 @@ sealed interface TransactionListEvent {
     data object OnBackClick : TransactionListEvent
     data class OnTabClick(val categoryType: CategoryType) : TransactionListEvent
     data class OnStatisticsPeriodClick(val newPeriod: StatisticsPeriod) : TransactionListEvent
-    data class OnFloatingButtonClick(val categoryId: Long?) : TransactionListEvent
+    data object OnFloatingButtonClick : TransactionListEvent
     data class OnTransactionClick(val transactionId: Long) : TransactionListEvent
     data object OnFilterMenuClick : TransactionListEvent
     data class OnFilterMenuChanged(val filter: TransactionsFilterUi) : TransactionListEvent

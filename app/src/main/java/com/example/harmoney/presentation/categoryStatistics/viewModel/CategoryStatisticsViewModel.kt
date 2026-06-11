@@ -11,14 +11,17 @@ import com.example.harmoney.presentation.categoryStatistics.models.CategoryStati
 import com.example.harmoney.presentation.categoryStatistics.models.FirstDayMonthError
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverter
 import com.example.harmoney.presentation.converters.NumbersFormatter
+import com.example.harmoney.presentation.models.DecimalPlaces
 import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.test.TestDataSource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.update
 
-@Suppress("detekt:LongParameterList", "detekt:TooManyFunctions",
-    "detekt:CyclomaticComplexMethod")
+@Suppress(
+    "detekt:LongParameterList", "detekt:TooManyFunctions",
+    "detekt:CyclomaticComplexMethod"
+)
 class CategoryStatisticsViewModel(
     categoryType: CategoryType,
     statisticsPeriod: StatisticsPeriod,
@@ -60,13 +63,13 @@ class CategoryStatisticsViewModel(
                 ),
                 total = numbersFormatter.toStringWithCurrency(
                     number = total,
-                    decimalPlaces = TWO_DECIMAL_PLACES,
+                    decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
                     currency = it.currency,
                     isNeededThousandSeparator = true
                 ),
                 currentBalance = numbersFormatter.toStringWithCurrency(
                     number = test.getBalance(),
-                    decimalPlaces = TWO_DECIMAL_PLACES,
+                    decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
                     currency = it.currency,
                     isNeededThousandSeparator = true
 
@@ -141,7 +144,7 @@ class CategoryStatisticsViewModel(
                     ),
                     total = numbersFormatter.toStringWithCurrency(
                         number = total,
-                        decimalPlaces = TWO_DECIMAL_PLACES,
+                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
                         currency = it.currency,
                         isNeededThousandSeparator = true
                     ),
@@ -190,7 +193,7 @@ class CategoryStatisticsViewModel(
                     ),
                     total = numbersFormatter.toStringWithCurrency(
                         number = total,
-                        decimalPlaces = TWO_DECIMAL_PLACES,
+                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
                         currency = it.currency,
                         isNeededThousandSeparator = true
                     ),
@@ -329,7 +332,6 @@ class CategoryStatisticsViewModel(
     }
 
     private companion object {
-        const val TWO_DECIMAL_PLACES = 2
         const val MIN_FIRST_DAY_MONTH = 1
         const val MAX_FIRST_DAY_MONTH = 28
         const val START_ANGLE = -90f

@@ -1,10 +1,10 @@
 package com.example.harmoney.presentation.converters
 
 import com.example.harmoney.domain.models.Currency
-import java.text.DecimalFormat
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.text.NumberFormat
 import java.util.Locale
-import kotlin.math.pow
-import kotlin.math.roundToInt
 
 class NumbersFormatterImpl : NumbersFormatter {
 
@@ -23,11 +23,16 @@ class NumbersFormatterImpl : NumbersFormatter {
         return toStringWithCurrency(numberWithSeparator, currency)
     }
 
-    private fun toStringWithThousandSeparator(number: Number): String {
-        val decimalFormatter = DecimalFormat(DECIMAL_FORMAT_PATTERN)
-        return decimalFormatter
+    private fun toStringWithThousandSeparator(number: BigDecimal): String {
+        val formatter = NumberFormat.getNumberInstance(Locale.US).apply {
+            minimumFractionDigits = MIN_DECIMAL_PLACES
+            maximumFractionDigits = MAX_DECIMAL_PLACES
+            isGroupingUsed = true
+        }
+        return formatter
             .format(number)
             .replace(SEPARATOR_COMMA, SEPARATOR_SPACE)
+
     }
 
     private fun toStringWithCurrency(number: String, currency: Currency): String {
@@ -53,31 +58,20 @@ class NumbersFormatterImpl : NumbersFormatter {
         return "${roundedNumber}$PERCENT"
     }
 
-    private fun roundNumber(number: Double, decimalPlaces: Int): Number {
+    private fun roundNumber(number: Double, decimalPlaces: Int): BigDecimal {
         val longres = number.toLong()
-        val digits = when {
-            // Если дробная часть равна нулю, то она будет отброшена (поэтому возвращается Number)
-            longres.toDouble() == number -> MIN_DECIMAL_PLACES
-            decimalPlaces !in MIN_DECIMAL_PLACES..MAX_DECIMAL_PLACES -> MAX_DECIMAL_PLACES
-            else -> decimalPlaces
-        }
+        val digits = if (longres.toDouble() == number) MIN_DECIMAL_PLACES else decimalPlaces
 
-        val res = if (digits == 0) {
-            longres
-        } else {
-            val сoeff = 10f.pow(digits)
-            (number * сoeff).roundToInt() / сoeff
-        }
-
-        return res
+        return number
+            .toBigDecimal()
+            .setScale(digits, RoundingMode.HALF_UP)
     }
 
     private companion object {
         const val SEPARATOR_COMMA = ","
         const val SEPARATOR_SPACE = " "
-        const val DECIMAL_FORMAT_PATTERN = "#$SEPARATOR_COMMA###"
         const val PERCENT = "%"
         const val MIN_DECIMAL_PLACES = 0
-        const val MAX_DECIMAL_PLACES = 6
+        const val MAX_DECIMAL_PLACES = 10
     }
 }

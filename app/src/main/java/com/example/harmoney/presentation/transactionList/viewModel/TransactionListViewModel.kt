@@ -7,6 +7,7 @@ import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverter
 import com.example.harmoney.presentation.converters.TransactionsFilterUiConverter
+import com.example.harmoney.presentation.models.DecimalPlaces
 import com.example.harmoney.presentation.models.TransactionsFilterUi
 import com.example.harmoney.presentation.test.TestDataSource
 import com.example.harmoney.presentation.transactionList.models.TransactionListAction
@@ -25,7 +26,6 @@ class TransactionListViewModel(
     private val transactionsFilterUiConverter: TransactionsFilterUiConverter
 ) : BaseViewModel<TransactionListEvent, TransactionListAction, TransactionListState>(
     TransactionListState(
-        categoryId = categoryId,
         selectedCategoryType = categoryType,
         selectedTabIndex = categoryType.ordinal,
         selectedStatisticsPeriod = statisticsPeriod
@@ -33,6 +33,7 @@ class TransactionListViewModel(
 ) {
     override val tag: String = TransactionListViewModel::class.java.simpleName ?: ""
     private val currency: Currency
+    private val selectedFilters: MutableList<Long>
 
     init {
         val filters = transactionsFilterUiConverter.map(
@@ -43,6 +44,13 @@ class TransactionListViewModel(
         val filter = categoryId?.let {
             filters.find { it.id == categoryId }
         } ?: filters.first()
+
+        selectedFilters = if (filters.isNotEmpty()) {
+            CategoryType.entries.map { filters.first().id }.toMutableList()
+        } else {
+            CategoryType.entries.map { ZERO_ID }.toMutableList()
+        }
+        selectedFilters[state.value.selectedCategoryType.ordinal] = filter.id
 
         val transactions = test.getTransactionList(
             statisticsPeriod = state.value.selectedStatisticsPeriod,
@@ -58,15 +66,14 @@ class TransactionListViewModel(
             it.copy(
                 currentBalance = numberFormatter.toStringWithCurrency(
                     number = balance,
-                    decimalPlaces = TWO_DECIMAL_PLACES,
+                    decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
                     currency = currency,
                     isNeededThousandSeparator = true
                 ),
-                categoryId = categoryId,
                 statisticsDate = test.getStatisticsDate(it.selectedStatisticsPeriod),
                 totalAmount = numberFormatter.toStringWithCurrency(
                     number = totalAmount,
-                    decimalPlaces = TWO_DECIMAL_PLACES,
+                    decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
                     currency = currency,
                     isNeededThousandSeparator = true
                 ),
@@ -87,7 +94,7 @@ class TransactionListViewModel(
                 onStatisticPeriodClick(event.newPeriod)
             }
 
-            is TransactionListEvent.OnFloatingButtonClick -> onCreateTransaction(event.categoryId)
+            is TransactionListEvent.OnFloatingButtonClick -> onCreateTransaction()
             is TransactionListEvent.OnTransactionClick -> onOpenTransaction(event.transactionId)
 
             is TransactionListEvent.OnFilterMenuClick -> onFilterMenuClick()
@@ -107,7 +114,10 @@ class TransactionListViewModel(
                     categoryType = newCategoryType,
                 )
             )
-            val curFilter = filters.first()
+            val curFilter = filters.find {
+                it.id == selectedFilters[newCategoryType.ordinal]
+            } ?: filters.first()
+            selectedFilters[newCategoryType.ordinal] = curFilter.id
 
             val transactions = test.getTransactionList(
                 statisticsPeriod = state.value.selectedStatisticsPeriod,
@@ -121,7 +131,7 @@ class TransactionListViewModel(
                     selectedTabIndex = newCategoryType.ordinal,
                     totalAmount = numberFormatter.toStringWithCurrency(
                         number = totalAmount,
-                        decimalPlaces = TWO_DECIMAL_PLACES,
+                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
                         currency = currency,
                         isNeededThousandSeparator = true
                     ),
@@ -151,7 +161,7 @@ class TransactionListViewModel(
                     selectedStatisticsPeriod = newPeriod,
                     totalAmount = numberFormatter.toStringWithCurrency(
                         number = totalAmount,
-                        decimalPlaces = TWO_DECIMAL_PLACES,
+                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
                         currency = currency,
                         isNeededThousandSeparator = true
                     ),
@@ -164,10 +174,15 @@ class TransactionListViewModel(
         }
     }
 
-    private fun onCreateTransaction(categoryId: Long?) {
+    private fun onCreateTransaction() {
+        val filterId: Long? = if (state.value.selectedFilter.id > ZERO_ID) {
+            state.value.selectedFilter.id
+        } else {
+            null
+        }
         writableAction.tryEmit(
             TransactionListAction
-                .NavigateToCreatingTransaction(categoryId)
+                .NavigateToCreatingTransaction(filterId)
         )
     }
 
@@ -191,6 +206,9 @@ class TransactionListViewModel(
                 state.value.selectedCategoryType,
                 filter.id
             )
+            val totalAmount = transactions.sumOf { it.totalAmount }
+            selectedFilters[state.value.selectedCategoryType.ordinal] = filter.id
+
             writableState.update {
                 it.copy(
                     selectedFilter = filter,
@@ -198,6 +216,12 @@ class TransactionListViewModel(
                     oneDayTransactionsList = oneDayTransactionsUiConverter.map(
                         transactions,
                         currency
+                    ),
+                    totalAmount = numberFormatter.toStringWithCurrency(
+                        number = totalAmount,
+                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
+                        currency = currency,
+                        isNeededThousandSeparator = true
                     )
                 )
             }
@@ -215,6 +239,6 @@ class TransactionListViewModel(
     }
 
     private companion object {
-        const val TWO_DECIMAL_PLACES = 2
+        const val ZERO_ID = 0L
     }
 }

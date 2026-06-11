@@ -117,6 +117,7 @@ object HarmTextField {
                 errorLabelColor = colors.error,
                 errorCursorColor = colors.primary,
                 errorPlaceholderColor = colors.onSurfaceContainer,
+                errorTrailingIconColor = colors.error,
                 selectionColors = TextSelectionColors(
                     handleColor = colors.primary,
                     backgroundColor = colors.primary
@@ -151,7 +152,9 @@ object HarmTextField {
                 {
                     Text(
                         text = supportingText,
-                        style = typography.labelMedium
+                        style = typography.labelMedium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
@@ -164,7 +167,6 @@ object HarmTextField {
     fun HarmTextFieldWithDatePicker(
         selectedDateString: String,
         showModalDatePicker: Boolean,
-        //selectedDateMillis: Long?,
         onDismiss: () -> Unit,
         onTextFieldTouch: () -> Unit,
         onDateSelected: (Long?) -> Unit,

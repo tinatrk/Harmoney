@@ -35,12 +35,15 @@ fun EmptyScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Image(
+            modifier = Modifier.fillMaxWidth(),
             painter = painterResource(R.drawable.im_empty_screen),
             contentDescription = stringResource(R.string.placeholder_empty_transaction_list)
         )
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 44.dp),
             text = stringResource(R.string.placeholder_empty_transaction_list),
             style = HarmTheme.typography.titleMediumSemiBold,
             color = HarmTheme.colors.onSurface,

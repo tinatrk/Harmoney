@@ -1,9 +1,7 @@
 package com.example.harmoney.presentation.categoryList.viewModel
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.harmoney.domain.models.CategoryType
-import com.example.harmoney.navigation.NavResultKeys
 import com.example.harmoney.presentation.categoryList.models.CategoryListAction
 import com.example.harmoney.presentation.categoryList.models.CategoryListEvent
 import com.example.harmoney.presentation.categoryList.models.CategoryListState
@@ -17,12 +15,9 @@ import kotlinx.coroutines.flow.update
 
 class CategoryListViewModel(
     categoryType: CategoryType,
-    private val isCategorySelectionMode: Boolean,
-    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _screenState = MutableStateFlow(
         CategoryListState(
-            isCategorySelectionMode = isCategorySelectionMode,
             selectedCategoryType = categoryType,
             selectedTabIndex = categoryType.ordinal,
         )
@@ -41,7 +36,6 @@ class CategoryListViewModel(
                 selectedCategoryType = categoryType,
                 selectedTabIndex = categoryType.ordinal,
                 categoryInfo = getCategoryInfo(categoryType),
-                isCategorySelectionMode = isCategorySelectionMode
             )
         }
     }
@@ -51,11 +45,7 @@ class CategoryListViewModel(
             is CategoryListEvent.OnBackClick -> onNavigateBack()
             is CategoryListEvent.OnTabClick -> onTabClick(event.categoryType)
             is CategoryListEvent.OnCategoryClick -> {
-                if (_screenState.value.isCategorySelectionMode) {
-                    onChoiceCategory(event.categoryId)
-                } else {
-                    onOpenCategory(event.categoryId)
-                }
+                onOpenCategory(event.categoryId)
             }
 
             is CategoryListEvent.OnFloatingButtonClick -> onCreateCategory()
@@ -86,20 +76,6 @@ class CategoryListViewModel(
     }
 
     private fun onNavigateBack() {
-        onReturnWithoutParam()
-    }
-
-    private fun onChoiceCategory(categoryId: Long) {
-        onReturnWithParam(categoryId)
-    }
-
-    private fun onReturnWithParam(param: Long) {
-        savedStateHandle[NavResultKeys.SELECTED_CATEGORY] = param
-        _action.tryEmit(CategoryListAction.NavigateBack)
-    }
-
-    private fun onReturnWithoutParam() {
-        savedStateHandle[NavResultKeys.SELECTED_CATEGORY] = null
         _action.tryEmit(CategoryListAction.NavigateBack)
     }
 

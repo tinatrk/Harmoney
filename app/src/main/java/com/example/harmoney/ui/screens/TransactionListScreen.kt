@@ -35,15 +35,9 @@ import com.example.harmoney.core.uilibrary.cards.HarmCard
 import com.example.harmoney.core.uilibrary.date.HarmDate
 import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
-import com.example.harmoney.domain.models.CategoryColors
-import com.example.harmoney.domain.models.CategoryIcon
-import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriod
-import com.example.harmoney.presentation.models.CategoryUi
 import com.example.harmoney.presentation.models.MenuOptions
-import com.example.harmoney.presentation.models.OneDayTransactionsUi
-import com.example.harmoney.presentation.models.TransactionUi
 import com.example.harmoney.presentation.models.TransactionsFilterUi
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
@@ -53,8 +47,8 @@ import com.example.harmoney.presentation.transactionList.models.TransactionListS
 import com.example.harmoney.presentation.transactionList.viewModel.TransactionListViewModel
 import com.example.harmoney.ui.components.EmptyScreen
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
+import com.example.harmoney.ui.other.PreviewData
 import com.example.harmoney.ui.theme.HarmTheme
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
@@ -137,7 +131,7 @@ fun TransactionListScreen(
                 iconRes = R.drawable.ic_add_24px,
                 contentDescription = stringResource(R.string.ic_add_transaction_desc),
                 onClick = {
-                    onEvent(TransactionListEvent.OnFloatingButtonClick(state.categoryId))
+                    onEvent(TransactionListEvent.OnFloatingButtonClick)
                 }
             )
         }
@@ -289,7 +283,6 @@ private fun TransactionListScreen_DarkEmptyPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                categoryId = null,
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "0 ₽",
                 oneDayTransactionsList = persistentListOf(),
@@ -310,7 +303,6 @@ fun TransactionListScreen_LightEmptyPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                categoryId = null,
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "0 ₽",
                 oneDayTransactionsList = persistentListOf(),
@@ -331,10 +323,9 @@ private fun TransactionListScreen_DarkPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                categoryId = null,
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "62 000 ₽",
-                oneDayTransactionsList = getExpensesTransactions(),
+                oneDayTransactionsList = PreviewData.getExpensesTransactions(),
                 selectedFilter = TransactionsFilterUi(0, "Все категории")
             ),
             onEvent = {},
@@ -352,10 +343,9 @@ private fun TransactionListScreen_LightPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                categoryId = null,
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "62 000 ₽",
-                oneDayTransactionsList = getExpensesTransactions(),
+                oneDayTransactionsList = PreviewData.getExpensesTransactions(),
                 selectedFilter = TransactionsFilterUi(0, "Все категории")
             ),
             onEvent = {},
@@ -373,13 +363,12 @@ private fun TransactionListScreen_DarkMenuPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                categoryId = null,
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "62 000 ₽",
-                oneDayTransactionsList = getExpensesTransactions(),
+                oneDayTransactionsList = PreviewData.getExpensesTransactions(),
                 selectedFilter = TransactionsFilterUi(0, "Все категории"),
                 isFilterMenuOpened = true,
-                transactionsFilters = getTransactionsFilter()
+                transactionsFilters = PreviewData.getExpensesFilters()
             ),
             onEvent = {},
             onCategoryTypeChanged = {},
@@ -396,13 +385,12 @@ private fun TransactionListScreen_LightMenuPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                categoryId = null,
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "62 000 ₽",
-                oneDayTransactionsList = getExpensesTransactions(),
+                oneDayTransactionsList = PreviewData.getExpensesTransactions(),
                 selectedFilter = TransactionsFilterUi(0, "Все категории"),
                 isFilterMenuOpened = true,
-                transactionsFilters = getTransactionsFilter()
+                transactionsFilters = PreviewData.getExpensesFilters()
             ),
             onEvent = {},
             onCategoryTypeChanged = {},
@@ -419,10 +407,9 @@ private fun TransactionListScreen_DarkFilteredPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                categoryId = null,
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "56 500 ₽",
-                oneDayTransactionsList = getFilteredTransactions(),
+                oneDayTransactionsList = PreviewData.getFilteredTransactions(),
                 selectedFilter = TransactionsFilterUi(3, "Отпуск"),
                 isFilterMenuOpened = false,
             ),
@@ -441,10 +428,9 @@ private fun TransactionListScreen_LightFilteredPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                categoryId = null,
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "56 500 ₽",
-                oneDayTransactionsList = getFilteredTransactions(),
+                oneDayTransactionsList = PreviewData.getFilteredTransactions(),
                 selectedFilter = TransactionsFilterUi(3, "Отпуск"),
                 isFilterMenuOpened = false,
             ),
@@ -455,200 +441,3 @@ private fun TransactionListScreen_LightFilteredPreview() {
     }
 }
 
-@Suppress("detekt:MagicNumber", "detekt:LongMethod")
-private fun getExpensesTransactions(): ImmutableList<OneDayTransactionsUi> {
-    return persistentListOf(
-        OneDayTransactionsUi(
-            date = "06 Марта",
-            totalAmount = "5 000 ₽",
-            transactions = persistentListOf(
-                TransactionUi(
-                    id = 1,
-                    category = CategoryUi(
-                        id = 1,
-                        name = "Подарки",
-                        type = CategoryType.Expenses,
-                        icon = CategoryIcon(
-                            icon = CategoryIcons.IC_GIFT,
-                            color = CategoryColors.ORANGE_T70
-                        ),
-                    ),
-                    amount = "2 000 ₽",
-                    note = "Маме на 8 марта",
-                    date = "06 Марта"
-                ),
-                TransactionUi(
-                    id = 2,
-                    category = CategoryUi(
-                        id = 1,
-                        name = "Подарки",
-                        type = CategoryType.Expenses,
-                        icon = CategoryIcon(
-                            icon = CategoryIcons.IC_GIFT,
-                            color = CategoryColors.ORANGE_T70
-                        ),
-                    ),
-                    amount = "1 500 ₽",
-                    note = "Бабушке на 8 марта",
-                    date = "06 Марта"
-                ),
-                TransactionUi(
-                    id = 3,
-                    category = CategoryUi(
-                        id = 3,
-                        name = "Отпуск",
-                        type = CategoryType.Expenses,
-                        icon = CategoryIcon(
-                            icon = CategoryIcons.IC_VACATION_1,
-                            color = CategoryColors.BLUE_T80
-                        ),
-                    ),
-                    amount = "1 500 ₽",
-                    note = "Чемодан",
-                    date = "06 Марта"
-                ),
-            )
-        ),
-        OneDayTransactionsUi(
-            date = "15 Марта",
-            totalAmount = "2 000 ₽",
-            transactions = persistentListOf(
-                TransactionUi(
-                    id = 4,
-                    category = CategoryUi(
-                        id = 2,
-                        name = "Продукты",
-                        type = CategoryType.Expenses,
-                        icon = CategoryIcon(
-                            icon = CategoryIcons.IC_SHOP_CART,
-                            color = CategoryColors.VIOLET_T68
-                        ),
-                    ),
-                    amount = "2 000 ₽",
-                    date = "15 Марта"
-                ),
-            )
-        ),
-        OneDayTransactionsUi(
-            date = "20 Марта",
-            totalAmount = "30 000 ₽",
-            transactions = persistentListOf(
-                TransactionUi(
-                    id = 5,
-                    category = CategoryUi(
-                        id = 3,
-                        name = "Отпуск",
-                        type = CategoryType.Expenses,
-                        icon = CategoryIcon(
-                            icon = CategoryIcons.IC_VACATION_1,
-                            color = CategoryColors.BLUE_T80
-                        ),
-                    ),
-                    amount = "30 000 ₽",
-                    note = "Билеты",
-                    date = "20 Марта"
-                ),
-            )
-        ),
-        OneDayTransactionsUi(
-            date = "25 Марта",
-            totalAmount = "25 000 ₽",
-            transactions = persistentListOf(
-                TransactionUi(
-                    id = 6,
-                    category = CategoryUi(
-                        id = 3,
-                        name = "Отпуск",
-                        type = CategoryType.Expenses,
-                        icon = CategoryIcon(
-                            icon = CategoryIcons.IC_VACATION_1,
-                            color = CategoryColors.BLUE_T80
-                        ),
-                    ),
-                    amount = "25 000 ₽",
-                    note = "Жилье",
-                    date = "25 Марта"
-                ),
-            )
-        ),
-    )
-}
-
-@Suppress("detekt:MagicNumber")
-private fun getTransactionsFilter(): ImmutableList<TransactionsFilterUi> {
-    return persistentListOf(
-        TransactionsFilterUi(id = 0, name = "Все категории"),
-        TransactionsFilterUi(id = 1, name = "Подарки"),
-        TransactionsFilterUi(id = 2, name = "Продукты"),
-        TransactionsFilterUi(id = 3, name = "Отпуск"),
-    ).sortedBy { it.name }.toImmutableList()
-}
-
-@Suppress("detekt:MagicNumber", "detekt:LongMethod")
-private fun getFilteredTransactions(): ImmutableList<OneDayTransactionsUi> {
-    return persistentListOf(
-        OneDayTransactionsUi(
-            date = "06 Марта",
-            totalAmount = "1 500 ₽",
-            transactions = persistentListOf(
-                TransactionUi(
-                    id = 3,
-                    category = CategoryUi(
-                        id = 3,
-                        name = "Отпуск",
-                        type = CategoryType.Expenses,
-                        icon = CategoryIcon(
-                            icon = CategoryIcons.IC_VACATION_1,
-                            color = CategoryColors.BLUE_T80
-                        ),
-                    ),
-                    amount = "1 500 ₽",
-                    note = "Чемодан",
-                    date = "06 Марта"
-                ),
-            )
-        ),
-        OneDayTransactionsUi(
-            date = "20 Марта",
-            totalAmount = "30 000 ₽",
-            transactions = persistentListOf(
-                TransactionUi(
-                    id = 5,
-                    category = CategoryUi(
-                        id = 3,
-                        name = "Отпуск",
-                        type = CategoryType.Expenses,
-                        icon = CategoryIcon(
-                            icon = CategoryIcons.IC_VACATION_1,
-                            color = CategoryColors.BLUE_T80
-                        ),
-                    ),
-                    amount = "30 000 ₽",
-                    note = "Билеты",
-                    date = "20 Марта"
-                ),
-            )
-        ),
-        OneDayTransactionsUi(
-            date = "25 Марта",
-            totalAmount = "25 000 ₽",
-            transactions = persistentListOf(
-                TransactionUi(
-                    id = 6,
-                    category = CategoryUi(
-                        id = 3,
-                        name = "Отпуск",
-                        type = CategoryType.Expenses,
-                        icon = CategoryIcon(
-                            icon = CategoryIcons.IC_VACATION_1,
-                            color = CategoryColors.BLUE_T80
-                        ),
-                    ),
-                    amount = "25 000 ₽",
-                    note = "Жилье",
-                    date = "25 Марта"
-                ),
-            )
-        ),
-    )
-}

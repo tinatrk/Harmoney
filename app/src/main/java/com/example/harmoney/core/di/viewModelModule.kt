@@ -1,6 +1,5 @@
 package com.example.harmoney.core.di
 
-import androidx.lifecycle.SavedStateHandle
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorHandler
@@ -61,7 +60,6 @@ val viewModelModule = module {
             categoryType = categoryType,
             categoryId = categoryId,
             transactionId = transactionId,
-            savedStateHandle = get(),
             test = get(),
             numbersFormatter = get(),
             dateFormatter = get(),
@@ -70,11 +68,9 @@ val viewModelModule = module {
         )
     }
 
-    viewModel { (categoryType: CategoryType, isCategorySelectionMode: Boolean) ->
+    viewModel { (categoryType: CategoryType) ->
         CategoryListViewModel(
             categoryType = categoryType,
-            isCategorySelectionMode = isCategorySelectionMode,
-            savedStateHandle = get(),
         )
     }
 
@@ -88,10 +84,6 @@ val viewModelModule = module {
 
     viewModel {
         SharedStatisticsPeriodViewModel()
-    }
-
-    single {
-        SavedStateHandle()
     }
 
     viewModel {
