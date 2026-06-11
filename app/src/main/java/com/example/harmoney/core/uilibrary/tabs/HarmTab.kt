@@ -23,35 +23,11 @@ import com.example.harmoney.ui.mappers.CategoryTypeUiMapper.toStringRes
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
- * - `HarmPrimaryTabRow` - PrimaryTabRow with HarmTheme colors
  * - `HarmCommonTab` - Tab with HarmTheme colors
+ * - `HarmPrimaryTabRow` - PrimaryTabRow with HarmTheme colors
  * */
 @UiLibrary
 object HarmTab {
-    /** PrimaryTabRow with HarmTheme colors */
-    @Composable
-    fun HarmPrimaryTabRow(
-        selectedTabIndex: Int,
-        tabs: @Composable (() -> Unit)
-    ) {
-        val colors = HarmTheme.colors
-
-        PrimaryTabRow(
-            selectedTabIndex = selectedTabIndex,
-            containerColor = colors.surfaceContainer,
-            contentColor = colors.onSurfaceContainer,
-            indicator = {
-            },
-            divider = {
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = Color.Transparent
-                )
-            },
-            tabs = tabs
-        )
-    }
-
     /** Tab with HarmTheme colors */
     @Composable
     fun HarmCommonTab(
@@ -84,44 +60,28 @@ object HarmTab {
             }
         }
     }
-}
 
-@Preview(showBackground = true, backgroundColor = 0xFF201923)
-@Composable
-private fun HarmPrimaryTabRow_DarkPreview() {
-    val selectedTabIndex = 0
-    HarmTheme(darkTheme = true) {
-        HarmTab.HarmPrimaryTabRow(
-            selectedTabIndex = selectedTabIndex,
-            tabs = {
-                CategoryType.entries.forEachIndexed { index, tab ->
-                    HarmTab.HarmCommonTab(
-                        selected = selectedTabIndex == index,
-                        onClick = {},
-                        text = stringResource(tab.toStringRes())
-                    )
-                }
-            }
-        )
-    }
-}
+    /** PrimaryTabRow with HarmTheme colors */
+    @Composable
+    fun HarmPrimaryTabRow(
+        selectedTabIndex: Int,
+        tabs: @Composable (() -> Unit)
+    ) {
+        val colors = HarmTheme.colors
 
-@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
-@Composable
-private fun HarmPrimaryTabRow_LightPreview() {
-    val selectedTabIndex = 0
-    HarmTheme(darkTheme = false) {
-        HarmTab.HarmPrimaryTabRow(
+        PrimaryTabRow(
             selectedTabIndex = selectedTabIndex,
-            tabs = {
-                CategoryType.entries.forEachIndexed { index, tab ->
-                    HarmTab.HarmCommonTab(
-                        selected = selectedTabIndex == index,
-                        onClick = {},
-                        text = stringResource(tab.toStringRes())
-                    )
-                }
-            }
+            containerColor = colors.surfaceContainer,
+            contentColor = colors.onSurfaceContainer,
+            indicator = {
+            },
+            divider = {
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = Color.Transparent
+                )
+            },
+            tabs = tabs
         )
     }
 }
@@ -173,3 +133,44 @@ private fun HarmCommonTab_UnselectedLightPreview() {
         )
     }
 }
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmPrimaryTabRow_DarkPreview() {
+    val selectedTabIndex = 0
+    HarmTheme(darkTheme = true) {
+        HarmTab.HarmPrimaryTabRow(
+            selectedTabIndex = selectedTabIndex,
+            tabs = {
+                CategoryType.entries.forEachIndexed { index, tab ->
+                    HarmTab.HarmCommonTab(
+                        selected = selectedTabIndex == index,
+                        onClick = {},
+                        text = stringResource(tab.toStringRes())
+                    )
+                }
+            }
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmPrimaryTabRow_LightPreview() {
+    val selectedTabIndex = 0
+    HarmTheme(darkTheme = false) {
+        HarmTab.HarmPrimaryTabRow(
+            selectedTabIndex = selectedTabIndex,
+            tabs = {
+                CategoryType.entries.forEachIndexed { index, tab ->
+                    HarmTab.HarmCommonTab(
+                        selected = selectedTabIndex == index,
+                        onClick = {},
+                        text = stringResource(tab.toStringRes())
+                    )
+                }
+            }
+        )
+    }
+}
+

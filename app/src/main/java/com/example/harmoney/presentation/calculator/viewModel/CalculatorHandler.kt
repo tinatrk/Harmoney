@@ -2,15 +2,17 @@ package com.example.harmoney.presentation.calculator.viewModel
 
 import android.util.Log
 import com.example.harmoney.presentation.calculator.models.CalculatorOperation
+import com.example.harmoney.presentation.calculator.models.CalculatorResult
 import com.example.harmoney.presentation.calculator.models.CalculatorSymbol
 import com.example.harmoney.presentation.calculator.models.CalculatorSymbolType
 import net.objecthunter.exp4j.Expression
 import net.objecthunter.exp4j.ExpressionBuilder
+import java.math.RoundingMode
 
 class CalculatorHandler {
     private val numbers: MutableList<String> = mutableListOf()
     private val operations: MutableList<String> = mutableListOf()
-    private val results: MutableList<String> = mutableListOf()
+    private val results: MutableList<CalculatorResult> = mutableListOf()
 
     private var countOpenParenthesis = 0
     private var countClosedParenthesis = 0
@@ -33,13 +35,14 @@ class CalculatorHandler {
         return newEquation
     }
 
-    fun getResult(isNeedProcessing: Boolean = false): String {
-        var result = if (results.isNotEmpty()) results.last() else EMPTY_STRING
+    fun getResult(isNeedProcessing: Boolean = false): CalculatorResult {
+        var result = if (results.isNotEmpty()) {
+            results.last()
+        } else {
+            CalculatorResult(ZERO_RESULT, EMPTY_STRING)
+        }
         if (isNeedProcessing) {
-            val resNumeric = result.toBigDecimalOrNull()?.toDouble()
-            if (resNumeric != null) {
-                result = processResult(resNumeric, isNeedRound = true)
-            }
+            result = processResult(result.resultNumeric)
         }
         return result
     }
@@ -354,21 +357,20 @@ class CalculatorHandler {
         return equation.dropLast(1) + element
     }
 
-    fun calculate(equation: String): String {
+    fun calculate(equation: String): CalculatorResult {
         val correctedEquation = correctEquation(equation)
-        var result = CalculatorSymbol.ZERO.symbol
 
-        try {
+        val res = try {
             val expr: Expression = ExpressionBuilder(correctedEquation)
                 .build()
-            val res = expr.evaluate()
-            result = processResult(res)
+            val resultNumeric = expr.evaluate()
+            processResult(resultNumeric)
         } catch (e: IllegalArgumentException) {
             e.message?.let { Log.e(HARM_APP_TAG, it) }
-            result = EMPTY_STRING
+            CalculatorResult(ZERO_RESULT, EMPTY_STRING)
         }
 
-        return result
+        return res
     }
 
     private fun correctEquation(equation: String): String {
@@ -429,22 +431,23 @@ class CalculatorHandler {
         return completedEquation
     }
 
-    private fun processResult(result: Double, isNeedRound: Boolean = false): String {
+    private fun processResult(result: Double): CalculatorResult {
         val longres = result.toLong()
-        return if (longres.toDouble() == result) { // отбрасываем нулевую дробную часть
-            longres.toString()
-        } else {
-            if (isNeedRound) String.format(
-                java.util.Locale.ROOT,
-                "%.2f",
-                result
-            ) else result.toString()
-        }
+        val digits = if (longres.toDouble() == result) MIN_DECIMAL_PLACES else MAX_DECIMAL_PLACES
+
+        val rounded = result
+            .toBigDecimal()
+            .setScale(digits, RoundingMode.HALF_UP)
+
+        return CalculatorResult(rounded.toDouble(), rounded.toString())
     }
 
     private companion object {
-        const val HARM_APP_TAG = "HarmAppTag"
+        const val HARM_APP_TAG = "CalculatorHandler"
         const val EMPTY_STRING = ""
         const val DELIMITER = " "
+        const val ZERO_RESULT = 0.0
+        const val MIN_DECIMAL_PLACES = 0
+        const val MAX_DECIMAL_PLACES = 10
     }
 }

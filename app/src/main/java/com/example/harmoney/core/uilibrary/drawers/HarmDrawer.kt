@@ -28,11 +28,48 @@ import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.collections.immutable.toImmutableList
 
 /**
- * - `HarmModalDrawer` - ModalNavigationDrawer with Harm theme colors
  * - `HarmDrawerItem` - NavigationDrawerItem with Harm theme colors
+ * - `HarmModalDrawer` - ModalNavigationDrawer with Harm theme colors
  * */
 @UiLibrary
 object HarmDrawer {
+    /** NavigationDrawerItem with Harm theme colors */
+    @Composable
+    fun HarmDrawerItem(
+        label: String,
+        selected: Boolean,
+        onClick: () -> Unit,
+        modifier: Modifier = Modifier,
+        badge: @Composable (() -> Unit)? = null,
+    ) {
+        val colors = HarmTheme.colors
+        val typography = HarmTheme.typography
+
+        NavigationDrawerItem(
+            modifier = modifier,
+            label = {
+                Text(
+                    text = label,
+                    style = typography.bodyLarge,
+                    color = colors.onSurfaceVariant
+                )
+            },
+            selected = selected,
+            onClick = onClick,
+            badge = badge,
+            colors = NavigationDrawerItemDefaults.colors(
+                selectedContainerColor = colors.secondaryContainer,
+                unselectedContainerColor = colors.surfaceContainerLow,
+                selectedIconColor = colors.onSurfaceContainer,
+                unselectedIconColor = colors.surfaceContainerLow,
+                selectedTextColor = colors.onSurfaceContainer,
+                unselectedTextColor = colors.surfaceContainerLow,
+                selectedBadgeColor = colors.onSurfaceContainer,
+                unselectedBadgeColor = colors.surfaceContainerLow,
+            )
+        )
+    }
+
     /** ModalNavigationDrawer with Harm theme colors */
     @Composable
     fun HarmModalDrawer(
@@ -73,43 +110,6 @@ object HarmDrawer {
         ) {
             screen()
         }
-    }
-
-    /** NavigationDrawerItem with Harm theme colors */
-    @Composable
-    fun HarmDrawerItem(
-        label: String,
-        selected: Boolean,
-        onClick: () -> Unit,
-        modifier: Modifier = Modifier,
-        badge: @Composable (() -> Unit)? = null,
-    ) {
-        val colors = HarmTheme.colors
-        val typography = HarmTheme.typography
-
-        NavigationDrawerItem(
-            modifier = modifier,
-            label = {
-                Text(
-                    text = label,
-                    style = typography.bodyLarge,
-                    color = colors.onSurfaceVariant
-                )
-            },
-            selected = selected,
-            onClick = onClick,
-            badge = badge,
-            colors = NavigationDrawerItemDefaults.colors(
-                selectedContainerColor = colors.secondaryContainer,
-                unselectedContainerColor = colors.surfaceContainerLow,
-                selectedIconColor = colors.onSurfaceContainer,
-                unselectedIconColor = colors.surfaceContainerLow,
-                selectedTextColor = colors.onSurfaceContainer,
-                unselectedTextColor = colors.surfaceContainerLow,
-                selectedBadgeColor = colors.onSurfaceContainer,
-                unselectedBadgeColor = colors.surfaceContainerLow,
-            )
-        )
     }
 }
 

@@ -6,15 +6,20 @@ import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.OneDayTransactions
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.domain.models.Transaction
 import com.example.harmoney.domain.models.TransactionsFilter
+import com.example.harmoney.presentation.converters.DateFormatter
+import com.example.harmoney.presentation.models.DatePattern
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 /** A temporary class to simulate a data source until the domain part is implemented */
-class TestDataSource {
+class TestDataSource(private val dateFormatter: DateFormatter) {
 
     private val categories: MutableList<Category> = mutableListOf(
         Category(
@@ -23,7 +28,7 @@ class TestDataSource {
             type = CategoryType.Expenses,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_SHOP_CART,
-                color = CategoryColors.VIOLET_T68
+                color = CategoryColors.RED_T53
             ),
             createdAt = 1L,
             userOrder = 100.0,
@@ -34,7 +39,7 @@ class TestDataSource {
             type = CategoryType.Expenses,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_GIFT,
-                color = CategoryColors.ORANGE_T70
+                color = CategoryColors.PINK_T75
             ),
             createdAt = 2L,
             userOrder = 200.0,
@@ -45,7 +50,7 @@ class TestDataSource {
             type = CategoryType.Expenses,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_VACATION_1,
-                color = CategoryColors.BLUE_T80
+                color = CategoryColors.ORANGE_T55
             ),
             createdAt = 3L,
             userOrder = 300.0,
@@ -56,13 +61,178 @@ class TestDataSource {
             type = CategoryType.Expenses,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_EDUCATION,
-                color = CategoryColors.ROSE_T62
+                color = CategoryColors.ORANGE_T70
             ),
             createdAt = 4L,
             userOrder = 400.0,
         ),
         Category(
             id = 5,
+            name = "Internet and mobile",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_PHONE_INTERNET,
+                color = CategoryColors.ORANGE_T47
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 6,
+            name = "Psychology",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_BALANCE,
+                color = CategoryColors.YELLOW_T58
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 7,
+            name = "Transport",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_TRANSPORT_1,
+                color = CategoryColors.OLIVE_T52
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 8,
+            name = "Gadgets",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_COMPUTER,
+                color = CategoryColors.TEAL_T75
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 9,
+            name = "Eating on a walk",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_DINNER,
+                color = CategoryColors.COBALT_T56
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 10,
+            name = "For home",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_CLEANING,
+                color = CategoryColors.BLUE_T80
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 11,
+            name = "Entertainment",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_GAMES_1,
+                color = CategoryColors.PURPLE_T61
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 12,
+            name = "Fitness",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_FITNESS_1,
+                color = CategoryColors.PURPLE_T72
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 13,
+            name = "Health",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_HEALTH,
+                color = CategoryColors.BROWN_T51
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 14,
+            name = "Clothes",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_CLOTHES,
+                color = CategoryColors.SLATE_T55
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 15,
+            name = "Other",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_FROG,
+                color = CategoryColors.ROSE_T62
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 16,
+            name = "Beauty",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_HAIRCUT,
+                color = CategoryColors.ORANGE_T60
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 17,
+            name = "Pet",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_CAT,
+                color = CategoryColors.AMBER_T56
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 18,
+            name = "Children",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_BABY,
+                color = CategoryColors.CYAN_T55
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 19,
+            name = "Car",
+            type = CategoryType.Expenses,
+            icon = CategoryIcon(
+                icon = CategoryIcons.IC_GAS_STATION,
+                color = CategoryColors.LIME_T62
+            ),
+            createdAt = 4L,
+            userOrder = 400.0,
+        ),
+        Category(
+            id = 20,
             name = "Salary",
             type = CategoryType.Income,
             icon = CategoryIcon(
@@ -73,7 +243,7 @@ class TestDataSource {
             userOrder = 500.0,
         ),
         Category(
-            id = 6,
+            id = 21,
             name = "Gifts",
             type = CategoryType.Income,
             icon = CategoryIcon(
@@ -84,7 +254,7 @@ class TestDataSource {
             userOrder = 600.0,
         ),
         Category(
-            id = 7,
+            id = 22,
             name = "Other",
             type = CategoryType.Income,
             icon = CategoryIcon(
@@ -100,75 +270,75 @@ class TestDataSource {
         Transaction(
             id = 1,
             category = categories.first { it.id == 1L },
-            date = parseDateFromString("01.03.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("01.03.2026")),
             amount = 1500.0,
             note = "Вкусняшки"
         ),
         Transaction(
             id = 2,
             category = categories.first { it.id == 2L },
-            date = parseDateFromString("01.03.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("01.03.2026")),
             amount = 500.0,
             note = "8 марта"
         ),
         Transaction(
             id = 3,
             category = categories.first { it.id == 3L },
-            date = parseDateFromString("05.03.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("05.03.2026")),
             amount = 15000.0,
             note = "Билеты"
         ),
         Transaction(
             id = 4,
             category = categories.first { it.id == 1L },
-            date = parseDateFromString("10.03.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("10.03.2026")),
             amount = 2000.0,
         ),
         Transaction(
             id = 5,
             category = categories.first { it.id == 2L },
-            date = parseDateFromString("10.03.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("10.03.2026")),
             amount = 3000.0,
             note = "Сумку себе любимой"
         ),
         Transaction(
             id = 6,
             category = categories.first { it.id == 2L },
-            date = parseDateFromString("12.03.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("12.03.2026")),
             amount = 4000.0,
         ),
         //-------------------------------------------------------------
         Transaction(
             id = 7,
             category = categories.first { it.id == 1L },
-            date = parseDateFromString("05.02.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("05.02.2026")),
             amount = 2000.0,
             note = "Продукты к ужину"
         ),
         Transaction(
             id = 8,
             category = categories.first { it.id == 3L },
-            date = parseDateFromString("05.02.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("05.02.2026")),
             amount = 15000.0,
             note = "Хата"
         ),
         Transaction(
             id = 9,
             category = categories.first { it.id == 2L },
-            date = parseDateFromString("07.02.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("07.02.2026")),
             amount = 1500.0,
             note = "Валентинка"
         ),
         Transaction(
             id = 10,
             category = categories.first { it.id == 1L },
-            date = parseDateFromString("16.02.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("16.02.2026")),
             amount = 4000.0,
         ),
         Transaction(
             id = 11,
             category = categories.first { it.id == 2L },
-            date = parseDateFromString("16.02.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("16.02.2026")),
             amount = 1000.0,
             note = "Носки"
         ),
@@ -176,21 +346,21 @@ class TestDataSource {
         Transaction(
             id = 12,
             category = categories.first { it.id == 6L },
-            date = parseDateFromString("08.03.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("08.03.2026")),
             amount = 2000.0,
             note = "От мамы"
         ),
         Transaction(
             id = 13,
             category = categories.first { it.id == 6L },
-            date = parseDateFromString("08.03.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("08.03.2026")),
             amount = 1500.0,
             note = "От бабушки"
         ),
         Transaction(
             id = 14,
             category = categories.first { it.id == 5L },
-            date = parseDateFromString("25.02.2026"),
+            dateMillis = dateFormatter.dateToMillis(parseDateFromString("25.02.2026")),
             amount = 25000.0,
             note = "Зарплата"
         ),
@@ -204,10 +374,14 @@ class TestDataSource {
         ),*/
     )
 
-    private val curMonthFirstDay: LocalDate = parseDateFromString("25.02.2026")
-    private val curMonthLastDay: LocalDate = parseDateFromString("24.03.2026")
-    private val pastMonthFirstDay: LocalDate = parseDateFromString("25.01.2026")
-    private val pastMonthLastDay: LocalDate = parseDateFromString("24.02.2026")
+    private val curMonthFirstDay: Long =
+        dateFormatter.dateToMillis(parseDateFromString("25.05.2026"))
+    private val curMonthLastDay: Long =
+        dateFormatter.dateToMillis(parseDateFromString("24.06.2026"))
+    private val pastMonthFirstDay: Long =
+        dateFormatter.dateToMillis(parseDateFromString("25.01.2026"))
+    private val pastMonthLastDay: Long =
+        dateFormatter.dateToMillis(parseDateFromString("24.02.2026"))
 
     fun getBalance(): Double {
         var totalExpenses: Double = 0.0
@@ -222,23 +396,23 @@ class TestDataSource {
     }
 
     private fun parseDateFromString(date: String): LocalDate {
-        val formatter = DateTimeFormatter.ofPattern(DATE_PATTERN)
+        val formatter = DateTimeFormatter.ofPattern(DatePattern.TITLE_FORMAL)
         return LocalDate.parse(date, formatter)
     }
 
     private fun parseStringFromDate(date: LocalDate): String {
-        val formatter = DateTimeFormatter.ofPattern(DATE_PATTERN)
+        val formatter = DateTimeFormatter.ofPattern(DatePattern.TITLE_FORMAL)
         return date.format(formatter)
 
     }
 
     fun getStatisticsDate(statisticsPeriod: StatisticsPeriod): String {
         return if (statisticsPeriod == StatisticsPeriod.CURRENT_MONTH) {
-            parseStringFromDate(curMonthFirstDay) + " - " +
-                    parseStringFromDate(curMonthLastDay)
+            parseStringFromDate(dateFormatter.millisToDate(curMonthFirstDay)) + " - " +
+                    parseStringFromDate(dateFormatter.millisToDate(curMonthLastDay))
         } else {
-            parseStringFromDate(pastMonthFirstDay) + " - " +
-                    parseStringFromDate(pastMonthLastDay)
+            parseStringFromDate(dateFormatter.millisToDate(pastMonthFirstDay)) + " - " +
+                    parseStringFromDate(dateFormatter.millisToDate(pastMonthLastDay))
         }
     }
 
@@ -262,13 +436,25 @@ class TestDataSource {
         }.sortedByDescending { it.percentage }
     }
 
+    fun getCategories(
+        categoryType: CategoryType
+    ): List<Category> {
+        val categories = categories.filter { it.type == categoryType }.sortedBy { it.name }
+        // Если категорий много, то берем 10 первых
+        return categories
+    }
+
+    fun getCategory(categoryId: Long?): Category? {
+        return categoryId?.let { categories.find { it.id == categoryId } }
+    }
+
     private fun getTransactions(
         statisticsPeriod: StatisticsPeriod,
         categoryType: CategoryType,
         categoryId: Long? = null
     ): List<Transaction> {
-        var firstDay: LocalDate
-        var lastDay: LocalDate
+        var firstDay: Long
+        var lastDay: Long
 
         when (statisticsPeriod) {
             StatisticsPeriod.CURRENT_MONTH -> {
@@ -283,7 +469,7 @@ class TestDataSource {
         }
 
         val filteredTransactions = transactions
-            .filter { ((it.date >= firstDay) && (it.date <= lastDay)) }
+            .filter { ((it.dateMillis >= firstDay) && (it.dateMillis <= lastDay)) }
             .filter { it.category.type == categoryType }
 
         return if (categoryId != null) {
@@ -291,7 +477,12 @@ class TestDataSource {
         } else {
             filteredTransactions
         }
+    }
 
+    fun getTransaction(transactionId: Long?): Transaction? {
+        return transactionId?.let {
+            transactions.find { it.id == transactionId }
+        }
     }
 
     fun getTransactionList(
@@ -306,12 +497,12 @@ class TestDataSource {
         }
         val total = filteredTransactions.sumOf { it.amount }
 
-        val days = filteredTransactions.map { it.date }.distinct().sortedDescending()
+        val days = filteredTransactions.map { it.dateMillis }.distinct().sortedDescending()
 
         return days.map { day ->
-            val transactions = filteredTransactions.filter { it.date.isEqual(day) }
+            val transactions = filteredTransactions.filter { it.dateMillis == day }
             OneDayTransactions(
-                date = day,
+                dateMillis = day,
                 transactions = transactions,
                 totalAmount = transactions.sumOf { it.amount }
             )
@@ -327,7 +518,7 @@ class TestDataSource {
                 id = it.id,
                 name = it.name
             )
-        }
+        }.sortedBy { it.name }
 
         return listOf(
             TransactionsFilter(
@@ -337,7 +528,68 @@ class TestDataSource {
         ) + filters
     }
 
+    fun getFirstDay(): Long {
+        return curMonthFirstDay
+    }
+
+    fun getLastDay(): Long {
+        return curMonthLastDay
+    }
+
+    fun isDateInCorrectRange(dateMillis: Long?): Boolean {
+        return dateMillis in curMonthFirstDay..curMonthLastDay
+    }
+
+    // Добавить логику?
+    fun getAmountAfterCurrencyExchanged(
+        localAmount: Double,
+        localCurrency: Currency,
+        targetCurrency: Currency
+    ): Double {
+        val index = localCurrency.ordinal + targetCurrency.ordinal
+        return when (index) {
+            // EUR и RUB
+            1 -> {
+                if (targetCurrency == Currency.RUB) {
+                    localAmount * COUNT_RUB_IN_ONE_EUR
+                } else {
+                    localAmount / COUNT_RUB_IN_ONE_EUR
+                }
+            }
+
+            // EUR и USD
+            2 -> {
+                if (targetCurrency == Currency.USD) {
+                    localAmount * COUNT_EUR_IN_ONE_USD
+                } else {
+                    localAmount / COUNT_EUR_IN_ONE_USD
+                }
+            }
+
+            // USD и RUB
+            3 -> {
+                if (targetCurrency == Currency.RUB) {
+                    localAmount * COUNT_RUB_IN_ONE_USD
+                } else {
+                    localAmount / COUNT_RUB_IN_ONE_USD
+                }
+            }
+
+            else -> localAmount
+        }
+    }
+
+    fun saveTransaction(transaction: Transaction) {
+        transactions.add(
+            transaction.copy(
+                id = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            )
+        )
+    }
+
     private companion object {
-        const val DATE_PATTERN = "dd.MM.yyyy"
+        const val COUNT_RUB_IN_ONE_EUR = 80.0
+        const val COUNT_RUB_IN_ONE_USD = 70.0
+        const val COUNT_EUR_IN_ONE_USD = 0.86
     }
 }

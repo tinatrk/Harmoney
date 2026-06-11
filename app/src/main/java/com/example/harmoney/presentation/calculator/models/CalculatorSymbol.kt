@@ -83,5 +83,5 @@ private object Symbols {
     const val DIVIDE_SYMBOL_MATH = "/"
     const val EQUALITY_SYMBOL = "="
     const val CLEAR_SYMBOL = "C"
-    const val DELETE_LAST_SYMBOL = "Del"
+    const val DELETE_LAST_SYMBOL = "D"
 }

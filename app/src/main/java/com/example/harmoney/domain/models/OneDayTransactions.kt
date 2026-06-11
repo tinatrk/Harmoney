@@ -1,9 +1,7 @@
 package com.example.harmoney.domain.models
 
-import java.time.LocalDate
-
 data class OneDayTransactions(
-    val date: LocalDate,
+    val dateMillis: Long,
     val transactions: List<Transaction>,
     val totalAmount: Double,
 )

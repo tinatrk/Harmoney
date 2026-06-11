@@ -5,5 +5,6 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class CalculatorState(
     val equation: String = "",
-    val result: String = "",
+    val resultString: String = "",
+    val result: Double = 0.0,
 )

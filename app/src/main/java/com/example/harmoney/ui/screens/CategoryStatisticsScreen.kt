@@ -33,9 +33,6 @@ import com.example.harmoney.core.uilibrary.dialogs.HarmDialog
 import com.example.harmoney.core.uilibrary.drawers.HarmDrawer
 import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
-import com.example.harmoney.domain.models.CategoryColors
-import com.example.harmoney.domain.models.CategoryIcon
-import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.StatisticsPeriod
@@ -44,17 +41,13 @@ import com.example.harmoney.presentation.categoryStatistics.models.CategoryStati
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
 import com.example.harmoney.presentation.categoryStatistics.models.FirstDayMonthError
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
-import com.example.harmoney.presentation.models.CategoryStatisticsUi
-import com.example.harmoney.presentation.models.CategoryUi
 import com.example.harmoney.presentation.models.MenuOptions
-import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
 import com.example.harmoney.ui.components.EmptyScreen
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
+import com.example.harmoney.ui.other.PreviewData
 import com.example.harmoney.ui.theme.HarmTheme
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
@@ -292,7 +285,7 @@ fun CategoryStatisticsContent(
     val supportText =
         when (val error = state.firstDayMonthError) {
             is FirstDayMonthError.None -> ""
-            is FirstDayMonthError.IncorrectInput -> {
+            is FirstDayMonthError.OutOfRange -> {
                 stringResource(
                     R.string.error_incorrect_first_day_month_pattern,
                     error.minDay,
@@ -410,9 +403,9 @@ private fun CategoryStatisticsScreenLightPreviewEmpty() {
 @Composable
 private fun CategoryStatisticsScreenDarkPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val categories = getPreviewDataCategoryStatistics()
+    val categories = PreviewData.getExpensesCategoryStatistics()
     val total = "26 000 ₽"
-    val pieChartItems = getPreviewDataPieChartCategories()
+    val pieChartItems = PreviewData.getExpensesPieChartCategories()
 
     HarmTheme(darkTheme = true) {
         CategoryStatisticsScreen(
@@ -436,9 +429,9 @@ private fun CategoryStatisticsScreenDarkPreview() {
 @Composable
 private fun CategoryStatisticsScreenLightPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val categories = getPreviewDataCategoryStatistics()
+    val categories = PreviewData.getExpensesCategoryStatistics()
     val total = "26 000 ₽"
-    val pieChartItems = getPreviewDataPieChartCategories()
+    val pieChartItems = PreviewData.getExpensesPieChartCategories()
 
     HarmTheme(darkTheme = false) {
         CategoryStatisticsScreen(
@@ -538,7 +531,7 @@ private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialogError() {
                 isThemeDark = true,
                 isOpenedFirstDayMonthDialog = true,
                 firstDayMonthText = "90",
-                firstDayMonthError = FirstDayMonthError.IncorrectInput(1, 28),
+                firstDayMonthError = FirstDayMonthError.OutOfRange(1, 28),
             ),
             drawerState = drawerState
         )
@@ -559,81 +552,10 @@ private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialogError() {
                 isThemeDark = false,
                 isOpenedFirstDayMonthDialog = true,
                 firstDayMonthText = "90",
-                firstDayMonthError = FirstDayMonthError.IncorrectInput(1, 28),
+                firstDayMonthError = FirstDayMonthError.OutOfRange(1, 28),
             ),
             drawerState = drawerState
         )
     }
 }
 
-@Suppress("detekt:MagicNumber")
-private fun getPreviewDataCategoryStatistics(): ImmutableList<CategoryStatisticsUi> {
-    return persistentListOf(
-        CategoryStatisticsUi(
-            category = CategoryUi(
-                id = 1,
-                name = "Vacation",
-                type = CategoryType.Expenses,
-                icon = CategoryIcon(
-                    icon = CategoryIcons.IC_VACATION_1,
-                    color = CategoryColors.BLUE_T80
-                ),
-            ),
-            totalAmount = "15 000 ₽",
-            percentage = "57.7%",
-        ),
-        CategoryStatisticsUi(
-            category = CategoryUi(
-                id = 2,
-                name = "Gifts",
-                type = CategoryType.Expenses,
-                icon = CategoryIcon(
-                    icon = CategoryIcons.IC_GIFT,
-                    color = CategoryColors.ORANGE_T70
-                ),
-            ),
-            totalAmount = "7 500 ₽",
-            percentage = "28.8%",
-        ),
-        CategoryStatisticsUi(
-            category = CategoryUi(
-                id = 3,
-                name = "Products",
-                type = CategoryType.Expenses,
-                icon = CategoryIcon(
-                    icon = CategoryIcons.IC_SHOP_CART,
-                    color = CategoryColors.VIOLET_T68
-                ),
-            ),
-            totalAmount = "3 500 ₽",
-            percentage = "13.5%",
-        ),
-    )
-}
-
-@Suppress("detekt:MagicNumber")
-private fun getPreviewDataPieChartCategories(
-): ImmutableList<PieChartItem> {
-    return persistentListOf(
-        PieChartItem(
-            value = "15 000 ₽",
-            colorValue = CategoryColors.BLUE_T80.background,
-            startAngle = -90f,
-            sweepAngle = 205.69f,
-
-            ),
-        PieChartItem(
-            value = "7 500 ₽",
-            colorValue = CategoryColors.ORANGE_T70.background,
-            startAngle = 117.69f,
-            sweepAngle = 101.84f,
-
-            ),
-        PieChartItem(
-            value = "3 500 ₽",
-            colorValue = CategoryColors.VIOLET_T68.background,
-            startAngle = 221.53f,
-            sweepAngle = 46.46f,
-        )
-    )
-}

@@ -42,12 +42,17 @@
     <string name="ic_swap_vert_desc">Выбрать режим сортировки</string>
     <string name="ic_switch_on_desc">Переключатель включен</string>
     <string name="ic_filter_desc">Выбрать фильтр для транзакций</string>
+    <string name="ic_menu_arrow_up_desc">Закрыть меню</string>
+    <string name="ic_menu_arrow_down_desc">Открыть меню</string>
 
     <!-- Текст на кнопках -->
     <string name="btn_save_text">Сохранить</string>
     <string name="btn_dialog_yes_text">Да</string>
     <string name="btn_dialog_select_text">Выбрать</string>
     <string name="btn_dialog_cancel_text">Отмена</string>
+    <string name="btn_dialog_ok_text">ОK</string>
+    <string name="btn_create_text">Создать</string>
+    <string name="btn_delete_text">Удалить</string>
 
     <!-- Шаблоны с подстановкой -->
     <string name="pattern_money_with_currency">%s ₽</string>
@@ -67,16 +72,19 @@
     <string name="title_drawer_item_first_day_month">Первый день месяца</string>
     <string name="title_drawer_currency">Валюта всех транзакций</string>
     <string name="title_drawer_item_category_list">Список категорий</string>
+    <string name="title_category">Категория</string>
 
     <!-- Заголовки и текст диалоговых окон -->
     <string name="title_dialog_exit">Вы точно хотите выйти?</string>
     <string name="text_dialog_exit">Изменения не сохранены.</string>
-    <string name="title_dialog_delete_transaction">Вы точно хотите удалить транзакцию?</string>
-    <string name="title_dialog_delete_category">Вы точно хотите удалить категорию?</string>
+    <string name="title_dialog_delete_transaction">Вы уверены, что хотите удалить транзакцию?</string>
+    <string name="title_dialog_delete_category">Вы уверены, что хотите удалить категорию?</string>
     <string name="title_dialog_set_first_day_month">Введите номер первого дня финансового месяца</string>
+    <string name="title_dialog_transaction_save_error">Невозможно сохранить транзакцию</string>
+    <string name="text_dialog_transaction_save_error">Некоторые поля не заполнены или заполнены некорректно.</string>
 
     <!-- Текст для placeholders -->
-    <string name="placeholder_empty_transaction_list">У вас пока нет ни одной транзакции данного типа</string>
+    <string name="placeholder_empty_transaction_list">У вас нет транзакций данного типа</string>
 
     <!-- label для textField -->
     <string name="label_text_field_data">Дата</string>
@@ -87,4 +95,7 @@
     <!-- errorText для textField -->
     <string name="error_empty_field">Поле не может быть пустым</string>
     <string name="error_incorrect_first_day_month_pattern">Введите число в диапазоне от %d до %d</string>
+    <string name="error_incorrect_date">Выберите дату в рамках текущего финансового месяца: с %s по %s</string>
+    <string name="error_incorrect_amount">Введите положительное число больше нуля</string>
+
 </resources>

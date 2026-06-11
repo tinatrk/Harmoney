@@ -21,9 +21,10 @@ import com.example.harmoney.core.uilibrary.textfields.HarmTextField
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
- * - `HarmDialog` - base dialog with title, buttons and content
+ * - `HarmCommonDialog` - base dialog with title, buttons and content
  * - `HarmConfirmingDialog` - A dialog with a question for user and ok/cancel buttons
  * - `HarmSetFirstDayMonthDialog` - A dialog to set the first day of the month
+ * - `HarmWarningDialog' - A dialog with a warning and one ok button
  */
 @UiLibrary
 object HarmDialog {
@@ -35,7 +36,7 @@ object HarmDialog {
         dialogTitle: String? = null,
         @DrawableRes iconId: Int? = null,
         iconContentDescription: String? = null,
-        dismissButton: @Composable () -> Unit,
+        dismissButton: @Composable (() -> Unit)?,
         confirmButton: @Composable () -> Unit,
         dialogContent: @Composable() (() -> Unit)? = null,
     ) {
@@ -104,7 +105,7 @@ object HarmDialog {
                     Text(
                         text = dialogText,
                         style = HarmTheme.typography.titleMedium,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Start
                     )
                 }
             }
@@ -160,6 +161,39 @@ object HarmDialog {
                     text = stringResource(R.string.btn_save_text),
                     onClick = onConfirmation
                 )
+            }
+        )
+    }
+
+    /** A dialog with a warning and one ok button */
+    @Composable
+    fun HarmWarningDialog(
+        dialogTitle: String,
+        onDismissRequest: () -> Unit,
+        modifier: Modifier = Modifier,
+        dialogText: String? = null,
+    ) {
+        HarmCommonDialog(
+            modifier = modifier,
+            dialogTitle = dialogTitle,
+            onDismissRequest = onDismissRequest,
+            iconId = R.drawable.ic_warring_24px,
+            iconContentDescription = stringResource(R.string.ic_alert_dialog_desc),
+            dismissButton = null,
+            confirmButton = {
+                HarmButton.HarmPrimaryTextButton(
+                    text = stringResource(R.string.btn_dialog_ok_text),
+                    onClick = onDismissRequest
+                )
+            },
+            dialogContent = dialogText?.let {
+                {
+                    Text(
+                        text = dialogText,
+                        style = HarmTheme.typography.titleMedium,
+                        textAlign = TextAlign.Start
+                    )
+                }
             }
         )
     }
@@ -285,6 +319,30 @@ private fun HarmSetFirstDayMonthDialog_LightErrorPreview() {
                 1,
                 28
             )
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmWarningDialog_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmDialog.HarmWarningDialog(
+            dialogTitle = stringResource(R.string.title_dialog_transaction_save_error),
+            onDismissRequest = {},
+            dialogText = stringResource(R.string.text_dialog_transaction_save_error)
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmWarningDialog_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmDialog.HarmWarningDialog(
+            dialogTitle = stringResource(R.string.title_dialog_transaction_save_error),
+            onDismissRequest = {},
+            dialogText = stringResource(R.string.text_dialog_transaction_save_error)
         )
     }
 }

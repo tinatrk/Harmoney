@@ -31,6 +31,7 @@ fun NavGraphBuilder.transactionScreen(
 
                 )
             },
+            calculatorViewModel = koinViewModel(),
             sharedCategoryTypeViewModel = sharedCategoryTypeVM
         )
     }

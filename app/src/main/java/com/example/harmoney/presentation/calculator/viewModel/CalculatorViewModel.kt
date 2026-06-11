@@ -1,104 +1,125 @@
 package com.example.harmoney.presentation.calculator.viewModel
 
-import androidx.lifecycle.ViewModel
+import com.example.harmoney.base.BaseViewModel
 import com.example.harmoney.presentation.calculator.models.CalculatorAction
+import com.example.harmoney.presentation.calculator.models.CalculatorEvent
 import com.example.harmoney.presentation.calculator.models.CalculatorOperation
+import com.example.harmoney.presentation.calculator.models.CalculatorResult
 import com.example.harmoney.presentation.calculator.models.CalculatorState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class CalculatorViewModel(
     private val calculatorHandler: CalculatorHandler
-) : ViewModel() {
-    private val _calculatorStateFlow = MutableStateFlow(CalculatorState())
-    val calculatorStateFlow = _calculatorStateFlow.asStateFlow()
+) : BaseViewModel<CalculatorEvent, CalculatorAction, CalculatorState>(CalculatorState()) {
 
-    fun onAction(action: CalculatorAction) {
-        when (action) {
-            is CalculatorAction.OpenCalculator -> initializeEquation(action.initEquation)
-            is CalculatorAction.Number -> enterNumber(action.number)
-            is CalculatorAction.Clear -> clear()
-            is CalculatorAction.Delete -> delete()
-            is CalculatorAction.Operation -> enterOperation(action.operation)
-            is CalculatorAction.Decimal -> enterDecimal()
-            is CalculatorAction.Calculate -> showResult()
-            is CalculatorAction.Parenthesis -> enterParenthesis()
-            is CalculatorAction.CloseCalculator -> calculatorHandler.clearData()
+    override val tag: String = CalculatorViewModel::class.java.simpleName ?: ""
+
+    override fun obtainEvent(event: CalculatorEvent) {
+        when (event) {
+            is CalculatorEvent.OnOpenCalculator -> initializeEquation(event.initEquation)
+            is CalculatorEvent.OnEnterNumber -> onEnterNumber(event.number)
+            is CalculatorEvent.OnClearClick -> clear()
+            is CalculatorEvent.OnDeleteClick -> onDelete()
+            is CalculatorEvent.OnEnterOperation -> onEnterOperation(event.operation)
+            is CalculatorEvent.OnEnterDecimalDot -> onEnterDecimal()
+            is CalculatorEvent.OnCalculateClick -> showResult()
+            is CalculatorEvent.OnEnterParenthesis -> onEnterParenthesis()
+            is CalculatorEvent.OnCloseCalculator -> onCloseCalculator()
         }
     }
 
-    private fun changeState(equation: String, result: String) {
-        _calculatorStateFlow.value = _calculatorStateFlow.value.copy(
-            equation = equation,
-            result = result
-        )
+    private fun changeState(
+        equation: String,
+        result: CalculatorResult,
+    ) {
+        writableState.update {
+            it.copy(
+                equation = equation,
+                resultString = result.resultString,
+                result = result.resultNumeric,
+            )
+        }
     }
 
     private fun initializeEquation(initEquation: String) {
         val equation = calculatorHandler.initCalculator(initEquation)
         val result = calculatorHandler.getResult()
-        changeState(equation = equation, result = result)
+        changeState(
+            equation = equation,
+            result = result,
+        )
     }
 
-    private fun enterNumber(symbol: String) {
+    private fun onEnterNumber(symbol: String) {
         val equation = calculatorHandler.processNumberInput(
-            equation = _calculatorStateFlow.value.equation,
+            equation = state.value.equation,
             symbol = symbol
         )
 
         val result = calculatorHandler.getResult()
-        changeState(equation, result)
+        changeState(equation = equation, result = result)
     }
 
     private fun clear() {
         calculatorHandler.clearData()
-        changeState(equation = EMPTY_STRING, result = EMPTY_STRING)
+        changeState(
+            equation = EMPTY_STRING,
+            CalculatorResult(ZERO_RESULT, EMPTY_STRING)
+        )
     }
 
-    private fun delete() {
+    private fun onDelete() {
         val equation =
-            calculatorHandler.processDeleting(equation = _calculatorStateFlow.value.equation)
+            calculatorHandler.processDeleting(equation = state.value.equation)
 
         val result = calculatorHandler.getResult()
-        changeState(equation, result)
+        changeState(equation = equation, result = result)
     }
 
-    private fun enterOperation(operation: CalculatorOperation) {
+    private fun onEnterOperation(operation: CalculatorOperation) {
         val equation = calculatorHandler.processOperationInput(
-            equation = _calculatorStateFlow.value.equation,
+            equation = state.value.equation,
             operation = operation
         )
         val result = calculatorHandler.getResult()
-        changeState(equation, result)
+        changeState(equation = equation, result = result)
     }
 
-    private fun enterDecimal() {
+    private fun onEnterDecimal() {
         val equation =
-            calculatorHandler.processDecimalInput(equation = _calculatorStateFlow.value.equation)
+            calculatorHandler.processDecimalInput(equation = state.value.equation)
         val result = calculatorHandler.getResult()
-        changeState(equation, result)
+        changeState(equation = equation, result = result)
     }
 
-    private fun enterParenthesis() {
+    private fun onEnterParenthesis() {
         val equation = calculatorHandler
-            .processParenthesisInput(equation = _calculatorStateFlow.value.equation)
+            .processParenthesisInput(equation = state.value.equation)
 
         val result = calculatorHandler.getResult()
-        changeState(equation, result)
+        changeState(equation = equation, result = result)
     }
 
     private fun showResult() {
-        if (_calculatorStateFlow.value.result.isEmpty()) return
+        if (state.value.resultString.isEmpty()) return
 
         val result = calculatorHandler.getResult(isNeedProcessing = true)
 
         // Задаем начальное значение калькулятору, чтобы с результатом можно было работать
         // как с введенным значением
-        val equation = calculatorHandler.initCalculator(result)
-        changeState(equation, EMPTY_STRING)
+        val equation = calculatorHandler.initCalculator(result.resultString)
+        changeState(
+            equation,
+            CalculatorResult(result.resultNumeric, EMPTY_STRING)
+        )
+    }
+
+    private fun onCloseCalculator() {
+        calculatorHandler.clearData()
     }
 
     private companion object {
         const val EMPTY_STRING = ""
+        const val ZERO_RESULT = 0.0
     }
 }

@@ -1,6 +1,5 @@
 package com.example.harmoney.core.di
 
-import androidx.lifecycle.SavedStateHandle
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorHandler
@@ -12,6 +11,8 @@ import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverte
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverterImpl
 import com.example.harmoney.presentation.converters.CategoryUiConverter
 import com.example.harmoney.presentation.converters.CategoryUiConverterImpl
+import com.example.harmoney.presentation.converters.DateFormatter
+import com.example.harmoney.presentation.converters.DateFormatterImpl
 import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.converters.NumbersFormatterImpl
 import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverter
@@ -59,15 +60,17 @@ val viewModelModule = module {
             categoryType = categoryType,
             categoryId = categoryId,
             transactionId = transactionId,
-            savedStateHandle = get()
+            test = get(),
+            numbersFormatter = get(),
+            dateFormatter = get(),
+            transactionUiConverter = get(),
+            categoryUiConverter = get()
         )
     }
 
-    viewModel { (categoryType: CategoryType, isCategorySelectionMode: Boolean) ->
+    viewModel { (categoryType: CategoryType) ->
         CategoryListViewModel(
             categoryType = categoryType,
-            isCategorySelectionMode = isCategorySelectionMode,
-            savedStateHandle = get(),
         )
     }
 
@@ -81,10 +84,6 @@ val viewModelModule = module {
 
     viewModel {
         SharedStatisticsPeriodViewModel()
-    }
-
-    single {
-        SavedStateHandle()
     }
 
     viewModel {
@@ -107,12 +106,24 @@ val viewModelModule = module {
         NumbersFormatterImpl()
     }
 
+    factory<DateFormatter> {
+        DateFormatterImpl()
+    }
+
     factory<OneDayTransactionsUiConverter> {
-        OneDayTransactionsUiConverterImpl(transactionUiConverter = get(), numberFormatter = get())
+        OneDayTransactionsUiConverterImpl(
+            transactionUiConverter = get(),
+            numberFormatter = get(),
+            dateFormatter = get()
+        )
     }
 
     factory<TransactionUiConverter> {
-        TransactionUiConverterImpl(categoryUiConverter = get(), numbersFormatter = get())
+        TransactionUiConverterImpl(
+            categoryUiConverter = get(),
+            numbersFormatter = get(),
+            dateFormatter = get()
+        )
     }
 
     factory<TransactionsFilterUiConverter> {
@@ -121,6 +132,8 @@ val viewModelModule = module {
 
     //временный класс
     single {
-        TestDataSource()
+        TestDataSource(
+            dateFormatter = get()
+        )
     }
 }

@@ -78,6 +78,7 @@ dependencies {
     // region Other
     implementation(libs.objecthunter.exp4j)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.lucf15.modal.bottom.sheet)
     // endregion
 }
 

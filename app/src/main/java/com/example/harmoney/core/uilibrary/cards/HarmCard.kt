@@ -41,31 +41,79 @@ import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriod
-import com.example.harmoney.ui.mappers.CategoryIconUiMapper.toDrawableRes
-import com.example.harmoney.presentation.models.MenuOptions
 import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.CategoryUi
+import com.example.harmoney.presentation.models.MenuOptions
 import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.models.TransactionUi
+import com.example.harmoney.ui.mappers.CategoryIconUiMapper.toDrawableRes
 import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
 /**
- * - `HarmCategoryCard` - A card for displaying all types of category cards
- * - `HarmCategoryCardSumTransactions` - A card for displaying the total amount of transactions
- * for a category (with percentage)
- * - `HarmCategoryCardOneTransaction` - A card for displaying one transaction of a category
- * - `HarmSimpleCategoryCard` - A card for displaying categories when creating a transaction
- * - `HarmCategoryCardWithMenu` - A card for displaying categories when creating a category
- * (with dropdown menu)
- * - `HarmStatisticCard` - A card with a pie chart (shows the total amount of transactions
- * of each category)
  * - `HarmCardTransactionList` - A list with data and transactions for one day
- */
+ * - `HarmCategoryCard` - A card for displaying all types of category cards
+ * - `HarmCategoryCardOneTransaction` - A card for displaying one transaction of a category
+ * - `HarmCategoryCardSumTransactions` - A card for displaying the total amount of transactions
+ *   for a category (with percentage)
+ * - `HarmCategoryCardWithMenu` - A card for displaying categories when creating a category
+ *   (with dropdown menu)
+ * - `HarmSimpleCategoryCard` - A card for displaying categories when creating a transaction
+ * - `HarmStatisticCard` - A card with a pie chart (shows the total amount of transactions
+ *   of each category)
+ * */
 @UiLibrary
 object HarmCard {
+    /** A list with data and transactions for one day */
+    @Composable
+    fun HarmCardTransactionList(
+        data: String,
+        totalAmount: String,
+        transactions: ImmutableList<TransactionUi>,
+        onTransactionClick: (Long) -> Unit,
+        modifier: Modifier = Modifier,
+    ) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .background(color = Color.Transparent)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+            ) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(R.string.pattern_text_with_colon, data),
+                    style = HarmTheme.typography.titleMedium,
+                    color = HarmTheme.colors.onSurface,
+                    textAlign = TextAlign.Start
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = totalAmount,
+                    style = HarmTheme.typography.bodyLarge,
+                    color = HarmTheme.colors.onSurface,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            transactions.forEach { transaction ->
+                HarmCategoryCardOneTransaction(
+                    categoryInfo = transaction.category,
+                    transactionAmount = transaction.amount,
+                    onCardClick = { onTransactionClick(transaction.id) },
+                    transactionNote = transaction.note
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+    }
+
     /** A card for displaying all types of category cards */
     @Composable
     fun HarmCategoryCard(
@@ -96,6 +144,37 @@ object HarmCard {
                 }
             }
         }
+    }
+
+    /** A card for displaying one transaction of a category */
+    @Composable
+    fun HarmCategoryCardOneTransaction(
+        categoryInfo: CategoryUi,
+        transactionAmount: String,
+        onCardClick: () -> Unit,
+        transactionNote: String?,
+        modifier: Modifier = Modifier,
+    ) {
+        HarmCategoryCard(
+            modifier = modifier,
+            onCardClick = onCardClick,
+            mainContent = {
+                HarmCategoryCardBody(
+                    modifier = Modifier.weight(1f),
+                    categoryInfo = categoryInfo,
+                    subText = transactionNote
+                )
+            },
+            endContent = {
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    modifier = Modifier.wrapContentWidth(),
+                    text = transactionAmount,
+                    style = HarmTheme.typography.bodyLarge
+                )
+            }
+        )
     }
 
     /** A card for displaying the total amount of transactions for a category (with percentage) */
@@ -133,55 +212,6 @@ object HarmCard {
         )
     }
 
-    /** A card for displaying one transaction of a category */
-    @Composable
-    fun HarmCategoryCardOneTransaction(
-        categoryInfo: CategoryUi,
-        transactionAmount: String,
-        onCardClick: () -> Unit,
-        transactionNote: String?,
-        modifier: Modifier = Modifier,
-    ) {
-        HarmCategoryCard(
-            modifier = modifier,
-            onCardClick = onCardClick,
-            mainContent = {
-                HarmCategoryCardBody(
-                    modifier = Modifier.weight(1f),
-                    categoryInfo = categoryInfo,
-                    subText = transactionNote
-                )
-            },
-            endContent = {
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Text(
-                    modifier = Modifier.wrapContentWidth(),
-                    text = transactionAmount,
-                    style = HarmTheme.typography.bodyLarge
-                )
-            }
-        )
-    }
-
-    /** A card for displaying categories when creating a transaction */
-    @Composable
-    fun HarmSimpleCategoryCard(
-        category: CategoryStatisticsUi,
-        onCardClick: () -> Unit,
-        modifier: Modifier = Modifier,
-    ) {
-        HarmCategoryCard(
-            modifier = modifier,
-            onCardClick = onCardClick,
-            mainContent = {
-                HarmCategoryCardBody(
-                    modifier = Modifier.weight(1f), categoryInfo = category.category
-                )
-            },
-        )
-    }
-
     /** A card for displaying categories when creating a category (with dropdown menu) */
     @Composable
     fun HarmCategoryCardWithMenu(
@@ -216,6 +246,76 @@ object HarmCard {
                 )
             }
         )
+    }
+
+    /** A card for displaying categories when creating a transaction */
+    @Composable
+    fun HarmSimpleCategoryCard(
+        category: CategoryStatisticsUi,
+        onCardClick: () -> Unit,
+        modifier: Modifier = Modifier,
+    ) {
+        HarmCategoryCard(
+            modifier = modifier,
+            onCardClick = onCardClick,
+            mainContent = {
+                HarmCategoryCardBody(
+                    modifier = Modifier.weight(1f), categoryInfo = category.category
+                )
+            },
+        )
+    }
+
+    /** A card with a pie chart (shows the total amount of transactions of each category) */
+    @Composable
+    fun HarmStatisticCard(
+        periods: ImmutableList<StatisticsPeriod>,
+        data: String,
+        pieChartItems: ImmutableList<PieChartItem>,
+        total: String,
+        selectedPeriod: StatisticsPeriod,
+        onPeriodClick: (StatisticsPeriod) -> Unit,
+        modifier: Modifier = Modifier,
+    ) {
+        Card(
+            modifier = modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(
+                if (pieChartItems.isEmpty()) {
+                    0.dp
+                } else {
+                    6.dp
+                }
+            ),
+            colors = CardDefaults.cardColors(
+                containerColor = if (pieChartItems.isEmpty()) {
+                    Color.Transparent
+                } else {
+                    HarmTheme.colors.surfaceContainerHigh
+                },
+                contentColor = HarmTheme.colors.onSurface,
+            ),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                HarmDate.HarmStatisticPeriodList(
+                    data = data,
+                    periods = periods,
+                    selectedPeriod = selectedPeriod,
+                    onPeriodClick = onPeriodClick
+                )
+
+                if (pieChartItems.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    HarmGraphic.PieChartWithTitle(items = pieChartItems, title = total)
+                }
+            }
+        }
     }
 
     /** The main content that is repeated on all category cards */
@@ -264,178 +364,30 @@ object HarmCard {
             }
         }
     }
-
-    /** A card with a pie chart (shows the total amount of transactions of each category) */
-    @Composable
-    fun HarmStatisticCard(
-        periods: ImmutableList<StatisticsPeriod>,
-        data: String,
-        pieChartItems: ImmutableList<PieChartItem>,
-        total: String,
-        selectedPeriod: StatisticsPeriod,
-        onPeriodClick: (StatisticsPeriod) -> Unit,
-        modifier: Modifier = Modifier,
-    ) {
-        val screenDensity = LocalDensity.current.density
-        // отступ, чтобы total был строго внутри pieChart
-        val additionalPadding = remember {
-            mutableFloatStateOf(
-                (HarmGraphic.PIE_STROKE_WIDTH_PX / screenDensity)
-            )
-        }
-
-        Card(
-            modifier = modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(
-                if (pieChartItems.isEmpty()) {
-                    0.dp
-                } else {
-                    6.dp
-                }
-            ),
-            colors = CardDefaults.cardColors(
-                containerColor = if (pieChartItems.isEmpty()) {
-                    Color.Transparent
-                } else {
-                    HarmTheme.colors.surfaceContainerHigh
-                },
-                contentColor = HarmTheme.colors.onSurface,
-            ),
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                HarmDate.HarmStatisticPeriodList(
-                    data = data,
-                    periods = periods,
-                    selectedPeriod = selectedPeriod,
-                    onPeriodClick = onPeriodClick
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Box(
-                    modifier = Modifier.fillMaxWidth(1f / 2),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (pieChartItems.isNotEmpty()) {
-                        HarmGraphic.PieChart(
-                            items = pieChartItems
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(additionalPadding.floatValue.dp + 12.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = total,
-                                style = HarmTheme.typography.bodyLarge,
-                                color = HarmTheme.colors.onSurface,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /** A list with data and transactions for one day */
-    @Composable
-    fun HarmCardTransactionList(
-        data: String,
-        totalAmount: String,
-        transactions: ImmutableList<TransactionUi>,
-        onTransactionClick: (Long) -> Unit,
-        modifier: Modifier = Modifier,
-    ) {
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .background(color = Color.Transparent)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
-            ) {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.pattern_text_with_colon, data),
-                    style = HarmTheme.typography.titleMedium,
-                    color = HarmTheme.colors.onSurface,
-                    textAlign = TextAlign.Start
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = totalAmount,
-                    style = HarmTheme.typography.bodyLarge,
-                    color = HarmTheme.colors.onSurface,
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            transactions.forEach { transaction ->
-                HarmCategoryCardOneTransaction(
-                    categoryInfo = transaction.category,
-                    transactionAmount = transaction.amount,
-                    onCardClick = { onTransactionClick(transaction.id) },
-                    transactionNote = transaction.note
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-    }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF201923)
 @Composable
-private fun HarmCategoryCardSumTransactions_DarkPreview() {
+private fun HarmCardTransactionList_DarkPreview() {
     HarmTheme(darkTheme = true) {
-        HarmCard.HarmCategoryCardSumTransactions(
-            category = CategoryStatisticsUi(
-                category = CategoryUi(
-                    id = 0,
-                    name = "Продукты",
-                    type = CategoryType.Expenses,
-                    icon = CategoryIcon(
-                        icon = CategoryIcons.IC_SHOP_CART,
-                        color = CategoryColors.PINK_T75
-                    )
-                ),
-                totalAmount = "2 000 ₽",
-                percentage = "10.0%"
-            ),
-            onCardClick = {}
+        HarmCard.HarmCardTransactionList(
+            data = "01.03.2026",
+            transactions = getPreviewTransactionList(),
+            onTransactionClick = {},
+            totalAmount = "5 000 ₽"
         )
     }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
 @Composable
-private fun HarmCategoryCardSumTransactions_LightPreview() {
+private fun HarmCardTransactionList_LightPreview() {
     HarmTheme(darkTheme = false) {
-        HarmCard.HarmCategoryCardSumTransactions(
-            category = CategoryStatisticsUi(
-                category = CategoryUi(
-                    id = 0,
-                    name = "Продукты",
-                    type = CategoryType.Expenses,
-                    icon = CategoryIcon(
-                        icon = CategoryIcons.IC_SHOP_CART,
-                        color = CategoryColors.PINK_T75
-                    )
-                ),
-                totalAmount = "2 000 ₽",
-                percentage = "10.0%"
-            ),
-            onCardClick = {}
+        HarmCard.HarmCardTransactionList(
+            data = "01.03.2026",
+            transactions = getPreviewTransactionList(),
+            onTransactionClick = {},
+            totalAmount = "5 000 ₽"
         )
     }
 }
@@ -484,9 +436,9 @@ private fun HarmCategoryCardOneTransaction_LightPreview() {
 
 @Preview(showBackground = true, backgroundColor = 0xFF201923)
 @Composable
-private fun HarmSimpleCategoryCard_DarkPreview() {
+private fun HarmCategoryCardSumTransactions_DarkPreview() {
     HarmTheme(darkTheme = true) {
-        HarmCard.HarmSimpleCategoryCard(
+        HarmCard.HarmCategoryCardSumTransactions(
             category = CategoryStatisticsUi(
                 category = CategoryUi(
                     id = 0,
@@ -507,9 +459,9 @@ private fun HarmSimpleCategoryCard_DarkPreview() {
 
 @Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
 @Composable
-private fun HarmSimpleCategoryCard_LightPreview() {
+private fun HarmCategoryCardSumTransactions_LightPreview() {
     HarmTheme(darkTheme = false) {
-        HarmCard.HarmSimpleCategoryCard(
+        HarmCard.HarmCategoryCardSumTransactions(
             category = CategoryStatisticsUi(
                 category = CategoryUi(
                     id = 0,
@@ -594,26 +546,46 @@ private fun HarmCategoryCardWithMenu_LightPreview() {
 
 @Preview(showBackground = true, backgroundColor = 0xFF201923)
 @Composable
-private fun HarmCardTransactionList_DarkPreview() {
+private fun HarmSimpleCategoryCard_DarkPreview() {
     HarmTheme(darkTheme = true) {
-        HarmCard.HarmCardTransactionList(
-            data = "01.03.2026",
-            transactions = getPreviewTransactionList(),
-            onTransactionClick = {},
-            totalAmount = "5 000 ₽"
+        HarmCard.HarmSimpleCategoryCard(
+            category = CategoryStatisticsUi(
+                category = CategoryUi(
+                    id = 0,
+                    name = "Продукты",
+                    type = CategoryType.Expenses,
+                    icon = CategoryIcon(
+                        icon = CategoryIcons.IC_SHOP_CART,
+                        color = CategoryColors.PINK_T75
+                    )
+                ),
+                totalAmount = "2 000 ₽",
+                percentage = "10.0%"
+            ),
+            onCardClick = {}
         )
     }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
 @Composable
-private fun HarmCardTransactionList_LightPreview() {
+private fun HarmSimpleCategoryCard_LightPreview() {
     HarmTheme(darkTheme = false) {
-        HarmCard.HarmCardTransactionList(
-            data = "01.03.2026",
-            transactions = getPreviewTransactionList(),
-            onTransactionClick = {},
-            totalAmount = "5 000 ₽"
+        HarmCard.HarmSimpleCategoryCard(
+            category = CategoryStatisticsUi(
+                category = CategoryUi(
+                    id = 0,
+                    name = "Продукты",
+                    type = CategoryType.Expenses,
+                    icon = CategoryIcon(
+                        icon = CategoryIcons.IC_SHOP_CART,
+                        color = CategoryColors.PINK_T75
+                    )
+                ),
+                totalAmount = "2 000 ₽",
+                percentage = "10.0%"
+            ),
+            onCardClick = {}
         )
     }
 }
@@ -647,7 +619,8 @@ private fun getPreviewTransactionList(): ImmutableList<TransactionUi> {
                 ),
             ),
             amount = "2 000 ₽",
-            note = "На ужин"
+            note = "На ужин",
+            date = "01.03.2026"
         ),
         TransactionUi(
             id = 2,
@@ -661,6 +634,7 @@ private fun getPreviewTransactionList(): ImmutableList<TransactionUi> {
                 ),
             ),
             amount = "3 000 ₽",
+            date = "03.03.2026"
         )
     )
 }

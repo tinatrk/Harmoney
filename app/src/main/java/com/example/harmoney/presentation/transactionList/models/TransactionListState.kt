@@ -12,7 +12,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Stable
 data class TransactionListState(
     val currentBalance: String = "0.00",
-    val categoryId: Long? = null,
+
     val categoryTypes: ImmutableList<CategoryType> = CategoryType.entries.toImmutableList(),
     val selectedCategoryType: CategoryType = CategoryType.Expenses,
     val selectedTabIndex: Int = CategoryType.Expenses.ordinal,

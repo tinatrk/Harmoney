@@ -3,7 +3,6 @@ package com.example.harmoney.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.ui.screens.CategoryListScreen
 import kotlinx.serialization.Serializable
@@ -11,31 +10,27 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Serializable
-data class CategoryList(val isCategorySelectionMode: Boolean)
+data object CategoryList
 
 fun NavGraphBuilder.categoryListScreen(
-    onBackWithChosenCategory: () -> Unit,
+    onBackClick: () -> Unit,
     onNavigateToCreateCategory: () -> Unit,
     onNavigateToOpenCategory: (Long?) -> Unit,
     sharedCategoryTypeVM: SharedCategoryTypeViewModel
 ) {
-    composable<CategoryList> { nacBackStackEntry ->
-        val route = nacBackStackEntry.toRoute<CategoryList>()
+    composable<CategoryList> {
         CategoryListScreen(
             onNavigateToCreateCategory = onNavigateToCreateCategory,
             onNavigateToOpenCategory = onNavigateToOpenCategory,
             viewModel = koinViewModel() {
-                parametersOf(
-                    sharedCategoryTypeVM.selectedCategoryType.value,
-                    route.isCategorySelectionMode,
-                )
+                parametersOf(sharedCategoryTypeVM.selectedCategoryType.value)
             },
-            onBackClick = onBackWithChosenCategory,
+            onBackClick = onBackClick,
             sharedCategoryTypeVM = sharedCategoryTypeVM
         )
     }
 }
 
-fun NavController.navigateToCategoryList(isCategorySelectionMode: Boolean) {
-    navigate(route = CategoryList(isCategorySelectionMode = isCategorySelectionMode))
+fun NavController.navigateToCategoryList() {
+    navigate(route = CategoryList)
 }

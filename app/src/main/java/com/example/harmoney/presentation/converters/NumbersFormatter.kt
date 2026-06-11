@@ -10,5 +10,11 @@ interface NumbersFormatter {
         isNeededThousandSeparator: Boolean
     ): String
 
+    fun toString(
+        number: Double,
+        decimalPlaces: Int,
+        isNeededThousandSeparator: Boolean
+    ): String
+
     fun toStringWithPercent(number: Double, decimalPlaces: Int): String
 }

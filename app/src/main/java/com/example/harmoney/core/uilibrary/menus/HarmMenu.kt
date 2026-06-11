@@ -3,6 +3,7 @@ package com.example.harmoney.core.uilibrary.menus
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.requiredHeightIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -57,6 +58,7 @@ object HarmMenu {
 
             DropdownMenu(
                 modifier = modifier
+                    .requiredHeightIn(max = 400.dp)
                     .align(Alignment.CenterEnd)
                     .background(Color.Unspecified),
                 expanded = expanded,
@@ -86,7 +88,7 @@ object HarmMenu {
                 }
                 LaunchedEffect(expanded) {
                     if (expanded) {
-                        scrollState.scrollTo(scrollState.maxValue)
+                        scrollState.scrollTo(0)
                     }
                 }
             }

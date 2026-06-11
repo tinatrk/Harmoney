@@ -34,75 +34,11 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 /**
- * - `HarmStatisticPeriodList` - Text list of periods for statistic logic
  * - `HarmDatePickerModal` - Date Picker Dialog
+ * - `HarmStatisticPeriodList` - Text list of periods for statistic logic
  */
 @UiLibrary
 object HarmDate {
-    /** Text list of periods for statistic logic */
-    @Composable
-    fun HarmStatisticPeriodList(
-        data: String,
-        periods: ImmutableList<StatisticsPeriod>,
-        selectedPeriod: StatisticsPeriod,
-        onPeriodClick: (StatisticsPeriod) -> Unit,
-        modifier: Modifier = Modifier,
-    ) {
-        Column(modifier = modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                periods.forEach { period ->
-
-                    val borderColor = if (period.id == selectedPeriod.id) {
-                        HarmTheme.colors.primary
-                    } else {
-                        Color.Transparent
-                    }
-                    Text(
-                        modifier = Modifier
-                            .padding(horizontal = 6.dp)
-                            .border(
-                                width = 1.dp, color = borderColor,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(horizontal = 6.dp, vertical = 4.dp)
-
-                            .clickable { onPeriodClick(period) },
-                        text = stringResource(period.toStringRes()),
-                        style = if (period.id == selectedPeriod.id) {
-                            HarmTheme.typography.titleSmallSemiBold
-                        } else {
-                            HarmTheme.typography.titleSmall
-                        },
-                        color = if (period.id == selectedPeriod.id) {
-                            HarmTheme.colors.primary
-                        } else {
-                            HarmTheme.colors.onSurfaceContainer
-                        },
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = data,
-                    style = HarmTheme.typography.titleSmall,
-                    color = HarmTheme.colors.onSurface
-                )
-            }
-        }
-    }
-
     /** Date Picker Dialog */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -171,6 +107,92 @@ object HarmDate {
             )
         }
     }
+
+    /** Text list of periods for statistic logic */
+    @Composable
+    fun HarmStatisticPeriodList(
+        data: String,
+        periods: ImmutableList<StatisticsPeriod>,
+        selectedPeriod: StatisticsPeriod,
+        onPeriodClick: (StatisticsPeriod) -> Unit,
+        modifier: Modifier = Modifier,
+    ) {
+        Column(modifier = modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                periods.forEach { period ->
+
+                    val borderColor = if (period.id == selectedPeriod.id) {
+                        HarmTheme.colors.primary
+                    } else {
+                        Color.Transparent
+                    }
+                    Text(
+                        modifier = Modifier
+                            .padding(horizontal = 6.dp)
+                            .border(
+                                width = 1.dp, color = borderColor,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 6.dp, vertical = 4.dp)
+
+                            .clickable { onPeriodClick(period) },
+                        text = stringResource(period.toStringRes()),
+                        style = if (period.id == selectedPeriod.id) {
+                            HarmTheme.typography.titleSmallSemiBold
+                        } else {
+                            HarmTheme.typography.titleSmall
+                        },
+                        color = if (period.id == selectedPeriod.id) {
+                            HarmTheme.colors.primary
+                        } else {
+                            HarmTheme.colors.onSurfaceContainer
+                        },
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = data,
+                    style = HarmTheme.typography.titleSmall,
+                    color = HarmTheme.colors.onSurface
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun HarmDatePickerModal_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        HarmDate.HarmDatePickerModal(
+            onDateSelected = {},
+            onDismiss = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmDatePickerModal_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmDate.HarmDatePickerModal(
+            onDateSelected = {},
+            onDismiss = {}
+        )
+    }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFF201923)
@@ -195,28 +217,6 @@ private fun HarmStatisticPeriodList_LightPreview() {
             periods = StatisticsPeriod.entries.toImmutableList(),
             selectedPeriod = StatisticsPeriod.CURRENT_MONTH,
             onPeriodClick = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF201923)
-@Composable
-private fun HarmDatePickerModal_DarkPreview() {
-    HarmTheme(darkTheme = true) {
-        HarmDate.HarmDatePickerModal(
-            onDateSelected = {},
-            onDismiss = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
-@Composable
-private fun HarmDatePickerModal_LightPreview() {
-    HarmTheme(darkTheme = false) {
-        HarmDate.HarmDatePickerModal(
-            onDateSelected = {},
-            onDismiss = {}
         )
     }
 }

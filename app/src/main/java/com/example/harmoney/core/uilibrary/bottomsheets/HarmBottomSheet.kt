@@ -1,14 +1,15 @@
 package com.example.harmoney.core.uilibrary.bottomsheets
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -17,34 +18,52 @@ import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.ui.theme.HarmTheme
+import it.lucf15.compose.bottomsheet.ModalBottomSheet
+import it.lucf15.compose.bottomsheet.rememberModalBottomSheetState
 
-@UiLibrary
 @OptIn(ExperimentalMaterial3Api::class)
+@UiLibrary
 @Composable
 fun HarmBottomSheet(
-    sheetState: SheetState,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    showBottomSheet: Boolean = false,
-    content: @Composable (ColumnScope.() -> Unit)
+    isNeedScrim: Boolean = true,
+    skipPartiallyExpanded: Boolean = false,
+    nestedScrollableState: ScrollableState? = null,
+    content: @Composable (() -> Unit)
 ) {
-    if (showBottomSheet) {
-        ModalBottomSheet(
-            modifier = modifier,
-            onDismissRequest = onDismissRequest,
-            sheetState = sheetState,
-            shape = RoundedCornerShape(32.dp),
-            tonalElevation = 6.dp,
-            containerColor = HarmTheme.colors.surfaceContainerLow,
-            contentColor = HarmTheme.colors.onSurfaceVariant,
-            scrimColor = Color.Transparent,
-            dragHandle = {
-                BottomSheetDefaults
-                    .DragHandle(color = HarmTheme.colors.onSurfaceContainerLow)
-            },
-            content = content
-        )
-    }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
+
+    ModalBottomSheet(
+        modifier = modifier,
+        onDismissRequest = onDismissRequest,
+        sheetState = sheetState,
+        nestedScrollableState = nestedScrollableState,
+        shape = RoundedCornerShape(32.dp),
+        tonalElevation = 6.dp,
+        containerColor = HarmTheme.colors.surfaceContainerLow,
+        contentColor = HarmTheme.colors.onSurfaceVariant,
+        scrimColor = if (isNeedScrim) {
+            HarmTheme.colors.borderAndScrim.copy(alpha = .32f)
+        } else {
+            Color.Transparent
+        },
+        dragHandle = {
+            BottomSheetDefaults
+                .DragHandle(color = HarmTheme.colors.onSurfaceContainerLow)
+        },
+        content = {
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp)
+                    .wrapContentHeight(Alignment.Top)
+            ) {
+                content()
+            }
+
+        },
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,12 +71,8 @@ fun HarmBottomSheet(
 @Composable
 private fun HarmBottomSheetDarkPreview() {
     HarmTheme(darkTheme = true) {
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
         HarmBottomSheet(
-            sheetState = sheetState,
             onDismissRequest = {},
-            showBottomSheet = true
         ) {
             // тестовый контент
             Image(
@@ -73,11 +88,8 @@ private fun HarmBottomSheetDarkPreview() {
 @Composable
 private fun HarmBottomSheetLightPreview() {
     HarmTheme(darkTheme = false) {
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         HarmBottomSheet(
-            sheetState = sheetState,
             onDismissRequest = {},
-            showBottomSheet = true
         ) {
             // тестовый контент
             Image(
