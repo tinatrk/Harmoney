@@ -1,11 +1,9 @@
 package com.example.harmoney.core.uilibrary.buttons
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,7 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -120,7 +117,7 @@ object HarmButton {
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = title,
-                style = HarmTheme.typography.bodyMedium,
+                style = HarmTheme.typography.bodyLarge,
                 color = HarmTheme.colors.onSurface
             )
         }
@@ -157,27 +154,21 @@ object HarmButton {
         iconBackground: Color = Color(CategoryColors.VIOLET_T68.background),
         iconTint: Color = HarmTheme.colors.borderAndScrim
     ) {
-        Box(
-            modifier = modifier
-                .size(48.dp),
-            contentAlignment = Alignment.Center
+        IconButton(
+            modifier = modifier,
+            shape = CircleShape,
+            onClick = onClick,
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = iconBackground,
+                contentColor = iconTint
+            )
         ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .clickable { onClick() }
-                    .background(iconBackground),
-                contentAlignment = Alignment.Center
-            ) {
-                if (iconRes != null) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(iconRes),
-                        contentDescription = contentDescription,
-                        tint = iconTint
-                    )
-                }
+            if (iconRes != null) {
+                Icon(
+                    painter = painterResource(iconRes),
+                    contentDescription = contentDescription,
+                    tint = iconTint
+                )
             }
         }
     }

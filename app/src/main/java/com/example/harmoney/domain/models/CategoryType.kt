@@ -4,8 +4,8 @@ import com.example.harmoney.base.IdEnum
 import com.example.harmoney.base.IdEnumRegistry
 
 enum class CategoryType(override val id: Long) : IdEnum {
-    Expenses(id = 1),
-    Income(id = 2);
+    EXPENSES(id = 1),
+    INCOME(id = 2);
 
     companion object {
         private val registry = IdEnumRegistry(CategoryType::class.java) { it.id }

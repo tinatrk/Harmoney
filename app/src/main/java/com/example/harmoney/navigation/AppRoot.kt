@@ -39,8 +39,8 @@ fun AppRoot() {
             transactionScreen(
                 sharedCategoryTypeVM = sharedCategoryTypeVM,
                 onBackClick = { navController.popBackStack() },
-                onNavigateToCategoryListScreen = {
-                    navController.navigateToCategoryList()
+                onNavigateToCategoryScreen = {
+                    navController.navigateToCategory(categoryId = null)
                 }
             )
 

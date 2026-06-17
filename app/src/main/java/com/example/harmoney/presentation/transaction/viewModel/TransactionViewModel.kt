@@ -26,7 +26,6 @@ import java.time.LocalDate
 
 @Suppress(
     "detekt:LongParameterList", "detekt:TooManyFunctions",
-    "detekt:CyclomaticComplexMethod"
 )
 class TransactionViewModel(
     categoryType: CategoryType,
@@ -97,6 +96,9 @@ class TransactionViewModel(
         }
     }
 
+    @Suppress(
+        "detekt:CyclomaticComplexMethod"
+    )
     override fun obtainEvent(event: TransactionEvent) {
         when (event) {
             is TransactionEvent.OnBackClick -> onBackClick()

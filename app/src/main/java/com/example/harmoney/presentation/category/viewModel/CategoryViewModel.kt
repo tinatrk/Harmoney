@@ -17,6 +17,9 @@ class CategoryViewModel(categoryType: CategoryType, categoryId: Long?) :
 
     init {}
 
+    @Suppress(
+        "detekt:CyclomaticComplexMethod"
+    )
     override fun obtainEvent(event: CategoryEvent) {
         when (event) {
             is CategoryEvent.OnBackClick -> onNavigateBack()

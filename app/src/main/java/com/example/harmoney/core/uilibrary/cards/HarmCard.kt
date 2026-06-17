@@ -4,7 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -19,12 +18,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -60,7 +56,7 @@ import kotlinx.collections.immutable.toImmutableList
  *   for a category (with percentage)
  * - `HarmCategoryCardWithMenu` - A card for displaying categories when creating a category
  *   (with dropdown menu)
- * - `HarmSimpleCategoryCard` - A card for displaying categories when creating a transaction
+ * - `HarmSimpleCategoryCard` - A simple card with icon and title
  * - `HarmStatisticCard` - A card with a pie chart (shows the total amount of transactions
  *   of each category)
  * */
@@ -248,10 +244,10 @@ object HarmCard {
         )
     }
 
-    /** A card for displaying categories when creating a transaction */
+    /** A simple card with icon and title */
     @Composable
     fun HarmSimpleCategoryCard(
-        category: CategoryStatisticsUi,
+        category: CategoryUi,
         onCardClick: () -> Unit,
         modifier: Modifier = Modifier,
     ) {
@@ -260,7 +256,7 @@ object HarmCard {
             onCardClick = onCardClick,
             mainContent = {
                 HarmCategoryCardBody(
-                    modifier = Modifier.weight(1f), categoryInfo = category.category
+                    modifier = Modifier.weight(1f), categoryInfo = category
                 )
             },
         )
@@ -400,7 +396,7 @@ private fun HarmCategoryCardOneTransaction_DarkPreview() {
             categoryInfo = CategoryUi(
                 id = 0,
                 name = "Продукты",
-                type = CategoryType.Expenses,
+                type = CategoryType.EXPENSES,
                 icon = CategoryIcon(
                     icon = CategoryIcons.IC_SHOP_CART,
                     color = CategoryColors.PINK_T75
@@ -421,7 +417,7 @@ private fun HarmCategoryCardOneTransaction_LightPreview() {
             categoryInfo = CategoryUi(
                 id = 0,
                 name = "Продукты",
-                type = CategoryType.Expenses,
+                type = CategoryType.EXPENSES,
                 icon = CategoryIcon(
                     icon = CategoryIcons.IC_SHOP_CART,
                     color = CategoryColors.PINK_T75
@@ -443,7 +439,7 @@ private fun HarmCategoryCardSumTransactions_DarkPreview() {
                 category = CategoryUi(
                     id = 0,
                     name = "Продукты",
-                    type = CategoryType.Expenses,
+                    type = CategoryType.EXPENSES,
                     icon = CategoryIcon(
                         icon = CategoryIcons.IC_SHOP_CART,
                         color = CategoryColors.PINK_T75
@@ -466,7 +462,7 @@ private fun HarmCategoryCardSumTransactions_LightPreview() {
                 category = CategoryUi(
                     id = 0,
                     name = "Продукты",
-                    type = CategoryType.Expenses,
+                    type = CategoryType.EXPENSES,
                     icon = CategoryIcon(
                         icon = CategoryIcons.IC_SHOP_CART,
                         color = CategoryColors.PINK_T75
@@ -489,7 +485,7 @@ private fun HarmCategoryCardWithMenu_DarkPreview() {
                 category = CategoryUi(
                     id = 0,
                     name = "Продукты",
-                    type = CategoryType.Expenses,
+                    type = CategoryType.EXPENSES,
                     icon = CategoryIcon(
                         icon = CategoryIcons.IC_SHOP_CART,
                         color = CategoryColors.PINK_T75
@@ -521,7 +517,7 @@ private fun HarmCategoryCardWithMenu_LightPreview() {
                 category = CategoryUi(
                     id = 0,
                     name = "Продукты",
-                    type = CategoryType.Expenses,
+                    type = CategoryType.EXPENSES,
                     icon = CategoryIcon(
                         icon = CategoryIcons.IC_SHOP_CART,
                         color = CategoryColors.PINK_T75
@@ -549,18 +545,14 @@ private fun HarmCategoryCardWithMenu_LightPreview() {
 private fun HarmSimpleCategoryCard_DarkPreview() {
     HarmTheme(darkTheme = true) {
         HarmCard.HarmSimpleCategoryCard(
-            category = CategoryStatisticsUi(
-                category = CategoryUi(
-                    id = 0,
-                    name = "Продукты",
-                    type = CategoryType.Expenses,
-                    icon = CategoryIcon(
-                        icon = CategoryIcons.IC_SHOP_CART,
-                        color = CategoryColors.PINK_T75
-                    )
-                ),
-                totalAmount = "2 000 ₽",
-                percentage = "10.0%"
+            category = CategoryUi(
+                id = 0,
+                name = "Продукты",
+                type = CategoryType.EXPENSES,
+                icon = CategoryIcon(
+                    icon = CategoryIcons.IC_SHOP_CART,
+                    color = CategoryColors.PINK_T75
+                )
             ),
             onCardClick = {}
         )
@@ -572,18 +564,14 @@ private fun HarmSimpleCategoryCard_DarkPreview() {
 private fun HarmSimpleCategoryCard_LightPreview() {
     HarmTheme(darkTheme = false) {
         HarmCard.HarmSimpleCategoryCard(
-            category = CategoryStatisticsUi(
-                category = CategoryUi(
-                    id = 0,
-                    name = "Продукты",
-                    type = CategoryType.Expenses,
-                    icon = CategoryIcon(
-                        icon = CategoryIcons.IC_SHOP_CART,
-                        color = CategoryColors.PINK_T75
-                    )
-                ),
-                totalAmount = "2 000 ₽",
-                percentage = "10.0%"
+            category = CategoryUi(
+                id = 0,
+                name = "Продукты",
+                type = CategoryType.EXPENSES,
+                icon = CategoryIcon(
+                    icon = CategoryIcons.IC_SHOP_CART,
+                    color = CategoryColors.PINK_T75
+                )
             ),
             onCardClick = {}
         )
@@ -612,7 +600,7 @@ private fun getPreviewTransactionList(): ImmutableList<TransactionUi> {
             category = CategoryUi(
                 id = 1,
                 name = "Продукты",
-                type = CategoryType.Expenses,
+                type = CategoryType.EXPENSES,
                 icon = CategoryIcon(
                     icon = CategoryIcons.IC_SHOP_CART,
                     color = CategoryColors.PINK_T75
@@ -627,7 +615,7 @@ private fun getPreviewTransactionList(): ImmutableList<TransactionUi> {
             category = CategoryUi(
                 id = 2,
                 name = "Подарки",
-                type = CategoryType.Expenses,
+                type = CategoryType.EXPENSES,
                 icon = CategoryIcon(
                     icon = CategoryIcons.IC_GIFT,
                     color = CategoryColors.VIOLET_T68

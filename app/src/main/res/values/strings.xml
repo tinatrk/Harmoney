@@ -26,9 +26,11 @@
     <string name="ic_drawer_menu_desc">Открыть меню с настройками</string>
     <string name="ic_add_transaction_desc">Создать транзакцию</string>
     <string name="ic_add_category_desc">Создать категорию</string>
-    <string name="ic_choice_category_icon_for_category_desc">Выбрать эту иконку для категории транзакций</string>
-    <string name="ic_choice_category_icon_for_transaction_desc">Выбрать эту категорию транзакции</string>
-    <string name="ic_choice_color_for_category_icon_desc">Выбрать этот цвет для категории</string>
+    <string name="ic_change_category_icon_desc">Изменить иконку категории</string>
+    <string name="ic_select_category_icon_for_category_desc">Выбрать эту иконку для категории транзакций</string>
+    <string name="ic_select_category_icon_for_transaction_desc">Выбрать эту категорию транзакции</string>
+    <string name="ic_select_color_for_category_icon_desc">Выбрать этот цвет для категории</string>
+    <string name="ic_selected_color_for_category_icon_desc">Этот цвет выбран для категории</string>
     <string name="ic_edit_desc">Редактировать</string>
     <string name="ic_delete_desc">Удалить</string>
     <string name="ic_radio_button_on_desc">Выбрано</string>
@@ -73,6 +75,7 @@
     <string name="title_drawer_currency">Валюта всех транзакций</string>
     <string name="title_drawer_item_category_list">Список категорий</string>
     <string name="title_category">Категория</string>
+    <string name="title_color">Цвет</string>
 
     <!-- Заголовки и текст диалоговых окон -->
     <string name="title_dialog_exit">Вы точно хотите выйти?</string>
@@ -81,7 +84,8 @@
     <string name="title_dialog_delete_category">Вы уверены, что хотите удалить категорию?</string>
     <string name="title_dialog_set_first_day_month">Введите номер первого дня финансового месяца</string>
     <string name="title_dialog_transaction_save_error">Невозможно сохранить транзакцию</string>
-    <string name="text_dialog_transaction_save_error">Некоторые поля не заполнены или заполнены некорректно.</string>
+    <string name="title_dialog_category_save_error">Невозможно сохранить категорию</string>
+    <string name="text_dialog_saving_error">Некоторые поля не заполнены или заполнены некорректно.</string>
 
     <!-- Текст для placeholders -->
     <string name="placeholder_empty_transaction_list">У вас нет транзакций данного типа</string>
@@ -91,6 +95,7 @@
     <string name="label_text_field_amount">Сумма</string>
     <string name="label_text_field_note">Комментарий</string>
     <string name="label_text_field_first_day_month">Первый день месяца</string>
+    <string name="label_text_field_category_name">Название</string>
 
     <!-- errorText для textField -->
     <string name="error_empty_field">Поле не может быть пустым</string>

@@ -25,7 +25,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 1,
             name = "Products",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_SHOP_CART,
                 color = CategoryColors.RED_T53
@@ -36,7 +36,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 2,
             name = "Gifts",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_GIFT,
                 color = CategoryColors.PINK_T75
@@ -47,7 +47,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 3,
             name = "Vacation",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_VACATION_1,
                 color = CategoryColors.ORANGE_T55
@@ -58,7 +58,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 4,
             name = "Education",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_EDUCATION,
                 color = CategoryColors.ORANGE_T70
@@ -69,7 +69,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 5,
             name = "Internet and mobile",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_PHONE_INTERNET,
                 color = CategoryColors.ORANGE_T47
@@ -80,7 +80,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 6,
             name = "Psychology",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_BALANCE,
                 color = CategoryColors.YELLOW_T58
@@ -91,7 +91,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 7,
             name = "Transport",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_TRANSPORT_1,
                 color = CategoryColors.OLIVE_T52
@@ -102,7 +102,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 8,
             name = "Gadgets",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_COMPUTER,
                 color = CategoryColors.TEAL_T75
@@ -113,7 +113,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 9,
             name = "Eating on a walk",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_DINNER,
                 color = CategoryColors.COBALT_T56
@@ -124,7 +124,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 10,
             name = "For home",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_CLEANING,
                 color = CategoryColors.BLUE_T80
@@ -135,7 +135,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 11,
             name = "Entertainment",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_GAMES_1,
                 color = CategoryColors.PURPLE_T61
@@ -146,7 +146,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 12,
             name = "Fitness",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_FITNESS_1,
                 color = CategoryColors.PURPLE_T72
@@ -157,7 +157,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 13,
             name = "Health",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_HEALTH,
                 color = CategoryColors.BROWN_T51
@@ -168,7 +168,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 14,
             name = "Clothes",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_CLOTHES,
                 color = CategoryColors.SLATE_T55
@@ -179,7 +179,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 15,
             name = "Other",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_FROG,
                 color = CategoryColors.ROSE_T62
@@ -190,7 +190,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 16,
             name = "Beauty",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_HAIRCUT,
                 color = CategoryColors.ORANGE_T60
@@ -201,7 +201,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 17,
             name = "Pet",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_CAT,
                 color = CategoryColors.AMBER_T56
@@ -212,7 +212,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 18,
             name = "Children",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_BABY,
                 color = CategoryColors.CYAN_T55
@@ -223,7 +223,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 19,
             name = "Car",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_GAS_STATION,
                 color = CategoryColors.LIME_T62
@@ -234,7 +234,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 20,
             name = "Salary",
-            type = CategoryType.Income,
+            type = CategoryType.INCOME,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_MONEY_1,
                 color = CategoryColors.GREEN_T70
@@ -245,7 +245,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 21,
             name = "Gifts",
-            type = CategoryType.Income,
+            type = CategoryType.INCOME,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_MONEY_3,
                 color = CategoryColors.GREEN_T53
@@ -256,7 +256,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Category(
             id = 22,
             name = "Other",
-            type = CategoryType.Income,
+            type = CategoryType.INCOME,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_MONEY_2,
                 color = CategoryColors.GREEN_T60
@@ -385,11 +385,11 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
 
     fun getBalance(): Double {
         var totalExpenses: Double = 0.0
-        transactions.filter { it.category.type == CategoryType.Expenses }
+        transactions.filter { it.category.type == CategoryType.EXPENSES }
             .forEach { totalExpenses += it.amount }
 
         var totalIncome: Double = 0.0
-        transactions.filter { it.category.type == CategoryType.Income }
+        transactions.filter { it.category.type == CategoryType.INCOME }
             .forEach { totalIncome += it.amount }
 
         return totalIncome - totalExpenses

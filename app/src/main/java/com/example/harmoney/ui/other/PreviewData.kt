@@ -20,7 +20,7 @@ object PreviewData {
         CategoryUi(
             id = 1,
             name = "Продукты",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_SHOP_CART,
                 color = CategoryColors.RED_T53
@@ -31,7 +31,7 @@ object PreviewData {
         CategoryUi(
             id = 2,
             name = "Подарки",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_GIFT,
                 color = CategoryColors.PINK_T75
@@ -42,7 +42,7 @@ object PreviewData {
         CategoryUi(
             id = 3,
             name = "Путешествия",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_VACATION_1,
                 color = CategoryColors.ORANGE_T55
@@ -53,7 +53,7 @@ object PreviewData {
         CategoryUi(
             id = 4,
             name = "Образование",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_EDUCATION,
                 color = CategoryColors.ORANGE_T70
@@ -64,7 +64,7 @@ object PreviewData {
         CategoryUi(
             id = 5,
             name = "Интернет и связь",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_PHONE_INTERNET,
                 color = CategoryColors.ORANGE_T47

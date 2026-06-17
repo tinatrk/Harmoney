@@ -73,8 +73,7 @@ fun TransactionListScreen(
 
     LaunchedEffect(statisticsPeriod) {
         viewModel.obtainEvent(
-            TransactionListEvent
-                .OnStatisticsPeriodClick(statisticsPeriod)
+            TransactionListEvent.OnStatisticsPeriodClick(statisticsPeriod)
         )
     }
 

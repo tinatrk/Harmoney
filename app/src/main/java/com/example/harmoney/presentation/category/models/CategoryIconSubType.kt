@@ -1,165 +1,152 @@
 package com.example.harmoney.presentation.category.models
 
-import androidx.annotation.StringRes
-import com.example.harmoney.R
 import com.example.harmoney.domain.models.CategoryIcons
 
 enum class CategoryIconSubType(
     val id: Long,
-    @StringRes val resId: Int,
-    val iconIds: List<Long>
+    val icons: List<CategoryIcons>
 ) {
-    FINANCE(
+    COMMON(
         id = 1,
-        resId = R.string.category_icon_sub_type_finance,
-        iconIds = listOf(
-            CategoryIcons.IC_BANK.id,
-            CategoryIcons.IC_CARD.id,
-            CategoryIcons.IC_EXPENSE.id,
-            CategoryIcons.IC_INCOME.id,
-            CategoryIcons.IC_MONEY_1.id,
-            CategoryIcons.IC_MONEY_2.id,
-            CategoryIcons.IC_MONEY_3.id,
-            CategoryIcons.IC_PURSE.id,
-            CategoryIcons.IC_WALLET.id,
-            CategoryIcons.IC_PIGGY_CAPITAL.id,
-            CategoryIcons.IC_DEBT.id,
-            CategoryIcons.IC_OVERSPEND.id,
-            CategoryIcons.IC_BILL.id,
-            CategoryIcons.IC_MORTGAGE.id,
-            CategoryIcons.IC_RENTAL.id,
-            CategoryIcons.IC_WELFARE.id,
+        icons = listOf(
+            CategoryIcons.IC_HEALTHY_FOOD,
+            CategoryIcons.IC_CAKE,
+            CategoryIcons.IC_COFFEE,
+            CategoryIcons.IC_CLOTHES,
+            CategoryIcons.IC_SUITCASE,
+            CategoryIcons.IC_COMPUTER,
+            CategoryIcons.IC_LAUNDRY,
+            CategoryIcons.IC_PHONE_INTERNET,
+            CategoryIcons.IC_GIFT,
+            CategoryIcons.IC_EDUCATION,
+            CategoryIcons.IC_TRAVEL,
+            CategoryIcons.IC_VACATION_1,
+            CategoryIcons.IC_VACATION_2,
+        )
+    ),
+
+    FINANCE(
+        id = 2,
+        icons = listOf(
+            CategoryIcons.IC_BANK,
+            CategoryIcons.IC_CARD,
+            CategoryIcons.IC_EXPENSE,
+            CategoryIcons.IC_INCOME,
+            CategoryIcons.IC_MONEY_1,
+            CategoryIcons.IC_MONEY_2,
+            CategoryIcons.IC_MONEY_3,
+            CategoryIcons.IC_PURSE,
+            CategoryIcons.IC_WALLET,
+            CategoryIcons.IC_PIGGY_CAPITAL,
+            CategoryIcons.IC_DEBT,
+            CategoryIcons.IC_OVERSPEND,
+            CategoryIcons.IC_BILL,
+            CategoryIcons.IC_MORTGAGE,
+            CategoryIcons.IC_RENTAL,
+            CategoryIcons.IC_WELFARE,
         )
     ),
 
     HOME(
-        id = 2,
-        resId = R.string.category_icon_sub_type_home,
-        iconIds = listOf(
-            CategoryIcons.IC_HOME_1.id,
-            CategoryIcons.IC_HOME_2.id,
-            CategoryIcons.IC_FAMILY.id,
-            CategoryIcons.IC_BABY.id,
-            CategoryIcons.IC_BABY_WHEELCHAIR.id,
-            CategoryIcons.IC_BASKET.id,
-            CategoryIcons.IC_CLEANING.id,
-            CategoryIcons.IC_SERVICE.id,
-            CategoryIcons.IC_SHOP_CART.id,
+        id = 3,
+        icons = listOf(
+            CategoryIcons.IC_HOME_1,
+            CategoryIcons.IC_HOME_2,
+            CategoryIcons.IC_FAMILY,
+            CategoryIcons.IC_BABY,
+            CategoryIcons.IC_BABY_WHEELCHAIR,
+            CategoryIcons.IC_BASKET,
+            CategoryIcons.IC_CLEANING,
+            CategoryIcons.IC_SERVICE,
+            CategoryIcons.IC_SHOP_CART,
         )
     ),
 
     HEALTH(
-        id = 3,
-        resId = R.string.category_icon_sub_type_health,
-        iconIds = listOf(
-            CategoryIcons.IC_COSMETICS.id,
-            CategoryIcons.IC_HAIRCUT.id,
-            CategoryIcons.IC_CHARITY.id,
-            CategoryIcons.IC_CURE.id,
-            CategoryIcons.IC_HEALTH.id,
-            CategoryIcons.IC_MONEY_2.id,
+        id = 4,
+        icons = listOf(
+            CategoryIcons.IC_COSMETICS,
+            CategoryIcons.IC_HAIRCUT,
+            CategoryIcons.IC_CHARITY,
+            CategoryIcons.IC_CURE,
+            CategoryIcons.IC_HEALTH,
+            CategoryIcons.IC_MONEY_2,
         )
     ),
 
     TRANSPORT(
-        id = 4,
-        resId = R.string.category_icon_sub_type_transport,
-        iconIds = listOf(
-            CategoryIcons.IC_CAR.id,
-            CategoryIcons.IC_TRANSPORT_1.id,
-            CategoryIcons.IC_TRANSPORT_2.id,
-            CategoryIcons.IC_TRANSPORT_3.id,
-            CategoryIcons.IC_GAS_STATION.id,
-            CategoryIcons.IC_BICYCLE.id,
+        id = 5,
+        icons = listOf(
+            CategoryIcons.IC_CAR,
+            CategoryIcons.IC_TRANSPORT_1,
+            CategoryIcons.IC_TRANSPORT_2,
+            CategoryIcons.IC_TRANSPORT_3,
+            CategoryIcons.IC_GAS_STATION,
+            CategoryIcons.IC_BICYCLE,
         )
     ),
 
     SPORT(
-        id = 5,
-        resId = R.string.category_icon_sub_type_sport,
-        iconIds = listOf(
-            CategoryIcons.IC_SPORT_1.id,
-            CategoryIcons.IC_SPORT_2.id,
-            CategoryIcons.IC_SPORT_3.id,
-            CategoryIcons.IC_YOGA_1.id,
-            CategoryIcons.IC_YOGA_2.id,
-            CategoryIcons.IC_YOGA_3.id,
-            CategoryIcons.IC_FITNESS_1.id,
-            CategoryIcons.IC_FITNESS_2.id,
-            CategoryIcons.IC_FITNESS_3.id,
-            CategoryIcons.IC_FITNESS_4.id,
+        id = 6,
+        icons = listOf(
+            CategoryIcons.IC_SPORT_1,
+            CategoryIcons.IC_SPORT_2,
+            CategoryIcons.IC_SPORT_3,
+            CategoryIcons.IC_YOGA_1,
+            CategoryIcons.IC_YOGA_2,
+            CategoryIcons.IC_YOGA_3,
+            CategoryIcons.IC_FITNESS_1,
+            CategoryIcons.IC_FITNESS_2,
+            CategoryIcons.IC_FITNESS_3,
+            CategoryIcons.IC_FITNESS_4,
         )
     ),
 
     ANIMALS(
-        id = 6,
-        resId = R.string.category_icon_sub_type_animals,
-        iconIds = listOf(
-            CategoryIcons.IC_PET.id,
-            CategoryIcons.IC_CAT.id,
-            CategoryIcons.IC_DOG.id,
-            CategoryIcons.IC_PAW.id,
-            CategoryIcons.IC_BALANCE.id,
-            CategoryIcons.IC_DINOSAUR.id,
-            CategoryIcons.IC_DUCK.id,
-            CategoryIcons.IC_FROG.id,
-            CategoryIcons.IC_OCTOPUS.id,
-            CategoryIcons.IC_SQUIRREL.id,
+        id = 7,
+        icons = listOf(
+            CategoryIcons.IC_PET,
+            CategoryIcons.IC_CAT,
+            CategoryIcons.IC_DOG,
+            CategoryIcons.IC_PAW,
+            CategoryIcons.IC_BALANCE,
+            CategoryIcons.IC_DINOSAUR,
+            CategoryIcons.IC_DUCK,
+            CategoryIcons.IC_FROG,
+            CategoryIcons.IC_OCTOPUS,
+            CategoryIcons.IC_SQUIRREL,
         )
     ),
 
     HOBBY(
-        id = 7,
-        resId = R.string.category_icon_sub_type_hobby,
-        iconIds = listOf(
-            CategoryIcons.IC_ART_1.id,
-            CategoryIcons.IC_ART_2.id,
-            CategoryIcons.IC_GAMES_1.id,
-            CategoryIcons.IC_GAMES_2.id,
-            CategoryIcons.IC_BOOKS.id,
-            CategoryIcons.IC_GUITAR.id,
+        id = 8,
+        icons = listOf(
+            CategoryIcons.IC_ART_1,
+            CategoryIcons.IC_ART_2,
+            CategoryIcons.IC_GAMES_1,
+            CategoryIcons.IC_GAMES_2,
+            CategoryIcons.IC_BOOKS,
+            CategoryIcons.IC_GUITAR,
         )
     ),
 
     EVENTS(
-        id = 8,
-        resId = R.string.category_icon_sub_type_events,
-        iconIds = listOf(
-            CategoryIcons.IC_EVENT.id,
-            CategoryIcons.IC_DINNER.id,
-            CategoryIcons.IC_CONCERT.id,
-            CategoryIcons.IC_TICKETS.id,
-            CategoryIcons.IC_MOVIE.id,
-            CategoryIcons.IC_PARTY.id,
-        )
-    ),
-
-    COMMON(
         id = 9,
-        resId = R.string.category_icon_sub_type_common,
-        iconIds = listOf(
-            CategoryIcons.IC_HEALTHY_FOOD.id,
-            CategoryIcons.IC_CAKE.id,
-            CategoryIcons.IC_COFFEE.id,
-            CategoryIcons.IC_CLOTHES.id,
-            CategoryIcons.IC_SUITCASE.id,
-            CategoryIcons.IC_COMPUTER.id,
-            CategoryIcons.IC_LAUNDRY.id,
-            CategoryIcons.IC_PHONE_INTERNET.id,
-            CategoryIcons.IC_GIFT.id,
-            CategoryIcons.IC_EDUCATION.id,
-            CategoryIcons.IC_TRAVEL.id,
-            CategoryIcons.IC_VACATION_1.id,
-            CategoryIcons.IC_VACATION_2.id,
+        icons = listOf(
+            CategoryIcons.IC_EVENT,
+            CategoryIcons.IC_DINNER,
+            CategoryIcons.IC_CONCERT,
+            CategoryIcons.IC_TICKETS,
+            CategoryIcons.IC_MOVIE,
+            CategoryIcons.IC_PARTY,
         )
     ),
 
     OTHER(
         id = 10,
-        resId = R.string.category_icon_sub_type_other,
-        iconIds = listOf(
-            CategoryIcons.IC_GOAL.id,
-            CategoryIcons.IC_EULER.id,
+        icons = listOf(
+            CategoryIcons.IC_GOAL,
+            CategoryIcons.IC_EULER,
         )
     )
 }

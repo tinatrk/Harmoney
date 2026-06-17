@@ -8,8 +8,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class SharedCategoryTypeViewModel : ViewModel() {
-    private val _selectedCategoryType = MutableStateFlow(CategoryType.Expenses)
-    val selectedCategoryType: StateFlow<CategoryType> = _selectedCategoryType.asStateFlow()
+    private val _selectedCategoryType = MutableStateFlow(CategoryType.EXPENSES)
+    val selectedCategoryType: StateFlow<CategoryType> =
+        _selectedCategoryType.asStateFlow()
 
     fun categoryTypeChanged(newCategoryType: CategoryType) {
         if (selectedCategoryType.value.id != newCategoryType.id) {

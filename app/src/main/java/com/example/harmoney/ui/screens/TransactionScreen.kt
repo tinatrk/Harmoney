@@ -74,7 +74,7 @@ fun TransactionScreen(
     viewModel: TransactionViewModel,
     calculatorViewModel: CalculatorViewModel,
     onBackClick: () -> Unit,
-    onNavigateToCategoryListScreen: () -> Unit,
+    onNavigateToCategoryScreen: () -> Unit,
 ) {
     val categoryType by sharedCategoryTypeViewModel.selectedCategoryType
         .collectAsStateWithLifecycle()
@@ -113,7 +113,7 @@ fun TransactionScreen(
                 when (act) {
                     TransactionAction.NavigateBack -> onBackClick()
                     is TransactionAction.NavigateToCategoryScreen -> {
-                        onNavigateToCategoryListScreen()
+                        onNavigateToCategoryScreen()
                     }
 
                     else -> {}
@@ -204,8 +204,8 @@ fun TransactionContent(
             state = state,
             onEvent = onEvent,
         )
-
         Spacer(modifier = Modifier.height(16.dp))
+
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -539,7 +539,7 @@ fun Dialogs(
     if (state.isSaveTransactionErrorDialogOpened) {
         HarmDialog.HarmWarningDialog(
             dialogTitle = stringResource(R.string.title_dialog_transaction_save_error),
-            dialogText = stringResource(R.string.text_dialog_transaction_save_error),
+            dialogText = stringResource(R.string.text_dialog_saving_error),
             onDismissRequest = { onEvent(TransactionEvent.OnSaveDialogDismiss) }
         )
     }

@@ -15,20 +15,19 @@ data class Transaction(val categoryId: Long?, val transactionId: Long?)
 
 fun NavGraphBuilder.transactionScreen(
     onBackClick: () -> Unit,
-    onNavigateToCategoryListScreen: () -> Unit,
+    onNavigateToCategoryScreen: () -> Unit,
     sharedCategoryTypeVM: SharedCategoryTypeViewModel
 ) {
     composable<Transaction> { navBackStackEntry ->
         val route = navBackStackEntry.toRoute<Transaction>()
         TransactionScreen(
             onBackClick = onBackClick,
-            onNavigateToCategoryListScreen = onNavigateToCategoryListScreen,
+            onNavigateToCategoryScreen = onNavigateToCategoryScreen,
             viewModel = koinViewModel() {
                 parametersOf(
                     sharedCategoryTypeVM.selectedCategoryType.value,
                     route.categoryId,
                     route.transactionId
-
                 )
             },
             calculatorViewModel = koinViewModel(),

@@ -99,25 +99,46 @@ object HarmTextField {
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = colors.primary,
                 unfocusedBorderColor = contentColor,
+                errorBorderColor = colors.error,
+
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent,
+
                 focusedLabelColor = colors.primary,
                 unfocusedLabelColor = contentColor,
                 disabledLabelColor = contentColor,
+                errorLabelColor = colors.error,
+
                 cursorColor = colors.primary,
+                errorCursorColor = colors.primary,
+
+                focusedLeadingIconColor = colors.onSurfaceContainer,
+                unfocusedLeadingIconColor = contentColor,
+                disabledLeadingIconColor = contentColor,
+                errorLeadingIconColor = colors.error,
+
                 focusedTrailingIconColor = colors.onSurfaceContainer,
                 unfocusedTrailingIconColor = contentColor,
+                disabledTrailingIconColor = contentColor,
+                errorTrailingIconColor = colors.error,
+
                 focusedTextColor = colors.onSurfaceContainer,
                 unfocusedTextColor = colors.onSurfaceContainer,
+                disabledTextColor = colors.onSurfaceContainer,
+                errorTextColor = colors.error,
+
                 focusedPlaceholderColor = colors.onSurfaceContainer,
                 unfocusedPlaceholderColor = colors.onSurfaceContainerLow,
-                errorTextColor = colors.error,
-                errorSupportingTextColor = colors.error,
-                errorBorderColor = colors.error,
-                errorLabelColor = colors.error,
-                errorCursorColor = colors.primary,
+                disabledPlaceholderColor = colors.onSurfaceContainerLow,
                 errorPlaceholderColor = colors.onSurfaceContainer,
-                errorTrailingIconColor = colors.error,
+
+                focusedSupportingTextColor = colors.onSurfaceContainer,
+                unfocusedSupportingTextColor = colors.onSurfaceContainer,
+                disabledSupportingTextColor = colors.onSurfaceContainer,
+                errorSupportingTextColor = colors.error,
+
                 selectionColors = TextSelectionColors(
                     handleColor = colors.primary,
                     backgroundColor = colors.primary

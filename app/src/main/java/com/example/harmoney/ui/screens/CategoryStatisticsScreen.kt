@@ -69,11 +69,15 @@ fun CategoryStatisticsScreen(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(categoryType) {
-        viewModel.obtainEvent(CategoryStatisticsEvent.OnTabClick(categoryType = categoryType))
+        viewModel.obtainEvent(
+            CategoryStatisticsEvent.OnTabClick(categoryType = categoryType)
+        )
     }
 
     LaunchedEffect(statisticsPeriod) {
-        viewModel.obtainEvent(CategoryStatisticsEvent.OnStatisticsPeriodClick(statisticsPeriod))
+        viewModel.obtainEvent(
+            CategoryStatisticsEvent.OnStatisticsPeriodClick(statisticsPeriod)
+        )
     }
 
     LaunchedEffect(Unit) {
@@ -174,7 +178,7 @@ fun CategoryStatisticsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(paddingValues),
-                tabs = state.categoryTypes,
+                tabs = CategoryType.entries.toImmutableList(),
                 selectedTabIndex = state.selectedTabIndex,
                 onTabClick = { categoryType ->
                     onCategoryTypeChanged(categoryType)
@@ -300,7 +304,7 @@ fun CategoryStatisticsContent(
             .background(HarmTheme.colors.surface)
     ) {
         HarmCard.HarmStatisticCard(
-            periods = state.statisticsPeriods,
+            periods = StatisticsPeriod.entries.toImmutableList(),
             data = state.statisticsDate,
             pieChartItems = state.pieChartCategories,
             total = state.total,
