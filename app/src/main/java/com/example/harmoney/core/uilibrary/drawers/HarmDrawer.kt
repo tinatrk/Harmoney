@@ -91,9 +91,7 @@ object HarmDrawer {
                     drawerContainerColor = colors.surfaceContainerLow,
                     drawerContentColor = colors.onSurfaceVariant
                 ) {
-                    Column(
-                        modifier = Modifier.padding(horizontal = 12.dp)
-                    ) {
+                    Column(modifier = Modifier.padding(horizontal = 12.dp)) {
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             modifier = Modifier.padding(16.dp),
@@ -164,12 +162,7 @@ private fun PreviewDrawerItems(
         label = stringResource(R.string.title_drawer_item_theme),
         selected = false,
         onClick = {},
-        badge = {
-            HarmButton.HarmSwitch(
-                isChecked = isThemeDark,
-                onClick = {}
-            )
-        }
+        badge = { HarmButton.HarmSwitch(isChecked = isThemeDark, onClick = {}) }
     )
     HarmDrawer.HarmDrawerItem(
         label = stringResource(R.string.title_drawer_item_first_day_month),
@@ -191,9 +184,7 @@ private fun PreviewDrawerItems(
             HarmMenu.HarmDropdownMenu(
                 expanded = isCurrencyMenuOpened,
                 menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
-                    MenuOptions(
-                        text = currency.code
-                    ) {}
+                    MenuOptions(text = currency.code) {}
                 }.toImmutableList(),
                 onDismissRequest = {}
             ) {

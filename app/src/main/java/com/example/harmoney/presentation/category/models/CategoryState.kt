@@ -13,10 +13,9 @@ data class CategoryState(
     val isCreateCategoryScreen: Boolean = true,
 
     val selectedCategoryType: CategoryType = CategoryType.EXPENSES,
-    val selectedTabIndex: Int = CategoryType.EXPENSES.ordinal,
 
     val categoryName: String = "",
-    val isCategoryNameError: Boolean = false,
+    val categoryNameError: CategoryNameError = CategoryNameError.None,
 
     val selectedIcon: CategoryIcons = CategoryIcons.IC_SHOP_CART,
     val isIconsBottomSheetOpened: Boolean = false,

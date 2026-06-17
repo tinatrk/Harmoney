@@ -15,7 +15,8 @@ class OneDayTransactionsUiConverterImpl(
 ) : OneDayTransactionsUiConverter {
     override fun map(day: OneDayTransactions, currency: Currency): OneDayTransactionsUi {
         return OneDayTransactionsUi(
-            date = dateFormatter.millisToString(day.dateMillis, DatePattern.CARD_SHORT),
+            date = dateFormatter
+                .millisToString(dateMillis = day.dateMillis, pattern = DatePattern.CARD_SHORT),
             transactions = transactionUiConverter.map(day.transactions, currency),
             totalAmount = numberFormatter.toStringWithCurrency(
                 number = day.totalAmount,
@@ -30,6 +31,6 @@ class OneDayTransactionsUiConverterImpl(
         days: List<OneDayTransactions>,
         currency: Currency
     ): ImmutableList<OneDayTransactionsUi> {
-        return days.map { map(it, currency) }.toImmutableList()
+        return days.map { map(day = it, currency = currency) }.toImmutableList()
     }
 }

@@ -46,7 +46,7 @@ class TransactionViewModel(
 ) {
     override val tag: String = TransactionViewModel::class.java.simpleName ?: ""
 
-    private val startedTransactionUi: TransactionUi
+    private val initialTransactionUi: TransactionUi
     private var curTransaction: Transaction
     private var localAmount: Double = 0.0
 
@@ -61,8 +61,8 @@ class TransactionViewModel(
 
         val categories = test.getCategories(state.value.selectedCategoryType)
 
-        curTransaction = getStartedTransaction(transactionId, categories, categoryId)
-        startedTransactionUi =
+        curTransaction = getInitialTransaction(transactionId, categories, categoryId)
+        initialTransactionUi =
             transactionUiConverter.map(curTransaction, state.value.globalCurrency)
         localAmount = curTransaction.amount
 
@@ -76,10 +76,10 @@ class TransactionViewModel(
 
         writableState.update {
             it.copy(
-                isCreateTransactionScreen = startedTransactionUi.id == ZERO_ID,
+                isCreateTransactionScreen = initialTransactionUi.id == ZERO_ID,
                 selectedDate = dateFormatter.millisToString(
-                    curTransaction.dateMillis,
-                    DatePattern.CARD_FULLY
+                    dateMillis = curTransaction.dateMillis,
+                    pattern = DatePattern.CARD_FULLY
                 ),
                 localCurrency = it.globalCurrency,
                 amountInLocalCurrency = amount,
@@ -123,7 +123,7 @@ class TransactionViewModel(
 
             is TransactionEvent.OnCategoriesBottomSheetOpened -> onCategoriesBottomSheetOpened()
             is TransactionEvent.OnCategoriesBottomSheetDismiss -> onCategoriesBottomSheetDismiss()
-            is TransactionEvent.OnCategoryClick -> onCategoryClick(event.categoryId)
+            is TransactionEvent.OnCategoryClick -> onCategoryClick(newCategoryId = event.categoryId)
             is TransactionEvent.OnCreateCategoryClick -> onNavigateToCategoryScreen()
 
             is TransactionEvent.OnSaveClick -> onSaveClick()
@@ -139,32 +139,20 @@ class TransactionViewModel(
         val curTransactionUi =
             transactionUiConverter.map(curTransaction, state.value.globalCurrency)
 
-        if (startedTransactionUi != curTransactionUi) {
-            writableState.update {
-                it.copy(
-                    isTransactionNotSavedDialogOpened = true
-                )
-            }
+        if (initialTransactionUi != curTransactionUi) {
+            writableState.update { it.copy(isTransactionNotSavedDialogOpened = true) }
         } else {
             onNavigateBack()
         }
     }
 
     private fun onBackDialogConfirm() {
-        writableState.update {
-            it.copy(
-                isTransactionNotSavedDialogOpened = false
-            )
-        }
+        writableState.update { it.copy(isTransactionNotSavedDialogOpened = false) }
         onNavigateBack()
     }
 
     private fun onBackDialogDismiss() {
-        writableState.update {
-            it.copy(
-                isTransactionNotSavedDialogOpened = false
-            )
-        }
+        writableState.update { it.copy(isTransactionNotSavedDialogOpened = false) }
     }
 
     private fun onNavigateBack() {
@@ -178,19 +166,14 @@ class TransactionViewModel(
             val newCategoryId = when {
                 categories.isEmpty() -> null
                 oldCategoryId == ZERO_ID -> categories.first().id
-                oldCategoryId != ZERO_ID -> {
-                    categories.find { it.id == oldCategoryId }?.id
-                }
-
+                oldCategoryId != ZERO_ID -> categories.find { it.id == oldCategoryId }?.id
                 else -> null
             }
 
             val curCategory = categories.find { it.id == newCategoryId }
 
             curTransaction =
-                curTransaction.copy(
-                    category = curCategory ?: getEmptyCategory(newCategoryType)
-                )
+                curTransaction.copy(category = curCategory ?: getEmptyCategory(newCategoryType))
 
             writableState.update {
                 it.copy(
@@ -204,17 +187,12 @@ class TransactionViewModel(
     }
 
     private fun onDateDialogOpen() {
-        writableState.update {
-            it.copy(
-                isDatePickerOpened = true
-            )
-        }
+        writableState.update { it.copy(isDatePickerOpened = true) }
     }
 
     private fun onDateDialogConfirm(newDateMillis: Long?) {
         val dateMillis = newDateMillis ?: dateFormatter.dateToMillis(LocalDate.now())
-        val isDateCorrect =
-            dateMillis in firstDayMillis..lastDayMillis
+        val isDateCorrect = dateMillis in firstDayMillis..lastDayMillis
 
         curTransaction = curTransaction.copy(dateMillis = dateMillis)
 
@@ -224,39 +202,31 @@ class TransactionViewModel(
                     TransactionDateError.None
                 } else {
                     TransactionDateError.OutOfRange(
-                        dateFormatter.millisToString(
-                            firstDayMillis,
-                            DatePattern.CARD_FULLY
+                        firstDay = dateFormatter.millisToString(
+                            dateMillis = firstDayMillis,
+                            pattern = DatePattern.CARD_FULLY
                         ),
-                        dateFormatter.millisToString(
-                            lastDayMillis,
-                            DatePattern.CARD_FULLY
+                        lastDay = dateFormatter.millisToString(
+                            dateMillis = lastDayMillis,
+                            pattern = DatePattern.CARD_FULLY
                         ),
                     )
                 },
                 isDatePickerOpened = !isDateCorrect,
                 selectedDate = dateFormatter.millisToString(
-                    dateMillis,
-                    DatePattern.CARD_FULLY
+                    dateMillis = dateMillis,
+                    pattern = DatePattern.CARD_FULLY
                 ),
             )
         }
     }
 
     private fun onDateDialogDismiss() {
-        writableState.update {
-            it.copy(
-                isDatePickerOpened = false,
-            )
-        }
+        writableState.update { it.copy(isDatePickerOpened = false) }
     }
 
     private fun onCalculatorOpen() {
-        writableState.update {
-            it.copy(
-                isCalculatorOpen = true
-            )
-        }
+        writableState.update { it.copy(isCalculatorOpen = true) }
     }
 
     private fun onAmountChange(newAmount: Double) {
@@ -307,19 +277,11 @@ class TransactionViewModel(
     }
 
     private fun onCalculatorDismiss() {
-        writableState.update {
-            it.copy(
-                isCalculatorOpen = false
-            )
-        }
+        writableState.update { it.copy(isCalculatorOpen = false) }
     }
 
     private fun onCurrencyClick() {
-        writableState.update {
-            it.copy(
-                isCurrencyMenuOpened = true
-            )
-        }
+        writableState.update { it.copy(isCurrencyMenuOpened = true) }
     }
 
     private fun onCurrencyChanged(newCurrency: Currency) {
@@ -349,46 +311,29 @@ class TransactionViewModel(
     }
 
     private fun onCurrencyDismiss() {
-        writableState.update {
-            it.copy(
-                isCurrencyMenuOpened = false
-            )
-        }
+        writableState.update { it.copy(isCurrencyMenuOpened = false) }
     }
 
     private fun onNoteChanged(newNote: String) {
         if (newNote != state.value.note) {
             curTransaction = curTransaction.copy(note = newNote)
-            writableState.update {
-                it.copy(
-                    note = newNote
-                )
-            }
+            writableState.update { it.copy(note = newNote) }
         }
     }
 
     private fun onCategoriesBottomSheetOpened() {
-        writableState.update {
-            it.copy(
-                isCategoriesBottomSheetOpened = true
-            )
-        }
+        writableState.update { it.copy(isCategoriesBottomSheetOpened = true) }
     }
 
     private fun onCategoriesBottomSheetDismiss() {
-        writableState.update {
-            it.copy(
-                isCategoriesBottomSheetOpened = false
-            )
-        }
+        writableState.update { it.copy(isCategoriesBottomSheetOpened = false) }
     }
 
     private fun onCategoryClick(newCategoryId: Long) {
         if (newCategoryId != state.value.selectedCategory?.id) {
-            val newCategoryUi =
-                state.value.categories.find { it.id == newCategoryId }
+            val newCategoryUi = state.value.categories.find { it.id == newCategoryId }
             val newCategory = if (newCategoryUi != null) {
-                categoryUiConverter.map(newCategoryUi)
+                categoryUiConverter.map(category = newCategoryUi)
             } else {
                 getEmptyCategory(state.value.selectedCategoryType)
             }
@@ -406,9 +351,7 @@ class TransactionViewModel(
     }
 
     private fun onNavigateToCategoryScreen() {
-        writableAction.tryEmit(
-            TransactionAction.NavigateToCategoryScreen
-        )
+        writableAction.tryEmit(TransactionAction.NavigateToCategoryScreen)
     }
 
     private fun onSaveClick() {
@@ -432,47 +375,35 @@ class TransactionViewModel(
             }
         } else {
             // TODO() сохранить транзакцию
-            test.saveTransaction(curTransaction)
+            if (transactionUiConverter.map(curTransaction, state.value.globalCurrency)
+                != initialTransactionUi
+            ) {
+                test.saveTransaction(curTransaction)
+            }
             onNavigateBack()
         }
     }
 
     private fun onSaveDialogDismiss() {
-        writableState.update {
-            it.copy(
-                isSaveTransactionErrorDialogOpened = false
-            )
-        }
+        writableState.update { it.copy(isSaveTransactionErrorDialogOpened = false) }
     }
 
     private fun onDeleteClick() {
-        writableState.update {
-            it.copy(
-                isTransactionDeleteDialogOpened = true
-            )
-        }
+        writableState.update { it.copy(isTransactionDeleteDialogOpened = true) }
     }
 
     private fun onDeleteDialogConfirm() {
-        // логика удаления транзакции
+        test.deleteTransaction(curTransaction)
 
-        writableState.update {
-            it.copy(
-                isTransactionDeleteDialogOpened = false
-            )
-        }
+        writableState.update { it.copy(isTransactionDeleteDialogOpened = false) }
         onNavigateBack()
     }
 
     private fun onDeleteDialogDismiss() {
-        writableState.update {
-            it.copy(
-                isTransactionDeleteDialogOpened = false
-            )
-        }
+        writableState.update { it.copy(isTransactionDeleteDialogOpened = false) }
     }
 
-    private fun getStartedTransaction(
+    private fun getInitialTransaction(
         transactionId: Long?,
         categories: List<Category>,
         filterId: Long?,
@@ -485,12 +416,14 @@ class TransactionViewModel(
 
         val filter: Category = if (categories.isNotEmpty() && filterId != null) {
             categories.find { it.id == filterId } ?: defaultCategory
-        } else defaultCategory
+        } else {
+            defaultCategory
+        }
 
         return if (transactionId != null) {
             test.getTransaction(transactionId) ?: getEmptyTransaction(defaultCategory)
         } else {
-            getEmptyTransaction(filter)
+            getEmptyTransaction(category = filter)
         }
     }
 
@@ -498,7 +431,7 @@ class TransactionViewModel(
         return Transaction(
             id = ZERO_ID,
             category = category,
-            dateMillis = dateFormatter.dateToMillis(LocalDate.now()),
+            dateMillis = dateFormatter.dateToMillis(date = LocalDate.now()),
             amount = ZERO_AMOUNT
         )
     }

@@ -70,9 +70,7 @@ object HarmTextField {
 
         OutlinedTextField(
             modifier = modifier
-                .onFocusChanged { focusState ->
-                    isFocused.value = focusState.isFocused
-                },
+                .onFocusChanged { focusState -> isFocused.value = focusState.isFocused },
             value = value,
             onValueChange = { newValue ->
                 if (onlyNumbers) {
@@ -156,9 +154,7 @@ object HarmTextField {
             ),
             shape = RoundedCornerShape(12.dp),
             label = {
-                Column(
-                    modifier = Modifier.background(Color.Transparent)
-                ) {
+                Column(modifier = Modifier.background(Color.Transparent)) {
                     Text(
                         text = if (!isFocused.value && value.isEmpty()) placeholder else label,
                         style = typography.labelMedium,
@@ -225,10 +221,7 @@ object HarmTextField {
         )
 
         if (showModalDatePicker) {
-            HarmDatePickerModal(
-                onDateSelected = onDateSelected,
-                onDismiss = onDismiss
-            )
+            HarmDatePickerModal(onDateSelected = onDateSelected, onDismiss = onDismiss)
         }
     }
 }
@@ -321,9 +314,7 @@ private fun HarmBaseTextField_ErrorDarkPreview() {
             onValueChange = {},
             isError = true,
             supportingText = stringResource(
-                R.string.error_incorrect_first_day_month_pattern,
-                1,
-                28
+                R.string.error_incorrect_first_day_month_pattern, 1, 28
             )
         )
     }
@@ -341,9 +332,7 @@ private fun HarmBaseTextField_ErrorLightPreview() {
             onValueChange = {},
             isError = true,
             supportingText = stringResource(
-                R.string.error_incorrect_first_day_month_pattern,
-                1,
-                28
+                R.string.error_incorrect_first_day_month_pattern, 1, 28
             )
         )
     }

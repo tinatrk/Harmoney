@@ -135,9 +135,7 @@ object HarmCard {
             ) {
                 mainContent()
 
-                endContent?.let {
-                    endContent()
-                }
+                endContent?.let { endContent() }
             }
         }
     }
@@ -277,11 +275,7 @@ object HarmCard {
             modifier = modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(
-                if (pieChartItems.isEmpty()) {
-                    0.dp
-                } else {
-                    6.dp
-                }
+                if (pieChartItems.isEmpty()) 0.dp else 6.dp
             ),
             colors = CardDefaults.cardColors(
                 containerColor = if (pieChartItems.isEmpty()) {
@@ -321,24 +315,19 @@ object HarmCard {
         modifier: Modifier = Modifier,
         subText: String? = null
     ) {
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
             HarmIcon.HarmCircularCategoryIcon(
                 backgroundColorValue = categoryInfo.icon.color.background,
                 iconRes = categoryInfo.icon.icon.toDrawableRes(),
                 contentDescription = stringResource(
-                    R.string.ic_category_desc,
-                    categoryInfo.name
+                    R.string.ic_category_desc, categoryInfo.name
                 ),
             )
 
             Spacer(modifier = Modifier.width(8.dp))
 
             Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {

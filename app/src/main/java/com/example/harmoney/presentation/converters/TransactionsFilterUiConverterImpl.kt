@@ -11,6 +11,6 @@ class TransactionsFilterUiConverterImpl : TransactionsFilterUiConverter {
     }
 
     override fun map(filters: List<TransactionsFilter>): ImmutableList<TransactionsFilterUi> {
-        return filters.map { map(it) }.toImmutableList()
+        return filters.map { map(filter = it) }.toImmutableList()
     }
 }

@@ -46,6 +46,7 @@ import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.presentation.category.models.CategoryAction
 import com.example.harmoney.presentation.category.models.CategoryEvent
 import com.example.harmoney.presentation.category.models.CategoryIconSubType
+import com.example.harmoney.presentation.category.models.CategoryNameError
 import com.example.harmoney.presentation.category.models.CategoryState
 import com.example.harmoney.presentation.category.viewModel.CategoryViewModel
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
@@ -176,10 +177,7 @@ fun CategoryContent(
         }
     }
 
-    Dialogs(
-        state = state,
-        onEvent = onEvent
-    )
+    Dialogs(state = state, onEvent = onEvent)
 }
 
 @Composable
@@ -188,10 +186,13 @@ fun IconAndName(
     onEvent: (CategoryEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val supportingText = if (state.isCategoryNameError) {
-        stringResource(R.string.error_empty_field)
-    } else {
-        ""
+    val supportingText = when (state.categoryNameError) {
+        is CategoryNameError.Empty -> stringResource(R.string.error_empty_field)
+        is CategoryNameError.AlreadyExists -> {
+            stringResource(R.string.error_category_name_already_exists)
+        }
+
+        is CategoryNameError.None -> ""
     }
     val scrollState = rememberLazyGridState()
 
@@ -211,7 +212,7 @@ fun IconAndName(
             placeholder = stringResource(R.string.label_text_field_category_name),
             label = stringResource(R.string.label_text_field_category_name),
             onValueChange = { newName -> onEvent(CategoryEvent.OnCategoryNameChanged(newName)) },
-            isError = state.isCategoryNameError,
+            isError = state.categoryNameError !is CategoryNameError.None,
             supportingText = supportingText
         )
     }
@@ -265,9 +266,7 @@ fun ColorList(
     onEvent: (CategoryEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
         Text(
             text = stringResource(R.string.title_color),
             style = HarmTheme.typography.bodyLarge,
@@ -341,9 +340,7 @@ fun Dialogs(
 private fun CategoryScreen_CreateDarkPreview() {
     HarmTheme(darkTheme = true) {
         CategoryScreen(
-            state = CategoryState(
-                isCreateCategoryScreen = true
-            ),
+            state = CategoryState(isCreateCategoryScreen = true),
             onEvent = {},
             onCategoryTypeChanged = {}
         )
@@ -355,9 +352,7 @@ private fun CategoryScreen_CreateDarkPreview() {
 private fun CategoryScreen_CreateLightPreview() {
     HarmTheme(darkTheme = false) {
         CategoryScreen(
-            state = CategoryState(
-                isCreateCategoryScreen = true
-            ),
+            state = CategoryState(isCreateCategoryScreen = true),
             onEvent = {},
             onCategoryTypeChanged = {}
         )

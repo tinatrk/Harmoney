@@ -295,9 +295,7 @@ private fun HarmSetFirstDayMonthDialog_DarkErrorPreview() {
             onDismissRequest = {},
             isError = true,
             supportingText = stringResource(
-                R.string.error_incorrect_first_day_month_pattern,
-                1,
-                28
+                R.string.error_incorrect_first_day_month_pattern, 1, 28
             )
         )
     }
@@ -315,9 +313,7 @@ private fun HarmSetFirstDayMonthDialog_LightErrorPreview() {
             onDismissRequest = {},
             isError = true,
             supportingText = stringResource(
-                R.string.error_incorrect_first_day_month_pattern,
-                1,
-                28
+                R.string.error_incorrect_first_day_month_pattern, 1, 28
             )
         )
     }

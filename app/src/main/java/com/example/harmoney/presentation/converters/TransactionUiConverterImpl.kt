@@ -23,7 +23,9 @@ class TransactionUiConverterImpl(
                 isNeededThousandSeparator = true,
                 currency = currency
             ),
-            date = dateFormatter.millisToString(transaction.dateMillis, DatePattern.CARD_SHORT),
+            date = dateFormatter.millisToString(
+                dateMillis = transaction.dateMillis, pattern = DatePattern.CARD_SHORT
+            ),
             note = transaction.note,
             createdAt = transaction.createdAt
         )
@@ -33,6 +35,6 @@ class TransactionUiConverterImpl(
         transactions: List<Transaction>,
         currency: Currency
     ): ImmutableList<TransactionUi> {
-        return transactions.map { map(it, currency) }.toImmutableList()
+        return transactions.map { map(transaction = it, currency = currency) }.toImmutableList()
     }
 }

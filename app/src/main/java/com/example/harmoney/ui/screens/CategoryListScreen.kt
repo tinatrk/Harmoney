@@ -118,8 +118,7 @@ fun CategoryListContent(
             .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
         Text(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             text = state.categoryInfo,
             style = HarmTheme.typography.bodyLarge,
             color = HarmTheme.colors.onSurface,
@@ -128,8 +127,7 @@ fun CategoryListContent(
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             text = "categoryTypeId = ${state.selectedCategoryType.id}",
             style = HarmTheme.typography.bodyLarge,
             color = HarmTheme.colors.onSurface,

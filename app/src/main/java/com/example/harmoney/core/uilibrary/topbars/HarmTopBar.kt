@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
-import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.ui.theme.HarmTheme
 
 /**
@@ -68,15 +67,9 @@ object HarmTopBar {
                         .padding(start = startTitleOffset, end = endTitleOffset),
                     horizontalAlignment = titleAlignment
                 ) {
-                    Text(
-                        text = title,
-                        style = HarmTheme.typography.titleLargeSemiBold
-                    )
+                    Text(text = title, style = HarmTheme.typography.titleLargeSemiBold)
                     if (subtitle != null) {
-                        Text(
-                            text = subtitle,
-                            style = HarmTheme.typography.titleMedium
-                        )
+                        Text(text = subtitle, style = HarmTheme.typography.titleMedium)
                     }
                 }
             },

@@ -34,18 +34,12 @@ fun ScreenWithCategoryTypeTabs(
     modifier: Modifier = Modifier,
     content: @Composable (() -> Unit)
 ) {
-    Column(
-        modifier = modifier
-    ) {
-        HarmTab.HarmPrimaryTabRow(
-            selectedTabIndex = selectedTabIndex
-        ) {
+    Column(modifier = modifier) {
+        HarmTab.HarmPrimaryTabRow(selectedTabIndex = selectedTabIndex) {
             tabs.forEachIndexed { index, tab ->
                 HarmTab.HarmCommonTab(
                     selected = selectedTabIndex == index,
-                    onClick = {
-                        onTabClick(tab)
-                    },
+                    onClick = { onTabClick(tab) },
                     text = stringResource(tab.toStringRes())
                 )
             }

@@ -39,7 +39,7 @@ class DateFormatterImpl : DateFormatter {
     }
 
     override fun millisToString(dateMillis: Long, pattern: String): String {
-        return dateToString(millisToDate(dateMillis), pattern)
+        return dateToString(date = millisToDate(dateMillis), pattern = pattern)
     }
 
     private companion object {

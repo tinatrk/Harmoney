@@ -29,6 +29,6 @@ class CategoryUiConverterImpl : CategoryUiConverter {
     }
 
     override fun map(categories: List<Category>): ImmutableList<CategoryUi> {
-        return categories.map { map(it) }.toImmutableList()
+        return categories.map { map(category = it) }.toImmutableList()
     }
 }

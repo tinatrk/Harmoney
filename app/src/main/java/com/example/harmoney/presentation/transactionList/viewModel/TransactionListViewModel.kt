@@ -25,7 +25,7 @@ class TransactionListViewModel(
     private val numberFormatter: NumbersFormatter,
     private val transactionsFilterUiConverter: TransactionsFilterUiConverter
 ) : BaseViewModel<TransactionListEvent, TransactionListAction, TransactionListState>(
-    TransactionListState(
+    state = TransactionListState(
         selectedCategoryType = categoryType,
         selectedTabIndex = categoryType.ordinal,
         selectedStatisticsPeriod = statisticsPeriod
@@ -36,14 +36,9 @@ class TransactionListViewModel(
     private val selectedFilters: MutableList<Long>
 
     init {
-        val filters = transactionsFilterUiConverter.map(
-            test.getTransactionFilters(
-                categoryType = state.value.selectedCategoryType,
-            )
-        )
-        val filter = categoryId?.let {
-            filters.find { it.id == categoryId }
-        } ?: filters.first()
+        val filters = transactionsFilterUiConverter
+            .map(filters = test.getTransactionFilters(state.value.selectedCategoryType))
+        val filter = categoryId?.let { filters.find { it.id == categoryId } } ?: filters.first()
 
         selectedFilters = if (filters.isNotEmpty()) {
             CategoryType.entries.map { filters.first().id }.toMutableList()
@@ -78,7 +73,7 @@ class TransactionListViewModel(
                     isNeededThousandSeparator = true
                 ),
                 oneDayTransactionsList = oneDayTransactionsUiConverter
-                    .map(transactions, currency),
+                    .map(days = transactions, currency = currency),
                 transactionsFilters = filters,
                 isFilterMenuOpened = false,
                 selectedFilter = filter
@@ -89,7 +84,7 @@ class TransactionListViewModel(
     override fun obtainEvent(event: TransactionListEvent) {
         when (event) {
             is TransactionListEvent.OnBackClick -> onNavigateBack()
-            is TransactionListEvent.OnTabClick -> onTabClick(event.categoryType)
+            is TransactionListEvent.OnTabClick -> onTabClick(newCategoryType = event.categoryType)
             is TransactionListEvent.OnStatisticsPeriodClick -> {
                 onStatisticPeriodClick(event.newPeriod)
             }
@@ -110,9 +105,7 @@ class TransactionListViewModel(
     private fun onTabClick(newCategoryType: CategoryType) {
         if (writableState.value.selectedCategoryType.id != newCategoryType.id) {
             val filters = transactionsFilterUiConverter.map(
-                test.getTransactionFilters(
-                    categoryType = newCategoryType,
-                )
+                filters = test.getTransactionFilters(newCategoryType)
             )
             val curFilter = filters.find {
                 it.id == selectedFilters[newCategoryType.ordinal]
@@ -136,8 +129,8 @@ class TransactionListViewModel(
                         isNeededThousandSeparator = true
                     ),
                     oneDayTransactionsList = oneDayTransactionsUiConverter.map(
-                        transactions,
-                        currency
+                        days = transactions,
+                        currency = currency
                     ),
                     transactionsFilters = filters,
                     selectedFilter = curFilter
@@ -157,7 +150,7 @@ class TransactionListViewModel(
 
             writableState.update {
                 it.copy(
-                    statisticsDate = test.getStatisticsDate(newPeriod),
+                    statisticsDate = test.getStatisticsDate(statisticsPeriod = newPeriod),
                     selectedStatisticsPeriod = newPeriod,
                     totalAmount = numberFormatter.toStringWithCurrency(
                         number = totalAmount,
@@ -181,15 +174,13 @@ class TransactionListViewModel(
             null
         }
         writableAction.tryEmit(
-            TransactionListAction
-                .NavigateToCreatingTransaction(filterId)
+            TransactionListAction.NavigateToCreatingTransaction(filterId)
         )
     }
 
     private fun onOpenTransaction(transactionId: Long?) {
         writableAction.tryEmit(
-            TransactionListAction
-                .NavigateToOpeningTransaction(transactionId)
+            TransactionListAction.NavigateToOpeningTransaction(transactionId)
         )
     }
 
@@ -202,9 +193,9 @@ class TransactionListViewModel(
     private fun onFilterMenuChanged(filter: TransactionsFilterUi) {
         if (state.value.selectedFilter.id != filter.id) {
             val transactions = test.getTransactionList(
-                state.value.selectedStatisticsPeriod,
-                state.value.selectedCategoryType,
-                filter.id
+                statisticsPeriod = state.value.selectedStatisticsPeriod,
+                categoryType = state.value.selectedCategoryType,
+                filterId = filter.id
             )
             val totalAmount = transactions.sumOf { it.totalAmount }
             selectedFilters[state.value.selectedCategoryType.ordinal] = filter.id
@@ -214,8 +205,8 @@ class TransactionListViewModel(
                     selectedFilter = filter,
                     isFilterMenuOpened = false,
                     oneDayTransactionsList = oneDayTransactionsUiConverter.map(
-                        transactions,
-                        currency
+                        days = transactions,
+                        currency = currency
                     ),
                     totalAmount = numberFormatter.toStringWithCurrency(
                         number = totalAmount,
@@ -231,11 +222,7 @@ class TransactionListViewModel(
     }
 
     private fun onFilterMenuDismiss() {
-        writableState.update {
-            it.copy(
-                isFilterMenuOpened = false
-            )
-        }
+        writableState.update { it.copy(isFilterMenuOpened = false) }
     }
 
     private companion object {

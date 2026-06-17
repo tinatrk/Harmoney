@@ -44,10 +44,7 @@ class CalculatorViewModel(
     private fun initializeEquation(initEquation: String) {
         val equation = calculatorHandler.initCalculator(initEquation)
         val result = calculatorHandler.getResult()
-        changeState(
-            equation = equation,
-            result = result,
-        )
+        changeState(equation = equation, result = result)
     }
 
     private fun onEnterNumber(symbol: String) {
@@ -64,13 +61,12 @@ class CalculatorViewModel(
         calculatorHandler.clearData()
         changeState(
             equation = EMPTY_STRING,
-            CalculatorResult(ZERO_RESULT, EMPTY_STRING)
+            result = CalculatorResult(resultNumeric = ZERO_RESULT, resultString = EMPTY_STRING)
         )
     }
 
     private fun onDelete() {
-        val equation =
-            calculatorHandler.processDeleting(equation = state.value.equation)
+        val equation = calculatorHandler.processDeleting(equation = state.value.equation)
 
         val result = calculatorHandler.getResult()
         changeState(equation = equation, result = result)
@@ -86,15 +82,13 @@ class CalculatorViewModel(
     }
 
     private fun onEnterDecimal() {
-        val equation =
-            calculatorHandler.processDecimalInput(equation = state.value.equation)
+        val equation = calculatorHandler.processDecimalInput(equation = state.value.equation)
         val result = calculatorHandler.getResult()
         changeState(equation = equation, result = result)
     }
 
     private fun onEnterParenthesis() {
-        val equation = calculatorHandler
-            .processParenthesisInput(equation = state.value.equation)
+        val equation = calculatorHandler.processParenthesisInput(equation = state.value.equation)
 
         val result = calculatorHandler.getResult()
         changeState(equation = equation, result = result)
@@ -109,8 +103,10 @@ class CalculatorViewModel(
         // как с введенным значением
         val equation = calculatorHandler.initCalculator(result.resultString)
         changeState(
-            equation,
-            CalculatorResult(result.resultNumeric, EMPTY_STRING)
+            equation = equation,
+            result = CalculatorResult(
+                resultNumeric = result.resultNumeric, resultString = EMPTY_STRING
+            )
         )
     }
 

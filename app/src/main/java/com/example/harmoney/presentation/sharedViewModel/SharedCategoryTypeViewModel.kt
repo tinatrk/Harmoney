@@ -14,9 +14,7 @@ class SharedCategoryTypeViewModel : ViewModel() {
 
     fun categoryTypeChanged(newCategoryType: CategoryType) {
         if (selectedCategoryType.value.id != newCategoryType.id) {
-            _selectedCategoryType.update {
-                newCategoryType
-            }
+            _selectedCategoryType.update { newCategoryType }
         }
     }
 }

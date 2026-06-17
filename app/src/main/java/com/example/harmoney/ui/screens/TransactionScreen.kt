@@ -89,8 +89,7 @@ fun TransactionScreen(
     LaunchedEffect(calculatorState.result) {
         if (state.isCalculatorOpen) {
             viewModel.obtainEvent(
-                TransactionEvent
-                    .OnAmountChanged(calculatorState.result)
+                TransactionEvent.OnAmountChanged(calculatorState.result)
             )
         }
     }
@@ -98,8 +97,7 @@ fun TransactionScreen(
     LaunchedEffect(state.isCalculatorOpen) {
         if (state.isCalculatorOpen) {
             calculatorViewModel.obtainEvent(
-                CalculatorEvent
-                    .OnOpenCalculator(state.amountInLocalCurrency)
+                CalculatorEvent.OnOpenCalculator(state.amountInLocalCurrency)
             )
         } else {
             calculatorViewModel.obtainEvent(CalculatorEvent.OnCloseCalculator)
@@ -167,9 +165,7 @@ fun TransactionScreen(
                 .padding(paddingValues),
             tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = state.selectedTabIndex,
-            onTabClick = { categoryType ->
-                onCategoryTypeChanged(categoryType)
-            }
+            onTabClick = { categoryType -> onCategoryTypeChanged(categoryType) }
         ) {
             TransactionContent(
                 state = state,
@@ -302,18 +298,16 @@ private fun TextFields(
                 HarmMenu.HarmDropdownMenu(
                     expanded = state.isCurrencyMenuOpened,
                     menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
-                        MenuOptions(
-                            text = currency.code,
-                        ) { onEvent(TransactionEvent.OnCurrencyChanged(currency)) }
+                        MenuOptions(text = currency.code) {
+                            onEvent(TransactionEvent.OnCurrencyChanged(currency))
+                        }
                     }.toImmutableList(),
                     onDismissRequest = { onEvent(TransactionEvent.OnCurrencyDismiss) }
                 ) {
                     Row(
                         modifier = Modifier
                             .wrapContentWidth()
-                            .clickable {
-                                onEvent(TransactionEvent.OnCurrencyClick)
-                            },
+                            .clickable { onEvent(TransactionEvent.OnCurrencyClick) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -377,11 +371,7 @@ private fun TextFields(
             },
             onTextFieldTouch = { onEvent(TransactionEvent.OnDateDialogOpen) },
             onDateSelected = { newDateMillis ->
-                onEvent(
-                    TransactionEvent.OnDateDialogConfirm(
-                        newDateMillis
-                    )
-                )
+                onEvent(TransactionEvent.OnDateDialogConfirm(newDateMillis))
                 focusManager.clearFocus()
             },
             isError = state.dateError != TransactionDateError.None,
@@ -432,10 +422,7 @@ fun CategoryList(
 ) {
     val scrollState = rememberLazyGridState()
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
+    Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = stringResource(R.string.title_category),
             style = HarmTheme.typography.bodyLarge,
@@ -450,28 +437,22 @@ fun CategoryList(
             HarmButton.HarmCircularIconButtonWithTitle(
                 iconRes = state.selectedCategory.icon.icon.toDrawableRes(),
                 contentDescription = stringResource(
-                    R.string.ic_category_desc,
-                    state.selectedCategory.name
+                    R.string.ic_category_desc, state.selectedCategory.name
                 ),
                 iconBackground = Color(state.selectedCategory.icon.color.background),
                 iconTitle = state.selectedCategory.name,
                 selected = false,
-                onClick = {
-                    onEvent(TransactionEvent.OnCategoriesBottomSheetOpened)
-                }
+                onClick = { onEvent(TransactionEvent.OnCategoriesBottomSheetOpened) }
             )
         } else {
             HarmButton.HarmCircularIconButtonWithTitle(
                 iconRes = R.drawable.ic_add_24px,
-                contentDescription =
-                    stringResource(R.string.ic_add_category_desc),
+                contentDescription = stringResource(R.string.ic_add_category_desc),
                 iconBackground = HarmTheme.colors.primary,
                 iconTint = HarmTheme.colors.onPrimary,
                 iconTitle = stringResource(R.string.btn_create_text),
                 selected = false,
-                onClick = {
-                    onEvent(TransactionEvent.OnCreateCategoryClick)
-                }
+                onClick = { onEvent(TransactionEvent.OnCreateCategoryClick) }
             )
         }
 
@@ -490,8 +471,7 @@ fun CategoryList(
                     items(count = 1) {
                         HarmButton.HarmCircularIconButtonWithTitle(
                             iconRes = R.drawable.ic_add_24px,
-                            contentDescription =
-                                stringResource(R.string.ic_add_category_desc),
+                            contentDescription = stringResource(R.string.ic_add_category_desc),
                             iconBackground = HarmTheme.colors.primary,
                             iconTint = HarmTheme.colors.onPrimary,
                             iconTitle = stringResource(R.string.btn_create_text),
@@ -503,8 +483,7 @@ fun CategoryList(
                         HarmButton.HarmCircularIconButtonWithTitle(
                             iconRes = category.icon.icon.toDrawableRes(),
                             contentDescription = stringResource(
-                                R.string.ic_category_desc,
-                                category.name
+                                R.string.ic_category_desc, category.name
                             ),
                             iconBackground = Color(category.icon.color.background),
                             iconTitle = category.name,
@@ -641,7 +620,8 @@ private fun TransactionListScreen_CreateWithErrorDarkPreview() {
             state = TransactionState(
                 isCreateTransactionScreen = true,
                 selectedDate = "11 Апреля 2026",
-                dateError = TransactionDateError.OutOfRange("01 Мая 2026", "31 Мая 2026"),
+                dateError = TransactionDateError
+                    .OutOfRange(firstDay = "01 Мая 2026", lastDay = "31 Мая 2026"),
                 amountInLocalCurrency = "0",
                 amountError = TransactionAmountError.IncorrectInput,
                 note = "Новый тариф",
@@ -663,7 +643,8 @@ private fun TransactionListScreen_CreateWithErrorLightPreview() {
             state = TransactionState(
                 isCreateTransactionScreen = true,
                 selectedDate = "11 Апреля 2026",
-                dateError = TransactionDateError.OutOfRange("01 Мая 2026", "31 Мая 2026"),
+                dateError = TransactionDateError
+                    .OutOfRange(firstDay = "01 Мая 2026", lastDay = "31 Мая 2026"),
                 amountInLocalCurrency = "0",
                 amountError = TransactionAmountError.IncorrectInput,
                 note = "Новый тариф",

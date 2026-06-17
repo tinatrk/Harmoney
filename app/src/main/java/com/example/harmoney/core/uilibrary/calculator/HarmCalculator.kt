@@ -68,9 +68,7 @@ fun HarmCalculator(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier.weight(
                     Const.MANAGEMENT_WIDTH_IN_BUTTONS / Const.CALCULATOR_WIDTH_IN_BUTTONS
@@ -85,7 +83,7 @@ fun HarmCalculator(
                     Const.OPERATION_WIDTH_IN_BUTTONS / Const.CALCULATOR_WIDTH_IN_BUTTONS
                 ), // 1/4
                 onEvent = onEvent,
-                onCalculateClick
+                onCalculateClick = onCalculateClick
             )
         }
     }
@@ -145,9 +143,7 @@ private fun CalculationDigitsBlock(
                 ) { onEvent(CalculatorEvent.OnEnterNumber(number)) }
             }
         }
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
             CalculatorButton(
                 modifier = modifier.weight(
                     Const.DOUBLE_BUTTON_WIDTH / Const.NUMBERS_WIDTH_IN_BUTTONS
@@ -178,9 +174,7 @@ private fun CalculatingMathBlock(
         CalculatorOperation.Subtract,
         CalculatorOperation.Add
     )
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
         operations.forEach { operation ->
             CalculatorButton(
                 modifier = Modifier.fillMaxWidth(),
@@ -272,10 +266,7 @@ private object Const {
 private fun CalculatorDarkPreview() {
     HarmTheme(darkTheme = true) {
         HarmCalculator(
-            state = CalculatorState(
-                equation = "5 + 3",
-                resultString = "8"
-            ),
+            state = CalculatorState(equation = "5 + 3", resultString = "8"),
             onEvent = {}
         )
     }
@@ -286,10 +277,7 @@ private fun CalculatorDarkPreview() {
 private fun CalculatorLightPreview() {
     HarmTheme(darkTheme = false) {
         HarmCalculator(
-            state = CalculatorState(
-                equation = "5 + 3",
-                resultString = "8"
-            ),
+            state = CalculatorState(equation = "5 + 3", resultString = "8"),
             onEvent = {}
         )
     }

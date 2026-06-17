@@ -102,5 +102,6 @@
     <string name="error_incorrect_first_day_month_pattern">Введите число в диапазоне от %d до %d</string>
     <string name="error_incorrect_date">Выберите дату в рамках текущего финансового месяца: с %s по %s</string>
     <string name="error_incorrect_amount">Введите положительное число больше нуля</string>
+    <string name="error_category_name_already_exists">Категория с таким названием уже существует</string>
 
 </resources>

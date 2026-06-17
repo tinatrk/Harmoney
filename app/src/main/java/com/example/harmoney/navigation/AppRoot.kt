@@ -39,22 +39,16 @@ fun AppRoot() {
             transactionScreen(
                 sharedCategoryTypeVM = sharedCategoryTypeVM,
                 onBackClick = { navController.popBackStack() },
-                onNavigateToCategoryScreen = {
-                    navController.navigateToCategory(categoryId = null)
-                }
+                onNavigateToCategoryScreen = { navController.navigateToCategory(categoryId = null) }
             )
 
             categoryListScreen(
                 sharedCategoryTypeVM = sharedCategoryTypeVM,
                 onNavigateToCreateCategory = {
-                    navController.navigateToCategory(
-                        categoryId = null
-                    )
+                    navController.navigateToCategory(categoryId = null)
                 },
                 onNavigateToOpenCategory = { categoryId ->
-                    navController.navigateToCategory(
-                        categoryId = categoryId
-                    )
+                    navController.navigateToCategory(categoryId = categoryId)
                 },
                 onBackClick = { navController.popBackStack() }
             )
@@ -94,10 +88,7 @@ fun StatisticsPeriodFlow(
                 flowNavController.navigateToTransactionList(categoryId)
             },
             onNavigateToCreateTransaction = {
-                parentNavController.navigateToTransaction(
-                    transactionId = null,
-                    categoryId = null
-                )
+                parentNavController.navigateToTransaction(transactionId = null, categoryId = null)
             },
             onNavigateToCategoryList = {
                 parentNavController.navigateToCategoryList()

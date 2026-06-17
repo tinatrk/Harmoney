@@ -587,6 +587,28 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         )
     }
 
+    fun deleteTransaction(transaction: Transaction) {
+
+    }
+
+    fun saveCategory(category: Category) {
+        categories.add(
+            category.copy(
+                id = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            )
+        )
+    }
+
+    fun deleteCategory(category: Category) {
+
+    }
+
+    fun isCategoryAlreadyExists(categoryName: String, categoryType: CategoryType): Boolean {
+        val list = categories.filter {it.type == categoryType}
+        val category = list.find {it.name == categoryName}
+        return category != null
+    }
+
     private companion object {
         const val COUNT_RUB_IN_ONE_EUR = 80.0
         const val COUNT_RUB_IN_ONE_USD = 70.0

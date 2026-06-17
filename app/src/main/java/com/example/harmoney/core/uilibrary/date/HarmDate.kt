@@ -140,7 +140,6 @@ object HarmDate {
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .padding(horizontal = 6.dp, vertical = 4.dp)
-
                             .clickable { onPeriodClick(period) },
                         text = stringResource(period.toStringRes()),
                         style = if (period.id == selectedPeriod.id) {
@@ -159,10 +158,7 @@ object HarmDate {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Text(
                     text = data,
                     style = HarmTheme.typography.titleSmall,
@@ -177,10 +173,7 @@ object HarmDate {
 @Composable
 private fun HarmDatePickerModal_DarkPreview() {
     HarmTheme(darkTheme = true) {
-        HarmDate.HarmDatePickerModal(
-            onDateSelected = {},
-            onDismiss = {}
-        )
+        HarmDate.HarmDatePickerModal(onDateSelected = {}, onDismiss = {})
     }
 }
 
@@ -188,10 +181,7 @@ private fun HarmDatePickerModal_DarkPreview() {
 @Composable
 private fun HarmDatePickerModal_LightPreview() {
     HarmTheme(darkTheme = false) {
-        HarmDate.HarmDatePickerModal(
-            onDateSelected = {},
-            onDismiss = {}
-        )
+        HarmDate.HarmDatePickerModal(onDateSelected = {}, onDismiss = {})
     }
 }
 

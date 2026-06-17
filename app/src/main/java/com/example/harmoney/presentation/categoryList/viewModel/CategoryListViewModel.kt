@@ -66,8 +66,9 @@ class CategoryListViewModel(
 
     private fun onCreateCategory() {
         _action.tryEmit(
-            CategoryListAction
-                .NavigateToCreatingCategory(_screenState.value.selectedCategoryType.id)
+            CategoryListAction.NavigateToCreatingCategory(
+                _screenState.value.selectedCategoryType.id
+            )
         )
     }
 
