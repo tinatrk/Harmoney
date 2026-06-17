@@ -9,7 +9,7 @@ sealed interface CategoryEvent {
     data object OnBackDialogConfirm : CategoryEvent
     data object OnBackDialogDismiss : CategoryEvent
 
-    data class OnChangeCategoryTypeClick(val categoryType: CategoryType) : CategoryEvent
+    data class OnChangeCategoryTypeClick(val newCategoryType: CategoryType) : CategoryEvent
 
     data class OnCategoryNameChanged(val newName: String) : CategoryEvent
 

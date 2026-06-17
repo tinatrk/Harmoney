@@ -579,7 +579,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         }
     }
 
-    fun saveTransaction(transaction: Transaction) {
+    fun createTransaction(transaction: Transaction) {
         transactions.add(
             transaction.copy(
                 id = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -587,11 +587,19 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         )
     }
 
-    fun deleteTransaction(transaction: Transaction) {
+    fun updateTransaction(transaction: Transaction) {
+        val oldTransaction = transactions.find { it.id == transaction.id }
+        val oldTransactionIndex = transactions.indexOf(oldTransaction)
+        if (oldTransactionIndex < 0) return
 
+        transactions[oldTransactionIndex] = transaction
     }
 
-    fun saveCategory(category: Category) {
+    fun deleteTransaction(transaction: Transaction) {
+        transactions.remove(transaction)
+    }
+
+    fun createCategory(category: Category) {
         categories.add(
             category.copy(
                 id = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
@@ -599,13 +607,21 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         )
     }
 
-    fun deleteCategory(category: Category) {
+    fun updateCategory(category: Category) {
+        val oldCategory = categories.find { it.id == category.id }
+        val oldCategoryIndex = categories.indexOf(oldCategory)
+        if (oldCategoryIndex < 0) return
 
+        categories[oldCategoryIndex] = category
+    }
+
+    fun deleteCategory(category: Category) {
+        categories.remove(category)
     }
 
     fun isCategoryAlreadyExists(categoryName: String, categoryType: CategoryType): Boolean {
-        val list = categories.filter {it.type == categoryType}
-        val category = list.find {it.name == categoryName}
+        val list = categories.filter { it.type == categoryType }
+        val category = list.find { it.name == categoryName }
         return category != null
     }
 

@@ -18,9 +18,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.update
 
-@Suppress(
-    "detekt:LongParameterList", "detekt:TooManyFunctions",
-)
+@Suppress("detekt:LongParameterList", "detekt:TooManyFunctions")
 class CategoryStatisticsViewModel(
     categoryType: CategoryType,
     statisticsPeriod: StatisticsPeriod,
@@ -76,9 +74,7 @@ class CategoryStatisticsViewModel(
         }
     }
 
-    @Suppress(
-        "detekt:CyclomaticComplexMethod"
-    )
+    @Suppress("detekt:CyclomaticComplexMethod")
     override fun obtainEvent(event: CategoryStatisticsEvent) {
         when (event) {
             is CategoryStatisticsEvent.OnTabClick -> {

@@ -98,9 +98,7 @@ object HarmButton {
         Row(
             modifier = modifier
                 .padding(vertical = 8.dp)
-                .clickable {
-                    onCheckChanged(!checked)
-                },
+                .clickable { onCheckChanged(!checked) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             HarmCircularCheckBox(

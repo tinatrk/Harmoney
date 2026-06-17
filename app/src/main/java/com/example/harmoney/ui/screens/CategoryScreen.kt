@@ -3,6 +3,7 @@ package com.example.harmoney.ui.screens
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -196,17 +197,21 @@ fun IconAndName(
     }
     val scrollState = rememberLazyGridState()
 
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        HarmButton.HarmCircularIconButton(
-            iconRes = state.selectedIcon.toDrawableRes(),
-            contentDescription = stringResource(R.string.ic_change_category_icon_desc),
-            iconBackground = Color(state.selectedColor.background),
-            onClick = { onEvent(CategoryEvent.OnOpenIconsBottomSheetClick) }
-        )
-        Spacer(modifier = Modifier.width(16.dp))
+    Row(horizontalArrangement = Arrangement.Center) {
+        Box(
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .height(56.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            HarmButton.HarmCircularIconButton(
+                iconRes = state.selectedIcon.toDrawableRes(),
+                contentDescription = stringResource(R.string.ic_change_category_icon_desc),
+                iconBackground = Color(state.selectedColor.background),
+                onClick = { onEvent(CategoryEvent.OnOpenIconsBottomSheetClick) }
+            )
+        }
+        Spacer(modifier = Modifier.width(12.dp))
         HarmTextField.HarmBaseTextField(
             value = state.categoryName,
             placeholder = stringResource(R.string.label_text_field_category_name),

@@ -24,9 +24,7 @@ import com.example.harmoney.presentation.transaction.models.TransactionState
 import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 
-@Suppress(
-    "detekt:LongParameterList", "detekt:TooManyFunctions",
-)
+@Suppress("detekt:LongParameterList", "detekt:TooManyFunctions")
 class TransactionViewModel(
     categoryType: CategoryType,
     categoryId: Long?,
@@ -96,9 +94,7 @@ class TransactionViewModel(
         }
     }
 
-    @Suppress(
-        "detekt:CyclomaticComplexMethod"
-    )
+    @Suppress("detekt:CyclomaticComplexMethod")
     override fun obtainEvent(event: TransactionEvent) {
         when (event) {
             is TransactionEvent.OnBackClick -> onBackClick()
@@ -347,6 +343,8 @@ class TransactionViewModel(
                     isCategoriesBottomSheetOpened = false
                 )
             }
+        } else {
+            onCategoriesBottomSheetDismiss()
         }
     }
 
@@ -355,30 +353,33 @@ class TransactionViewModel(
     }
 
     private fun onSaveClick() {
-        val isAmountError = state.value.amountError != TransactionAmountError.None
-                || curTransaction.amount <= 0
+        val isCategoryError = curTransaction.category.id == ZERO_ID
 
-        if ((curTransaction.category.id == ZERO_ID)
-            || state.value.dateError != TransactionDateError.None
-            || isAmountError
+        val amountError = if (curTransaction.amount <= 0) {
+            TransactionAmountError.IncorrectInput
+        } else {
+            state.value.amountError
+        }
+
+        if (isCategoryError || state.value.dateError != TransactionDateError.None
+            || amountError != TransactionAmountError.None
         ) {
             writableState.update {
                 it.copy(
-                    isCategoryError = curTransaction.category.id == ZERO_ID,
+                    isCategoryError = isCategoryError,
                     isSaveTransactionErrorDialogOpened = true,
-                    amountError = if (curTransaction.amount <= 0) {
-                        TransactionAmountError.IncorrectInput
-                    } else {
-                        TransactionAmountError.None
-                    }
+                    amountError = amountError
                 )
             }
         } else {
-            // TODO() сохранить транзакцию
             if (transactionUiConverter.map(curTransaction, state.value.globalCurrency)
                 != initialTransactionUi
             ) {
-                test.saveTransaction(curTransaction)
+                if (state.value.isCreateTransactionScreen) {
+                    test.createTransaction(curTransaction)
+                } else {
+                    test.updateTransaction(curTransaction)
+                }
             }
             onNavigateBack()
         }
