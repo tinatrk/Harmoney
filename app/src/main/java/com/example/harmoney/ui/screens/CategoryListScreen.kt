@@ -1,20 +1,21 @@
 package com.example.harmoney.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -23,13 +24,18 @@ import androidx.lifecycle.flowWithLifecycle
 import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
+import com.example.harmoney.domain.models.CategorySortOption
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.presentation.categoryList.models.CategoryListAction
 import com.example.harmoney.presentation.categoryList.models.CategoryListEvent
 import com.example.harmoney.presentation.categoryList.models.CategoryListState
 import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
+import com.example.harmoney.presentation.models.MenuOptions
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
+import com.example.harmoney.ui.mappers.CategoryIconUiMapper.toDrawableRes
+import com.example.harmoney.ui.mappers.CategorySortOptionUiMapper.toStringRes
+import com.example.harmoney.ui.other.PreviewData
 import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.collections.immutable.toImmutableList
 
@@ -68,19 +74,58 @@ fun CategoryListScreen(
             }
     }
 
+    CategoryListScreen(
+        state = state,
+        onEvent = viewModel::obtainEvent,
+        onCategoryTypeChanged = sharedCategoryTypeVM::categoryTypeChanged
+    )
+}
+
+@Composable
+fun CategoryListScreen(
+    state: CategoryListState,
+    onEvent: (CategoryListEvent) -> Unit,
+    onCategoryTypeChanged: (CategoryType) -> Unit,
+) {
     Scaffold(
         topBar = {
             HarmTopBar.HarmCommonTopBar(
                 title = stringResource(R.string.title_top_app_bar_category_list),
-                navigationIconRes = R.drawable.ic_arrow_back_24px,
-                navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
-                onNavigationIconClick = {
-                    viewModel.obtainEvent(CategoryListEvent.OnBackClick)
+                navigationIcon = {
+                    HarmButton.HarmTopBarIconButton(
+                        iconRes = R.drawable.ic_arrow_back_24px,
+                        contentDescription = stringResource(R.string.ic_arrow_back_desc),
+                        onClick = { onEvent(CategoryListEvent.OnBackClick) }
+                    )
                 },
-                actionIconRes = R.drawable.ic_swap_vert_24px,
-                actionIconDesc = stringResource(R.string.ic_swap_vert_desc),
-                onActionIconClick = {},
+                actionIcons = {
+                    HarmButton.HarmDropdownMenuIcon(
+                        iconRes = R.drawable.ic_swap_vert_24px,
+                        contentDescription = stringResource(R.string.ic_swap_vert_desc),
+                        onMenuClick = { onEvent(CategoryListEvent.OnSortMenuClick) },
+                        onMenuDismiss = { onEvent(CategoryListEvent.OnSortMenuDismiss) },
+                        expanded = state.isSortMenuOpened,
+                        menuOptions = CategorySortOption.entries.map { sortOption ->
+                            MenuOptions(
+                                text = stringResource(sortOption.toStringRes()),
+                                onClick = {
+                                    onEvent(
+                                        CategoryListEvent
+                                            .OnSortOptionClick(sortOption)
+                                    )
+                                }
+                            )
+                        }.toImmutableList()
+                    )
+                },
                 isTitleCenterAlignment = false
+            )
+        },
+        floatingActionButton = {
+            HarmButton.HarmFloatingActionButton(
+                iconRes = R.drawable.ic_add_24px,
+                contentDescription = stringResource(R.string.ic_add_category_desc),
+                onClick = { onEvent(CategoryListEvent.OnFloatingButtonClick) }
             )
         },
         containerColor = HarmTheme.colors.surface
@@ -91,13 +136,11 @@ fun CategoryListScreen(
                 .padding(paddingValues),
             tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = state.selectedTabIndex,
-            onTabClick = { categoryType ->
-                sharedCategoryTypeVM.categoryTypeChanged(categoryType)
-            }
+            onTabClick = onCategoryTypeChanged
         ) {
             CategoryListContent(
                 state = state,
-                onEvent = viewModel::obtainEvent,
+                onEvent = onEvent,
             )
         }
     }
@@ -109,32 +152,52 @@ fun CategoryListContent(
     onEvent: (CategoryListEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val testCategoryId = 7L
-
-    Column(
+    LazyVerticalGrid(
         modifier = modifier
             .fillMaxSize()
             .background(HarmTheme.colors.surface)
-            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .padding(horizontal = 16.dp, vertical = 16.dp),
+        columns = GridCells.Fixed(3),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "categoryTypeId = ${state.selectedCategoryType.id}",
-            style = HarmTheme.typography.bodyLarge,
-            color = HarmTheme.colors.onSurface,
-            textAlign = TextAlign.Center
-        )
+        items(state.categories) { category ->
+            HarmButton.HarmCircularIconButtonWithTitle(
+                iconRes = category.icon.icon.toDrawableRes(),
+                iconBackground = Color(category.icon.color.background),
+                iconTitle = category.name,
+                contentDescription =
+                    stringResource(R.string.ic_category_edit_desc, category.name),
+                onClick = { onEvent(CategoryListEvent.OnCategoryClick(category.id)) }
+            )
+        }
+    }
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
-        HarmButton.HarmPrimaryButton(
-            text = "Choose category, categoryId = 7",
-            onClick = { onEvent(CategoryListEvent.OnCategoryClick(testCategoryId)) }
+@Preview(showSystemUi = true)
+@Composable
+fun CategoryListScreen_DarkPreview() {
+    HarmTheme(darkTheme = true) {
+        CategoryListScreen(
+            state = CategoryListState(
+                categories = PreviewData.getExpensesCategories()
+            ),
+            onEvent = {},
+            onCategoryTypeChanged = {}
         )
+    }
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
-        HarmButton.HarmPrimaryButton(
-            text = "On floating button click (create category)",
-            onClick = { onEvent(CategoryListEvent.OnFloatingButtonClick) }
+@Preview(showSystemUi = true)
+@Composable
+fun CategoryListScreen_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        CategoryListScreen(
+            state = CategoryListState(
+                categories = PreviewData.getExpensesCategories()
+            ),
+            onEvent = {},
+            onCategoryTypeChanged = {}
         )
     }
 }

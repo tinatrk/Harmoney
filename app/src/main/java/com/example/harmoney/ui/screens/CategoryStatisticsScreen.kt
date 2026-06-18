@@ -147,15 +147,21 @@ fun CategoryStatisticsScreen(
                 HarmTopBar.HarmCommonTopBar(
                     title = state.currentBalance,
                     subtitle = stringResource(R.string.title_balance),
-                    navigationIconRes = R.drawable.ic_drawer_menu_24px,
-                    navigationIconDesc = stringResource(R.string.ic_drawer_menu_desc),
-                    onNavigationIconClick = {
-                        onEvent(CategoryStatisticsEvent.OnSettingsIconClick)
+                    navigationIcon = {
+                        HarmButton.HarmTopBarIconButton(
+                            iconRes = R.drawable.ic_arrow_back_24px,
+                            contentDescription = stringResource(R.string.ic_arrow_back_desc),
+                            onClick = { onEvent(CategoryStatisticsEvent.OnSettingsIconClick) }
+                        )
                     },
-                    actionIconRes = R.drawable.ic_list_24px,
-                    actionIconDesc = stringResource(R.string.ic_list_desc),
-                    onActionIconClick = {
-                        onEvent(CategoryStatisticsEvent.OnTransactionListIconClick)
+                    actionIcons = {
+                        HarmButton.HarmTopBarIconButton(
+                            iconRes = R.drawable.ic_list_24px,
+                            contentDescription = stringResource(R.string.ic_list_desc),
+                            onClick = {
+                                onEvent(CategoryStatisticsEvent.OnTransactionListIconClick)
+                            }
+                        )
                     },
                     isTitleCenterAlignment = true
                 )

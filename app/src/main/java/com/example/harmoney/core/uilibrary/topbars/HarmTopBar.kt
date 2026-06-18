@@ -2,9 +2,9 @@ package com.example.harmoney.core.uilibrary.topbars
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -23,7 +23,7 @@ import com.example.harmoney.ui.theme.HarmTheme
 /**
  * - `HarmCommonTopBar` - Basic top app bar
  * - `HarmSimpleTopBar` - Top app bar with navigation button (without actions and subtitle).
- * By default, back icon is used.
+ * By default, arrow back icon is used.
  */
 @UiLibrary
 object HarmTopBar {
@@ -34,27 +34,24 @@ object HarmTopBar {
         title: String,
         modifier: Modifier = Modifier,
         subtitle: String? = null,
-        @DrawableRes navigationIconRes: Int? = null,
-        navigationIconDesc: String? = null,
-        @DrawableRes actionIconRes: Int? = null,
-        actionIconDesc: String? = null,
         isTitleCenterAlignment: Boolean = false,
-        onNavigationIconClick: (() -> Unit)? = null,
-        onActionIconClick: (() -> Unit)? = null
+        navigationIcon: @Composable (() -> Unit)? = null,
+        actionIcons: @Composable (RowScope.() -> Unit)? = null,
     ) {
         // пришлось вручную прописать размер иконок, чтобы правильно центрировать заголовок
+        // (центрирование будет корректным, если в navigationIcon и actionIcons не более одной
+        // иконки стандартного размера)
         val topAppBarIconSize = 48.dp
 
-        // Сделала variable переменные, чтобы complexity функции была меньше 15
         var titleAlignment = Alignment.Start
         var startTitleOffset = 0.dp
         var endTitleOffset = 0.dp
 
         if (isTitleCenterAlignment) {
             titleAlignment = Alignment.CenterHorizontally
-            if (navigationIconRes == null && actionIconRes != null) startTitleOffset =
+            if (navigationIcon == null && actionIcons != null) startTitleOffset =
                 topAppBarIconSize
-            if (navigationIconRes != null && actionIconRes == null) endTitleOffset =
+            if (navigationIcon != null && actionIcons == null) endTitleOffset =
                 topAppBarIconSize
         }
 
@@ -73,26 +70,8 @@ object HarmTopBar {
                     }
                 }
             },
-            navigationIcon = navigationIconRes?.let {
-                {
-                    HarmButton.HarmTopBarIconButton(
-                        modifier = Modifier.size(topAppBarIconSize),
-                        iconRes = navigationIconRes,
-                        onClick = onNavigationIconClick ?: {},
-                        contentDescription = navigationIconDesc
-                    )
-                }
-            } ?: {},
-            actions = actionIconRes?.let {
-                {
-                    HarmButton.HarmTopBarIconButton(
-                        modifier = Modifier.size(topAppBarIconSize),
-                        iconRes = actionIconRes,
-                        onClick = onActionIconClick ?: {},
-                        contentDescription = actionIconDesc
-                    )
-                }
-            } ?: {},
+            navigationIcon = navigationIcon ?: {},
+            actions = actionIcons ?: {},
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = HarmTheme.colors.surface,
                 navigationIconContentColor = HarmTheme.colors.onSurfaceVariant,
@@ -104,7 +83,7 @@ object HarmTopBar {
 
     /** Top app bar with navigation button (without actions and subtitle)
      *
-     * By default, back icon is used.
+     * By default, arrow back icon is used.
      * */
     @Composable
     fun HarmSimpleTopBar(
@@ -117,10 +96,15 @@ object HarmTopBar {
         HarmCommonTopBar(
             modifier = modifier,
             title = title,
-            navigationIconRes = navigationIconRes ?: R.drawable.ic_arrow_back_24px,
-            navigationIconDesc =
-                navigationIconDesc ?: stringResource(R.string.ic_arrow_back_desc),
-            onNavigationIconClick = onNavigationIconClick,
+            navigationIcon = {
+                HarmButton.HarmTopBarIconButton(
+                    iconRes = navigationIconRes ?: R.drawable.ic_arrow_back_24px,
+                    contentDescription =
+                        navigationIconDesc ?: stringResource(R.string.ic_arrow_back_desc),
+                    onClick = onNavigationIconClick,
+
+                    )
+            },
         )
     }
 }
@@ -154,12 +138,20 @@ private fun TwoIconsCenterTitleTopBar_DarkPreview() {
         HarmTopBar.HarmCommonTopBar(
             title = "100 000 ₽",
             subtitle = stringResource(R.string.title_balance),
-            navigationIconRes = R.drawable.ic_drawer_menu_24px,
-            navigationIconDesc = stringResource(R.string.ic_drawer_menu_desc),
-            onNavigationIconClick = {},
-            actionIconRes = R.drawable.ic_list_24px,
-            actionIconDesc = stringResource(R.string.ic_list_desc),
-            onActionIconClick = {},
+            navigationIcon = {
+                HarmButton.HarmTopBarIconButton(
+                    iconRes = R.drawable.ic_drawer_menu_24px,
+                    contentDescription = stringResource(R.string.ic_drawer_menu_desc),
+                    onClick = {}
+                )
+            },
+            actionIcons = {
+                HarmButton.HarmTopBarIconButton(
+                    iconRes = R.drawable.ic_list_24px,
+                    contentDescription = stringResource(R.string.ic_list_desc),
+                    onClick = {}
+                )
+            },
             isTitleCenterAlignment = true
         )
     }
@@ -172,12 +164,20 @@ private fun TwoIconsCenterTitleTopBar_LightPreview() {
         HarmTopBar.HarmCommonTopBar(
             title = "100 000 ₽",
             subtitle = stringResource(R.string.title_balance),
-            navigationIconRes = R.drawable.ic_drawer_menu_24px,
-            navigationIconDesc = stringResource(R.string.ic_drawer_menu_desc),
-            onNavigationIconClick = {},
-            actionIconRes = R.drawable.ic_list_24px,
-            actionIconDesc = stringResource(R.string.ic_list_desc),
-            onActionIconClick = {},
+            navigationIcon = {
+                HarmButton.HarmTopBarIconButton(
+                    iconRes = R.drawable.ic_drawer_menu_24px,
+                    contentDescription = stringResource(R.string.ic_drawer_menu_desc),
+                    onClick = {}
+                )
+            },
+            actionIcons = {
+                HarmButton.HarmTopBarIconButton(
+                    iconRes = R.drawable.ic_list_24px,
+                    contentDescription = stringResource(R.string.ic_list_desc),
+                    onClick = {}
+                )
+            },
             isTitleCenterAlignment = true
         )
     }
@@ -190,9 +190,13 @@ private fun OneIconCenterTitle_DarkPreview() {
         HarmTopBar.HarmCommonTopBar(
             title = "100 000 ₽",
             subtitle = stringResource(R.string.title_balance),
-            navigationIconRes = R.drawable.ic_arrow_back_24px,
-            navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
-            onNavigationIconClick = {},
+            navigationIcon = {
+                HarmButton.HarmTopBarIconButton(
+                    iconRes = R.drawable.ic_arrow_back_24px,
+                    contentDescription = stringResource(R.string.ic_arrow_back_desc),
+                    onClick = {}
+                )
+            },
             isTitleCenterAlignment = true
         )
     }
@@ -205,9 +209,13 @@ private fun OneIconCenterTitle_LightPreview() {
         HarmTopBar.HarmCommonTopBar(
             title = "100 000 ₽",
             subtitle = stringResource(R.string.title_balance),
-            navigationIconRes = R.drawable.ic_arrow_back_24px,
-            navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
-            onNavigationIconClick = {},
+            navigationIcon = {
+                HarmButton.HarmTopBarIconButton(
+                    iconRes = R.drawable.ic_arrow_back_24px,
+                    contentDescription = stringResource(R.string.ic_arrow_back_desc),
+                    onClick = {}
+                )
+            },
             isTitleCenterAlignment = true
         )
     }
@@ -219,12 +227,20 @@ private fun TwoIconsTopBar_DarkPreview() {
     HarmTheme(darkTheme = true) {
         HarmTopBar.HarmCommonTopBar(
             title = stringResource(R.string.title_top_app_bar_category_list),
-            navigationIconRes = R.drawable.ic_arrow_back_24px,
-            navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
-            onNavigationIconClick = {},
-            actionIconRes = R.drawable.ic_swap_vert_24px,
-            actionIconDesc = stringResource(R.string.ic_swap_vert_desc),
-            onActionIconClick = {},
+            navigationIcon = {
+                HarmButton.HarmTopBarIconButton(
+                    iconRes = R.drawable.ic_arrow_back_24px,
+                    contentDescription = stringResource(R.string.ic_arrow_back_desc),
+                    onClick = {}
+                )
+            },
+            actionIcons = {
+                HarmButton.HarmTopBarIconButton(
+                    iconRes = R.drawable.ic_swap_vert_24px,
+                    contentDescription = stringResource(R.string.ic_swap_vert_desc),
+                    onClick = {}
+                )
+            },
             isTitleCenterAlignment = false
         )
     }
@@ -236,12 +252,20 @@ private fun TwoIconsTopBar_LightPreview() {
     HarmTheme(darkTheme = false) {
         HarmTopBar.HarmCommonTopBar(
             title = stringResource(R.string.title_top_app_bar_category_list),
-            navigationIconRes = R.drawable.ic_arrow_back_24px,
-            navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
-            onNavigationIconClick = {},
-            actionIconRes = R.drawable.ic_swap_vert_24px,
-            actionIconDesc = stringResource(R.string.ic_swap_vert_desc),
-            onActionIconClick = {},
+            navigationIcon = {
+                HarmButton.HarmTopBarIconButton(
+                    iconRes = R.drawable.ic_arrow_back_24px,
+                    contentDescription = stringResource(R.string.ic_arrow_back_desc),
+                    onClick = {}
+                )
+            },
+            actionIcons = {
+                HarmButton.HarmTopBarIconButton(
+                    iconRes = R.drawable.ic_swap_vert_24px,
+                    contentDescription = stringResource(R.string.ic_swap_vert_desc),
+                    onClick = {}
+                )
+            },
             isTitleCenterAlignment = false
         )
     }

@@ -28,6 +28,7 @@ class CategoryListViewModel(
             is CategoryListEvent.OnBackClick -> onNavigateBack()
 
             is CategoryListEvent.OnSortMenuClick -> {}
+            is CategoryListEvent.OnSortMenuDismiss -> {}
             is CategoryListEvent.OnSortOptionClick -> {}
 
             is CategoryListEvent.OnTabClick -> onTabClick(event.newCategoryType)

@@ -118,9 +118,13 @@ fun TransactionListScreen(
             HarmTopBar.HarmCommonTopBar(
                 title = state.currentBalance,
                 subtitle = stringResource(R.string.title_balance),
-                navigationIconRes = R.drawable.ic_arrow_back_24px,
-                navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
-                onNavigationIconClick = { onEvent(TransactionListEvent.OnBackClick) },
+                navigationIcon = {
+                    HarmButton.HarmTopBarIconButton(
+                        iconRes = R.drawable.ic_arrow_back_24px,
+                        contentDescription = stringResource(R.string.ic_arrow_back_desc),
+                        onClick = { onEvent(TransactionListEvent.OnBackClick) }
+                    )
+                },
                 isTitleCenterAlignment = true,
             )
         },

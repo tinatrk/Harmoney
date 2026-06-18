@@ -100,7 +100,7 @@ fun CategoryScreen(
 ) {
     Scaffold(
         topBar = {
-            HarmTopBar.HarmCommonTopBar(
+            HarmTopBar.HarmSimpleTopBar(
                 title = stringResource(
                     if (state.isCreateCategoryScreen) {
                         R.string.title_top_app_bar_create_category
@@ -108,10 +108,7 @@ fun CategoryScreen(
                         R.string.title_top_app_bar_edit_category
                     }
                 ),
-                navigationIconRes = R.drawable.ic_arrow_back_24px,
-                navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
                 onNavigationIconClick = { onEvent(CategoryEvent.OnBackClick) },
-                isTitleCenterAlignment = false
             )
         },
         containerColor = HarmTheme.colors.surface

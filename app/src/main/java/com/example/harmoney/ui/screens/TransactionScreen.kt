@@ -143,7 +143,7 @@ fun TransactionScreen(
 ) {
     Scaffold(
         topBar = {
-            HarmTopBar.HarmCommonTopBar(
+            HarmTopBar.HarmSimpleTopBar(
                 title = stringResource(
                     if (state.isCreateTransactionScreen) {
                         R.string.title_top_app_bar_create_transaction
@@ -151,10 +151,7 @@ fun TransactionScreen(
                         R.string.title_top_app_bar_edit_transaction
                     }
                 ),
-                navigationIconRes = R.drawable.ic_arrow_back_24px,
-                navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
                 onNavigationIconClick = { onEvent(TransactionEvent.OnBackClick) },
-                isTitleCenterAlignment = false,
             )
         },
         containerColor = HarmTheme.colors.surface

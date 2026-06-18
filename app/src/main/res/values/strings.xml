@@ -33,6 +33,7 @@
     <string name="ic_radio_button_off_desc">Не выбрано</string>
     <string name="ic_list_desc">Отобразить транзакции в виде списка</string>
     <string name="ic_category_desc">Иконка категории %s</string>
+    <string name="ic_category_edit_desc">Редактировать категорию %s</string>
     <string name="ic_menu_desc">Открыть меню</string>
     <string name="ic_alert_dialog_desc">Предупреждение</string>
     <string name="ic_calendar_desc">Открыть календарь для выбора даты</string>
