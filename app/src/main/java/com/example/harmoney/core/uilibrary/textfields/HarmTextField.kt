@@ -70,9 +70,7 @@ object HarmTextField {
 
         OutlinedTextField(
             modifier = modifier
-                .onFocusChanged { focusState ->
-                    isFocused.value = focusState.isFocused
-                },
+                .onFocusChanged { focusState -> isFocused.value = focusState.isFocused },
             value = value,
             onValueChange = { newValue ->
                 if (onlyNumbers) {
@@ -99,25 +97,46 @@ object HarmTextField {
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = colors.primary,
                 unfocusedBorderColor = contentColor,
+                errorBorderColor = colors.error,
+
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent,
+
                 focusedLabelColor = colors.primary,
                 unfocusedLabelColor = contentColor,
                 disabledLabelColor = contentColor,
+                errorLabelColor = colors.error,
+
                 cursorColor = colors.primary,
+                errorCursorColor = colors.primary,
+
+                focusedLeadingIconColor = colors.onSurfaceContainer,
+                unfocusedLeadingIconColor = contentColor,
+                disabledLeadingIconColor = contentColor,
+                errorLeadingIconColor = colors.error,
+
                 focusedTrailingIconColor = colors.onSurfaceContainer,
                 unfocusedTrailingIconColor = contentColor,
+                disabledTrailingIconColor = contentColor,
+                errorTrailingIconColor = colors.error,
+
                 focusedTextColor = colors.onSurfaceContainer,
                 unfocusedTextColor = colors.onSurfaceContainer,
+                disabledTextColor = colors.onSurfaceContainer,
+                errorTextColor = colors.error,
+
                 focusedPlaceholderColor = colors.onSurfaceContainer,
                 unfocusedPlaceholderColor = colors.onSurfaceContainerLow,
-                errorTextColor = colors.error,
-                errorSupportingTextColor = colors.error,
-                errorBorderColor = colors.error,
-                errorLabelColor = colors.error,
-                errorCursorColor = colors.primary,
+                disabledPlaceholderColor = colors.onSurfaceContainerLow,
                 errorPlaceholderColor = colors.onSurfaceContainer,
-                errorTrailingIconColor = colors.error,
+
+                focusedSupportingTextColor = colors.onSurfaceContainer,
+                unfocusedSupportingTextColor = colors.onSurfaceContainer,
+                disabledSupportingTextColor = colors.onSurfaceContainer,
+                errorSupportingTextColor = colors.error,
+
                 selectionColors = TextSelectionColors(
                     handleColor = colors.primary,
                     backgroundColor = colors.primary
@@ -135,9 +154,7 @@ object HarmTextField {
             ),
             shape = RoundedCornerShape(12.dp),
             label = {
-                Column(
-                    modifier = Modifier.background(Color.Transparent)
-                ) {
+                Column(modifier = Modifier.background(Color.Transparent)) {
                     Text(
                         text = if (!isFocused.value && value.isEmpty()) placeholder else label,
                         style = typography.labelMedium,
@@ -204,10 +221,7 @@ object HarmTextField {
         )
 
         if (showModalDatePicker) {
-            HarmDatePickerModal(
-                onDateSelected = onDateSelected,
-                onDismiss = onDismiss
-            )
+            HarmDatePickerModal(onDateSelected = onDateSelected, onDismiss = onDismiss)
         }
     }
 }
@@ -300,9 +314,7 @@ private fun HarmBaseTextField_ErrorDarkPreview() {
             onValueChange = {},
             isError = true,
             supportingText = stringResource(
-                R.string.error_incorrect_first_day_month_pattern,
-                1,
-                28
+                R.string.error_incorrect_first_day_month_pattern, 1, 28
             )
         )
     }
@@ -320,9 +332,7 @@ private fun HarmBaseTextField_ErrorLightPreview() {
             onValueChange = {},
             isError = true,
             supportingText = stringResource(
-                R.string.error_incorrect_first_day_month_pattern,
-                1,
-                28
+                R.string.error_incorrect_first_day_month_pattern, 1, 28
             )
         )
     }

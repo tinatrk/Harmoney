@@ -27,8 +27,10 @@ fun NavGraphBuilder.categoryStatisticsScreen(
             onNavigateToCreateTransaction = onNavigateToCreateTransaction,
             onNavigateToCategoryList = onNavigateToCategoryList,
             viewModel = koinViewModel() {
-                parametersOf(sharedCategoryTypeVM.selectedCategoryType.value,
-                    sharedStatisticsPeriodVM.selectedStatisticsPeriod.value)
+                parametersOf(
+                    sharedCategoryTypeVM.selectedCategoryType.value,
+                    sharedStatisticsPeriodVM.selectedStatisticsPeriod.value
+                )
             },
         )
     }

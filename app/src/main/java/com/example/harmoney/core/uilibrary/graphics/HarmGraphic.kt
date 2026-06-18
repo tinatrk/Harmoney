@@ -45,9 +45,7 @@ object HarmGraphic {
         // за пределами заявленных размеров области (по всем сторонам).
         // Добавляем отступ (в dp), чтобы всегда получать график в ожидаемом месте.
         val halfPieStrokeWidthDp = remember {
-            mutableFloatStateOf(
-                (pieStrokeWidthPx / screenDensity) / 2
-            )
+            mutableFloatStateOf((pieStrokeWidthPx / screenDensity) / 2)
         }
 
         Canvas(
@@ -85,21 +83,14 @@ object HarmGraphic {
 
         val screenDensity = LocalDensity.current.density
         // отступ, чтобы title был строго внутри pieChart
-        val pieStrokeWidthDp = remember {
-            mutableFloatStateOf(
-                (pieStrokeWidthPx / screenDensity)
-            )
-        }
+        val pieStrokeWidthDp = remember { mutableFloatStateOf((pieStrokeWidthPx / screenDensity)) }
 
         Box(
             modifier = modifier.fillMaxWidth(1f / 2),
             contentAlignment = Alignment.Center
         ) {
             if (items.isNotEmpty()) {
-                PieChart(
-                    items = items,
-                    pieStrokeWidthPx = pieStrokeWidthPx
-                )
+                PieChart(items = items, pieStrokeWidthPx = pieStrokeWidthPx)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -131,15 +122,13 @@ private fun PieChart_DarkPreview() {
                     colorValue = CategoryColors.BLUE_T80.background,
                     startAngle = -90f,
                     sweepAngle = 205.69f,
-
-                    ),
+                ),
                 PieChartItem(
                     value = "7 500 ₽",
                     colorValue = CategoryColors.ORANGE_T70.background,
                     startAngle = 117.69f,
                     sweepAngle = 101.84f,
-
-                    ),
+                ),
                 PieChartItem(
                     value = "3 500 ₽",
                     colorValue = CategoryColors.VIOLET_T68.background,
@@ -163,15 +152,13 @@ private fun PieChart_LightPreview() {
                     colorValue = CategoryColors.BLUE_T80.background,
                     startAngle = -90f,
                     sweepAngle = 205.69f,
-
-                    ),
+                ),
                 PieChartItem(
                     value = "7 500 ₽",
                     colorValue = CategoryColors.ORANGE_T70.background,
                     startAngle = 117.69f,
                     sweepAngle = 101.84f,
-
-                    ),
+                ),
                 PieChartItem(
                     value = "3 500 ₽",
                     colorValue = CategoryColors.VIOLET_T68.background,
@@ -196,15 +183,13 @@ private fun PieChartWithTitle_DarkPreview() {
                         colorValue = CategoryColors.BLUE_T80.background,
                         startAngle = -90f,
                         sweepAngle = 205.69f,
-
-                        ),
+                    ),
                     PieChartItem(
                         value = "7 500 ₽",
                         colorValue = CategoryColors.ORANGE_T70.background,
                         startAngle = 117.69f,
                         sweepAngle = 101.84f,
-
-                        ),
+                    ),
                     PieChartItem(
                         value = "3 500 ₽",
                         colorValue = CategoryColors.VIOLET_T68.background,
@@ -230,15 +215,13 @@ private fun PieChartWithTitle_LightPreview() {
                         colorValue = CategoryColors.BLUE_T80.background,
                         startAngle = -90f,
                         sweepAngle = 205.69f,
-
-                        ),
+                    ),
                     PieChartItem(
                         value = "7 500 ₽",
                         colorValue = CategoryColors.ORANGE_T70.background,
                         startAngle = 117.69f,
                         sweepAngle = 101.84f,
-
-                        ),
+                    ),
                     PieChartItem(
                         value = "3 500 ₽",
                         colorValue = CategoryColors.VIOLET_T68.background,

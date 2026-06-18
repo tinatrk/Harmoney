@@ -73,14 +73,8 @@ object HarmTab {
             selectedTabIndex = selectedTabIndex,
             containerColor = colors.surfaceContainer,
             contentColor = colors.onSurfaceContainer,
-            indicator = {
-            },
-            divider = {
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = Color.Transparent
-                )
-            },
+            indicator = {},
+            divider = { HorizontalDivider(thickness = 1.dp, color = Color.Transparent) },
             tabs = tabs
         )
     }
@@ -173,4 +167,3 @@ private fun HarmPrimaryTabRow_LightPreview() {
         )
     }
 }
-

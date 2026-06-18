@@ -31,7 +31,7 @@ class NumbersFormatterImpl : NumbersFormatter {
         }
         return formatter
             .format(number)
-            .replace(SEPARATOR_COMMA, SEPARATOR_SPACE)
+            .replace(oldValue = SEPARATOR_COMMA, newValue = SEPARATOR_SPACE)
 
     }
 

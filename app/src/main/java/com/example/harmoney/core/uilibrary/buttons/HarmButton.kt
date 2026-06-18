@@ -1,11 +1,9 @@
 package com.example.harmoney.core.uilibrary.buttons
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,7 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -86,10 +83,7 @@ object HarmButton {
                 disabledContentColor = HarmTheme.colors.onSurfaceContainerLow,
             )
         ) {
-            Icon(
-                painter = painterResource(iconRes),
-                contentDescription = contentDescription
-            )
+            Icon(painter = painterResource(iconRes), contentDescription = contentDescription)
         }
     }
 
@@ -104,9 +98,7 @@ object HarmButton {
         Row(
             modifier = modifier
                 .padding(vertical = 8.dp)
-                .clickable {
-                    onCheckChanged(!checked)
-                },
+                .clickable { onCheckChanged(!checked) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             HarmCircularCheckBox(
@@ -120,7 +112,7 @@ object HarmButton {
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = title,
-                style = HarmTheme.typography.bodyMedium,
+                style = HarmTheme.typography.bodyLarge,
                 color = HarmTheme.colors.onSurface
             )
         }
@@ -157,27 +149,21 @@ object HarmButton {
         iconBackground: Color = Color(CategoryColors.VIOLET_T68.background),
         iconTint: Color = HarmTheme.colors.borderAndScrim
     ) {
-        Box(
-            modifier = modifier
-                .size(48.dp),
-            contentAlignment = Alignment.Center
+        IconButton(
+            modifier = modifier,
+            shape = CircleShape,
+            onClick = onClick,
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = iconBackground,
+                contentColor = iconTint
+            )
         ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .clickable { onClick() }
-                    .background(iconBackground),
-                contentAlignment = Alignment.Center
-            ) {
-                if (iconRes != null) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(iconRes),
-                        contentDescription = contentDescription,
-                        tint = iconTint
-                    )
-                }
+            if (iconRes != null) {
+                Icon(
+                    painter = painterResource(iconRes),
+                    contentDescription = contentDescription,
+                    tint = iconTint
+                )
             }
         }
     }
@@ -248,10 +234,7 @@ object HarmButton {
             enabled = enabled,
             colors = colors
         ) {
-            Text(
-                text = text,
-                style = HarmTheme.typography.bodyLargeSemiBold,
-            )
+            Text(text = text, style = HarmTheme.typography.bodyLargeSemiBold)
         }
     }
 
@@ -271,10 +254,7 @@ object HarmButton {
             colors = colors,
             contentPadding = PaddingValues(8.dp)
         ) {
-            Text(
-                text = text,
-                style = HarmTheme.typography.bodyLargeSemiBold,
-            )
+            Text(text = text, style = HarmTheme.typography.bodyLargeSemiBold)
         }
     }
 
@@ -340,10 +320,7 @@ object HarmButton {
             elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 6.dp),
             onClick = onClick,
         ) {
-            Icon(
-                painter = painterResource(iconRes),
-                contentDescription = contentDescription
-            )
+            Icon(painter = painterResource(iconRes), contentDescription = contentDescription)
         }
     }
 
@@ -447,9 +424,7 @@ object HarmButton {
         Switch(
             modifier = modifier,
             checked = isChecked,
-            onCheckedChange = {
-                onClick()
-            },
+            onCheckedChange = { onClick() },
             thumbContent = {
                 if (isChecked) {
                     Icon(
@@ -486,10 +461,7 @@ object HarmButton {
             ),
             onClick = onClick
         ) {
-            Icon(
-                painter = painterResource(iconRes),
-                contentDescription = contentDescription
-            )
+            Icon(painter = painterResource(iconRes), contentDescription = contentDescription)
         }
     }
 }
@@ -570,10 +542,7 @@ private fun HarmCheckableIconWithTitle_CheckedLightPreview() {
 @Composable
 private fun HarmCircularCheckBox_UncheckedDarkPreview() {
     HarmTheme(darkTheme = true) {
-        HarmButton.HarmCircularCheckBox(
-            checked = false,
-            contentDescription = null
-        )
+        HarmButton.HarmCircularCheckBox(checked = false, contentDescription = null)
     }
 }
 
@@ -581,10 +550,7 @@ private fun HarmCircularCheckBox_UncheckedDarkPreview() {
 @Composable
 private fun HarmCircularCheckBox_CheckedDarkPreview() {
     HarmTheme(darkTheme = true) {
-        HarmButton.HarmCircularCheckBox(
-            checked = true,
-            contentDescription = null
-        )
+        HarmButton.HarmCircularCheckBox(checked = true, contentDescription = null)
     }
 }
 
@@ -592,10 +558,7 @@ private fun HarmCircularCheckBox_CheckedDarkPreview() {
 @Composable
 private fun HarmCircularCheckBox_UncheckedLightPreview() {
     HarmTheme(darkTheme = false) {
-        HarmButton.HarmCircularCheckBox(
-            checked = false,
-            contentDescription = null
-        )
+        HarmButton.HarmCircularCheckBox(checked = false, contentDescription = null)
     }
 }
 
@@ -603,10 +566,7 @@ private fun HarmCircularCheckBox_UncheckedLightPreview() {
 @Composable
 private fun HarmCircularCheckBox_CheckedLightPreview() {
     HarmTheme(darkTheme = false) {
-        HarmButton.HarmCircularCheckBox(
-            checked = true,
-            contentDescription = null
-        )
+        HarmButton.HarmCircularCheckBox(checked = true, contentDescription = null)
     }
 }
 
@@ -712,8 +672,8 @@ private fun HarmDropdownMenuIcon_DarkPreview() {
             iconRes = R.drawable.ic_menu_24px,
             contentDescription = null,
             menuOptions = persistentListOf(
-                MenuOptions(stringResource(R.string.ic_edit_desc), {}),
-                MenuOptions(stringResource(R.string.ic_delete_desc), {}),
+                MenuOptions(text = stringResource(R.string.ic_edit_desc), onClick = {}),
+                MenuOptions(text = stringResource(R.string.ic_delete_desc), onClick = {}),
             ),
             expanded = true,
             onMenuClick = {},
@@ -730,8 +690,8 @@ private fun HarmDropdownMenuIcon_LightPreview() {
             iconRes = R.drawable.ic_menu_24px,
             contentDescription = null,
             menuOptions = persistentListOf(
-                MenuOptions(stringResource(R.string.ic_edit_desc), {}),
-                MenuOptions(stringResource(R.string.ic_delete_desc), {}),
+                MenuOptions(text = stringResource(R.string.ic_edit_desc), onClick = {}),
+                MenuOptions(text = stringResource(R.string.ic_delete_desc), onClick = {}),
             ),
             expanded = true,
             onMenuClick = {},
@@ -856,10 +816,7 @@ private fun HarmSecondaryText_LightPreview() {
 @Composable
 private fun HarmSwitch_UncheckedDarkPreview() {
     HarmTheme(darkTheme = true) {
-        HarmButton.HarmSwitch(
-            isChecked = false,
-            onClick = {}
-        )
+        HarmButton.HarmSwitch(isChecked = false, onClick = {})
     }
 }
 
@@ -867,10 +824,7 @@ private fun HarmSwitch_UncheckedDarkPreview() {
 @Composable
 private fun HarmSwitch_CheckedDarkPreview() {
     HarmTheme(darkTheme = true) {
-        HarmButton.HarmSwitch(
-            isChecked = true,
-            onClick = {}
-        )
+        HarmButton.HarmSwitch(isChecked = true, onClick = {})
     }
 }
 
@@ -878,10 +832,7 @@ private fun HarmSwitch_CheckedDarkPreview() {
 @Composable
 private fun HarmSwitch_UncheckedLightPreview() {
     HarmTheme(darkTheme = false) {
-        HarmButton.HarmSwitch(
-            isChecked = false,
-            onClick = {}
-        )
+        HarmButton.HarmSwitch(isChecked = false, onClick = {})
     }
 }
 
@@ -889,10 +840,7 @@ private fun HarmSwitch_UncheckedLightPreview() {
 @Composable
 private fun HarmSwitch_CheckedLightPreview() {
     HarmTheme(darkTheme = false) {
-        HarmButton.HarmSwitch(
-            isChecked = true,
-            onClick = {}
-        )
+        HarmButton.HarmSwitch(isChecked = true, onClick = {})
     }
 }
 

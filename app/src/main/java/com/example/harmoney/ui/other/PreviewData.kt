@@ -20,7 +20,7 @@ object PreviewData {
         CategoryUi(
             id = 1,
             name = "Продукты",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_SHOP_CART,
                 color = CategoryColors.RED_T53
@@ -31,7 +31,7 @@ object PreviewData {
         CategoryUi(
             id = 2,
             name = "Подарки",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_GIFT,
                 color = CategoryColors.PINK_T75
@@ -42,7 +42,7 @@ object PreviewData {
         CategoryUi(
             id = 3,
             name = "Путешествия",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_VACATION_1,
                 color = CategoryColors.ORANGE_T55
@@ -53,7 +53,7 @@ object PreviewData {
         CategoryUi(
             id = 4,
             name = "Образование",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_EDUCATION,
                 color = CategoryColors.ORANGE_T70
@@ -64,7 +64,7 @@ object PreviewData {
         CategoryUi(
             id = 5,
             name = "Интернет и связь",
-            type = CategoryType.Expenses,
+            type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_PHONE_INTERNET,
                 color = CategoryColors.ORANGE_T47
@@ -118,7 +118,6 @@ object PreviewData {
         ),
     )
 
-    //@Suppress("detekt:MagicNumber")
     fun getExpensesCategoryStatistics(): ImmutableList<CategoryStatisticsUi> {
         return persistentListOf(
             CategoryStatisticsUi(
@@ -139,7 +138,6 @@ object PreviewData {
         )
     }
 
-    //@Suppress("detekt:MagicNumber")
     fun getExpensesPieChartCategories(
     ): ImmutableList<PieChartItem> {
         return persistentListOf(
@@ -148,15 +146,13 @@ object PreviewData {
                 colorValue = expensesCategories[2].icon.color.background,
                 startAngle = -90f,
                 sweepAngle = 205.69f,
-
-                ),
+            ),
             PieChartItem(
                 value = "7 500 ₽",
                 colorValue = expensesCategories[1].icon.color.background,
                 startAngle = 117.69f,
                 sweepAngle = 101.84f,
-
-                ),
+            ),
             PieChartItem(
                 value = "3 500 ₽",
                 colorValue = expensesCategories[0].icon.color.background,
@@ -166,7 +162,6 @@ object PreviewData {
         )
     }
 
-    //@Suppress("detekt:MagicNumber", "detekt:LongMethod")
     fun getExpensesTransactions(): ImmutableList<OneDayTransactionsUi> {
         return persistentListOf(
             OneDayTransactionsUi(
@@ -192,7 +187,6 @@ object PreviewData {
         )
     }
 
-    //@Suppress("detekt:MagicNumber")
     fun getExpensesFilters(): ImmutableList<TransactionsFilterUi> {
         val filters = persistentListOf(TransactionsFilterUi(id = 0, name = "Все категории")) +
                 expensesCategories.map { TransactionsFilterUi(it.id, it.name) }
@@ -201,29 +195,22 @@ object PreviewData {
         return filters.toImmutableList()
     }
 
-    //@Suppress("detekt:MagicNumber", "detekt:LongMethod")
     fun getFilteredTransactions(): ImmutableList<OneDayTransactionsUi> {
         return persistentListOf(
             OneDayTransactionsUi(
                 date = "06 Марта",
                 totalAmount = "1 500 ₽",
-                transactions = persistentListOf(
-                    expensesTransactions[2]
-                )
+                transactions = persistentListOf(expensesTransactions[2])
             ),
             OneDayTransactionsUi(
                 date = "20 Марта",
                 totalAmount = "30 000 ₽",
-                transactions = persistentListOf(
-                    expensesTransactions[4]
-                )
+                transactions = persistentListOf(expensesTransactions[4])
             ),
             OneDayTransactionsUi(
                 date = "25 Марта",
                 totalAmount = "25 000 ₽",
-                transactions = persistentListOf(
-                    expensesTransactions[5]
-                )
+                transactions = persistentListOf(expensesTransactions[5])
             ),
         )
     }

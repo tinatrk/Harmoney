@@ -40,9 +40,7 @@ val viewModelModule = module {
         )
     }
 
-    viewModel { (
-                    categoryType: CategoryType,
-                    statisticsPeriod: StatisticsPeriod,
+    viewModel { (categoryType: CategoryType, statisticsPeriod: StatisticsPeriod,
                     categoryId: Long?) ->
         TransactionListViewModel(
             categoryType = categoryType,
@@ -69,13 +67,16 @@ val viewModelModule = module {
     }
 
     viewModel { (categoryType: CategoryType) ->
-        CategoryListViewModel(
-            categoryType = categoryType,
-        )
+        CategoryListViewModel(categoryType = categoryType)
     }
 
     viewModel { (categoryType: CategoryType, categoryId: Long?) ->
-        CategoryViewModel(categoryType = categoryType, categoryId = categoryId)
+        CategoryViewModel(
+            categoryType = categoryType,
+            categoryId = categoryId,
+            test = get(),
+            categoryUiConverter = get()
+        )
     }
 
     viewModel {
@@ -132,8 +133,6 @@ val viewModelModule = module {
 
     //временный класс
     single {
-        TestDataSource(
-            dateFormatter = get()
-        )
+        TestDataSource(dateFormatter = get())
     }
 }

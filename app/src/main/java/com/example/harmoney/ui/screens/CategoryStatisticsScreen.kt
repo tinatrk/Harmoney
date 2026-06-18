@@ -69,11 +69,15 @@ fun CategoryStatisticsScreen(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(categoryType) {
-        viewModel.obtainEvent(CategoryStatisticsEvent.OnTabClick(categoryType = categoryType))
+        viewModel.obtainEvent(
+            CategoryStatisticsEvent.OnTabClick(categoryType = categoryType)
+        )
     }
 
     LaunchedEffect(statisticsPeriod) {
-        viewModel.obtainEvent(CategoryStatisticsEvent.OnStatisticsPeriodClick(statisticsPeriod))
+        viewModel.obtainEvent(
+            CategoryStatisticsEvent.OnStatisticsPeriodClick(statisticsPeriod)
+        )
     }
 
     LaunchedEffect(Unit) {
@@ -151,10 +155,7 @@ fun CategoryStatisticsScreen(
                     actionIconRes = R.drawable.ic_list_24px,
                     actionIconDesc = stringResource(R.string.ic_list_desc),
                     onActionIconClick = {
-                        onEvent(
-                            CategoryStatisticsEvent
-                                .OnTransactionListIconClick
-                        )
+                        onEvent(CategoryStatisticsEvent.OnTransactionListIconClick)
                     },
                     isTitleCenterAlignment = true
                 )
@@ -164,9 +165,7 @@ fun CategoryStatisticsScreen(
                 HarmButton.HarmFloatingActionButton(
                     iconRes = R.drawable.ic_add_24px,
                     contentDescription = stringResource(R.string.ic_add_transaction_desc),
-                    onClick = {
-                        onEvent(CategoryStatisticsEvent.OnFloatingButtonClick)
-                    }
+                    onClick = { onEvent(CategoryStatisticsEvent.OnFloatingButtonClick) }
                 )
             }
         ) { paddingValues ->
@@ -174,11 +173,9 @@ fun CategoryStatisticsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(paddingValues),
-                tabs = state.categoryTypes,
+                tabs = CategoryType.entries.toImmutableList(),
                 selectedTabIndex = state.selectedTabIndex,
-                onTabClick = { categoryType ->
-                    onCategoryTypeChanged(categoryType)
-                }
+                onTabClick = { categoryType -> onCategoryTypeChanged(categoryType) }
             ) {
                 CategoryStatisticsContent(
                     state = state,
@@ -201,33 +198,18 @@ private fun SettingsDrawerItems(
     HarmDrawer.HarmDrawerItem(
         label = stringResource(R.string.title_drawer_item_theme),
         selected = false,
-        onClick = {
-            onEvent(
-                CategoryStatisticsEvent
-                    .OnChangeTheme
-            )
-        },
+        onClick = { onEvent(CategoryStatisticsEvent.OnChangeTheme) },
         badge = {
             HarmButton.HarmSwitch(
                 isChecked = isThemeDark,
-                onClick = {
-                    onEvent(
-                        CategoryStatisticsEvent
-                            .OnChangeTheme
-                    )
-                }
+                onClick = { onEvent(CategoryStatisticsEvent.OnChangeTheme) }
             )
         }
     )
     HarmDrawer.HarmDrawerItem(
         label = stringResource(R.string.title_drawer_item_first_day_month),
         selected = false,
-        onClick = {
-            onEvent(
-                CategoryStatisticsEvent
-                    .OnFirstDayMonthClick
-            )
-        },
+        onClick = { onEvent(CategoryStatisticsEvent.OnFirstDayMonthClick) },
         badge = {
             Text(
                 text = firstDayMonth,
@@ -239,19 +221,14 @@ private fun SettingsDrawerItems(
     HarmDrawer.HarmDrawerItem(
         label = stringResource(R.string.title_drawer_currency),
         selected = false,
-        onClick = {
-            onEvent(
-                CategoryStatisticsEvent
-                    .OnCurrencySettingsClick
-            )
-        },
+        onClick = { onEvent(CategoryStatisticsEvent.OnCurrencySettingsClick) },
         badge = {
             HarmMenu.HarmDropdownMenu(
                 expanded = isCurrencyMenuOpened,
                 menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
-                    MenuOptions(
-                        text = currency.code,
-                    ) { onEvent(CategoryStatisticsEvent.OnCurrencyChanged(currency)) }
+                    MenuOptions(text = currency.code) {
+                        onEvent(CategoryStatisticsEvent.OnCurrencyChanged(currency))
+                    }
                 }.toImmutableList(),
                 onDismissRequest = { onEvent(CategoryStatisticsEvent.OnCurrencyMenuDismiss) }
             ) {
@@ -266,12 +243,7 @@ private fun SettingsDrawerItems(
     HarmDrawer.HarmDrawerItem(
         label = stringResource(R.string.title_drawer_item_category_list),
         selected = false,
-        onClick = {
-            onEvent(
-                CategoryStatisticsEvent
-                    .OnCategoryListClick
-            )
-        }
+        onClick = { onEvent(CategoryStatisticsEvent.OnCategoryListClick) }
     )
 }
 
@@ -300,23 +272,19 @@ fun CategoryStatisticsContent(
             .background(HarmTheme.colors.surface)
     ) {
         HarmCard.HarmStatisticCard(
-            periods = state.statisticsPeriods,
+            periods = StatisticsPeriod.entries.toImmutableList(),
             data = state.statisticsDate,
             pieChartItems = state.pieChartCategories,
             total = state.total,
             selectedPeriod = state.selectedStatisticsPeriod,
-            onPeriodClick = { newPeriod ->
-                onStatisticsPeriodChanged(newPeriod)
-            }
+            onPeriodClick = { newPeriod -> onStatisticsPeriodChanged(newPeriod) }
         )
 
         if (state.categories.isEmpty()) {
             EmptyScreen()
         } else {
             Spacer(modifier = Modifier.height(16.dp))
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 items(state.categories) { category ->
                     HarmCard.HarmCategoryCardSumTransactions(
                         modifier = Modifier.fillMaxWidth(),
@@ -531,7 +499,7 @@ private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialogError() {
                 isThemeDark = true,
                 isOpenedFirstDayMonthDialog = true,
                 firstDayMonthText = "90",
-                firstDayMonthError = FirstDayMonthError.OutOfRange(1, 28),
+                firstDayMonthError = FirstDayMonthError.OutOfRange(minDay = 1, maxDay = 28),
             ),
             drawerState = drawerState
         )
@@ -552,10 +520,9 @@ private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialogError() {
                 isThemeDark = false,
                 isOpenedFirstDayMonthDialog = true,
                 firstDayMonthText = "90",
-                firstDayMonthError = FirstDayMonthError.OutOfRange(1, 28),
+                firstDayMonthError = FirstDayMonthError.OutOfRange(minDay = 1, maxDay = 28),
             ),
             drawerState = drawerState
         )
     }
 }
-

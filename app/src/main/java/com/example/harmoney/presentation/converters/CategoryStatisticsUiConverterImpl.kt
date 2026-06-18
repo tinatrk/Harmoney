@@ -26,8 +26,8 @@ class CategoryStatisticsUiConverterImpl(
                 isNeededThousandSeparator = true
             ),
             percentage = numberFormatter.toStringWithPercent(
-                categoryStatistics.percentage.toDouble(),
-                DecimalPlaces.PERCENT_DISPLAY
+                number = categoryStatistics.percentage.toDouble(),
+                decimalPlaces = DecimalPlaces.PERCENT_DISPLAY
             )
         )
     }
@@ -36,6 +36,8 @@ class CategoryStatisticsUiConverterImpl(
         categories: List<CategoryStatistics>,
         currency: Currency
     ): ImmutableList<CategoryStatisticsUi> {
-        return categories.map { map(it, currency) }.toImmutableList()
+        return categories.map {
+            map(categoryStatistics = it, currency = currency)
+        }.toImmutableList()
     }
 }

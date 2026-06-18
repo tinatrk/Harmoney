@@ -190,10 +190,7 @@ fun HarmTheme(
     )
 
     ProvideTheme(customColors, typography) {
-        MaterialTheme(
-            colorScheme = debugColors(),
-            content = content
-        )
+        MaterialTheme(colorScheme = debugColors(), content = content)
     }
 }
 
@@ -218,10 +215,7 @@ fun ProvideTheme(
 
     val rippleColor = colors.onSurfaceContainer
     val rippleConfig = remember(rippleColor) {
-        RippleConfiguration(
-            color = rippleColor,
-            rippleAlpha = RippleDefaults.RippleAlpha
-        )
+        RippleConfiguration(color = rippleColor, rippleAlpha = RippleDefaults.RippleAlpha)
     }
 
     CompositionLocalProvider(

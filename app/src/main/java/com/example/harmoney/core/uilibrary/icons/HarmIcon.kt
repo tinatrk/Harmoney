@@ -32,10 +32,7 @@ object HarmIcon {
     ) {
         Icon(
             modifier = modifier
-                .background(
-                    color = Color(backgroundColorValue),
-                    shape = CircleShape
-                )
+                .background(color = Color(backgroundColorValue), shape = CircleShape)
                 .padding(8.dp)
                 .size(24.dp),
             painter = painterResource(iconRes),

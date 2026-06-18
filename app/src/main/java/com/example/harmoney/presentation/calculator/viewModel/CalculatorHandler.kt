@@ -39,7 +39,7 @@ class CalculatorHandler {
         var result = if (results.isNotEmpty()) {
             results.last()
         } else {
-            CalculatorResult(ZERO_RESULT, EMPTY_STRING)
+            CalculatorResult(resultNumeric = ZERO_RESULT, resultString = EMPTY_STRING)
         }
         if (isNeedProcessing) {
             result = processResult(result.resultNumeric)
@@ -59,7 +59,7 @@ class CalculatorHandler {
                     replaceLastElement(
                         equation = equation,
                         element = symbol,
-                        CalculatorSymbolType.NUMBER
+                        symbolType = CalculatorSymbolType.NUMBER
                     )
                 } else {
                     addDigit(
@@ -137,11 +137,8 @@ class CalculatorHandler {
                 }
             }
 
-            val lastSymbol = if (equation.isNotEmpty()) equation.last()
-                .toString() else EMPTY_STRING
-
-            lastSymbolType =
-                CalculatorSymbol.getTypeFromString(lastSymbol)
+            val lastSymbol = if (equation.isNotEmpty()) equation.last().toString() else EMPTY_STRING
+            lastSymbolType = CalculatorSymbol.getTypeFromString(lastSymbol)
 
             results.removeAt(results.lastIndex)
             equation
@@ -187,7 +184,7 @@ class CalculatorHandler {
                     replaceLastElement(
                         equation = equation,
                         element = operation.symbol,
-                        CalculatorSymbolType.OPERATION
+                        symbolType = CalculatorSymbolType.OPERATION
                     )
                 }
             }
@@ -367,7 +364,7 @@ class CalculatorHandler {
             processResult(resultNumeric)
         } catch (e: IllegalArgumentException) {
             e.message?.let { Log.e(HARM_APP_TAG, it) }
-            CalculatorResult(ZERO_RESULT, EMPTY_STRING)
+            CalculatorResult(resultNumeric = ZERO_RESULT, resultString = EMPTY_STRING)
         }
 
         return res
@@ -386,8 +383,7 @@ class CalculatorHandler {
             } else {
                 EMPTY_STRING
             }
-            val symbolType =
-                CalculatorSymbol.getTypeFromString(lastSymbol)
+            val symbolType = CalculatorSymbol.getTypeFromString(lastSymbol)
 
             completedEquation = when (symbolType) {
                 CalculatorSymbolType.OPERATION -> {
@@ -415,18 +411,16 @@ class CalculatorHandler {
 
         //Заменяем x на *
         completedEquation =
-            completedEquation
-                .replace(
-                    CalculatorSymbol.MULTIPLY.symbol,
-                    CalculatorSymbol.getMultiplyMathSymbol()
-                )
+            completedEquation.replace(
+                oldValue = CalculatorSymbol.MULTIPLY.symbol,
+                newValue = CalculatorSymbol.getMultiplyMathSymbol()
+            )
         //Заменяем ÷ на /
         completedEquation =
-            completedEquation
-                .replace(
-                    CalculatorSymbol.DIVIDE.symbol,
-                    CalculatorSymbol.getDivideMathSymbol()
-                )
+            completedEquation.replace(
+                oldValue = CalculatorSymbol.DIVIDE.symbol,
+                newValue = CalculatorSymbol.getDivideMathSymbol()
+            )
 
         return completedEquation
     }
@@ -435,9 +429,7 @@ class CalculatorHandler {
         val longres = result.toLong()
         val digits = if (longres.toDouble() == result) MIN_DECIMAL_PLACES else MAX_DECIMAL_PLACES
 
-        val rounded = result
-            .toBigDecimal()
-            .setScale(digits, RoundingMode.HALF_UP)
+        val rounded = result.toBigDecimal().setScale(digits, RoundingMode.HALF_UP)
 
         return CalculatorResult(rounded.toDouble(), rounded.toString())
     }

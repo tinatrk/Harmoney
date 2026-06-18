@@ -49,8 +49,7 @@ fun HarmBottomSheet(
             Color.Transparent
         },
         dragHandle = {
-            BottomSheetDefaults
-                .DragHandle(color = HarmTheme.colors.onSurfaceContainerLow)
+            BottomSheetDefaults.DragHandle(color = HarmTheme.colors.onSurfaceContainerLow)
         },
         content = {
             Box(

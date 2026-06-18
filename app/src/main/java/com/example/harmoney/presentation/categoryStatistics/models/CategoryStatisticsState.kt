@@ -13,16 +13,14 @@ import kotlinx.collections.immutable.toImmutableList
 @Stable
 data class CategoryStatisticsState(
     val currentBalance: String = "0.00",
-    val categoryTypes: ImmutableList<CategoryType> = CategoryType.entries.toImmutableList(),
-    val selectedCategoryType: CategoryType = CategoryType.Expenses,
-    val selectedTabIndex: Int = CategoryType.Expenses.ordinal,
+
+    val selectedCategoryType: CategoryType = CategoryType.EXPENSES,
+    val selectedTabIndex: Int = CategoryType.EXPENSES.ordinal,
 
     val categories: ImmutableList<CategoryStatisticsUi> = persistentListOf(),
     val pieChartCategories: ImmutableList<PieChartItem> = persistentListOf(),
     val total: String = "0.00",
 
-    val statisticsPeriods: ImmutableList<StatisticsPeriod> =
-        StatisticsPeriod.entries.toImmutableList(),
     val statisticsDate: String = "",
     val selectedStatisticsPeriod: StatisticsPeriod = StatisticsPeriod.CURRENT_MONTH,
 

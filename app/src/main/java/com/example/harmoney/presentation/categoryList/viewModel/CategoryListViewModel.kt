@@ -66,8 +66,9 @@ class CategoryListViewModel(
 
     private fun onCreateCategory() {
         _action.tryEmit(
-            CategoryListAction
-                .NavigateToCreatingCategory(_screenState.value.selectedCategoryType.id)
+            CategoryListAction.NavigateToCreatingCategory(
+                _screenState.value.selectedCategoryType.id
+            )
         )
     }
 
@@ -81,8 +82,8 @@ class CategoryListViewModel(
 
     private fun getCategoryInfo(categoryType: CategoryType): String {
         return when (categoryType) {
-            CategoryType.Expenses -> "Информация по расходам"
-            CategoryType.Income -> "Информация по доходам"
+            CategoryType.EXPENSES -> "Информация по расходам"
+            CategoryType.INCOME -> "Информация по доходам"
         }
     }
 }

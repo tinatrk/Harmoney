@@ -295,9 +295,7 @@ private fun HarmSetFirstDayMonthDialog_DarkErrorPreview() {
             onDismissRequest = {},
             isError = true,
             supportingText = stringResource(
-                R.string.error_incorrect_first_day_month_pattern,
-                1,
-                28
+                R.string.error_incorrect_first_day_month_pattern, 1, 28
             )
         )
     }
@@ -315,9 +313,7 @@ private fun HarmSetFirstDayMonthDialog_LightErrorPreview() {
             onDismissRequest = {},
             isError = true,
             supportingText = stringResource(
-                R.string.error_incorrect_first_day_month_pattern,
-                1,
-                28
+                R.string.error_incorrect_first_day_month_pattern, 1, 28
             )
         )
     }
@@ -330,7 +326,7 @@ private fun HarmWarningDialog_DarkPreview() {
         HarmDialog.HarmWarningDialog(
             dialogTitle = stringResource(R.string.title_dialog_transaction_save_error),
             onDismissRequest = {},
-            dialogText = stringResource(R.string.text_dialog_transaction_save_error)
+            dialogText = stringResource(R.string.text_dialog_saving_error)
         )
     }
 }
@@ -342,7 +338,7 @@ private fun HarmWarningDialog_LightPreview() {
         HarmDialog.HarmWarningDialog(
             dialogTitle = stringResource(R.string.title_dialog_transaction_save_error),
             onDismissRequest = {},
-            dialogText = stringResource(R.string.text_dialog_transaction_save_error)
+            dialogText = stringResource(R.string.text_dialog_saving_error)
         )
     }
 }

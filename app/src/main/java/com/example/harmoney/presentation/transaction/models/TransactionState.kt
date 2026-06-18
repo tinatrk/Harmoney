@@ -6,15 +6,13 @@ import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.presentation.models.CategoryUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 
 @Stable
 data class TransactionState(
     val isCreateTransactionScreen: Boolean = true,
 
-    val categoryTypes: ImmutableList<CategoryType> = CategoryType.entries.toImmutableList(),
-    val selectedCategoryType: CategoryType = CategoryType.Expenses,
-    val selectedTabIndex: Int = CategoryType.Expenses.ordinal,
+    val selectedCategoryType: CategoryType = CategoryType.EXPENSES,
+    val selectedTabIndex: Int = CategoryType.EXPENSES.ordinal,
 
     val selectedDate: String = "",
     val isDatePickerOpened: Boolean = false,

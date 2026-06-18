@@ -18,10 +18,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.update
 
-@Suppress(
-    "detekt:LongParameterList", "detekt:TooManyFunctions",
-    "detekt:CyclomaticComplexMethod"
-)
+@Suppress("detekt:LongParameterList", "detekt:TooManyFunctions")
 class CategoryStatisticsViewModel(
     categoryType: CategoryType,
     statisticsPeriod: StatisticsPeriod,
@@ -42,11 +39,10 @@ class CategoryStatisticsViewModel(
         //TODO() считать тему из shared preferences
         //TODO() считать валюту из shared preferences
         writableState.update {
-            val categories =
-                test.getCategoriesForStatistics(
-                    it.selectedStatisticsPeriod,
-                    it.selectedCategoryType
-                )
+            val categories = test.getCategoriesForStatistics(
+                it.selectedStatisticsPeriod,
+                it.selectedCategoryType
+            )
             val formattedCategories = categoryStatisticsUiConverter.map(categories, it.currency)
 
             val total = categories.sumOf { category -> category.totalAmount }
@@ -78,18 +74,22 @@ class CategoryStatisticsViewModel(
         }
     }
 
+    @Suppress("detekt:CyclomaticComplexMethod")
     override fun obtainEvent(event: CategoryStatisticsEvent) {
         when (event) {
-            is CategoryStatisticsEvent.OnTabClick -> onTabClick(event.categoryType)
+            is CategoryStatisticsEvent.OnTabClick -> {
+                onTabClick(newCategoryType = event.categoryType)
+            }
+
             is CategoryStatisticsEvent.OnSettingsIconClick -> onNavigateToSettings()
-            is CategoryStatisticsEvent.OnTransactionListIconClick -> onNavigateToTransactionList(
-                null
-            )
+            is CategoryStatisticsEvent.OnTransactionListIconClick -> {
+                onNavigateToTransactionList(categoryId = null)
+            }
 
             is CategoryStatisticsEvent.OnFloatingButtonClick -> onNavigateToTransaction()
-            is CategoryStatisticsEvent.OnCategoryClick -> onNavigateToTransactionList(
-                event.categoryId
-            )
+            is CategoryStatisticsEvent.OnCategoryClick -> {
+                onNavigateToTransactionList(event.categoryId)
+            }
 
             is CategoryStatisticsEvent.OnStatisticsPeriodClick -> {
                 onStatisticsPeriodClick(event.newPeriod)
@@ -123,11 +123,10 @@ class CategoryStatisticsViewModel(
     private fun onTabClick(newCategoryType: CategoryType) {
         if (writableState.value.selectedCategoryType.id != newCategoryType.id) {
             writableState.update {
-                val categories =
-                    test.getCategoriesForStatistics(
-                        statisticsPeriod = it.selectedStatisticsPeriod,
-                        categoryType = newCategoryType
-                    )
+                val categories = test.getCategoriesForStatistics(
+                    statisticsPeriod = it.selectedStatisticsPeriod,
+                    categoryType = newCategoryType
+                )
                 val formattedCategories = categoryStatisticsUiConverter.map(categories, it.currency)
 
                 val total = categories.sumOf { category -> category.totalAmount }
@@ -137,8 +136,8 @@ class CategoryStatisticsViewModel(
                     selectedTabIndex = newCategoryType.ordinal,
                     categories = categoryStatisticsUiConverter.map(categories, it.currency),
                     pieChartCategories = getPieChartCategories(
-                        categories,
-                        formattedCategories.map { category ->
+                        categories = categories,
+                        categoriesAmountString = formattedCategories.map { category ->
                             category.totalAmount
                         }
                     ),
@@ -158,11 +157,9 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onNavigateToTransactionList(categoryId: Long?) {
-        writableAction
-            .tryEmit(
-                CategoryStatisticsAction
-                    .NavigateToTransactionList(categoryId)
-            )
+        writableAction.tryEmit(
+            CategoryStatisticsAction.NavigateToTransactionList(categoryId)
+        )
     }
 
     private fun onNavigateToTransaction() {
@@ -186,8 +183,8 @@ class CategoryStatisticsViewModel(
                 it.copy(
                     categories = categoryStatisticsUiConverter.map(categories, it.currency),
                     pieChartCategories = getPieChartCategories(
-                        categories,
-                        formattedCategories.map { category ->
+                        categories = categories,
+                        categoriesAmountString = formattedCategories.map { category ->
                             category.totalAmount
                         }
                     ),
@@ -234,21 +231,13 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onThemeChanged() {
-        writableState.update {
-            it.copy(
-                isThemeDark = !writableState.value.isThemeDark
-            )
-        }
+        writableState.update { it.copy(isThemeDark = !writableState.value.isThemeDark) }
         //TODO() в будущем поменять логику на shared preferences
     }
 
     private fun onFirstDayMonthClick() {
         if (!state.value.isOpenedFirstDayMonthDialog) {
-            writableState.update {
-                it.copy(
-                    isOpenedFirstDayMonthDialog = true
-                )
-            }
+            writableState.update { it.copy(isOpenedFirstDayMonthDialog = true) }
         }
     }
 
@@ -256,7 +245,9 @@ class CategoryStatisticsViewModel(
         val firstDay = state.value.firstDayMonthText.toIntOrNull()
         val isFirstDayCorrect = if (firstDay != null) {
             firstDay in MIN_FIRST_DAY_MONTH..MAX_FIRST_DAY_MONTH
-        } else false
+        } else {
+            false
+        }
 
         if (isFirstDayCorrect) {
             writableState.update {
@@ -284,15 +275,17 @@ class CategoryStatisticsViewModel(
         val firstDay = newText.toIntOrNull()
         val isFirstDayCorrect = if (firstDay != null) {
             firstDay in MIN_FIRST_DAY_MONTH..MAX_FIRST_DAY_MONTH
-        } else false
+        } else {
+            false
+        }
 
         writableState.update {
             it.copy(
                 firstDayMonthText = newText,
                 firstDayMonthError = if (!isFirstDayCorrect) {
                     FirstDayMonthError.OutOfRange(
-                        MIN_FIRST_DAY_MONTH,
-                        MAX_FIRST_DAY_MONTH
+                        minDay = MIN_FIRST_DAY_MONTH,
+                        maxDay = MAX_FIRST_DAY_MONTH
                     )
                 } else {
                     FirstDayMonthError.None
@@ -303,9 +296,7 @@ class CategoryStatisticsViewModel(
 
     private fun onCurrencySettingsClick() {
         writableState.update {
-            it.copy(
-                isCurrencyMenuOpened = !it.isCurrencyMenuOpened
-            )
+            it.copy(isCurrencyMenuOpened = !it.isCurrencyMenuOpened)
         }
     }
 
@@ -313,10 +304,7 @@ class CategoryStatisticsViewModel(
         // TODO() реализовать пересчет баланса, списка категорий и общей суммы для новой валюты
         if (state.value.currency.code != newCurrency.code) {
             writableState.update {
-                it.copy(
-                    currency = newCurrency,
-                    isCurrencyMenuOpened = false
-                )
+                it.copy(currency = newCurrency, isCurrencyMenuOpened = false)
             }
         } else {
             onCurrencyMenuDismiss()
@@ -324,11 +312,7 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onCurrencyMenuDismiss() {
-        writableState.update {
-            it.copy(
-                isCurrencyMenuOpened = false
-            )
-        }
+        writableState.update { it.copy(isCurrencyMenuOpened = false) }
     }
 
     private companion object {

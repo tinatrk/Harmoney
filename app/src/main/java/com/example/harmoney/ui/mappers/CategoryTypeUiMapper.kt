@@ -5,7 +5,7 @@ import com.example.harmoney.domain.models.CategoryType
 
 object CategoryTypeUiMapper {
     fun CategoryType.toStringRes(): Int = when (this) {
-        CategoryType.Expenses -> R.string.category_type_expenses_title
-        CategoryType.Income -> R.string.category_type_income_title
+        CategoryType.EXPENSES -> R.string.category_type_expenses_title
+        CategoryType.INCOME -> R.string.category_type_income_title
     }
 }

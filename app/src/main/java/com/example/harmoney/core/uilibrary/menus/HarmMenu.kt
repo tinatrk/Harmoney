@@ -67,9 +67,7 @@ object HarmMenu {
                 shape = RoundedCornerShape(12.dp),
                 scrollState = scrollState,
             ) {
-                Column(
-                    modifier = Modifier.background(Color.Unspecified)
-                ) {
+                Column(modifier = Modifier.background(Color.Unspecified)) {
                     menuOptions.forEach { option ->
                         DropdownMenuItem(
                             text = {
@@ -104,9 +102,9 @@ private fun HarmDropdownMenu_DarkPreview() {
             expanded = true,
             onDismissRequest = {},
             menuOptions = persistentListOf(
-                MenuOptions(text = "EUR", {}),
-                MenuOptions(text = "RUB", {}),
-                MenuOptions(text = "USD", {})
+                MenuOptions(text = "EUR", onClick = {}),
+                MenuOptions(text = "RUB", onClick = {}),
+                MenuOptions(text = "USD", onClick = {})
             ),
             menuSource = {
                 Icon(
@@ -127,9 +125,9 @@ private fun HarmDropdownMenu_LightPreview() {
             expanded = true,
             onDismissRequest = {},
             menuOptions = persistentListOf(
-                MenuOptions(text = "EUR", {}),
-                MenuOptions(text = "RUB", {}),
-                MenuOptions(text = "USD", {})
+                MenuOptions(text = "EUR", onClick = {}),
+                MenuOptions(text = "RUB", onClick = {}),
+                MenuOptions(text = "USD", onClick = {})
             ),
             menuSource = {
                 Icon(

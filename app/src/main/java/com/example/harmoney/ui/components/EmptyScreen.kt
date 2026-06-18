@@ -56,15 +56,11 @@ fun EmptyScreen(
 @Preview(showSystemUi = true, showBackground = true, backgroundColor = 0xFF201923)
 @Composable
 fun EmptyScreen_DarkPreview() {
-    HarmTheme(darkTheme = true) {
-        EmptyScreen()
-    }
+    HarmTheme(darkTheme = true) { EmptyScreen() }
 }
 
 @Preview(showSystemUi = true, showBackground = true, backgroundColor = 0xFFFEF7FF)
 @Composable
 fun EmptyScreen_LightPreview() {
-    HarmTheme(darkTheme = false) {
-        EmptyScreen()
-    }
+    HarmTheme(darkTheme = false) { EmptyScreen() }
 }

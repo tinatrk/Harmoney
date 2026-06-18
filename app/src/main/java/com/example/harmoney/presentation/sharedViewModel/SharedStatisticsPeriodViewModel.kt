@@ -14,9 +14,7 @@ class SharedStatisticsPeriodViewModel : ViewModel() {
 
     fun statisticsPeriodChanged(newStatisticsPeriod: StatisticsPeriod) {
         if (selectedStatisticsPeriod.value.id != newStatisticsPeriod.id) {
-            _selectedStatisticsPeriod.update {
-                newStatisticsPeriod
-            }
+            _selectedStatisticsPeriod.update { newStatisticsPeriod }
         }
     }
 }

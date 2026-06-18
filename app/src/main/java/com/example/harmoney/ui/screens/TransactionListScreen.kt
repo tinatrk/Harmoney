@@ -73,8 +73,7 @@ fun TransactionListScreen(
 
     LaunchedEffect(statisticsPeriod) {
         viewModel.obtainEvent(
-            TransactionListEvent
-                .OnStatisticsPeriodClick(statisticsPeriod)
+            TransactionListEvent.OnStatisticsPeriodClick(statisticsPeriod)
         )
     }
 
@@ -130,9 +129,7 @@ fun TransactionListScreen(
             HarmButton.HarmFloatingActionButton(
                 iconRes = R.drawable.ic_add_24px,
                 contentDescription = stringResource(R.string.ic_add_transaction_desc),
-                onClick = {
-                    onEvent(TransactionListEvent.OnFloatingButtonClick)
-                }
+                onClick = { onEvent(TransactionListEvent.OnFloatingButtonClick) }
             )
         }
     ) { paddingValues ->
@@ -142,9 +139,7 @@ fun TransactionListScreen(
                 .padding(paddingValues),
             tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = state.selectedTabIndex,
-            onTabClick = { categoryType ->
-                onCategoryTypeChanged(categoryType)
-            }
+            onTabClick = { categoryType -> onCategoryTypeChanged(categoryType) }
         ) {
             TransactionListContent(
                 state = state,
@@ -171,9 +166,7 @@ fun TransactionListContent(
             data = state.statisticsDate,
             periods = StatisticsPeriod.entries.toImmutableList(),
             selectedPeriod = state.selectedStatisticsPeriod,
-            onPeriodClick = { newPeriod ->
-                onStatisticsPeriodChanged(newPeriod)
-            }
+            onPeriodClick = { newPeriod -> onStatisticsPeriodChanged(newPeriod) }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -213,10 +206,7 @@ fun TransactionListContent(
                         MenuOptions(
                             text = category.name,
                             onClick = {
-                                onEvent(
-                                    TransactionListEvent
-                                        .OnFilterMenuChanged(category)
-                                )
+                                onEvent(TransactionListEvent.OnFilterMenuChanged(category))
                             }
                         )
                     }.toImmutableList()
@@ -224,9 +214,7 @@ fun TransactionListContent(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {
-                                onEvent(TransactionListEvent.OnFilterMenuClick)
-                            },
+                            .clickable { onEvent(TransactionListEvent.OnFilterMenuClick) },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.End
                     ) {
@@ -254,9 +242,7 @@ fun TransactionListContent(
         } else {
             Spacer(modifier = Modifier.height(12.dp))
 
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 items(state.oneDayTransactionsList) { day ->
                     HarmCard.HarmCardTransactionList(
                         data = day.date,
@@ -286,7 +272,7 @@ private fun TransactionListScreen_DarkEmptyPreview() {
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "0 ₽",
                 oneDayTransactionsList = persistentListOf(),
-                selectedFilter = TransactionsFilterUi(0, "Все категории")
+                selectedFilter = TransactionsFilterUi(id = 0, name = "Все категории")
             ),
             onEvent = {},
             onCategoryTypeChanged = {},
@@ -306,7 +292,7 @@ fun TransactionListScreen_LightEmptyPreview() {
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "0 ₽",
                 oneDayTransactionsList = persistentListOf(),
-                selectedFilter = TransactionsFilterUi(0, "Все категории")
+                selectedFilter = TransactionsFilterUi(id = 0, name = "Все категории")
             ),
             onEvent = {},
             onCategoryTypeChanged = {},
@@ -326,7 +312,7 @@ private fun TransactionListScreen_DarkPreview() {
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "62 000 ₽",
                 oneDayTransactionsList = PreviewData.getExpensesTransactions(),
-                selectedFilter = TransactionsFilterUi(0, "Все категории")
+                selectedFilter = TransactionsFilterUi(id = 0, name = "Все категории")
             ),
             onEvent = {},
             onCategoryTypeChanged = {},
@@ -346,7 +332,7 @@ private fun TransactionListScreen_LightPreview() {
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "62 000 ₽",
                 oneDayTransactionsList = PreviewData.getExpensesTransactions(),
-                selectedFilter = TransactionsFilterUi(0, "Все категории")
+                selectedFilter = TransactionsFilterUi(id = 0, name = "Все категории")
             ),
             onEvent = {},
             onCategoryTypeChanged = {},
@@ -366,7 +352,7 @@ private fun TransactionListScreen_DarkMenuPreview() {
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "62 000 ₽",
                 oneDayTransactionsList = PreviewData.getExpensesTransactions(),
-                selectedFilter = TransactionsFilterUi(0, "Все категории"),
+                selectedFilter = TransactionsFilterUi(id = 0, name = "Все категории"),
                 isFilterMenuOpened = true,
                 transactionsFilters = PreviewData.getExpensesFilters()
             ),
@@ -388,7 +374,7 @@ private fun TransactionListScreen_LightMenuPreview() {
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "62 000 ₽",
                 oneDayTransactionsList = PreviewData.getExpensesTransactions(),
-                selectedFilter = TransactionsFilterUi(0, "Все категории"),
+                selectedFilter = TransactionsFilterUi(id = 0, name = "Все категории"),
                 isFilterMenuOpened = true,
                 transactionsFilters = PreviewData.getExpensesFilters()
             ),
@@ -410,7 +396,7 @@ private fun TransactionListScreen_DarkFilteredPreview() {
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "56 500 ₽",
                 oneDayTransactionsList = PreviewData.getFilteredTransactions(),
-                selectedFilter = TransactionsFilterUi(3, "Отпуск"),
+                selectedFilter = TransactionsFilterUi(id = 3, name = "Отпуск"),
                 isFilterMenuOpened = false,
             ),
             onEvent = {},
@@ -431,7 +417,7 @@ private fun TransactionListScreen_LightFilteredPreview() {
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 totalAmount = "56 500 ₽",
                 oneDayTransactionsList = PreviewData.getFilteredTransactions(),
-                selectedFilter = TransactionsFilterUi(3, "Отпуск"),
+                selectedFilter = TransactionsFilterUi(id = 3, name = "Отпуск"),
                 isFilterMenuOpened = false,
             ),
             onEvent = {},
@@ -440,4 +426,3 @@ private fun TransactionListScreen_LightFilteredPreview() {
         )
     }
 }
-
