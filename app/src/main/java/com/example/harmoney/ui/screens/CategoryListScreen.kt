@@ -42,7 +42,7 @@ fun CategoryListScreen(
     onNavigateToOpenCategory: (categoryId: Long?) -> Unit,
 ) {
     val categoryType by sharedCategoryTypeVM.selectedCategoryType.collectAsStateWithLifecycle()
-    val state by viewModel.screenState.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     LaunchedEffect(categoryType) {
@@ -117,15 +117,6 @@ fun CategoryListContent(
             .background(HarmTheme.colors.surface)
             .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = state.categoryInfo,
-            style = HarmTheme.typography.bodyLarge,
-            color = HarmTheme.colors.onSurface,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = "categoryTypeId = ${state.selectedCategoryType.id}",
