@@ -94,7 +94,9 @@
     <string name="title_sort_user_order">Пользовательская</string>
 
     <!-- Текст для placeholders -->
+    <string name="placeholder_empty_screen">Заглушка для пустого экрана</string>
     <string name="placeholder_empty_transaction_list">У вас нет транзакций данного типа</string>
+    <string name="placeholder_empty_category_list">У вас нет категорий данного типа</string>
 
     <!-- label для textField -->
     <string name="label_text_field_data">Дата</string>

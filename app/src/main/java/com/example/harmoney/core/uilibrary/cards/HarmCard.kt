@@ -488,8 +488,8 @@ private fun HarmCategoryCardWithMenu_DarkPreview() {
             iconContentDescription = null,
             isMenuOpened = true,
             menuOptions = persistentListOf(
-                MenuOptions(stringResource(R.string.ic_edit_desc), {}),
-                MenuOptions(stringResource(R.string.ic_delete_desc), {}),
+                MenuOptions(text = stringResource(R.string.ic_edit_desc), onClick = {}),
+                MenuOptions(text = stringResource(R.string.ic_delete_desc), onClick = {}),
             ),
             onMenuClick = {},
             onMenuDismiss = {}
@@ -520,8 +520,8 @@ private fun HarmCategoryCardWithMenu_LightPreview() {
             iconContentDescription = null,
             isMenuOpened = true,
             menuOptions = persistentListOf(
-                MenuOptions(stringResource(R.string.ic_edit_desc), {}),
-                MenuOptions(stringResource(R.string.ic_delete_desc), {}),
+                MenuOptions(text = stringResource(R.string.ic_edit_desc), onClick = {}),
+                MenuOptions(text = stringResource(R.string.ic_delete_desc), onClick = {}),
             ),
             onMenuClick = {},
             onMenuDismiss = {}

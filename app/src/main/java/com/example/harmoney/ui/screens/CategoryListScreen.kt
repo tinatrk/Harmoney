@@ -2,8 +2,10 @@ package com.example.harmoney.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -32,6 +34,7 @@ import com.example.harmoney.presentation.categoryList.models.CategoryListState
 import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
 import com.example.harmoney.presentation.models.MenuOptions
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
+import com.example.harmoney.ui.components.EmptyScreen
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.mappers.CategoryIconUiMapper.toDrawableRes
 import com.example.harmoney.ui.mappers.CategorySortOptionUiMapper.toStringRes
@@ -108,14 +111,14 @@ fun CategoryListScreen(
                         menuOptions = CategorySortOption.entries.map { sortOption ->
                             MenuOptions(
                                 text = stringResource(sortOption.toStringRes()),
-                                onClick = {
-                                    onEvent(
-                                        CategoryListEvent
-                                            .OnSortOptionClick(sortOption)
-                                    )
-                                }
-                            )
-                        }.toImmutableList()
+                                expanded = state.selectedSortOption.id == sortOption.id
+                            ) {
+                                onEvent(
+                                    CategoryListEvent.OnSortOptionClick(sortOption)
+                                )
+                            }
+                        }.toImmutableList(),
+                        isNeededHighlightSelectedOption = true
                     )
                 },
                 isTitleCenterAlignment = false
@@ -140,7 +143,7 @@ fun CategoryListScreen(
         ) {
             CategoryListContent(
                 state = state,
-                onEvent = onEvent,
+                onEvent = onEvent
             )
         }
     }
@@ -152,24 +155,35 @@ fun CategoryListContent(
     onEvent: (CategoryListEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyVerticalGrid(
-        modifier = modifier
-            .fillMaxSize()
-            .background(HarmTheme.colors.surface)
-            .padding(horizontal = 16.dp, vertical = 16.dp),
-        columns = GridCells.Fixed(3),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        items(state.categories) { category ->
-            HarmButton.HarmCircularIconButtonWithTitle(
-                iconRes = category.icon.icon.toDrawableRes(),
-                iconBackground = Color(category.icon.color.background),
-                iconTitle = category.name,
-                contentDescription =
-                    stringResource(R.string.ic_category_edit_desc, category.name),
-                onClick = { onEvent(CategoryListEvent.OnCategoryClick(category.id)) }
-            )
+    if (state.categories.isEmpty()) {
+        EmptyScreen(message = stringResource(R.string.placeholder_empty_category_list))
+    } else {
+        LazyVerticalGrid(
+            modifier = modifier
+                .fillMaxSize()
+                .background(HarmTheme.colors.surface)
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+            columns = GridCells.Fixed(3),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            items(state.categories) { category ->
+                HarmButton.HarmCircularIconButtonWithTitle(
+                    iconRes = category.icon.icon.toDrawableRes(),
+                    iconBackground = Color(category.icon.color.background),
+                    iconTitle = category.name,
+                    contentDescription =
+                        stringResource(R.string.ic_category_edit_desc, category.name),
+                    onClick = { onEvent(CategoryListEvent.OnCategoryClick(category.id)) }
+                )
+            }
+            item {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                )
+            }
         }
     }
 }

@@ -209,11 +209,10 @@ fun TransactionListContent(
                     menuOptions = state.transactionsFilters.map { category ->
                         MenuOptions(
                             text = category.name,
-                            onClick = {
-                                onEvent(TransactionListEvent.OnFilterMenuChanged(category))
-                            }
-                        )
-                    }.toImmutableList()
+                            expanded = state.selectedFilter.id == category.id
+                        ) { onEvent(TransactionListEvent.OnFilterMenuChanged(category)) }
+                    }.toImmutableList(),
+                    isNeededHighlightSelectedOption = true
                 ) {
                     Row(
                         modifier = Modifier
@@ -242,7 +241,7 @@ fun TransactionListContent(
         }
 
         if (state.oneDayTransactionsList.isEmpty()) {
-            EmptyScreen()
+            EmptyScreen(message = stringResource(R.string.placeholder_empty_transaction_list))
         } else {
             Spacer(modifier = Modifier.height(12.dp))
 

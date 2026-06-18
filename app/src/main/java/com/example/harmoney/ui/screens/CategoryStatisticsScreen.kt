@@ -136,7 +136,7 @@ fun CategoryStatisticsScreen(
                 isThemeDark = state.isThemeDark,
                 firstDayMonth = state.firstDayMonth.toString(),
                 isCurrencyMenuOpened = state.isCurrencyMenuOpened,
-                currentCurrency = state.currency.code,
+                currentCurrencyCode = state.currency.code,
                 onEvent = onEvent
             )
         }
@@ -198,7 +198,7 @@ private fun SettingsDrawerItems(
     isThemeDark: Boolean,
     firstDayMonth: String,
     isCurrencyMenuOpened: Boolean,
-    currentCurrency: String,
+    currentCurrencyCode: String,
     onEvent: (CategoryStatisticsEvent) -> Unit,
 ) {
     HarmDrawer.HarmDrawerItem(
@@ -232,14 +232,15 @@ private fun SettingsDrawerItems(
             HarmMenu.HarmDropdownMenu(
                 expanded = isCurrencyMenuOpened,
                 menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
-                    MenuOptions(text = currency.code) {
+                    MenuOptions(text = currency.code, expanded = currentCurrencyCode == currency.code) {
                         onEvent(CategoryStatisticsEvent.OnCurrencyChanged(currency))
                     }
                 }.toImmutableList(),
-                onDismissRequest = { onEvent(CategoryStatisticsEvent.OnCurrencyMenuDismiss) }
+                onDismissRequest = { onEvent(CategoryStatisticsEvent.OnCurrencyMenuDismiss) },
+                isNeededHighlightSelectedOption = true
             ) {
                 Text(
-                    text = currentCurrency,
+                    text = currentCurrencyCode,
                     style = HarmTheme.typography.bodyLarge,
                     color = HarmTheme.colors.onSurface
                 )
@@ -287,7 +288,7 @@ fun CategoryStatisticsContent(
         )
 
         if (state.categories.isEmpty()) {
-            EmptyScreen()
+            EmptyScreen(message = stringResource(R.string.placeholder_empty_transaction_list))
         } else {
             Spacer(modifier = Modifier.height(16.dp))
             LazyColumn(modifier = Modifier.fillMaxWidth()) {

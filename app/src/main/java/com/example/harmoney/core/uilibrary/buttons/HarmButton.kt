@@ -290,12 +290,14 @@ object HarmButton {
         onMenuClick: () -> Unit,
         onMenuDismiss: () -> Unit,
         modifier: Modifier = Modifier,
+        isNeededHighlightSelectedOption: Boolean = false,
     ) {
         HarmMenu.HarmDropdownMenu(
             expanded = expanded,
             menuOptions = menuOptions,
             onDismissRequest = onMenuDismiss,
-            modifier = modifier
+            modifier = modifier,
+            isNeededHighlightSelectedOption = isNeededHighlightSelectedOption
         ) {
             HarmCardIconButton(
                 iconRes = iconRes,

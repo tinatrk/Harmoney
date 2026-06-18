@@ -37,6 +37,9 @@ object HarmMenu {
      * `expanded` - state is menu opened
      *
      * `menuSource` - the object that opens the menu when clicked on. For example icon (optional)
+     *
+     * `isNeededHighlightSelectedOption` - is needed highlight of the selected option
+     * (color indication)
      * */
     @Composable
     fun HarmDropdownMenu(
@@ -44,6 +47,7 @@ object HarmMenu {
         menuOptions: ImmutableList<MenuOptions>,
         onDismissRequest: () -> Unit,
         modifier: Modifier = Modifier,
+        isNeededHighlightSelectedOption: Boolean = false,
         menuSource: @Composable (() -> Unit)? = null,
     ) {
         val scrollState = rememberScrollState()
@@ -70,6 +74,13 @@ object HarmMenu {
                 Column(modifier = Modifier.background(Color.Unspecified)) {
                     menuOptions.forEach { option ->
                         DropdownMenuItem(
+                            modifier = Modifier.background(
+                                if (isNeededHighlightSelectedOption && option.expanded) {
+                                    HarmTheme.colors.primary
+                                } else {
+                                    Color.Unspecified
+                                }
+                            ),
                             text = {
                                 Text(
                                     modifier = Modifier.background(Color.Unspecified),
@@ -79,7 +90,13 @@ object HarmMenu {
                             },
                             onClick = option.onClick,
                             colors = MenuDefaults.itemColors(
-                                textColor = HarmTheme.colors.onSurfaceVariant,
+                                textColor = if (isNeededHighlightSelectedOption
+                                    && option.expanded
+                                ) {
+                                    HarmTheme.colors.onPrimary
+                                } else {
+                                    HarmTheme.colors.onSurfaceVariant
+                                },
                             )
                         )
                     }
