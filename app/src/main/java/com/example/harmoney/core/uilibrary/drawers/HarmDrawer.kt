@@ -23,7 +23,7 @@ import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.domain.models.Currency
-import com.example.harmoney.presentation.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.collections.immutable.toImmutableList
 
@@ -184,7 +184,7 @@ private fun PreviewDrawerItems(
             HarmMenu.HarmDropdownMenu(
                 expanded = isCurrencyMenuOpened,
                 menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
-                    MenuOptions(text = currency.code) {}
+                    MenuOption(text = currency.code) {}
                 }.toImmutableList(),
                 onDismissRequest = {}
             ) {

@@ -26,6 +26,7 @@ koin = "4.0.2"
 exp4j = "0.4.8"
 kotlinxCollectionsImmutable = "0.3.7"
 lucf15ModalBottomSheet = "1.0.1"
+composeReorderable = "0.9.6"
 
 [libraries]
 #AndroidX
@@ -61,7 +62,8 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", versi
 # Other
 objecthunter_exp4j = { group = "net.objecthunter", name = "exp4j", version.ref = "exp4j" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
-lucf15-modal-bottom-sheet = {module = "com.github.lucf15:ModalBottomSheet", version.ref = "lucf15ModalBottomSheet"}
+lucf15-modal-bottom-sheet = { module = "com.github.lucf15:ModalBottomSheet", version.ref = "lucf15ModalBottomSheet" }
+compose-reorderable = { module = "org.burnoutcrew.composereorderable:reorderable", version.ref = "composeReorderable" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

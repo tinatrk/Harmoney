@@ -45,7 +45,7 @@ object PreviewData {
             type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_VACATION_1,
-                color = CategoryColors.ORANGE_T55
+                color = CategoryColors.VIOLET_T68
             ),
             createdAt = 3L,
             userOrder = 300.0,
@@ -56,7 +56,7 @@ object PreviewData {
             type = CategoryType.EXPENSES,
             icon = CategoryIcon(
                 icon = CategoryIcons.IC_EDUCATION,
-                color = CategoryColors.ORANGE_T70
+                color = CategoryColors.BLUE_T60
             ),
             createdAt = 4L,
             userOrder = 400.0,

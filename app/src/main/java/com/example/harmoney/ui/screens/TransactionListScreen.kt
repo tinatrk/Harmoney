@@ -37,7 +37,7 @@ import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriod
-import com.example.harmoney.presentation.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.presentation.models.TransactionsFilterUi
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
@@ -118,9 +118,13 @@ fun TransactionListScreen(
             HarmTopBar.HarmCommonTopBar(
                 title = state.currentBalance,
                 subtitle = stringResource(R.string.title_balance),
-                navigationIconRes = R.drawable.ic_arrow_back_24px,
-                navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
-                onNavigationIconClick = { onEvent(TransactionListEvent.OnBackClick) },
+                navigationIcon = {
+                    HarmButton.HarmTopBarIconButton(
+                        iconRes = R.drawable.ic_arrow_back_24px,
+                        contentDescription = stringResource(R.string.ic_arrow_back_desc),
+                        onClick = { onEvent(TransactionListEvent.OnBackClick) }
+                    )
+                },
                 isTitleCenterAlignment = true,
             )
         },
@@ -203,13 +207,12 @@ fun TransactionListContent(
                     expanded = state.isFilterMenuOpened,
                     onDismissRequest = { onEvent(TransactionListEvent.OnFilterMenuDismiss) },
                     menuOptions = state.transactionsFilters.map { category ->
-                        MenuOptions(
+                        MenuOption(
                             text = category.name,
-                            onClick = {
-                                onEvent(TransactionListEvent.OnFilterMenuChanged(category))
-                            }
-                        )
-                    }.toImmutableList()
+                            expanded = state.selectedFilter.id == category.id
+                        ) { onEvent(TransactionListEvent.OnFilterMenuChanged(category)) }
+                    }.toImmutableList(),
+                    isNeededHighlightSelectedOption = true
                 ) {
                     Row(
                         modifier = Modifier
@@ -238,7 +241,7 @@ fun TransactionListContent(
         }
 
         if (state.oneDayTransactionsList.isEmpty()) {
-            EmptyScreen()
+            EmptyScreen(message = stringResource(R.string.placeholder_empty_transaction_list))
         } else {
             Spacer(modifier = Modifier.height(12.dp))
 

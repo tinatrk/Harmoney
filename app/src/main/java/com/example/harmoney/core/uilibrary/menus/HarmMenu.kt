@@ -18,11 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
-import com.example.harmoney.presentation.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -37,13 +38,17 @@ object HarmMenu {
      * `expanded` - state is menu opened
      *
      * `menuSource` - the object that opens the menu when clicked on. For example icon (optional)
+     *
+     * `isNeededHighlightSelectedOption` - is needed highlight of the selected option
+     * (color indication)
      * */
     @Composable
     fun HarmDropdownMenu(
         expanded: Boolean,
-        menuOptions: ImmutableList<MenuOptions>,
+        menuOptions: ImmutableList<MenuOption>,
         onDismissRequest: () -> Unit,
         modifier: Modifier = Modifier,
+        isNeededHighlightSelectedOption: Boolean = false,
         menuSource: @Composable (() -> Unit)? = null,
     ) {
         val scrollState = rememberScrollState()
@@ -69,7 +74,24 @@ object HarmMenu {
             ) {
                 Column(modifier = Modifier.background(Color.Unspecified)) {
                     menuOptions.forEach { option ->
+                        val containerColor = if (isNeededHighlightSelectedOption
+                            && option.expanded
+                        ) {
+                            HarmTheme.colors.primary
+                        } else {
+                            Color.Unspecified
+                        }
+
+                        val contentColor = if (isNeededHighlightSelectedOption
+                            && option.expanded
+                        ) {
+                            HarmTheme.colors.onPrimary
+                        } else {
+                            HarmTheme.colors.onSurfaceVariant
+                        }
+
                         DropdownMenuItem(
+                            modifier = Modifier.background(containerColor),
                             text = {
                                 Text(
                                     modifier = Modifier.background(Color.Unspecified),
@@ -78,8 +100,18 @@ object HarmMenu {
                                 )
                             },
                             onClick = option.onClick,
+                            leadingIcon = option.leadingIconRes?.let {
+                                {
+                                    Icon(
+                                        painter = painterResource(option.leadingIconRes),
+                                        contentDescription =
+                                            stringResource(R.string.ic_sort_option_desc),
+                                    )
+                                }
+                            },
                             colors = MenuDefaults.itemColors(
-                                textColor = HarmTheme.colors.onSurfaceVariant,
+                                textColor = contentColor,
+                                leadingIconColor = contentColor
                             )
                         )
                     }
@@ -102,9 +134,9 @@ private fun HarmDropdownMenu_DarkPreview() {
             expanded = true,
             onDismissRequest = {},
             menuOptions = persistentListOf(
-                MenuOptions(text = "EUR", onClick = {}),
-                MenuOptions(text = "RUB", onClick = {}),
-                MenuOptions(text = "USD", onClick = {})
+                MenuOption(text = "EUR", onClick = {}),
+                MenuOption(text = "RUB", onClick = {}),
+                MenuOption(text = "USD", onClick = {})
             ),
             menuSource = {
                 Icon(
@@ -125,9 +157,9 @@ private fun HarmDropdownMenu_LightPreview() {
             expanded = true,
             onDismissRequest = {},
             menuOptions = persistentListOf(
-                MenuOptions(text = "EUR", onClick = {}),
-                MenuOptions(text = "RUB", onClick = {}),
-                MenuOptions(text = "USD", onClick = {})
+                MenuOption(text = "EUR", onClick = {}),
+                MenuOption(text = "RUB", onClick = {}),
+                MenuOption(text = "USD", onClick = {})
             ),
             menuSource = {
                 Icon(

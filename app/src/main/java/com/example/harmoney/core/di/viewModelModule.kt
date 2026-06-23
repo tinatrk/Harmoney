@@ -67,7 +67,11 @@ val viewModelModule = module {
     }
 
     viewModel { (categoryType: CategoryType) ->
-        CategoryListViewModel(categoryType = categoryType)
+        CategoryListViewModel(
+            categoryType = categoryType,
+            test = get(),
+            categoryUiConverter = get()
+        )
     }
 
     viewModel { (categoryType: CategoryType, categoryId: Long?) ->

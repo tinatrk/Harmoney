@@ -41,7 +41,7 @@ import com.example.harmoney.presentation.categoryStatistics.models.CategoryStati
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
 import com.example.harmoney.presentation.categoryStatistics.models.FirstDayMonthError
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
-import com.example.harmoney.presentation.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
 import com.example.harmoney.ui.components.EmptyScreen
@@ -136,7 +136,7 @@ fun CategoryStatisticsScreen(
                 isThemeDark = state.isThemeDark,
                 firstDayMonth = state.firstDayMonth.toString(),
                 isCurrencyMenuOpened = state.isCurrencyMenuOpened,
-                currentCurrency = state.currency.code,
+                currentCurrencyCode = state.currency.code,
                 onEvent = onEvent
             )
         }
@@ -147,15 +147,21 @@ fun CategoryStatisticsScreen(
                 HarmTopBar.HarmCommonTopBar(
                     title = state.currentBalance,
                     subtitle = stringResource(R.string.title_balance),
-                    navigationIconRes = R.drawable.ic_drawer_menu_24px,
-                    navigationIconDesc = stringResource(R.string.ic_drawer_menu_desc),
-                    onNavigationIconClick = {
-                        onEvent(CategoryStatisticsEvent.OnSettingsIconClick)
+                    navigationIcon = {
+                        HarmButton.HarmTopBarIconButton(
+                            iconRes = R.drawable.ic_arrow_back_24px,
+                            contentDescription = stringResource(R.string.ic_arrow_back_desc),
+                            onClick = { onEvent(CategoryStatisticsEvent.OnSettingsIconClick) }
+                        )
                     },
-                    actionIconRes = R.drawable.ic_list_24px,
-                    actionIconDesc = stringResource(R.string.ic_list_desc),
-                    onActionIconClick = {
-                        onEvent(CategoryStatisticsEvent.OnTransactionListIconClick)
+                    actionIcons = {
+                        HarmButton.HarmTopBarIconButton(
+                            iconRes = R.drawable.ic_list_24px,
+                            contentDescription = stringResource(R.string.ic_list_desc),
+                            onClick = {
+                                onEvent(CategoryStatisticsEvent.OnTransactionListIconClick)
+                            }
+                        )
                     },
                     isTitleCenterAlignment = true
                 )
@@ -192,7 +198,7 @@ private fun SettingsDrawerItems(
     isThemeDark: Boolean,
     firstDayMonth: String,
     isCurrencyMenuOpened: Boolean,
-    currentCurrency: String,
+    currentCurrencyCode: String,
     onEvent: (CategoryStatisticsEvent) -> Unit,
 ) {
     HarmDrawer.HarmDrawerItem(
@@ -226,14 +232,18 @@ private fun SettingsDrawerItems(
             HarmMenu.HarmDropdownMenu(
                 expanded = isCurrencyMenuOpened,
                 menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
-                    MenuOptions(text = currency.code) {
+                    MenuOption(
+                        text = currency.code,
+                        expanded = currentCurrencyCode == currency.code
+                    ) {
                         onEvent(CategoryStatisticsEvent.OnCurrencyChanged(currency))
                     }
                 }.toImmutableList(),
-                onDismissRequest = { onEvent(CategoryStatisticsEvent.OnCurrencyMenuDismiss) }
+                onDismissRequest = { onEvent(CategoryStatisticsEvent.OnCurrencyMenuDismiss) },
+                isNeededHighlightSelectedOption = true
             ) {
                 Text(
-                    text = currentCurrency,
+                    text = currentCurrencyCode,
                     style = HarmTheme.typography.bodyLarge,
                     color = HarmTheme.colors.onSurface
                 )
@@ -281,7 +291,7 @@ fun CategoryStatisticsContent(
         )
 
         if (state.categories.isEmpty()) {
-            EmptyScreen()
+            EmptyScreen(message = stringResource(R.string.placeholder_empty_transaction_list))
         } else {
             Spacer(modifier = Modifier.height(16.dp))
             LazyColumn(modifier = Modifier.fillMaxWidth()) {

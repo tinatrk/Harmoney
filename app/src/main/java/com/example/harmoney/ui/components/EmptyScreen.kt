@@ -24,7 +24,8 @@ import com.example.harmoney.ui.theme.HarmTheme
 
 @Composable
 fun EmptyScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    message: String = ""
 ) {
     Column(
         modifier = modifier
@@ -37,14 +38,14 @@ fun EmptyScreen(
         Image(
             modifier = Modifier.fillMaxWidth(),
             painter = painterResource(R.drawable.im_empty_screen),
-            contentDescription = stringResource(R.string.placeholder_empty_transaction_list)
+            contentDescription = message
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 44.dp),
-            text = stringResource(R.string.placeholder_empty_transaction_list),
+            text = message,
             style = HarmTheme.typography.titleMediumSemiBold,
             color = HarmTheme.colors.onSurface,
             textAlign = TextAlign.Center

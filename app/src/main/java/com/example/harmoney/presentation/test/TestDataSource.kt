@@ -4,6 +4,7 @@ import com.example.harmoney.domain.models.Category
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
+import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
@@ -74,8 +75,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_PHONE_INTERNET,
                 color = CategoryColors.ORANGE_T47
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 5L,
+            userOrder = 500.0,
         ),
         Category(
             id = 6,
@@ -85,8 +86,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_BALANCE,
                 color = CategoryColors.YELLOW_T58
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 6L,
+            userOrder = 600.0,
         ),
         Category(
             id = 7,
@@ -96,8 +97,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_TRANSPORT_1,
                 color = CategoryColors.OLIVE_T52
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 7L,
+            userOrder = 700.0,
         ),
         Category(
             id = 8,
@@ -107,8 +108,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_COMPUTER,
                 color = CategoryColors.TEAL_T75
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 8L,
+            userOrder = 800.0,
         ),
         Category(
             id = 9,
@@ -118,8 +119,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_DINNER,
                 color = CategoryColors.COBALT_T56
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 9L,
+            userOrder = 900.0,
         ),
         Category(
             id = 10,
@@ -129,8 +130,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_CLEANING,
                 color = CategoryColors.BLUE_T80
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 10L,
+            userOrder = 1000.0,
         ),
         Category(
             id = 11,
@@ -140,8 +141,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_GAMES_1,
                 color = CategoryColors.PURPLE_T61
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 11L,
+            userOrder = 1100.0,
         ),
         Category(
             id = 12,
@@ -151,8 +152,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_FITNESS_1,
                 color = CategoryColors.PURPLE_T72
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 12L,
+            userOrder = 1200.0,
         ),
         Category(
             id = 13,
@@ -162,8 +163,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_HEALTH,
                 color = CategoryColors.BROWN_T51
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 13L,
+            userOrder = 1300.0,
         ),
         Category(
             id = 14,
@@ -173,8 +174,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_CLOTHES,
                 color = CategoryColors.SLATE_T55
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 14L,
+            userOrder = 1400.0,
         ),
         Category(
             id = 15,
@@ -184,8 +185,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_FROG,
                 color = CategoryColors.ROSE_T62
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 15L,
+            userOrder = 1500.0,
         ),
         Category(
             id = 16,
@@ -195,8 +196,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_HAIRCUT,
                 color = CategoryColors.ORANGE_T60
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 16L,
+            userOrder = 1600.0,
         ),
         Category(
             id = 17,
@@ -206,8 +207,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_CAT,
                 color = CategoryColors.AMBER_T56
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 17L,
+            userOrder = 1700.0,
         ),
         Category(
             id = 18,
@@ -217,8 +218,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_BABY,
                 color = CategoryColors.CYAN_T55
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 18L,
+            userOrder = 1800.0,
         ),
         Category(
             id = 19,
@@ -228,8 +229,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_GAS_STATION,
                 color = CategoryColors.LIME_T62
             ),
-            createdAt = 4L,
-            userOrder = 400.0,
+            createdAt = 19L,
+            userOrder = 1900.0,
         ),
         Category(
             id = 20,
@@ -239,8 +240,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_MONEY_1,
                 color = CategoryColors.GREEN_T70
             ),
-            createdAt = 5L,
-            userOrder = 500.0,
+            createdAt = 20L,
+            userOrder = 2000.0,
         ),
         Category(
             id = 21,
@@ -250,8 +251,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_MONEY_3,
                 color = CategoryColors.GREEN_T53
             ),
-            createdAt = 6L,
-            userOrder = 600.0,
+            createdAt = 21L,
+            userOrder = 2100.0,
         ),
         Category(
             id = 22,
@@ -261,8 +262,8 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
                 icon = CategoryIcons.IC_MONEY_2,
                 color = CategoryColors.GREEN_T60
             ),
-            createdAt = 7L,
-            userOrder = 700.0,
+            createdAt = 22L,
+            userOrder = 2200.0,
         )
     )
 
@@ -364,15 +365,9 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
             amount = 25000.0,
             note = "Зарплата"
         ),
-        //----------------------------------------------------------------------------------
-        /*Transaction(
-            id = 15,
-            category = categories.first { it.id == 5L },
-            date = parseDateFromString("25.01.2026"),
-            amount = 30000.0,
-            note = "Зарплата"
-        ),*/
     )
+
+    private var categorySortOption: SortOption = SortOption.ALPHABET
 
     private val curMonthFirstDay: Long =
         dateFormatter.dateToMillis(parseDateFromString("25.05.2026"))
@@ -382,6 +377,9 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         dateFormatter.dateToMillis(parseDateFromString("25.01.2026"))
     private val pastMonthLastDay: Long =
         dateFormatter.dateToMillis(parseDateFromString("24.02.2026"))
+
+    // для корректной работы updateCategoryUserOrder
+    private val userOrder = USER_ORDER_IN_ASCENDING_ORDER
 
     fun getBalance(): Double {
         var totalExpenses: Double = 0.0
@@ -439,9 +437,20 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
     fun getCategories(
         categoryType: CategoryType
     ): List<Category> {
-        val categories = categories.filter { it.type == categoryType }.sortedBy { it.name }
-        // Если категорий много, то берем 10 первых
-        return categories
+        val categories = categories.filter { it.type == categoryType }
+
+        return when (categorySortOption) {
+            SortOption.ALPHABET -> categories.sortedBy { it.name }
+            SortOption.TIME_CREATED -> categories.sortedBy { it.createdAt }
+            SortOption.USER_ORDER -> {
+                // для корректной работы updateCategoryUserOrder
+                if (userOrder == USER_ORDER_IN_ASCENDING_ORDER) {
+                    categories.sortedBy { it.userOrder }
+                } else {
+                    categories.sortedByDescending { it.userOrder }
+                }
+            }
+        }
     }
 
     fun getCategory(categoryId: Long?): Category? {
@@ -512,13 +521,14 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
     fun getTransactionFilters(
         categoryType: CategoryType,
     ): List<TransactionsFilter> {
-        val categories = categories.filter { it.type == categoryType }
+        val categories = getCategories(categoryType)
+
         val filters = categories.map {
             TransactionsFilter(
                 id = it.id,
                 name = it.name
             )
-        }.sortedBy { it.name }
+        }
 
         return listOf(
             TransactionsFilter(
@@ -600,9 +610,14 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
     }
 
     fun createCategory(category: Category) {
+        val maxUserOrder = categories.maxOf { it.userOrder }
+        val timeAdded =
+            LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         categories.add(
             category.copy(
-                id = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                id = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                createdAt = timeAdded,
+                userOrder = maxUserOrder + USER_ORDER_STEP
             )
         )
     }
@@ -625,9 +640,41 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         return category != null
     }
 
+    fun getSortOption(): SortOption {
+        return categorySortOption
+    }
+
+    fun updateCategorySortOption(newSortOption: SortOption) {
+        categorySortOption = newSortOption
+    }
+
+    fun updateCategoryUserOrder(from: Int, to: Int, categoryType: CategoryType) {
+        val categoryList: MutableList<Category> = getCategories(categoryType).toMutableList()
+
+        if (from == to) return
+
+        val item = categoryList.removeAt(from)
+        categoryList.add(to, item)
+
+        val prev = categoryList.getOrNull(to - 1)
+        val next = categoryList.getOrNull(to + 1)
+
+        val newUserOrder = when {
+            prev == null && next == null -> USER_ORDER_STEP
+            prev == null -> next!!.userOrder - userOrder * USER_ORDER_STEP
+            next == null -> prev.userOrder + userOrder * USER_ORDER_STEP
+            else -> (prev.userOrder + next.userOrder) / 2.0
+        }
+
+        updateCategory(item.copy(userOrder = newUserOrder))
+    }
+
     private companion object {
         const val COUNT_RUB_IN_ONE_EUR = 80.0
         const val COUNT_RUB_IN_ONE_USD = 70.0
         const val COUNT_EUR_IN_ONE_USD = 0.86
+        const val USER_ORDER_STEP = 100.0
+        const val USER_ORDER_IN_ASCENDING_ORDER = 1 // значение не менять
+        const val USER_ORDER_IN_DESCENDING_ORDER = -1 // значение не менять
     }
 }

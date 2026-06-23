@@ -1,89 +1,121 @@
 package com.example.harmoney.presentation.categoryList.viewModel
 
-import androidx.lifecycle.ViewModel
+import com.example.harmoney.base.BaseViewModel
+import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.presentation.categoryList.models.CategoryListAction
 import com.example.harmoney.presentation.categoryList.models.CategoryListEvent
 import com.example.harmoney.presentation.categoryList.models.CategoryListState
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.example.harmoney.presentation.converters.CategoryUiConverter
+import com.example.harmoney.presentation.test.TestDataSource
 import kotlinx.coroutines.flow.update
 
 class CategoryListViewModel(
     categoryType: CategoryType,
-) : ViewModel() {
-    private val _screenState = MutableStateFlow(
-        CategoryListState(
-            selectedCategoryType = categoryType,
-            selectedTabIndex = categoryType.ordinal,
-        )
+    private val test: TestDataSource,
+    private val categoryUiConverter: CategoryUiConverter
+) : BaseViewModel<CategoryListEvent, CategoryListAction, CategoryListState>(
+    state = CategoryListState(
+        selectedCategoryType = categoryType,
+        selectedTabIndex = categoryType.ordinal,
     )
-    val screenState: StateFlow<CategoryListState> = _screenState.asStateFlow()
-
-    private val _action = MutableSharedFlow<CategoryListAction?>(
-        replay = 0,
-        extraBufferCapacity = 1
-    )
-    val action: SharedFlow<CategoryListAction?> = _action.asSharedFlow()
+) {
+    override val tag: String = CategoryListViewModel::class.java.simpleName ?: ""
 
     init {
-        _screenState.update {
+        // TODO() считать тип сортировки
+        val sortOption = test.getSortOption()
+
+        val categories = test.getCategories(categoryType)
+
+        writableState.update {
             it.copy(
-                selectedCategoryType = categoryType,
-                selectedTabIndex = categoryType.ordinal,
-                categoryInfo = getCategoryInfo(categoryType),
+                selectedSortOption = sortOption,
+                categories = categoryUiConverter.map(categories)
             )
         }
     }
 
-    fun obtainEvent(event: CategoryListEvent) {
+    override fun obtainEvent(event: CategoryListEvent) {
         when (event) {
             is CategoryListEvent.OnBackClick -> onNavigateBack()
-            is CategoryListEvent.OnTabClick -> onTabClick(event.categoryType)
-            is CategoryListEvent.OnCategoryClick -> {
-                onOpenCategory(event.categoryId)
+
+            is CategoryListEvent.OnSortMenuClick -> onSortMenuClick()
+            is CategoryListEvent.OnSortMenuDismiss -> onSortMenuDismiss()
+            is CategoryListEvent.OnSortOptionClick -> onSortOptionClick(event.newSortOption)
+
+            is CategoryListEvent.OnCategoryUserOrderChanged -> {
+                onUpdateCategoryUserOrder(event.from, event.to)
             }
+
+            is CategoryListEvent.OnTabClick -> onTabClick(event.newCategoryType)
+
+            is CategoryListEvent.OnCategoryClick -> onOpenCategory(event.categoryId)
 
             is CategoryListEvent.OnFloatingButtonClick -> onCreateCategory()
         }
     }
 
     private fun onTabClick(newCategoryType: CategoryType) {
-        if (_screenState.value.selectedCategoryType.id != newCategoryType.id) {
-            _screenState.update {
+        if (state.value.selectedCategoryType.id != newCategoryType.id) {
+            val categories = test.getCategories(newCategoryType)
+
+            writableState.update {
                 it.copy(
                     selectedCategoryType = newCategoryType,
                     selectedTabIndex = newCategoryType.ordinal,
-                    categoryInfo = getCategoryInfo(newCategoryType)
+                    categories = categoryUiConverter.map(categories)
                 )
             }
         }
     }
 
-    private fun onCreateCategory() {
-        _action.tryEmit(
-            CategoryListAction.NavigateToCreatingCategory(
-                _screenState.value.selectedCategoryType.id
+    private fun onSortMenuClick() {
+        writableState.update { it.copy(isSortMenuOpened = true) }
+    }
+
+    private fun onSortMenuDismiss() {
+        writableState.update { it.copy(isSortMenuOpened = false) }
+    }
+
+    private fun onSortOptionClick(newSortOption: SortOption) {
+        if (state.value.selectedSortOption != newSortOption) {
+            test.updateCategorySortOption(newSortOption)
+            val categories = test.getCategories(state.value.selectedCategoryType)
+
+            writableState.update {
+                it.copy(
+                    selectedSortOption = newSortOption,
+                    categories = categoryUiConverter.map(categories),
+                    isSortMenuOpened = false
+                )
+            }
+        } else {
+            onSortMenuDismiss()
+        }
+    }
+
+    private fun onUpdateCategoryUserOrder(from: Int, to: Int) {
+        if (from == to) return
+        test.updateCategoryUserOrder(from, to, state.value.selectedCategoryType)
+        writableState.update {
+            it.copy(
+                categories = categoryUiConverter.map(
+                    test.getCategories(state.value.selectedCategoryType)
+                )
             )
-        )
+        }
+    }
+
+    private fun onCreateCategory() {
+        writableAction.tryEmit(CategoryListAction.NavigateToCreatingCategory)
     }
 
     private fun onOpenCategory(categoryId: Long?) {
-        _action.tryEmit(CategoryListAction.NavigateToOpeningCategory(categoryId))
+        writableAction.tryEmit(CategoryListAction.NavigateToOpeningCategory(categoryId))
     }
 
     private fun onNavigateBack() {
-        _action.tryEmit(CategoryListAction.NavigateBack)
-    }
-
-    private fun getCategoryInfo(categoryType: CategoryType): String {
-        return when (categoryType) {
-            CategoryType.EXPENSES -> "Информация по расходам"
-            CategoryType.INCOME -> "Информация по доходам"
-        }
+        writableAction.tryEmit(CategoryListAction.NavigateBack)
     }
 }

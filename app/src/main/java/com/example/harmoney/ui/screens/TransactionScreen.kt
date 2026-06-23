@@ -53,7 +53,7 @@ import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.presentation.calculator.models.CalculatorEvent
 import com.example.harmoney.presentation.calculator.models.CalculatorState
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorViewModel
-import com.example.harmoney.presentation.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.presentation.transaction.models.TransactionAction
 import com.example.harmoney.presentation.transaction.models.TransactionAmountError
@@ -143,7 +143,7 @@ fun TransactionScreen(
 ) {
     Scaffold(
         topBar = {
-            HarmTopBar.HarmCommonTopBar(
+            HarmTopBar.HarmSimpleTopBar(
                 title = stringResource(
                     if (state.isCreateTransactionScreen) {
                         R.string.title_top_app_bar_create_transaction
@@ -151,10 +151,7 @@ fun TransactionScreen(
                         R.string.title_top_app_bar_edit_transaction
                     }
                 ),
-                navigationIconRes = R.drawable.ic_arrow_back_24px,
-                navigationIconDesc = stringResource(R.string.ic_arrow_back_desc),
                 onNavigationIconClick = { onEvent(TransactionEvent.OnBackClick) },
-                isTitleCenterAlignment = false,
             )
         },
         containerColor = HarmTheme.colors.surface
@@ -298,7 +295,7 @@ private fun TextFields(
                 HarmMenu.HarmDropdownMenu(
                     expanded = state.isCurrencyMenuOpened,
                     menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
-                        MenuOptions(text = currency.code) {
+                        MenuOption(text = currency.code) {
                             onEvent(TransactionEvent.OnCurrencyChanged(currency))
                         }
                     }.toImmutableList(),

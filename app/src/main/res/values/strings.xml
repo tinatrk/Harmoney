@@ -17,10 +17,6 @@
     <string name="category_icon_sub_type_common">Общее</string>
     <string name="category_icon_sub_type_other">Другое</string>
 
-    <!-- Заголовки для периодов (для статистики) -->
-    <string name="period_last_month">Прошлый месяц</string>
-    <string name="period_current_month">Текущий месяц</string>
-
     <!-- content description для иконок -->
     <string name="ic_arrow_back_desc">Вернуться на предыдущий экран</string>
     <string name="ic_drawer_menu_desc">Открыть меню с настройками</string>
@@ -37,6 +33,7 @@
     <string name="ic_radio_button_off_desc">Не выбрано</string>
     <string name="ic_list_desc">Отобразить транзакции в виде списка</string>
     <string name="ic_category_desc">Иконка категории %s</string>
+    <string name="ic_category_edit_desc">Редактировать категорию %s</string>
     <string name="ic_menu_desc">Открыть меню</string>
     <string name="ic_alert_dialog_desc">Предупреждение</string>
     <string name="ic_calendar_desc">Открыть календарь для выбора даты</string>
@@ -46,6 +43,8 @@
     <string name="ic_filter_desc">Выбрать фильтр для транзакций</string>
     <string name="ic_menu_arrow_up_desc">Закрыть меню</string>
     <string name="ic_menu_arrow_down_desc">Открыть меню</string>
+    <string name="ic_sort_option_desc">Выбрать этот метод сортировки</string>
+    <string name="ic_double_drag_handle_desc">Перетащить элемент</string>
 
     <!-- Текст на кнопках -->
     <string name="btn_save_text">Сохранить</string>
@@ -77,6 +76,10 @@
     <string name="title_category">Категория</string>
     <string name="title_color">Цвет</string>
 
+    <!-- Заголовки для периодов (для статистики) -->
+    <string name="period_last_month">Прошлый месяц</string>
+    <string name="period_current_month">Текущий месяц</string>
+
     <!-- Заголовки и текст диалоговых окон -->
     <string name="title_dialog_exit">Вы точно хотите выйти?</string>
     <string name="text_dialog_exit">Изменения не сохранены.</string>
@@ -87,8 +90,15 @@
     <string name="title_dialog_category_save_error">Невозможно сохранить категорию</string>
     <string name="text_dialog_saving_error">Некоторые поля не заполнены или заполнены некорректно.</string>
 
+    <!-- Заголовки видов сортировки -->
+    <string name="title_sort_time_created">По времени создания</string>
+    <string name="title_sort_alphabet">По алфавиту</string>
+    <string name="title_sort_user_order">Пользовательская</string>
+
     <!-- Текст для placeholders -->
+    <string name="placeholder_empty_screen">Заглушка для пустого экрана</string>
     <string name="placeholder_empty_transaction_list">У вас нет транзакций данного типа</string>
+    <string name="placeholder_empty_category_list">У вас нет категорий данного типа</string>
 
     <!-- label для textField -->
     <string name="label_text_field_data">Дата</string>
