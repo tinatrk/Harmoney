@@ -74,7 +74,7 @@ object HarmButton {
         modifier: Modifier = Modifier,
     ) {
         IconButton(
-            modifier = modifier.size(40.dp),
+            modifier = modifier,
             onClick = onClick,
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = Color.Transparent,

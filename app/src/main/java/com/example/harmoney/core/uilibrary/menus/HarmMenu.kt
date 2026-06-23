@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
@@ -73,14 +74,24 @@ object HarmMenu {
             ) {
                 Column(modifier = Modifier.background(Color.Unspecified)) {
                     menuOptions.forEach { option ->
+                        val containerColor = if (isNeededHighlightSelectedOption
+                            && option.expanded
+                        ) {
+                            HarmTheme.colors.primary
+                        } else {
+                            Color.Unspecified
+                        }
+
+                        val contentColor = if (isNeededHighlightSelectedOption
+                            && option.expanded
+                        ) {
+                            HarmTheme.colors.onPrimary
+                        } else {
+                            HarmTheme.colors.onSurfaceVariant
+                        }
+
                         DropdownMenuItem(
-                            modifier = Modifier.background(
-                                if (isNeededHighlightSelectedOption && option.expanded) {
-                                    HarmTheme.colors.primary
-                                } else {
-                                    Color.Unspecified
-                                }
-                            ),
+                            modifier = Modifier.background(containerColor),
                             text = {
                                 Text(
                                     modifier = Modifier.background(Color.Unspecified),
@@ -89,14 +100,18 @@ object HarmMenu {
                                 )
                             },
                             onClick = option.onClick,
+                            leadingIcon = option.leadingIconRes?.let {
+                                {
+                                    Icon(
+                                        painter = painterResource(option.leadingIconRes),
+                                        contentDescription =
+                                            stringResource(R.string.ic_sort_option_desc),
+                                    )
+                                }
+                            },
                             colors = MenuDefaults.itemColors(
-                                textColor = if (isNeededHighlightSelectedOption
-                                    && option.expanded
-                                ) {
-                                    HarmTheme.colors.onPrimary
-                                } else {
-                                    HarmTheme.colors.onSurfaceVariant
-                                },
+                                textColor = contentColor,
+                                leadingIconColor = contentColor
                             )
                         )
                     }

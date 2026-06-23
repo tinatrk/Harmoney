@@ -232,7 +232,10 @@ private fun SettingsDrawerItems(
             HarmMenu.HarmDropdownMenu(
                 expanded = isCurrencyMenuOpened,
                 menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
-                    MenuOptions(text = currency.code, expanded = currentCurrencyCode == currency.code) {
+                    MenuOptions(
+                        text = currency.code,
+                        expanded = currentCurrencyCode == currency.code
+                    ) {
                         onEvent(CategoryStatisticsEvent.OnCurrencyChanged(currency))
                     }
                 }.toImmutableList(),

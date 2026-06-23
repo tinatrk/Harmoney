@@ -7,8 +7,10 @@ sealed class CategoryListEvent {
     data object OnBackClick : CategoryListEvent()
 
     data object OnSortMenuClick : CategoryListEvent()
-    data object OnSortMenuDismiss: CategoryListEvent()
+    data object OnSortMenuDismiss : CategoryListEvent()
     data class OnSortOptionClick(val newSortOption: CategorySortOption) : CategoryListEvent()
+
+    data class OnCategoryUserOrderChanged(val from: Int, val to: Int) : CategoryListEvent()
 
     data class OnTabClick(val newCategoryType: CategoryType) : CategoryListEvent()
 

@@ -378,6 +378,9 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
     private val pastMonthLastDay: Long =
         dateFormatter.dateToMillis(parseDateFromString("24.02.2026"))
 
+    // для корректной работы updateCategoryUserOrder
+    private val userOrder = USER_ORDER_IN_ASCENDING_ORDER
+
     fun getBalance(): Double {
         var totalExpenses: Double = 0.0
         transactions.filter { it.category.type == CategoryType.EXPENSES }
@@ -439,7 +442,14 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         return when (categorySortOption) {
             CategorySortOption.ALPHABET -> categories.sortedBy { it.name }
             CategorySortOption.TIME_CREATED -> categories.sortedBy { it.createdAt }
-            CategorySortOption.USER_ORDER -> categories.sortedBy { it.userOrder }
+            CategorySortOption.USER_ORDER -> {
+                // для корректной работы updateCategoryUserOrder
+                if (userOrder == USER_ORDER_IN_ASCENDING_ORDER) {
+                    categories.sortedBy { it.userOrder }
+                } else {
+                    categories.sortedByDescending { it.userOrder }
+                }
+            }
         }
     }
 
@@ -600,9 +610,14 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
     }
 
     fun createCategory(category: Category) {
+        val maxUserOrder = categories.maxOf { it.userOrder }
+        val timeAdded =
+            LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         categories.add(
             category.copy(
-                id = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                id = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                createdAt = timeAdded,
+                userOrder = maxUserOrder + USER_ORDER_STEP
             )
         )
     }
@@ -633,9 +648,33 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         categorySortOption = newSortOption
     }
 
+    fun updateCategoryUserOrder(from: Int, to: Int, categoryType: CategoryType) {
+        val categoryList: MutableList<Category> = getCategories(categoryType).toMutableList()
+
+        if (from == to) return
+
+        val item = categoryList.removeAt(from)
+        categoryList.add(to, item)
+
+        val prev = categoryList.getOrNull(to - 1)
+        val next = categoryList.getOrNull(to + 1)
+
+        val newUserOrder = when {
+            prev == null && next == null -> USER_ORDER_STEP
+            prev == null -> next!!.userOrder - userOrder * USER_ORDER_STEP
+            next == null -> prev.userOrder + userOrder * USER_ORDER_STEP
+            else -> (prev.userOrder + next.userOrder) / 2.0
+        }
+
+        updateCategory(item.copy(userOrder = newUserOrder))
+    }
+
     private companion object {
         const val COUNT_RUB_IN_ONE_EUR = 80.0
         const val COUNT_RUB_IN_ONE_USD = 70.0
         const val COUNT_EUR_IN_ONE_USD = 0.86
+        const val USER_ORDER_STEP = 100.0
+        const val USER_ORDER_IN_ASCENDING_ORDER = 1 // значение не менять
+        const val USER_ORDER_IN_DESCENDING_ORDER = -1 // значение не менять
     }
 }

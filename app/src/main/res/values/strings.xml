@@ -43,6 +43,8 @@
     <string name="ic_filter_desc">Выбрать фильтр для транзакций</string>
     <string name="ic_menu_arrow_up_desc">Закрыть меню</string>
     <string name="ic_menu_arrow_down_desc">Открыть меню</string>
+    <string name="ic_sort_option_desc">Выбрать этот метод сортировки</string>
+    <string name="ic_double_drag_handle_desc">Перетащить элемент</string>
 
     <!-- Текст на кнопках -->
     <string name="btn_save_text">Сохранить</string>

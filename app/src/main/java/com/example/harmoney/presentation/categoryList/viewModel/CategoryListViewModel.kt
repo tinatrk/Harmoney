@@ -44,6 +44,10 @@ class CategoryListViewModel(
             is CategoryListEvent.OnSortMenuDismiss -> onSortMenuDismiss()
             is CategoryListEvent.OnSortOptionClick -> onSortOptionClick(event.newSortOption)
 
+            is CategoryListEvent.OnCategoryUserOrderChanged -> {
+                onUpdateCategoryUserOrder(event.from, event.to)
+            }
+
             is CategoryListEvent.OnTabClick -> onTabClick(event.newCategoryType)
 
             is CategoryListEvent.OnCategoryClick -> onOpenCategory(event.categoryId)
@@ -88,6 +92,18 @@ class CategoryListViewModel(
             }
         } else {
             onSortMenuDismiss()
+        }
+    }
+
+    private fun onUpdateCategoryUserOrder(from: Int, to: Int) {
+        if (from == to) return
+        test.updateCategoryUserOrder(from, to, state.value.selectedCategoryType)
+        writableState.update {
+            it.copy(
+                categories = categoryUiConverter.map(
+                    test.getCategories(state.value.selectedCategoryType)
+                )
+            )
         }
     }
 
