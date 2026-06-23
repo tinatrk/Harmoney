@@ -37,20 +37,20 @@ import androidx.lifecycle.flowWithLifecycle
 import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
-import com.example.harmoney.domain.models.CategorySortOption
+import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.presentation.categoryList.models.CategoryListAction
 import com.example.harmoney.presentation.categoryList.models.CategoryListEvent
 import com.example.harmoney.presentation.categoryList.models.CategoryListState
 import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
 import com.example.harmoney.presentation.models.CategoryUi
-import com.example.harmoney.presentation.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.ui.components.EmptyScreen
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.mappers.CategoryIconUiMapper.toDrawableRes
-import com.example.harmoney.ui.mappers.CategorySortOptionUiMapper.toDrawableRes
-import com.example.harmoney.ui.mappers.CategorySortOptionUiMapper.toStringRes
+import com.example.harmoney.ui.mappers.SortOptionUiMapper.toDrawableRes
+import com.example.harmoney.ui.mappers.SortOptionUiMapper.toStringRes
 import com.example.harmoney.ui.other.PreviewData
 import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.collections.immutable.toImmutableList
@@ -126,8 +126,8 @@ fun CategoryListScreen(
                         onMenuClick = { onEvent(CategoryListEvent.OnSortMenuClick) },
                         onMenuDismiss = { onEvent(CategoryListEvent.OnSortMenuDismiss) },
                         expanded = state.isSortMenuOpened,
-                        menuOptions = CategorySortOption.entries.map { sortOption ->
-                            MenuOptions(
+                        menuOptions = SortOption.entries.map { sortOption ->
+                            MenuOption(
                                 text = stringResource(sortOption.toStringRes()),
                                 expanded = state.selectedSortOption.id == sortOption.id,
                                 leadingIconRes = sortOption.toDrawableRes()
@@ -177,7 +177,7 @@ fun CategoryListContent(
     if (state.categories.isEmpty()) {
         EmptyScreen(message = stringResource(R.string.placeholder_empty_category_list))
     } else {
-        if (state.selectedSortOption == CategorySortOption.USER_ORDER) {
+        if (state.selectedSortOption == SortOption.USER_ORDER) {
             VerticalReorderableGrid(state = state, onEvent = onEvent)
         } else {
             VerticalCommonGrid(state = state, onEvent = onEvent)

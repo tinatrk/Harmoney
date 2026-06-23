@@ -53,7 +53,7 @@ import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.presentation.calculator.models.CalculatorEvent
 import com.example.harmoney.presentation.calculator.models.CalculatorState
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorViewModel
-import com.example.harmoney.presentation.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.presentation.transaction.models.TransactionAction
 import com.example.harmoney.presentation.transaction.models.TransactionAmountError
@@ -295,7 +295,7 @@ private fun TextFields(
                 HarmMenu.HarmDropdownMenu(
                     expanded = state.isCurrencyMenuOpened,
                     menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
-                        MenuOptions(text = currency.code) {
+                        MenuOption(text = currency.code) {
                             onEvent(TransactionEvent.OnCurrencyChanged(currency))
                         }
                     }.toImmutableList(),

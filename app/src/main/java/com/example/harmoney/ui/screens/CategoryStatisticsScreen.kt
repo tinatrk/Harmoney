@@ -41,7 +41,7 @@ import com.example.harmoney.presentation.categoryStatistics.models.CategoryStati
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
 import com.example.harmoney.presentation.categoryStatistics.models.FirstDayMonthError
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
-import com.example.harmoney.presentation.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
 import com.example.harmoney.ui.components.EmptyScreen
@@ -232,7 +232,7 @@ private fun SettingsDrawerItems(
             HarmMenu.HarmDropdownMenu(
                 expanded = isCurrencyMenuOpened,
                 menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
-                    MenuOptions(
+                    MenuOption(
                         text = currency.code,
                         expanded = currentCurrencyCode == currency.code
                     ) {

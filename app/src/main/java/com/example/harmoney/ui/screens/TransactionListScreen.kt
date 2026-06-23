@@ -37,7 +37,7 @@ import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriod
-import com.example.harmoney.presentation.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.presentation.models.TransactionsFilterUi
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
@@ -207,7 +207,7 @@ fun TransactionListContent(
                     expanded = state.isFilterMenuOpened,
                     onDismissRequest = { onEvent(TransactionListEvent.OnFilterMenuDismiss) },
                     menuOptions = state.transactionsFilters.map { category ->
-                        MenuOptions(
+                        MenuOption(
                             text = category.name,
                             expanded = state.selectedFilter.id == category.id
                         ) { onEvent(TransactionListEvent.OnFilterMenuChanged(category)) }

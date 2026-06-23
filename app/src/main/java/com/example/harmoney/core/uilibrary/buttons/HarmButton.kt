@@ -40,7 +40,7 @@ import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.domain.models.CategoryColors
-import com.example.harmoney.presentation.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -285,7 +285,7 @@ object HarmButton {
     fun HarmDropdownMenuIcon(
         @DrawableRes iconRes: Int,
         expanded: Boolean,
-        menuOptions: ImmutableList<MenuOptions>,
+        menuOptions: ImmutableList<MenuOption>,
         contentDescription: String?,
         onMenuClick: () -> Unit,
         onMenuDismiss: () -> Unit,
@@ -674,8 +674,8 @@ private fun HarmDropdownMenuIcon_DarkPreview() {
             iconRes = R.drawable.ic_menu_24px,
             contentDescription = null,
             menuOptions = persistentListOf(
-                MenuOptions(text = stringResource(R.string.ic_edit_desc), onClick = {}),
-                MenuOptions(text = stringResource(R.string.ic_delete_desc), onClick = {}),
+                MenuOption(text = stringResource(R.string.ic_edit_desc), onClick = {}),
+                MenuOption(text = stringResource(R.string.ic_delete_desc), onClick = {}),
             ),
             expanded = true,
             onMenuClick = {},
@@ -692,8 +692,8 @@ private fun HarmDropdownMenuIcon_LightPreview() {
             iconRes = R.drawable.ic_menu_24px,
             contentDescription = null,
             menuOptions = persistentListOf(
-                MenuOptions(text = stringResource(R.string.ic_edit_desc), onClick = {}),
-                MenuOptions(text = stringResource(R.string.ic_delete_desc), onClick = {}),
+                MenuOption(text = stringResource(R.string.ic_edit_desc), onClick = {}),
+                MenuOption(text = stringResource(R.string.ic_delete_desc), onClick = {}),
             ),
             expanded = true,
             onMenuClick = {},

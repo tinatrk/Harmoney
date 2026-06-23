@@ -4,7 +4,7 @@ import com.example.harmoney.domain.models.Category
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
-import com.example.harmoney.domain.models.CategorySortOption
+import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
@@ -367,7 +367,7 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         ),
     )
 
-    private var categorySortOption: CategorySortOption = CategorySortOption.ALPHABET
+    private var categorySortOption: SortOption = SortOption.ALPHABET
 
     private val curMonthFirstDay: Long =
         dateFormatter.dateToMillis(parseDateFromString("25.05.2026"))
@@ -440,9 +440,9 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         val categories = categories.filter { it.type == categoryType }
 
         return when (categorySortOption) {
-            CategorySortOption.ALPHABET -> categories.sortedBy { it.name }
-            CategorySortOption.TIME_CREATED -> categories.sortedBy { it.createdAt }
-            CategorySortOption.USER_ORDER -> {
+            SortOption.ALPHABET -> categories.sortedBy { it.name }
+            SortOption.TIME_CREATED -> categories.sortedBy { it.createdAt }
+            SortOption.USER_ORDER -> {
                 // для корректной работы updateCategoryUserOrder
                 if (userOrder == USER_ORDER_IN_ASCENDING_ORDER) {
                     categories.sortedBy { it.userOrder }
@@ -640,11 +640,11 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         return category != null
     }
 
-    fun getSortOption(): CategorySortOption {
+    fun getSortOption(): SortOption {
         return categorySortOption
     }
 
-    fun updateCategorySortOption(newSortOption: CategorySortOption) {
+    fun updateCategorySortOption(newSortOption: SortOption) {
         categorySortOption = newSortOption
     }
 

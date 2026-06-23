@@ -1,7 +1,7 @@
 package com.example.harmoney.presentation.categoryList.viewModel
 
 import com.example.harmoney.base.BaseViewModel
-import com.example.harmoney.domain.models.CategorySortOption
+import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.presentation.categoryList.models.CategoryListAction
 import com.example.harmoney.presentation.categoryList.models.CategoryListEvent
@@ -78,7 +78,7 @@ class CategoryListViewModel(
         writableState.update { it.copy(isSortMenuOpened = false) }
     }
 
-    private fun onSortOptionClick(newSortOption: CategorySortOption) {
+    private fun onSortOptionClick(newSortOption: SortOption) {
         if (state.value.selectedSortOption != newSortOption) {
             test.updateCategorySortOption(newSortOption)
             val categories = test.getCategories(state.value.selectedCategoryType)

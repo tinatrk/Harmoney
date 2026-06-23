@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
-import com.example.harmoney.presentation.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -45,7 +45,7 @@ object HarmMenu {
     @Composable
     fun HarmDropdownMenu(
         expanded: Boolean,
-        menuOptions: ImmutableList<MenuOptions>,
+        menuOptions: ImmutableList<MenuOption>,
         onDismissRequest: () -> Unit,
         modifier: Modifier = Modifier,
         isNeededHighlightSelectedOption: Boolean = false,
@@ -134,9 +134,9 @@ private fun HarmDropdownMenu_DarkPreview() {
             expanded = true,
             onDismissRequest = {},
             menuOptions = persistentListOf(
-                MenuOptions(text = "EUR", onClick = {}),
-                MenuOptions(text = "RUB", onClick = {}),
-                MenuOptions(text = "USD", onClick = {})
+                MenuOption(text = "EUR", onClick = {}),
+                MenuOption(text = "RUB", onClick = {}),
+                MenuOption(text = "USD", onClick = {})
             ),
             menuSource = {
                 Icon(
@@ -157,9 +157,9 @@ private fun HarmDropdownMenu_LightPreview() {
             expanded = true,
             onDismissRequest = {},
             menuOptions = persistentListOf(
-                MenuOptions(text = "EUR", onClick = {}),
-                MenuOptions(text = "RUB", onClick = {}),
-                MenuOptions(text = "USD", onClick = {})
+                MenuOption(text = "EUR", onClick = {}),
+                MenuOption(text = "RUB", onClick = {}),
+                MenuOption(text = "USD", onClick = {})
             ),
             menuSource = {
                 Icon(

@@ -39,7 +39,7 @@ import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.CategoryUi
-import com.example.harmoney.presentation.models.MenuOptions
+import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.models.TransactionUi
 import com.example.harmoney.ui.mappers.CategoryIconUiMapper.toDrawableRes
@@ -212,7 +212,7 @@ object HarmCard {
         category: CategoryStatisticsUi,
         @DrawableRes iconRes: Int,
         isMenuOpened: Boolean,
-        menuOptions: ImmutableList<MenuOptions>,
+        menuOptions: ImmutableList<MenuOption>,
         onCardClick: () -> Unit,
         onMenuClick: () -> Unit,
         onMenuDismiss: () -> Unit,
@@ -488,8 +488,8 @@ private fun HarmCategoryCardWithMenu_DarkPreview() {
             iconContentDescription = null,
             isMenuOpened = true,
             menuOptions = persistentListOf(
-                MenuOptions(text = stringResource(R.string.ic_edit_desc), onClick = {}),
-                MenuOptions(text = stringResource(R.string.ic_delete_desc), onClick = {}),
+                MenuOption(text = stringResource(R.string.ic_edit_desc), onClick = {}),
+                MenuOption(text = stringResource(R.string.ic_delete_desc), onClick = {}),
             ),
             onMenuClick = {},
             onMenuDismiss = {}
@@ -520,8 +520,8 @@ private fun HarmCategoryCardWithMenu_LightPreview() {
             iconContentDescription = null,
             isMenuOpened = true,
             menuOptions = persistentListOf(
-                MenuOptions(text = stringResource(R.string.ic_edit_desc), onClick = {}),
-                MenuOptions(text = stringResource(R.string.ic_delete_desc), onClick = {}),
+                MenuOption(text = stringResource(R.string.ic_edit_desc), onClick = {}),
+                MenuOption(text = stringResource(R.string.ic_delete_desc), onClick = {}),
             ),
             onMenuClick = {},
             onMenuDismiss = {}
