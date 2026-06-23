@@ -22,9 +22,16 @@ material3 = "1.4.0"
 # Koin
 koin = "4.0.2"
 
+# Room
+roomRuntime = "2.7.0"
+ksp = "2.0.21-1.0.26"
+
+# Coroutines
+kotlinxCoroutinesAndroid = "1.9.0"
+kotlinxCollectionsImmutable = "0.3.7"
+
 # Other
 exp4j = "0.4.8"
-kotlinxCollectionsImmutable = "0.3.7"
 lucf15ModalBottomSheet = "1.0.1"
 composeReorderable = "0.9.6"
 
@@ -59,9 +66,17 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3",
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 
+# Room
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime"}
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+
+# Coroutines
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
+
 # Other
 objecthunter_exp4j = { group = "net.objecthunter", name = "exp4j", version.ref = "exp4j" }
-kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 lucf15-modal-bottom-sheet = { module = "com.github.lucf15:ModalBottomSheet", version.ref = "lucf15ModalBottomSheet" }
 compose-reorderable = { module = "org.burnoutcrew.composereorderable:reorderable", version.ref = "composeReorderable" }
 
@@ -71,3 +86,5 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+androidx-room = { id = "androidx.room", version.ref = "roomRuntime" }
+devtoolsKsp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
