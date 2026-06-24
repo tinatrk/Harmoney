@@ -53,6 +53,6 @@ interface CategoryDao {
         insertCategory(category.copy(userOrder = newUserOrder))
     }
 
-    @Query("DELETE FROM category")
-    suspend fun deleteAllCategories()
+    @Query("DELETE FROM category WHERE typeId = :categoryTypeId")
+    suspend fun deleteAllCategoriesOfType(categoryTypeId: Long)
 }
