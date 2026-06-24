@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.androidx.room)
+    alias(libs.plugins.devtoolsKsp)
 }
 
 android {
@@ -44,6 +46,9 @@ android {
         compose = true
         buildConfig = true
     }
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 }
 
 dependencies {
@@ -75,9 +80,20 @@ dependencies {
     implementation(libs.koin.android)
     // endregion
 
+    // region Room
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    // endregion
+
+    // region Coroutines
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.collections.immutable)
+    // endregion
+
     // region Other
     implementation(libs.objecthunter.exp4j)
-    implementation(libs.kotlinx.collections.immutable)
     implementation(libs.lucf15.modal.bottom.sheet)
     implementation(libs.compose.reorderable)
     // endregion
