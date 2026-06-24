@@ -401,7 +401,6 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
     private fun parseStringFromDate(date: LocalDate): String {
         val formatter = DateTimeFormatter.ofPattern(DatePattern.TITLE_FORMAL)
         return date.format(formatter)
-
     }
 
     fun getStatisticsDate(statisticsPeriod: StatisticsPeriod): String {
