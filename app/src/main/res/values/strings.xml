@@ -114,4 +114,7 @@
     <string name="error_incorrect_amount">Введите положительное число больше нуля</string>
     <string name="error_category_name_already_exists">Категория с таким названием уже существует</string>
 
+    <!-- snackbarText -->
+    <string name="snackbar_changed_theme_error">Ошибка при переключении темы</string>
+
 </resources>

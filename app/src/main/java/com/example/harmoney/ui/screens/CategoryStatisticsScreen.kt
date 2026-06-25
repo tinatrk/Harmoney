@@ -12,13 +12,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +36,7 @@ import com.example.harmoney.core.uilibrary.cards.HarmCard
 import com.example.harmoney.core.uilibrary.dialogs.HarmDialog
 import com.example.harmoney.core.uilibrary.drawers.HarmDrawer
 import com.example.harmoney.core.uilibrary.menus.HarmMenu
+import com.example.harmoney.core.uilibrary.snackbar.HarmSnackbar
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
@@ -67,6 +72,8 @@ fun CategoryStatisticsScreen(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(categoryType) {
         viewModel.obtainEvent(
@@ -89,11 +96,11 @@ fun CategoryStatisticsScreen(
                         onNavigateToTransactionList(act.categoryId)
                     }
 
-                    CategoryStatisticsAction.NavigateToTransaction -> {
+                    is CategoryStatisticsAction.NavigateToTransaction -> {
                         onNavigateToCreateTransaction()
                     }
 
-                    CategoryStatisticsAction.NavigateToSettings -> {
+                    is CategoryStatisticsAction.NavigateToSettings -> {
                         scope.launch {
                             if (drawerState.isClosed) {
                                 drawerState.open()
@@ -103,9 +110,17 @@ fun CategoryStatisticsScreen(
                         }
                     }
 
-                    CategoryStatisticsAction.NavigateToCategoryList -> onNavigateToCategoryList()
+                    is CategoryStatisticsAction.NavigateToCategoryList -> onNavigateToCategoryList()
 
-                    else -> {}
+                    is CategoryStatisticsAction.ShowChangeThemeError -> {
+                        snackbarHostState.showSnackbar(
+                            context.getString(
+                                R.string.snackbar_changed_theme_error
+                            )
+                        )
+                    }
+
+                    null -> {}
                 }
             }
     }
@@ -115,7 +130,8 @@ fun CategoryStatisticsScreen(
         onEvent = viewModel::obtainEvent,
         onCategoryTypeChanged = sharedCategoryTypeVM::categoryTypeChanged,
         onStatisticsPeriodChanged = sharedStatisticsPeriodVM::statisticsPeriodChanged,
-        drawerState = drawerState
+        drawerState = drawerState,
+        snackbarState = snackbarHostState
     )
 }
 
@@ -123,6 +139,7 @@ fun CategoryStatisticsScreen(
 fun CategoryStatisticsScreen(
     state: CategoryStatisticsState,
     drawerState: DrawerState,
+    snackbarState: SnackbarHostState,
     onEvent: (CategoryStatisticsEvent) -> Unit,
     onCategoryTypeChanged: (CategoryType) -> Unit,
     onStatisticsPeriodChanged: (StatisticsPeriod) -> Unit,
@@ -133,7 +150,7 @@ fun CategoryStatisticsScreen(
         drawerState = drawerState,
         drawerItems = {
             SettingsDrawerItems(
-                isThemeDark = state.isThemeDark,
+                isThemeDark = HarmTheme.colors.isDark,
                 firstDayMonth = state.firstDayMonth.toString(),
                 isCurrencyMenuOpened = state.isCurrencyMenuOpened,
                 currentCurrencyCode = state.currency.code,
@@ -173,6 +190,9 @@ fun CategoryStatisticsScreen(
                     contentDescription = stringResource(R.string.ic_add_transaction_desc),
                     onClick = { onEvent(CategoryStatisticsEvent.OnFloatingButtonClick) }
                 )
+            },
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarState) { data -> HarmSnackbar(snackbarData = data) }
             }
         ) { paddingValues ->
             ScreenWithCategoryTypeTabs(
@@ -204,11 +224,11 @@ private fun SettingsDrawerItems(
     HarmDrawer.HarmDrawerItem(
         label = stringResource(R.string.title_drawer_item_theme),
         selected = false,
-        onClick = { onEvent(CategoryStatisticsEvent.OnChangeTheme) },
+        onClick = { onEvent(CategoryStatisticsEvent.OnChangeTheme(!isThemeDark)) },
         badge = {
             HarmButton.HarmSwitch(
                 isChecked = isThemeDark,
-                onClick = { onEvent(CategoryStatisticsEvent.OnChangeTheme) }
+                onClick = { onEvent(CategoryStatisticsEvent.OnChangeTheme(!isThemeDark)) }
             )
         }
     )
@@ -343,17 +363,18 @@ fun CategoryStatisticsContent(
 @Composable
 private fun CategoryStatisticsScreenDarkPreviewEmpty() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = true) {
         CategoryStatisticsScreen(
             onEvent = {},
             onCategoryTypeChanged = {},
             onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
-                isThemeDark = true,
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 currentBalance = "0.00 ₽"
             ),
-            drawerState = drawerState
+            drawerState = drawerState,
+            snackbarState = snackbarHostState
         )
     }
 }
@@ -362,17 +383,18 @@ private fun CategoryStatisticsScreenDarkPreviewEmpty() {
 @Composable
 private fun CategoryStatisticsScreenLightPreviewEmpty() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = false) {
         CategoryStatisticsScreen(
             onEvent = {},
             onCategoryTypeChanged = {},
             onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
-                isThemeDark = false,
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 currentBalance = "0.00 ₽"
             ),
-            drawerState = drawerState
+            drawerState = drawerState,
+            snackbarState = snackbarHostState
         )
     }
 }
@@ -381,6 +403,7 @@ private fun CategoryStatisticsScreenLightPreviewEmpty() {
 @Composable
 private fun CategoryStatisticsScreenDarkPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val snackbarHostState = remember { SnackbarHostState() }
     val categories = PreviewData.getExpensesCategoryStatistics()
     val total = "26 000 ₽"
     val pieChartItems = PreviewData.getExpensesPieChartCategories()
@@ -391,14 +414,14 @@ private fun CategoryStatisticsScreenDarkPreview() {
             onCategoryTypeChanged = {},
             onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
-                isThemeDark = true,
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 categories = categories,
                 pieChartCategories = pieChartItems,
                 total = total,
                 currentBalance = "20 000 ₽"
             ),
-            drawerState = drawerState
+            drawerState = drawerState,
+            snackbarState = snackbarHostState
         )
     }
 }
@@ -407,6 +430,7 @@ private fun CategoryStatisticsScreenDarkPreview() {
 @Composable
 private fun CategoryStatisticsScreenLightPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val snackbarHostState = remember { SnackbarHostState() }
     val categories = PreviewData.getExpensesCategoryStatistics()
     val total = "26 000 ₽"
     val pieChartItems = PreviewData.getExpensesPieChartCategories()
@@ -417,14 +441,14 @@ private fun CategoryStatisticsScreenLightPreview() {
             onCategoryTypeChanged = {},
             onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
-                isThemeDark = false,
                 statisticsDate = "01.03.2026 - 31.03.2026",
                 categories = categories,
                 pieChartCategories = pieChartItems,
                 total = total,
                 currentBalance = "20 000 ₽"
             ),
-            drawerState = drawerState
+            drawerState = drawerState,
+            snackbarState = snackbarHostState
         )
     }
 }
@@ -433,13 +457,15 @@ private fun CategoryStatisticsScreenLightPreview() {
 @Composable
 private fun CategoryStatisticsScreenDarkPreviewWithSettings() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+    val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = true) {
         CategoryStatisticsScreen(
             onEvent = {},
             onCategoryTypeChanged = {},
             onStatisticsPeriodChanged = {},
-            state = CategoryStatisticsState(isThemeDark = true),
+            state = CategoryStatisticsState(),
             drawerState = drawerState,
+            snackbarState = snackbarHostState
         )
     }
 }
@@ -448,13 +474,15 @@ private fun CategoryStatisticsScreenDarkPreviewWithSettings() {
 @Composable
 private fun CategoryStatisticsScreenLightPreviewWithSettings() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+    val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = false) {
         CategoryStatisticsScreen(
             onEvent = {},
             onCategoryTypeChanged = {},
             onStatisticsPeriodChanged = {},
-            state = CategoryStatisticsState(isThemeDark = false),
-            drawerState = drawerState
+            state = CategoryStatisticsState(),
+            drawerState = drawerState,
+            snackbarState = snackbarHostState
         )
     }
 }
@@ -463,16 +491,15 @@ private fun CategoryStatisticsScreenLightPreviewWithSettings() {
 @Composable
 private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialog() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+    val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = true) {
         CategoryStatisticsScreen(
             onEvent = {},
             onCategoryTypeChanged = {},
             onStatisticsPeriodChanged = {},
-            state = CategoryStatisticsState(
-                isThemeDark = true,
-                isOpenedFirstDayMonthDialog = true
-            ),
-            drawerState = drawerState
+            state = CategoryStatisticsState(isOpenedFirstDayMonthDialog = true),
+            drawerState = drawerState,
+            snackbarState = snackbarHostState
         )
     }
 }
@@ -481,16 +508,15 @@ private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialog() {
 @Composable
 private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialog() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+    val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = false) {
         CategoryStatisticsScreen(
             onEvent = {},
             onCategoryTypeChanged = {},
             onStatisticsPeriodChanged = {},
-            state = CategoryStatisticsState(
-                isThemeDark = false,
-                isOpenedFirstDayMonthDialog = true
-            ),
-            drawerState = drawerState
+            state = CategoryStatisticsState(isOpenedFirstDayMonthDialog = true),
+            drawerState = drawerState,
+            snackbarState = snackbarHostState
         )
     }
 }
@@ -500,18 +526,19 @@ private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialog() {
 @Composable
 private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialogError() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+    val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = true) {
         CategoryStatisticsScreen(
             onEvent = {},
             onCategoryTypeChanged = {},
             onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
-                isThemeDark = true,
                 isOpenedFirstDayMonthDialog = true,
                 firstDayMonthText = "90",
                 firstDayMonthError = FirstDayMonthError.OutOfRange(minDay = 1, maxDay = 28),
             ),
-            drawerState = drawerState
+            drawerState = drawerState,
+            snackbarState = snackbarHostState
         )
     }
 }
@@ -521,18 +548,19 @@ private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialogError() {
 @Composable
 private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialogError() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+    val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = false) {
         CategoryStatisticsScreen(
             onEvent = {},
             onCategoryTypeChanged = {},
             onStatisticsPeriodChanged = {},
             state = CategoryStatisticsState(
-                isThemeDark = false,
                 isOpenedFirstDayMonthDialog = true,
                 firstDayMonthText = "90",
                 firstDayMonthError = FirstDayMonthError.OutOfRange(minDay = 1, maxDay = 28),
             ),
-            drawerState = drawerState
+            drawerState = drawerState,
+            snackbarState = snackbarHostState
         )
     }
 }

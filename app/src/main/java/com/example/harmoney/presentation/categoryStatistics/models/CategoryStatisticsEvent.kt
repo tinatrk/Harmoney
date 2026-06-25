@@ -13,7 +13,7 @@ sealed interface CategoryStatisticsEvent {
     data class OnCategoryClick(val categoryId: Long) : CategoryStatisticsEvent
     data object OnFloatingButtonClick : CategoryStatisticsEvent
 
-    data object OnChangeTheme : CategoryStatisticsEvent
+    data class OnChangeTheme(val isThemeDark: Boolean) : CategoryStatisticsEvent
     data object OnCategoryListClick : CategoryStatisticsEvent
 
     data object OnFirstDayMonthClick : CategoryStatisticsEvent
