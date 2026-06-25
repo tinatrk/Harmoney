@@ -5,4 +5,6 @@ sealed interface CategoryStatisticsAction {
     data object NavigateToTransaction : CategoryStatisticsAction
     data object NavigateToSettings : CategoryStatisticsAction
     data object NavigateToCategoryList : CategoryStatisticsAction
+
+    data object ShowChangeThemeError : CategoryStatisticsAction
 }

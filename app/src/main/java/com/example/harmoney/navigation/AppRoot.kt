@@ -11,7 +11,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
-import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -21,43 +20,41 @@ fun AppRoot() {
     // эта ViewModel используется на всех экранах
     val sharedCategoryTypeVM: SharedCategoryTypeViewModel = koinViewModel()
 
-    HarmTheme() {
-        NavHost(
-            navController = navController,
-            startDestination = MainFlow,
-            modifier = Modifier.padding(),
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None },
-        ) {
-            composable<MainFlow> {
-                StatisticsPeriodFlow(
-                    sharedCategoryTypeVM = sharedCategoryTypeVM,
-                    parentNavController = navController
-                )
-            }
-
-            transactionScreen(
+    NavHost(
+        navController = navController,
+        startDestination = MainFlow,
+        modifier = Modifier.padding(),
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+    ) {
+        composable<MainFlow> {
+            StatisticsPeriodFlow(
                 sharedCategoryTypeVM = sharedCategoryTypeVM,
-                onBackClick = { navController.popBackStack() },
-                onNavigateToCategoryScreen = { navController.navigateToCategory(categoryId = null) }
-            )
-
-            categoryListScreen(
-                sharedCategoryTypeVM = sharedCategoryTypeVM,
-                onNavigateToCreateCategory = {
-                    navController.navigateToCategory(categoryId = null)
-                },
-                onNavigateToOpenCategory = { categoryId ->
-                    navController.navigateToCategory(categoryId = categoryId)
-                },
-                onBackClick = { navController.popBackStack() }
-            )
-
-            categoryScreen(
-                sharedCategoryTypeVM = sharedCategoryTypeVM,
-                onBackClick = { navController.popBackStack() },
+                parentNavController = navController
             )
         }
+
+        transactionScreen(
+            sharedCategoryTypeVM = sharedCategoryTypeVM,
+            onBackClick = { navController.popBackStack() },
+            onNavigateToCategoryScreen = { navController.navigateToCategory(categoryId = null) }
+        )
+
+        categoryListScreen(
+            sharedCategoryTypeVM = sharedCategoryTypeVM,
+            onNavigateToCreateCategory = {
+                navController.navigateToCategory(categoryId = null)
+            },
+            onNavigateToOpenCategory = { categoryId ->
+                navController.navigateToCategory(categoryId = categoryId)
+            },
+            onBackClick = { navController.popBackStack() }
+        )
+
+        categoryScreen(
+            sharedCategoryTypeVM = sharedCategoryTypeVM,
+            onBackClick = { navController.popBackStack() },
+        )
     }
 }
 

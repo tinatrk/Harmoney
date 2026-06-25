@@ -1,5 +1,6 @@
 package com.example.harmoney.core.di
 
+import com.example.harmoney.MainViewModel
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorHandler
@@ -37,6 +38,7 @@ val viewModelModule = module {
             test = get(),
             categoryStatisticsUiConverter = get(),
             numbersFormatter = get(),
+            setThemeUseCase = get()
         )
     }
 
@@ -138,5 +140,9 @@ val viewModelModule = module {
     //временный класс
     single {
         TestDataSource(dateFormatter = get())
+    }
+
+    viewModel {
+        MainViewModel(getIsThemeDarkUseCase = get())
     }
 }

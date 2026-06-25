@@ -24,8 +24,6 @@ data class CategoryStatisticsState(
     val statisticsDate: String = "",
     val selectedStatisticsPeriod: StatisticsPeriod = StatisticsPeriod.CURRENT_MONTH,
 
-    val isThemeDark: Boolean = false,
-
     val firstDayMonth: Int = 1,
     val isOpenedFirstDayMonthDialog: Boolean = false,
     val firstDayMonthText: String = firstDayMonth.toString(),

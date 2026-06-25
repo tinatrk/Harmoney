@@ -5,6 +5,7 @@ import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.StatisticsPeriod
+import com.example.harmoney.domain.settings.theme.api.useCase.SetThemeUseCase
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
@@ -25,6 +26,7 @@ class CategoryStatisticsViewModel(
     private val test: TestDataSource,
     private val categoryStatisticsUiConverter: CategoryStatisticsUiConverter,
     private val numbersFormatter: NumbersFormatter,
+    private val setThemeUseCase: SetThemeUseCase
 ) :
     BaseViewModel<CategoryStatisticsEvent, CategoryStatisticsAction, CategoryStatisticsState>(
         state = CategoryStatisticsState(
@@ -36,7 +38,6 @@ class CategoryStatisticsViewModel(
     override val tag: String = CategoryStatisticsViewModel::class.java.simpleName ?: ""
 
     init {
-        //TODO() считать тему из shared preferences
         //TODO() считать валюту из shared preferences
         writableState.update {
             val categories = test.getCategoriesForStatistics(
@@ -68,7 +69,6 @@ class CategoryStatisticsViewModel(
                     decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
                     currency = it.currency,
                     isNeededThousandSeparator = true
-
                 )
             )
         }
@@ -95,7 +95,7 @@ class CategoryStatisticsViewModel(
                 onStatisticsPeriodClick(event.newPeriod)
             }
 
-            is CategoryStatisticsEvent.OnChangeTheme -> onThemeChanged()
+            is CategoryStatisticsEvent.OnChangeTheme -> onThemeChanged(event.isThemeDark)
 
             is CategoryStatisticsEvent.OnFirstDayMonthClick -> onFirstDayMonthClick()
             is CategoryStatisticsEvent.OnFirstDayMonthDialogConfirm -> {
@@ -230,9 +230,16 @@ class CategoryStatisticsViewModel(
         return pieChartItems.toImmutableList()
     }
 
-    private fun onThemeChanged() {
-        writableState.update { it.copy(isThemeDark = !writableState.value.isThemeDark) }
-        //TODO() в будущем поменять логику на shared preferences
+    private fun onThemeChanged(isThemeDark: Boolean) {
+        runSafely(
+            errorMessage = CHANGE_THEME_ERROR,
+            block = {
+                setThemeUseCase.execute(isThemeDark = isThemeDark)
+            },
+            onError = {
+                writableAction.tryEmit(CategoryStatisticsAction.ShowChangeThemeError)
+            }
+        )
     }
 
     private fun onFirstDayMonthClick() {
@@ -322,6 +329,7 @@ class CategoryStatisticsViewModel(
         const val GAP_ANGLE = 2f
         const val MIN_ANGLE = 0f
         const val MAX_ANGLE = 360f
-
+        // Используются только для вывода логов
+        const val CHANGE_THEME_ERROR = "Error switching the app theme"
     }
 }
