@@ -54,6 +54,7 @@ android {
 dependencies {
     // region AndroidX, Lifecycle, Compose
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -96,6 +97,7 @@ dependencies {
     implementation(libs.objecthunter.exp4j)
     implementation(libs.lucf15.modal.bottom.sheet)
     implementation(libs.compose.reorderable)
+    implementation(libs.androidx.datastore.preferences)
     // endregion
 }
 

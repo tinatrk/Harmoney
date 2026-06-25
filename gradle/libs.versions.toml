@@ -8,6 +8,7 @@ detekt = "1.23.8"
 coreKtx = "1.17.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.1"
+coreSplashscreen = "1.0.1"
 
 # Testing
 junit = "4.13.2"
@@ -34,10 +35,12 @@ kotlinxCollectionsImmutable = "0.3.7"
 exp4j = "0.4.8"
 lucf15ModalBottomSheet = "1.0.1"
 composeReorderable = "0.9.6"
+datastorePreferences = "1.1.7"
 
 [libraries]
 #AndroidX
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 
 # Lifecircle & Compose integration
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -79,6 +82,7 @@ kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collec
 objecthunter_exp4j = { group = "net.objecthunter", name = "exp4j", version.ref = "exp4j" }
 lucf15-modal-bottom-sheet = { module = "com.github.lucf15:ModalBottomSheet", version.ref = "lucf15ModalBottomSheet" }
 compose-reorderable = { module = "org.burnoutcrew.composereorderable:reorderable", version.ref = "composeReorderable" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
