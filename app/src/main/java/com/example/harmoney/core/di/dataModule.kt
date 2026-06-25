@@ -3,6 +3,7 @@ package com.example.harmoney.core.di
 import androidx.room.Room
 import com.example.harmoney.core.database.AppDatabase
 import com.example.harmoney.data.category.dao.CategoryDao
+import com.example.harmoney.data.transaction.dao.TransactionDao
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -18,5 +19,10 @@ val dataModule = module {
     factory<CategoryDao> {
         val database = get<AppDatabase>()
         database.categoryDao()
+    }
+
+    factory<TransactionDao> {
+        val database = get<AppDatabase>()
+        database.transactionDao()
     }
 }

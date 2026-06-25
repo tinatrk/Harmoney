@@ -27,7 +27,7 @@ interface CategoryDao {
     suspend fun getCategory(name: String, categoryTypeId: Long) : CategoryEntity?
 
     @Query("SELECT * FROM category WHERE typeId = :categoryTypeId")
-    suspend fun getCategories(categoryTypeId: Long): List<CategoryEntity>?
+    suspend fun getCategoryList(categoryTypeId: Long): List<CategoryEntity>?
 
     // Если вставляем категорию в конец списка
     @Query("SELECT MAX(userOrder) FROM category WHERE typeId = :categoryTypeId")
