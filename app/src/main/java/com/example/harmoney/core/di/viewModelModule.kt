@@ -72,7 +72,8 @@ val viewModelModule = module {
         CategoryListViewModel(
             sessionSateHolder = get(),
             test = get(),
-            categoryUiConverter = get()
+            categoryUiConverter = get(),
+            categorySortOptionInteractor = get()
         )
     }
 
