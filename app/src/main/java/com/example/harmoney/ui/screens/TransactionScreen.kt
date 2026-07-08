@@ -54,7 +54,6 @@ import com.example.harmoney.presentation.calculator.models.CalculatorEvent
 import com.example.harmoney.presentation.calculator.models.CalculatorState
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorViewModel
 import com.example.harmoney.presentation.models.MenuOption
-import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.presentation.transaction.models.TransactionAction
 import com.example.harmoney.presentation.transaction.models.TransactionAmountError
 import com.example.harmoney.presentation.transaction.models.TransactionDateError
@@ -70,21 +69,14 @@ import kotlinx.collections.immutable.toImmutableList
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionScreen(
-    sharedCategoryTypeViewModel: SharedCategoryTypeViewModel,
     viewModel: TransactionViewModel,
     calculatorViewModel: CalculatorViewModel,
     onBackClick: () -> Unit,
     onNavigateToCategoryScreen: () -> Unit,
 ) {
-    val categoryType by sharedCategoryTypeViewModel.selectedCategoryType
-        .collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val calculatorState by calculatorViewModel.state.collectAsStateWithLifecycle()
-
-    LaunchedEffect(categoryType) {
-        viewModel.obtainEvent(TransactionEvent.OnTabClick(categoryType))
-    }
 
     LaunchedEffect(calculatorState.result) {
         if (state.isCalculatorOpen) {
@@ -126,7 +118,6 @@ fun TransactionScreen(
     TransactionScreen(
         state = state,
         onEvent = viewModel::obtainEvent,
-        onCategoryTypeChanged = sharedCategoryTypeViewModel::categoryTypeChanged,
         calculatorState = calculatorState,
         onCalculatorEvent = calculatorViewModel::obtainEvent,
     )
@@ -139,7 +130,6 @@ fun TransactionScreen(
     onEvent: (TransactionEvent) -> Unit,
     calculatorState: CalculatorState,
     onCalculatorEvent: (CalculatorEvent) -> Unit,
-    onCategoryTypeChanged: (CategoryType) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -162,7 +152,9 @@ fun TransactionScreen(
                 .padding(paddingValues),
             tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = state.selectedTabIndex,
-            onTabClick = { categoryType -> onCategoryTypeChanged(categoryType) }
+            onTabClick = { newCategoryType ->
+                onEvent(TransactionEvent.OnTabClick(newCategoryType))
+            }
         ) {
             TransactionContent(
                 state = state,
@@ -544,7 +536,6 @@ private fun TransactionListScreen_CreateEmptyWithoutCategoriesDarkPreview() {
             onEvent = {},
             calculatorState = CalculatorState(),
             onCalculatorEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -562,7 +553,6 @@ private fun TransactionListScreen_CreateEmptyWithoutCategoriesLightPreview() {
             onEvent = {},
             calculatorState = CalculatorState(),
             onCalculatorEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -583,7 +573,6 @@ private fun TransactionListScreen_CreateWithNoteDarkPreview() {
             onEvent = {},
             calculatorState = CalculatorState(),
             onCalculatorEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -604,7 +593,6 @@ private fun TransactionListScreen_CreateWithNoteLightPreview() {
             onEvent = {},
             calculatorState = CalculatorState(),
             onCalculatorEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -627,7 +615,6 @@ private fun TransactionListScreen_CreateWithErrorDarkPreview() {
             onEvent = {},
             calculatorState = CalculatorState(),
             onCalculatorEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -650,7 +637,6 @@ private fun TransactionListScreen_CreateWithErrorLightPreview() {
             onEvent = {},
             calculatorState = CalculatorState(),
             onCalculatorEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -672,7 +658,6 @@ private fun TransactionListScreen_CreateWithCurrencyMenuDarkPreview() {
             onEvent = {},
             calculatorState = CalculatorState(),
             onCalculatorEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -694,7 +679,6 @@ private fun TransactionListScreen_CreateWithCurrencyMenuLightPreview() {
             onEvent = {},
             calculatorState = CalculatorState(),
             onCalculatorEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -719,7 +703,6 @@ private fun TransactionListScreen_CreateWithCurrencyExchangeDarkPreview() {
             onEvent = {},
             calculatorState = CalculatorState(),
             onCalculatorEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -744,7 +727,6 @@ private fun TransactionListScreen_CreateWithCurrencyExchangeLightPreview() {
             onEvent = {},
             calculatorState = CalculatorState(),
             onCalculatorEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -765,7 +747,6 @@ private fun TransactionListScreen_OpenEmptyDarkPreview() {
             onEvent = {},
             calculatorState = CalculatorState(),
             onCalculatorEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -786,7 +767,6 @@ private fun TransactionListScreen_OpenEmptyLightPreview() {
             onEvent = {},
             calculatorState = CalculatorState(),
             onCalculatorEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }

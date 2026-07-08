@@ -36,6 +36,7 @@ import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.date.HarmDate.HarmDatePickerModal
 import com.example.harmoney.ui.theme.HarmTheme
+import java.time.LocalDate
 
 /**
  * - `HarmBaseTextField` - base TextField for simple text or numeric content
@@ -186,7 +187,7 @@ object HarmTextField {
         showModalDatePicker: Boolean,
         onDismiss: () -> Unit,
         onTextFieldTouch: () -> Unit,
-        onDateSelected: (Long?) -> Unit,
+        onDateSelected: (LocalDate?) -> Unit,
         modifier: Modifier = Modifier,
         focusManager: FocusManager = LocalFocusManager.current,
         supportingText: String? = null,

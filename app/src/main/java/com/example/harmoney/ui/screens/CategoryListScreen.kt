@@ -37,15 +37,14 @@ import androidx.lifecycle.flowWithLifecycle
 import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
-import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.presentation.categoryList.models.CategoryListAction
 import com.example.harmoney.presentation.categoryList.models.CategoryListEvent
 import com.example.harmoney.presentation.categoryList.models.CategoryListState
 import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
 import com.example.harmoney.presentation.models.CategoryUi
 import com.example.harmoney.presentation.models.MenuOption
-import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.ui.components.EmptyScreen
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.mappers.CategoryIconUiMapper.toDrawableRes
@@ -62,19 +61,13 @@ import org.burnoutcrew.reorderable.reorderable
 
 @Composable
 fun CategoryListScreen(
-    sharedCategoryTypeVM: SharedCategoryTypeViewModel,
     viewModel: CategoryListViewModel,
     onBackClick: () -> Unit,
     onNavigateToCreateCategory: () -> Unit,
     onNavigateToOpenCategory: (categoryId: Long?) -> Unit,
 ) {
-    val categoryType by sharedCategoryTypeVM.selectedCategoryType.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-
-    LaunchedEffect(categoryType) {
-        viewModel.obtainEvent(CategoryListEvent.OnTabClick(categoryType))
-    }
 
     LaunchedEffect(Unit) {
         viewModel.action
@@ -98,7 +91,6 @@ fun CategoryListScreen(
     CategoryListScreen(
         state = state,
         onEvent = viewModel::obtainEvent,
-        onCategoryTypeChanged = sharedCategoryTypeVM::categoryTypeChanged
     )
 }
 
@@ -106,7 +98,6 @@ fun CategoryListScreen(
 fun CategoryListScreen(
     state: CategoryListState,
     onEvent: (CategoryListEvent) -> Unit,
-    onCategoryTypeChanged: (CategoryType) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -158,7 +149,7 @@ fun CategoryListScreen(
                 .padding(paddingValues),
             tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = state.selectedTabIndex,
-            onTabClick = onCategoryTypeChanged
+            onTabClick = { newTab -> onEvent(CategoryListEvent.OnTabClick(newTab)) }
         ) {
             CategoryListContent(
                 state = state,
@@ -333,7 +324,6 @@ fun CategoryListScreen_DarkPreview() {
                 categories = PreviewData.getExpensesCategories()
             ),
             onEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -347,7 +337,6 @@ fun CategoryListScreen_LightPreview() {
                 categories = PreviewData.getExpensesCategories()
             ),
             onEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }

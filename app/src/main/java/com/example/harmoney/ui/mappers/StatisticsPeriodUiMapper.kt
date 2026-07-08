@@ -1,13 +1,13 @@
 package com.example.harmoney.ui.mappers
 
 import com.example.harmoney.R
-import com.example.harmoney.domain.models.StatisticsPeriod
+import com.example.harmoney.domain.models.StatisticsPeriodType
 
 object StatisticsPeriodUiMapper {
-    fun StatisticsPeriod.toStringRes(): Int =
+    fun StatisticsPeriodType.toStringRes(): Int =
         when (this) {
-            StatisticsPeriod.LAST_MONTH -> R.string.period_last_month
-            StatisticsPeriod.CURRENT_MONTH -> R.string.period_current_month
+            StatisticsPeriodType.LAST_MONTH -> R.string.period_last_month
+            StatisticsPeriodType.CURRENT_MONTH -> R.string.period_current_month
         }
 }
 

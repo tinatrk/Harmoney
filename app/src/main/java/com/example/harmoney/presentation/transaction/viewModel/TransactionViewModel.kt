@@ -1,6 +1,8 @@
 package com.example.harmoney.presentation.transaction.viewModel
 
+import androidx.lifecycle.viewModelScope
 import com.example.harmoney.base.BaseViewModel
+import com.example.harmoney.core.session.SessionStateHolder
 import com.example.harmoney.domain.models.Category
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
@@ -12,23 +14,28 @@ import com.example.harmoney.presentation.converters.CategoryUiConverter
 import com.example.harmoney.presentation.converters.DateFormatter
 import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.converters.TransactionUiConverter
-import com.example.harmoney.presentation.models.DatePattern
 import com.example.harmoney.presentation.models.DecimalPlaces
-import com.example.harmoney.presentation.models.TransactionUi
 import com.example.harmoney.presentation.test.TestDataSource
+import com.example.harmoney.presentation.transaction.models.EditableTransaction
 import com.example.harmoney.presentation.transaction.models.TransactionAction
 import com.example.harmoney.presentation.transaction.models.TransactionAmountError
 import com.example.harmoney.presentation.transaction.models.TransactionDateError
 import com.example.harmoney.presentation.transaction.models.TransactionEvent
 import com.example.harmoney.presentation.transaction.models.TransactionState
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 
 @Suppress("detekt:LongParameterList", "detekt:TooManyFunctions")
 class TransactionViewModel(
-    categoryType: CategoryType,
     categoryId: Long?,
     transactionId: Long?,
+    private val sessionSateHolder: SessionStateHolder,
     private val test: TestDataSource,
     private val numbersFormatter: NumbersFormatter,
     private val dateFormatter: DateFormatter,
@@ -38,60 +45,84 @@ class TransactionViewModel(
     state =
         TransactionState(
             isCreateTransactionScreen = transactionId == null,
-            selectedCategoryType = categoryType,
-            selectedTabIndex = categoryType.ordinal,
         )
 ) {
     override val tag: String = TransactionViewModel::class.java.simpleName ?: ""
 
-    private val initialTransactionUi: TransactionUi
-    private var curTransaction: Transaction
-    private var localAmount: Double = 0.0
+    private val initialTransaction: Transaction
+    private var editableTransaction: EditableTransaction
+    private var amountInLocalCurrency: Double
 
     private val selectedCategories: MutableList<Long> =
         CategoryType.entries.map { ZERO_ID }.toMutableList()
 
-    private val firstDayMillis = test.getFirstDay()
-    private val lastDayMillis = test.getLastDay()
+    private val firstDay = test.getFirstDay()
+    private val lastDay = test.getLastDay()
 
     init {
         // TODO() в будущем считывать валюту из sharedPreferences
-
-        val categories = test.getCategories(state.value.selectedCategoryType)
-
-        curTransaction = getInitialTransaction(transactionId, categories, categoryId)
-        initialTransactionUi =
-            transactionUiConverter.map(curTransaction, state.value.globalCurrency)
-        localAmount = curTransaction.amount
-
-        selectedCategories[state.value.selectedCategoryType.ordinal] = curTransaction.category.id
-
-        val amount = numbersFormatter.toString(
-            number = curTransaction.amount,
+        initialTransaction = test.getTransaction(transactionId) ?: getEmptyTransaction()
+        editableTransaction = EditableTransaction(
+            amount = initialTransaction.amount,
+            date = initialTransaction.date,
+            note = initialTransaction.note,
+            categoryId = initialTransaction.category.id,
+            categoryType = initialTransaction.category.type
+        )
+        selectedCategories[editableTransaction.categoryType.ordinal] =
+            editableTransaction.categoryId
+        val amountString = numbersFormatter.toString(
+            number = editableTransaction.amount,
             decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
             isNeededThousandSeparator = true
         )
+        amountInLocalCurrency = editableTransaction.amount
+
+        sessionSateHolder.setCategoryType(editableTransaction.categoryType)
+
 
         writableState.update {
             it.copy(
-                isCreateTransactionScreen = initialTransactionUi.id == ZERO_ID,
-                selectedDate = dateFormatter.millisToString(
-                    dateMillis = curTransaction.dateMillis,
-                    pattern = DatePattern.CARD_FULLY
-                ),
+                selectedDate = dateFormatter.formatDate(date = editableTransaction.date),
                 localCurrency = it.globalCurrency,
-                amountInLocalCurrency = amount,
-                amountInGlobalCurrency = amount,
+                amountInLocalCurrency = amountString,
+                amountInGlobalCurrency = amountString,
                 amountError = TransactionAmountError.None,
-                note = curTransaction.note,
-                categories = categoryUiConverter.map(categories),
-                selectedCategory = if (curTransaction.category.id != ZERO_ID) {
-                    categoryUiConverter.map(curTransaction.category)
-                } else {
-                    null
-                }
+                note = editableTransaction.note,
             )
         }
+
+        sessionSateHolder.state.map { it.categoryType }
+            .distinctUntilChanged()
+            .flatMapLatest { categoryType ->
+                flow {
+                    emit(categoryType to test.getCategories(categoryType))
+                }
+            }.onEach { (categoryType, categories) ->
+
+                val oldCategoryId = selectedCategories[categoryType.ordinal]
+                val newCategoryId = when {
+                    categories.isEmpty() -> null
+                    oldCategoryId == ZERO_ID -> categories.first().id
+                    oldCategoryId != ZERO_ID -> categories.find { it.id == oldCategoryId }?.id
+                    else -> null
+                }
+
+                val curCategory = categories.find { it.id == newCategoryId }
+                editableTransaction = editableTransaction.copy(
+                    categoryId =
+                        curCategory?.id ?: ZERO_ID, categoryType = categoryType
+                )
+
+                writableState.update {
+                    it.copy(
+                        selectedCategoryType = categoryType,
+                        selectedTabIndex = categoryType.ordinal,
+                        categories = categoryUiConverter.map(categories),
+                        selectedCategory = curCategory?.let { categoryUiConverter.map(curCategory) }
+                    )
+                }
+            }.launchIn(viewModelScope)
     }
 
     @Suppress("detekt:CyclomaticComplexMethod")
@@ -132,10 +163,11 @@ class TransactionViewModel(
     }
 
     private fun onBackClick() {
-        val curTransactionUi =
-            transactionUiConverter.map(curTransaction, state.value.globalCurrency)
-
-        if (initialTransactionUi != curTransactionUi) {
+        val isEdited = editableTransaction.amount != initialTransaction.amount
+                || editableTransaction.date != initialTransaction.date
+                || editableTransaction.note != initialTransaction.note
+                || editableTransaction.categoryId != initialTransaction.category.id
+        if (isEdited) {
             writableState.update { it.copy(isTransactionNotSavedDialogOpened = true) }
         } else {
             onNavigateBack()
@@ -157,28 +189,7 @@ class TransactionViewModel(
 
     private fun onTabClick(newCategoryType: CategoryType) {
         if (state.value.selectedCategoryType.id != newCategoryType.id) {
-            val categories = test.getCategories(newCategoryType)
-            val oldCategoryId = selectedCategories[newCategoryType.ordinal]
-            val newCategoryId = when {
-                categories.isEmpty() -> null
-                oldCategoryId == ZERO_ID -> categories.first().id
-                oldCategoryId != ZERO_ID -> categories.find { it.id == oldCategoryId }?.id
-                else -> null
-            }
-
-            val curCategory = categories.find { it.id == newCategoryId }
-
-            curTransaction =
-                curTransaction.copy(category = curCategory ?: getEmptyCategory(newCategoryType))
-
-            writableState.update {
-                it.copy(
-                    selectedCategoryType = newCategoryType,
-                    selectedTabIndex = newCategoryType.ordinal,
-                    categories = categoryUiConverter.map(categories),
-                    selectedCategory = curCategory?.let { categoryUiConverter.map(curCategory) }
-                )
-            }
+            sessionSateHolder.setCategoryType(newCategoryType)
         }
     }
 
@@ -186,11 +197,12 @@ class TransactionViewModel(
         writableState.update { it.copy(isDatePickerOpened = true) }
     }
 
-    private fun onDateDialogConfirm(newDateMillis: Long?) {
-        val dateMillis = newDateMillis ?: dateFormatter.dateToMillis(LocalDate.now())
-        val isDateCorrect = dateMillis in firstDayMillis..lastDayMillis
+    private fun onDateDialogConfirm(newDate: LocalDate?) {
 
-        curTransaction = curTransaction.copy(dateMillis = dateMillis)
+        val date = newDate ?: LocalDate.now()
+        val isDateCorrect = date in firstDay..lastDay
+
+        editableTransaction = editableTransaction.copy(date = date)
 
         writableState.update {
             it.copy(
@@ -198,21 +210,12 @@ class TransactionViewModel(
                     TransactionDateError.None
                 } else {
                     TransactionDateError.OutOfRange(
-                        firstDay = dateFormatter.millisToString(
-                            dateMillis = firstDayMillis,
-                            pattern = DatePattern.CARD_FULLY
-                        ),
-                        lastDay = dateFormatter.millisToString(
-                            dateMillis = lastDayMillis,
-                            pattern = DatePattern.CARD_FULLY
-                        ),
+                        firstDay = dateFormatter.formatDate(date = firstDay),
+                        lastDay = dateFormatter.formatDate(date = lastDay),
                     )
                 },
                 isDatePickerOpened = !isDateCorrect,
-                selectedDate = dateFormatter.millisToString(
-                    dateMillis = dateMillis,
-                    pattern = DatePattern.CARD_FULLY
-                ),
+                selectedDate = dateFormatter.formatDate(date = date),
             )
         }
     }
@@ -226,7 +229,7 @@ class TransactionViewModel(
     }
 
     private fun onAmountChange(newAmount: Double) {
-        if (curTransaction.amount == newAmount) return
+        if (editableTransaction.amount == newAmount) return
 
         // преобразовать валюты, считав актуальный курс из интеренета по API
         val globalAmount = if (state.value.isUsedCurrencyExchange) {
@@ -255,8 +258,8 @@ class TransactionViewModel(
             globalAmountString
         }
 
-        curTransaction = curTransaction.copy(amount = globalAmount)
-        localAmount = newAmount
+        editableTransaction = editableTransaction.copy(amount = globalAmount)
+        amountInLocalCurrency = newAmount
 
         writableState.update {
             it.copy(
@@ -283,11 +286,11 @@ class TransactionViewModel(
     private fun onCurrencyChanged(newCurrency: Currency) {
         if (newCurrency.id != state.value.localCurrency.id) {
             val newGlobalAmount = test.getAmountAfterCurrencyExchanged(
-                localAmount = localAmount,
+                localAmount = amountInLocalCurrency,
                 localCurrency = newCurrency,
                 targetCurrency = state.value.globalCurrency
             )
-            curTransaction = curTransaction.copy(amount = newGlobalAmount)
+            editableTransaction = editableTransaction.copy(amount = newGlobalAmount)
 
             writableState.update {
                 it.copy(
@@ -312,7 +315,7 @@ class TransactionViewModel(
 
     private fun onNoteChanged(newNote: String) {
         if (newNote != state.value.note) {
-            curTransaction = curTransaction.copy(note = newNote)
+            editableTransaction = editableTransaction.copy(note = newNote)
             writableState.update { it.copy(note = newNote) }
         }
     }
@@ -333,13 +336,16 @@ class TransactionViewModel(
             } else {
                 getEmptyCategory(state.value.selectedCategoryType)
             }
-            curTransaction = curTransaction.copy(category = newCategory)
+            editableTransaction = editableTransaction.copy(
+                categoryId = newCategory.id,
+                categoryType = newCategory.type
+            )
             selectedCategories[state.value.selectedCategoryType.ordinal] = newCategory.id
 
             writableState.update {
                 it.copy(
                     selectedCategory = categoryUiConverter.map(newCategory),
-                    isCategoryError = curTransaction.category.id == ZERO_ID,
+                    isCategoryError = editableTransaction.categoryId == ZERO_ID,
                     isCategoriesBottomSheetOpened = false
                 )
             }
@@ -353,9 +359,10 @@ class TransactionViewModel(
     }
 
     private fun onSaveClick() {
-        val isCategoryError = curTransaction.category.id == ZERO_ID
+        val isCategoryError =
+            editableTransaction.categoryId == ZERO_ID
 
-        val amountError = if (curTransaction.amount <= 0) {
+        val amountError = if (editableTransaction.amount < 0) {
             TransactionAmountError.IncorrectInput
         } else {
             state.value.amountError
@@ -372,13 +379,17 @@ class TransactionViewModel(
                 )
             }
         } else {
-            if (transactionUiConverter.map(curTransaction, state.value.globalCurrency)
-                != initialTransactionUi
-            ) {
+            val isEdited = editableTransaction.amount != initialTransaction.amount
+                    || editableTransaction.date != initialTransaction.date
+                    || editableTransaction.note != initialTransaction.note
+                    || editableTransaction.categoryId != initialTransaction.category.id
+            if (isEdited) {
                 if (state.value.isCreateTransactionScreen) {
-                    test.createTransaction(curTransaction)
+                    //достать категорию и создать транзакцию
+                    //test.createTransaction(curTransaction)
                 } else {
-                    test.updateTransaction(curTransaction)
+                    //test.updateTransaction(curTransaction)
+                    //достать категорию и обновить транзакцию
                 }
             }
             onNavigateBack()
@@ -394,7 +405,8 @@ class TransactionViewModel(
     }
 
     private fun onDeleteDialogConfirm() {
-        test.deleteTransaction(curTransaction)
+        //достать категорию и удалить транзакцию
+        //test.deleteTransaction(curTransaction)
 
         writableState.update { it.copy(isTransactionDeleteDialogOpened = false) }
         onNavigateBack()
@@ -422,18 +434,18 @@ class TransactionViewModel(
         }
 
         return if (transactionId != null) {
-            test.getTransaction(transactionId) ?: getEmptyTransaction(defaultCategory)
+            test.getTransaction(transactionId) ?: getEmptyTransaction()//(defaultCategory)
         } else {
-            getEmptyTransaction(category = filter)
+            getEmptyTransaction()//(category = filter)
         }
     }
 
-    private fun getEmptyTransaction(category: Category): Transaction {
+    private fun getEmptyTransaction(): Transaction {
         return Transaction(
             id = ZERO_ID,
-            category = category,
-            dateMillis = dateFormatter.dateToMillis(date = LocalDate.now()),
-            amount = ZERO_AMOUNT
+            category = getEmptyCategory(CategoryType.EXPENSES),
+            date = LocalDate.now(),
+            amount = ZERO_AMOUNT,
         )
     }
 

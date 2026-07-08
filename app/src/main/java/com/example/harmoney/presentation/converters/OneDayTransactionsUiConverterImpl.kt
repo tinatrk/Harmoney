@@ -2,7 +2,6 @@ package com.example.harmoney.presentation.converters
 
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.OneDayTransactions
-import com.example.harmoney.presentation.models.DatePattern
 import com.example.harmoney.presentation.models.DecimalPlaces
 import com.example.harmoney.presentation.models.OneDayTransactionsUi
 import kotlinx.collections.immutable.ImmutableList
@@ -16,7 +15,7 @@ class OneDayTransactionsUiConverterImpl(
     override fun map(day: OneDayTransactions, currency: Currency): OneDayTransactionsUi {
         return OneDayTransactionsUi(
             date = dateFormatter
-                .millisToString(dateMillis = day.dateMillis, pattern = DatePattern.CARD_SHORT),
+                .formatShortDate(date = day.date),
             transactions = transactionUiConverter.map(day.transactions, currency),
             totalAmount = numberFormatter.toStringWithCurrency(
                 number = day.totalAmount,

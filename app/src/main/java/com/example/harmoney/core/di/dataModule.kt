@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import com.example.harmoney.core.database.AppDatabase
 import com.example.harmoney.data.category.dao.CategoryDao
+import com.example.harmoney.data.converters.DateConverter
 import com.example.harmoney.data.transaction.dao.TransactionDao
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -37,5 +38,9 @@ val dataModule = module {
                 File(get<Context>().filesDir, "settings.preferences_pb")
             }
         )
+    }
+
+    factory {
+        DateConverter()
     }
 }

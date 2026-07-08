@@ -1,6 +1,7 @@
 package com.example.harmoney.app
 
 import android.app.Application
+import com.example.harmoney.core.di.coreModule
 import com.example.harmoney.core.di.dataModule
 import com.example.harmoney.core.di.repositoryModule
 import com.example.harmoney.core.di.useCaseModule
@@ -15,6 +16,7 @@ class App : Application() {
         startKoin {
             androidContext(this@App)
             modules(
+                coreModule,
                 dataModule,
                 repositoryModule,
                 useCaseModule,

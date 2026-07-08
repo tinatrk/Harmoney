@@ -36,7 +36,7 @@ import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
-import com.example.harmoney.domain.models.StatisticsPeriod
+import com.example.harmoney.domain.models.StatisticsPeriodType
 import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.CategoryUi
 import com.example.harmoney.presentation.models.MenuOption
@@ -263,12 +263,12 @@ object HarmCard {
     /** A card with a pie chart (shows the total amount of transactions of each category) */
     @Composable
     fun HarmStatisticCard(
-        periods: ImmutableList<StatisticsPeriod>,
+        periods: ImmutableList<StatisticsPeriodType>,
         data: String,
         pieChartItems: ImmutableList<PieChartItem>,
         total: String,
-        selectedPeriod: StatisticsPeriod,
-        onPeriodClick: (StatisticsPeriod) -> Unit,
+        selectedPeriod: StatisticsPeriodType,
+        onPeriodClick: (StatisticsPeriodType) -> Unit,
         modifier: Modifier = Modifier,
     ) {
         Card(
@@ -572,10 +572,10 @@ private fun HarmSimpleCategoryCard_LightPreview() {
 private fun HarmStatisticCard_DarkPreview() {
     HarmTheme(darkTheme = true) {
         HarmCard.HarmStatisticCard(
-            periods = StatisticsPeriod.entries.toImmutableList(),
+            periods = StatisticsPeriodType.entries.toImmutableList(),
             data = "01.03.2026 - 31.03.2026",
             pieChartItems = getPreviewDataPieChartCategories(),
-            selectedPeriod = StatisticsPeriod.CURRENT_MONTH,
+            selectedPeriod = StatisticsPeriodType.CURRENT_MONTH,
             onPeriodClick = {},
             total = "5 000 ₽"
         )

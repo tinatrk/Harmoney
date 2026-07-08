@@ -1,10 +1,14 @@
 package com.example.harmoney.presentation.categoryStatistics.viewModel
 
+import androidx.lifecycle.viewModelScope
 import com.example.harmoney.base.BaseViewModel
+import com.example.harmoney.core.session.SessionStateHolder
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
-import com.example.harmoney.domain.models.StatisticsPeriod
+import com.example.harmoney.domain.models.StatisticsPeriodType
+import com.example.harmoney.domain.settings.period.api.useCase.FirstDayMonthInteractor
+import com.example.harmoney.domain.settings.period.api.useCase.GetStatisticsPeriodsUseCase
 import com.example.harmoney.domain.settings.theme.api.useCase.SetThemeUseCase
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
@@ -12,66 +16,94 @@ import com.example.harmoney.presentation.categoryStatistics.models.CategoryStati
 import com.example.harmoney.presentation.categoryStatistics.models.FirstDayMonthError
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverter
 import com.example.harmoney.presentation.converters.NumbersFormatter
+import com.example.harmoney.presentation.converters.StatisticsPeriodUiConverter
 import com.example.harmoney.presentation.models.DecimalPlaces
 import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.test.TestDataSource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.update
 
 @Suppress("detekt:LongParameterList", "detekt:TooManyFunctions")
 class CategoryStatisticsViewModel(
-    categoryType: CategoryType,
-    statisticsPeriod: StatisticsPeriod,
+    private val sessionSateHolder: SessionStateHolder,
     private val test: TestDataSource,
     private val categoryStatisticsUiConverter: CategoryStatisticsUiConverter,
     private val numbersFormatter: NumbersFormatter,
-    private val setThemeUseCase: SetThemeUseCase
+    private val statisticsPeriodUiConverter: StatisticsPeriodUiConverter,
+    private val setThemeUseCase: SetThemeUseCase,
+    private val firstDayMonthInteractor: FirstDayMonthInteractor,
+    private val getStatisticsPeriodsUseCase: GetStatisticsPeriodsUseCase
 ) :
     BaseViewModel<CategoryStatisticsEvent, CategoryStatisticsAction, CategoryStatisticsState>(
         state = CategoryStatisticsState(
-            selectedCategoryType = categoryType,
-            selectedTabIndex = categoryType.ordinal,
-            selectedStatisticsPeriod = statisticsPeriod
+            selectedCategoryType = sessionSateHolder.state.value.categoryType,
+            selectedTabIndex = sessionSateHolder.state.value.categoryType.ordinal,
         )
     ) {
     override val tag: String = CategoryStatisticsViewModel::class.java.simpleName ?: ""
 
+    private val sessionFlow = sessionSateHolder.state
+    private val periodsFlow = getStatisticsPeriodsUseCase()
+    private val firstDayMonthFlow = firstDayMonthInteractor.getFirstDayMonth()
+    //private val balanceFlow = getBalanceUseCase()
+    //private val currencyFlow = getCurrencyUseCase()
+
     init {
         //TODO() считать валюту из shared preferences
-        writableState.update {
+
+        combine(
+            sessionFlow,
+            periodsFlow,
+            firstDayMonthFlow,
+            //balanceFlow,
+            //currencyFlow
+        ) { sessionData, periods, firstDayMonth ->//balance, currency
+
+            val selectedPeriod = periods.first { it.type == sessionData.statisticsPeriodType }
             val categories = test.getCategoriesForStatistics(
-                it.selectedStatisticsPeriod,
-                it.selectedCategoryType
+                selectedPeriod, sessionData.categoryType
             )
-            val formattedCategories = categoryStatisticsUiConverter.map(categories, it.currency)
+
+            //Log.d("HarmAppTag", "catStatViewModel -> init -> combine -> selectedCategoryType =
+            // ${sessionData.categoryType.name}, selectedPeriod = ${selectedPeriod.type.name},
+            // firstDay = $firstDayMonth")//, statisticsSize = ${statistics.size}")
+
+            val formattedCategories =
+                categoryStatisticsUiConverter.map(categories, state.value.currency)
 
             val total = categories.sumOf { category -> category.totalAmount }
 
-            it.copy(
-                selectedCategoryType = categoryType,
-                selectedStatisticsPeriod = statisticsPeriod,
-                statisticsDate = test.getStatisticsDate(it.selectedStatisticsPeriod),
-                categories = formattedCategories,
-                pieChartCategories = getPieChartCategories(
-                    categories = categories,
-                    categoriesAmountString = formattedCategories
-                        .map { category -> category.totalAmount }
-                ),
-                total = numbersFormatter.toStringWithCurrency(
-                    number = total,
-                    decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
-                    currency = it.currency,
-                    isNeededThousandSeparator = true
-                ),
-                currentBalance = numbersFormatter.toStringWithCurrency(
-                    number = test.getBalance(),
-                    decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
-                    currency = it.currency,
-                    isNeededThousandSeparator = true
+            writableState.update {
+                it.copy(
+                    selectedCategoryType = sessionData.categoryType,
+                    selectedTabIndex = sessionData.categoryType.ordinal,
+                    selectedStatisticsPeriod = statisticsPeriodUiConverter.map(selectedPeriod),
+                    categories = formattedCategories,
+                    pieChartCategories = getPieChartCategories(
+                        categories = categories,
+                        categoriesAmountString = formattedCategories
+                            .map { category -> category.totalAmount }
+                    ),
+                    currentBalance = numbersFormatter.toStringWithCurrency(
+                        number = test.getBalance(),//balance
+                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
+                        currency = state.value.currency,//currency,
+                        isNeededThousandSeparator = true
+                    ),
+                    total = numbersFormatter.toStringWithCurrency(
+                        number = total,
+                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
+                        currency = state.value.currency,//currency,it.currency,
+                        isNeededThousandSeparator = true
+                    ),
+                    firstDayMonth = firstDayMonth,
+                    firstDayMonthText = firstDayMonth.toString()
                 )
-            )
-        }
+            }
+        }.launchIn(viewModelScope)
     }
 
     @Suppress("detekt:CyclomaticComplexMethod")
@@ -92,7 +124,7 @@ class CategoryStatisticsViewModel(
             }
 
             is CategoryStatisticsEvent.OnStatisticsPeriodClick -> {
-                onStatisticsPeriodClick(event.newPeriod)
+                onStatisticsPeriodClick(event.newPeriodType)
             }
 
             is CategoryStatisticsEvent.OnChangeTheme -> onThemeChanged(event.isThemeDark)
@@ -122,33 +154,8 @@ class CategoryStatisticsViewModel(
 
     private fun onTabClick(newCategoryType: CategoryType) {
         if (writableState.value.selectedCategoryType.id != newCategoryType.id) {
-            writableState.update {
-                val categories = test.getCategoriesForStatistics(
-                    statisticsPeriod = it.selectedStatisticsPeriod,
-                    categoryType = newCategoryType
-                )
-                val formattedCategories = categoryStatisticsUiConverter.map(categories, it.currency)
 
-                val total = categories.sumOf { category -> category.totalAmount }
-
-                it.copy(
-                    selectedCategoryType = newCategoryType,
-                    selectedTabIndex = newCategoryType.ordinal,
-                    categories = categoryStatisticsUiConverter.map(categories, it.currency),
-                    pieChartCategories = getPieChartCategories(
-                        categories = categories,
-                        categoriesAmountString = formattedCategories.map { category ->
-                            category.totalAmount
-                        }
-                    ),
-                    total = numbersFormatter.toStringWithCurrency(
-                        number = total,
-                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
-                        currency = it.currency,
-                        isNeededThousandSeparator = true
-                    ),
-                )
-            }
+            sessionSateHolder.setCategoryType(newCategoryType)
         }
     }
 
@@ -170,34 +177,10 @@ class CategoryStatisticsViewModel(
         writableAction.tryEmit(CategoryStatisticsAction.NavigateToCategoryList)
     }
 
-    private fun onStatisticsPeriodClick(newPeriod: StatisticsPeriod) {
-        if (newPeriod.id != state.value.selectedStatisticsPeriod.id) {
-            writableState.update {
-                val categories = test.getCategoriesForStatistics(
-                    statisticsPeriod = newPeriod,
-                    categoryType = it.selectedCategoryType
-                )
-                val formattedCategories = categoryStatisticsUiConverter.map(categories, it.currency)
-                val total = categories.sumOf { category -> category.totalAmount }
+    private fun onStatisticsPeriodClick(newPeriod: StatisticsPeriodType) {
+        if (newPeriod.id != state.value.selectedStatisticsPeriod.type.id) {
 
-                it.copy(
-                    categories = categoryStatisticsUiConverter.map(categories, it.currency),
-                    pieChartCategories = getPieChartCategories(
-                        categories = categories,
-                        categoriesAmountString = formattedCategories.map { category ->
-                            category.totalAmount
-                        }
-                    ),
-                    total = numbersFormatter.toStringWithCurrency(
-                        number = total,
-                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
-                        currency = it.currency,
-                        isNeededThousandSeparator = true
-                    ),
-                    statisticsDate = test.getStatisticsDate(newPeriod),
-                    selectedStatisticsPeriod = newPeriod
-                )
-            }
+            sessionSateHolder.setPeriodType(newPeriod)
         }
     }
 
@@ -257,14 +240,21 @@ class CategoryStatisticsViewModel(
         }
 
         if (isFirstDayCorrect) {
+            runSafely(
+                block = {
+                    firstDayMonthInteractor.setFirstDayMonth(firstDay!!)
+                },
+                onError = {},
+                errorMessage = SET_FIRST_DAY_MONTH_ERROR
+            )
             writableState.update {
                 it.copy(
-                    firstDayMonth = firstDay ?: it.firstDayMonth,
                     firstDayMonthError = FirstDayMonthError.None,
                     isOpenedFirstDayMonthDialog = false
                 )
             }
             //TODO() Добавить логику изменения первого дня месяца
+
         }
     }
 
@@ -329,7 +319,9 @@ class CategoryStatisticsViewModel(
         const val GAP_ANGLE = 2f
         const val MIN_ANGLE = 0f
         const val MAX_ANGLE = 360f
+
         // Используются только для вывода логов
         const val CHANGE_THEME_ERROR = "Error switching the app theme"
+        const val SET_FIRST_DAY_MONTH_ERROR = "Error setting first day month"
     }
 }

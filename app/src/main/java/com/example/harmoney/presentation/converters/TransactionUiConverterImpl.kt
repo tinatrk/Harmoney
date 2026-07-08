@@ -2,7 +2,6 @@ package com.example.harmoney.presentation.converters
 
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.Transaction
-import com.example.harmoney.presentation.models.DatePattern
 import com.example.harmoney.presentation.models.DecimalPlaces
 import com.example.harmoney.presentation.models.TransactionUi
 import kotlinx.collections.immutable.ImmutableList
@@ -23,9 +22,7 @@ class TransactionUiConverterImpl(
                 isNeededThousandSeparator = true,
                 currency = currency
             ),
-            date = dateFormatter.millisToString(
-                dateMillis = transaction.dateMillis, pattern = DatePattern.CARD_SHORT
-            ),
+            date = dateFormatter.formatShortDate(date = transaction.date),
             note = transaction.note,
             createdAt = transaction.createdAt
         )
