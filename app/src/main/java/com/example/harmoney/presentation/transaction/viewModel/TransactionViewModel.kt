@@ -135,7 +135,7 @@ class TransactionViewModel(
             is TransactionEvent.OnTabClick -> onTabClick(event.categoryType)
 
             is TransactionEvent.OnDateDialogOpen -> onDateDialogOpen()
-            is TransactionEvent.OnDateDialogConfirm -> onDateDialogConfirm(event.newDateMillis)
+            is TransactionEvent.OnDateDialogConfirm -> onDateDialogConfirm(event.newDate)
             is TransactionEvent.OnDateDialogDismiss -> onDateDialogDismiss()
 
             is TransactionEvent.OnCalculatorOpen -> onCalculatorOpen()

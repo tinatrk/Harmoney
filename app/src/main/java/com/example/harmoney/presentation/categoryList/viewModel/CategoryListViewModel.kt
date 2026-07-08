@@ -3,15 +3,14 @@ package com.example.harmoney.presentation.categoryList.viewModel
 import androidx.lifecycle.viewModelScope
 import com.example.harmoney.base.BaseViewModel
 import com.example.harmoney.core.session.SessionStateHolder
-import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.SortOption
+import com.example.harmoney.domain.settings.categorySortingMode.api.useCase.CategorySortOptionInteractor
 import com.example.harmoney.presentation.categoryList.models.CategoryListAction
 import com.example.harmoney.presentation.categoryList.models.CategoryListEvent
 import com.example.harmoney.presentation.categoryList.models.CategoryListState
-import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
 import com.example.harmoney.presentation.converters.CategoryUiConverter
 import com.example.harmoney.presentation.test.TestDataSource
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
@@ -19,14 +18,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class CategoryListViewModel(
     private val sessionSateHolder: SessionStateHolder,
     private val test: TestDataSource,
-    private val categoryUiConverter: CategoryUiConverter
+    private val categoryUiConverter: CategoryUiConverter,
+    private val categorySortOptionInteractor: CategorySortOptionInteractor
 ) : BaseViewModel<CategoryListEvent, CategoryListAction, CategoryListState>(
     state = CategoryListState(
         selectedCategoryType = sessionSateHolder.state.value.categoryType,
@@ -36,16 +35,19 @@ class CategoryListViewModel(
     override val tag: String = CategoryListViewModel::class.java.simpleName ?: ""
 
     init {
-        // TODO() считать тип сортировки
-        sessionSateHolder.state.map { it.categoryType }
-            .distinctUntilChanged()
-            .flatMapLatest { categoryType ->
+        combine(
+            sessionSateHolder.state.map { it.categoryType },
+            categorySortOptionInteractor.getSortOption()
+        ) { categoryType, sortOption ->
+            categoryType to sortOption
+        }.distinctUntilChanged()
+            .flatMapLatest { (categoryType, sortOption) ->
                 flow {
-                    val sortOption = test.getSortOption()
-                    val categories = test.getCategories(categoryType) //sortOption
+                    // sortOption тут не передаем, т.к. передадим в UseCase-е
+                    val categories = test.getCategories(categoryType)
                     emit(Triple(categoryType, sortOption, categories))
                 }
-        }.onEach { (categoryType, sortOption, categories) ->
+            }.onEach { (categoryType, sortOption, categories) ->
                 writableState.update {
                     it.copy(
                         selectedSortOption = sortOption,
@@ -95,13 +97,13 @@ class CategoryListViewModel(
     private fun onSortOptionClick(newSortOption: SortOption) {
         if (state.value.selectedSortOption != newSortOption) {
             // в будущем обновлять sortOption через UseCase, а категории обновятся автоматически
+
+            viewModelScope.launch { categorySortOptionInteractor.setSortOption(newSortOption) }
+
             test.updateCategorySortOption(newSortOption)
-            val categories = test.getCategories(state.value.selectedCategoryType)
 
             writableState.update {
                 it.copy(
-                    selectedSortOption = newSortOption,
-                    categories = categoryUiConverter.map(categories),
                     isSortMenuOpened = false
                 )
             }

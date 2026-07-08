@@ -11,7 +11,7 @@ sealed interface TransactionEvent {
     data class OnTabClick(val categoryType: CategoryType) : TransactionEvent
 
     data object OnDateDialogOpen : TransactionEvent
-    data class OnDateDialogConfirm(val newDateMillis: LocalDate?) : TransactionEvent
+    data class OnDateDialogConfirm(val newDate: LocalDate?) : TransactionEvent
     data object OnDateDialogDismiss : TransactionEvent
 
     data object OnCalculatorOpen : TransactionEvent

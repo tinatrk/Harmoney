@@ -1,5 +1,7 @@
 package com.example.harmoney.core.di
 
+import com.example.harmoney.domain.settings.categorySortingMode.api.useCase.CategorySortOptionInteractor
+import com.example.harmoney.domain.settings.categorySortingMode.impl.CategorySortOptionInteractorImpl
 import com.example.harmoney.domain.settings.period.api.useCase.FirstDayMonthInteractor
 import com.example.harmoney.domain.settings.period.api.useCase.GetStatisticsPeriodsUseCase
 import com.example.harmoney.domain.settings.period.impl.FirstDayMonthInteractorImpl
@@ -30,5 +32,9 @@ val useCaseModule = module {
 
     factory<FirstDayMonthInteractor> {
         FirstDayMonthInteractorImpl(repository = get())
+    }
+
+    factory<CategorySortOptionInteractor> {
+        CategorySortOptionInteractorImpl(repository = get())
     }
 }
