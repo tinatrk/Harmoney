@@ -22,8 +22,6 @@ import com.example.harmoney.presentation.converters.TransactionUiConverter
 import com.example.harmoney.presentation.converters.TransactionUiConverterImpl
 import com.example.harmoney.presentation.converters.TransactionsFilterUiConverter
 import com.example.harmoney.presentation.converters.TransactionsFilterUiConverterImpl
-import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
-import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
 import com.example.harmoney.presentation.test.TestDataSource
 import com.example.harmoney.presentation.transaction.viewModel.TransactionViewModel
 import com.example.harmoney.presentation.transactionList.viewModel.TransactionListViewModel
@@ -85,14 +83,6 @@ val viewModelModule = module {
             test = get(),
             categoryUiConverter = get()
         )
-    }
-
-    viewModel {
-        SharedCategoryTypeViewModel()
-    }
-
-    viewModel {
-        SharedStatisticsPeriodViewModel()
     }
 
     viewModel {

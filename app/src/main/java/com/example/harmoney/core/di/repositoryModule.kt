@@ -14,8 +14,4 @@ val repositoryModule = module {
     factory<FirstDayMonthRepository> {
         FirstDayMonthRepositoryImpl(dataStore = get())
     }
-
-    factory<FirstDayMonthRepository> {
-        FirstDayMonthRepositoryImpl(dataStore = get())
-    }
 }
