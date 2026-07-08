@@ -50,7 +50,6 @@ import com.example.harmoney.presentation.category.models.CategoryIconSubType
 import com.example.harmoney.presentation.category.models.CategoryNameError
 import com.example.harmoney.presentation.category.models.CategoryState
 import com.example.harmoney.presentation.category.viewModel.CategoryViewModel
-import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
 import com.example.harmoney.ui.mappers.CategoryIconSubTypeUiMapper.toStringRes
 import com.example.harmoney.ui.mappers.CategoryIconUiMapper.toDrawableRes
 import com.example.harmoney.ui.mappers.CategoryTypeUiMapper.toStringRes
@@ -58,17 +57,11 @@ import com.example.harmoney.ui.theme.HarmTheme
 
 @Composable
 fun CategoryScreen(
-    sharedCategoryTypeVM: SharedCategoryTypeViewModel,
     viewModel: CategoryViewModel,
     onBackClick: () -> Unit,
 ) {
-    val categoryType by sharedCategoryTypeVM.selectedCategoryType.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-
-    LaunchedEffect(categoryType) {
-        viewModel.obtainEvent(CategoryEvent.OnChangeCategoryTypeClick(categoryType))
-    }
 
     LaunchedEffect(Unit) {
         viewModel.action
@@ -88,7 +81,6 @@ fun CategoryScreen(
     CategoryScreen(
         state = state,
         onEvent = viewModel::obtainEvent,
-        onCategoryTypeChanged = sharedCategoryTypeVM::categoryTypeChanged
     )
 }
 
@@ -96,7 +88,6 @@ fun CategoryScreen(
 fun CategoryScreen(
     state: CategoryState,
     onEvent: (CategoryEvent) -> Unit,
-    onCategoryTypeChanged: (CategoryType) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -119,7 +110,6 @@ fun CategoryScreen(
                 .padding(paddingValues),
             state = state,
             onEvent = onEvent,
-            onCategoryTypeChanged = onCategoryTypeChanged
         )
     }
 }
@@ -128,7 +118,6 @@ fun CategoryScreen(
 fun CategoryContent(
     state: CategoryState,
     onEvent: (CategoryEvent) -> Unit,
-    onCategoryTypeChanged: (CategoryType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -149,7 +138,9 @@ fun CategoryContent(
                     modifier = Modifier.weight(1f),
                     title = stringResource(type.toStringRes()),
                     checked = state.selectedCategoryType.id == type.id,
-                    onCheckChanged = { onCategoryTypeChanged(type) }
+                    onCheckChanged = {
+                        onEvent(CategoryEvent.OnChangeCategoryTypeClick(type))
+                    }
                 )
             }
         }
@@ -344,7 +335,6 @@ private fun CategoryScreen_CreateDarkPreview() {
         CategoryScreen(
             state = CategoryState(isCreateCategoryScreen = true),
             onEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -356,7 +346,6 @@ private fun CategoryScreen_CreateLightPreview() {
         CategoryScreen(
             state = CategoryState(isCreateCategoryScreen = true),
             onEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -373,7 +362,6 @@ private fun CategoryScreen_EditDarkPreview() {
                 selectedColor = CategoryColors.PINK_T75,
             ),
             onEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -390,7 +378,6 @@ private fun CategoryScreen_EditLightPreview() {
                 selectedColor = CategoryColors.PINK_T75,
             ),
             onEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -408,7 +395,6 @@ private fun CategoryScreen_IconBottomSheetDarkPreview() {
                 isIconsBottomSheetOpened = true
             ),
             onEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }
@@ -426,7 +412,6 @@ private fun CategoryScreen_IconBottomSheetLightPreview() {
                 isIconsBottomSheetOpened = true
             ),
             onEvent = {},
-            onCategoryTypeChanged = {}
         )
     }
 }

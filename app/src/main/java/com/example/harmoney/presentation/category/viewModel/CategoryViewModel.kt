@@ -1,6 +1,7 @@
 package com.example.harmoney.presentation.category.viewModel
 
 import com.example.harmoney.base.BaseViewModel
+import com.example.harmoney.core.session.SessionStateHolder
 import com.example.harmoney.domain.models.Category
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
@@ -15,15 +16,15 @@ import com.example.harmoney.presentation.models.CategoryUi
 import com.example.harmoney.presentation.test.TestDataSource
 import kotlinx.coroutines.flow.update
 
-@Suppress("detekt:TooManyFunctions",)
+@Suppress("detekt:TooManyFunctions")
 class CategoryViewModel(
-    categoryType: CategoryType,
+    private val sessionSateHolder: SessionStateHolder,
     categoryId: Long?,
     private val test: TestDataSource,
     private val categoryUiConverter: CategoryUiConverter
 ) : BaseViewModel<CategoryEvent, CategoryAction, CategoryState>(
     CategoryState(
-        selectedCategoryType = categoryType,
+        selectedCategoryType = sessionSateHolder.state.value.categoryType,
         isCreateCategoryScreen = categoryId == null
     )
 ) {
@@ -118,6 +119,8 @@ class CategoryViewModel(
     private fun onChangedCategoryTypeClick(newCategoryType: CategoryType) {
         if (curCategory.type != newCategoryType) {
             curCategory = curCategory.copy(type = newCategoryType)
+
+            sessionSateHolder.setCategoryType(newCategoryType)
 
             val categoryNameError = checkCategoryName(
                 name = curCategory.name,

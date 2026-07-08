@@ -1,39 +1,60 @@
 package com.example.harmoney.presentation.categoryList.viewModel
 
+import androidx.lifecycle.viewModelScope
 import com.example.harmoney.base.BaseViewModel
+import com.example.harmoney.core.session.SessionStateHolder
 import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.presentation.categoryList.models.CategoryListAction
 import com.example.harmoney.presentation.categoryList.models.CategoryListEvent
 import com.example.harmoney.presentation.categoryList.models.CategoryListState
+import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
 import com.example.harmoney.presentation.converters.CategoryUiConverter
 import com.example.harmoney.presentation.test.TestDataSource
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class CategoryListViewModel(
-    categoryType: CategoryType,
+    private val sessionSateHolder: SessionStateHolder,
     private val test: TestDataSource,
     private val categoryUiConverter: CategoryUiConverter
 ) : BaseViewModel<CategoryListEvent, CategoryListAction, CategoryListState>(
     state = CategoryListState(
-        selectedCategoryType = categoryType,
-        selectedTabIndex = categoryType.ordinal,
+        selectedCategoryType = sessionSateHolder.state.value.categoryType,
+        selectedTabIndex = sessionSateHolder.state.value.categoryType.ordinal
     )
 ) {
     override val tag: String = CategoryListViewModel::class.java.simpleName ?: ""
 
     init {
         // TODO() считать тип сортировки
-        val sortOption = test.getSortOption()
-
-        val categories = test.getCategories(categoryType)
-
-        writableState.update {
-            it.copy(
-                selectedSortOption = sortOption,
-                categories = categoryUiConverter.map(categories)
-            )
-        }
+        sessionSateHolder.state.map { it.categoryType }
+            .distinctUntilChanged()
+            .flatMapLatest { categoryType ->
+                flow {
+                    val sortOption = test.getSortOption()
+                    val categories = test.getCategories(categoryType) //sortOption
+                    emit(Triple(categoryType, sortOption, categories))
+                }
+        }.onEach { (categoryType, sortOption, categories) ->
+                writableState.update {
+                    it.copy(
+                        selectedSortOption = sortOption,
+                        selectedCategoryType = categoryType,
+                        selectedTabIndex = categoryType.ordinal,
+                        categories = categoryUiConverter.map(categories)
+                    )
+                }
+            }.launchIn(viewModelScope)
     }
 
     override fun obtainEvent(event: CategoryListEvent) {
@@ -58,15 +79,8 @@ class CategoryListViewModel(
 
     private fun onTabClick(newCategoryType: CategoryType) {
         if (state.value.selectedCategoryType.id != newCategoryType.id) {
-            val categories = test.getCategories(newCategoryType)
 
-            writableState.update {
-                it.copy(
-                    selectedCategoryType = newCategoryType,
-                    selectedTabIndex = newCategoryType.ordinal,
-                    categories = categoryUiConverter.map(categories)
-                )
-            }
+            sessionSateHolder.setCategoryType(newCategoryType)
         }
     }
 
@@ -80,6 +94,7 @@ class CategoryListViewModel(
 
     private fun onSortOptionClick(newSortOption: SortOption) {
         if (state.value.selectedSortOption != newSortOption) {
+            // в будущем обновлять sortOption через UseCase, а категории обновятся автоматически
             test.updateCategorySortOption(newSortOption)
             val categories = test.getCategories(state.value.selectedCategoryType)
 
@@ -97,6 +112,7 @@ class CategoryListViewModel(
 
     private fun onUpdateCategoryUserOrder(from: Int, to: Int) {
         if (from == to) return
+        // пока при смене порядка категории автоматически не обновятся
         test.updateCategoryUserOrder(from, to, state.value.selectedCategoryType)
         writableState.update {
             it.copy(

@@ -36,11 +36,10 @@ import com.example.harmoney.core.uilibrary.date.HarmDate
 import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
 import com.example.harmoney.domain.models.CategoryType
-import com.example.harmoney.domain.models.StatisticsPeriod
+import com.example.harmoney.domain.models.StatisticsPeriodType
 import com.example.harmoney.presentation.models.MenuOption
+import com.example.harmoney.presentation.models.StatisticsPeriodUi
 import com.example.harmoney.presentation.models.TransactionsFilterUi
-import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
-import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
 import com.example.harmoney.presentation.transactionList.models.TransactionListAction
 import com.example.harmoney.presentation.transactionList.models.TransactionListEvent
 import com.example.harmoney.presentation.transactionList.models.TransactionListState
@@ -54,28 +53,13 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun TransactionListScreen(
-    sharedCategoryTypeVM: SharedCategoryTypeViewModel,
-    sharedStatisticsPeriodVM: SharedStatisticsPeriodViewModel,
     viewModel: TransactionListViewModel,
     onBackClick: () -> Unit,
     onNavigateToCreateTransaction: (categoryId: Long?) -> Unit,
     onNavigateToOpenTransaction: (transactionId: Long?) -> Unit,
 ) {
-    val categoryType by sharedCategoryTypeVM.selectedCategoryType.collectAsStateWithLifecycle()
-    val statisticsPeriod by sharedStatisticsPeriodVM
-        .selectedStatisticsPeriod.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-
-    LaunchedEffect(categoryType) {
-        viewModel.obtainEvent(TransactionListEvent.OnTabClick(categoryType = categoryType))
-    }
-
-    LaunchedEffect(statisticsPeriod) {
-        viewModel.obtainEvent(
-            TransactionListEvent.OnStatisticsPeriodClick(statisticsPeriod)
-        )
-    }
 
     LaunchedEffect(Unit) {
         viewModel.action
@@ -100,8 +84,6 @@ fun TransactionListScreen(
     TransactionListScreen(
         state = state,
         onEvent = viewModel::obtainEvent,
-        onCategoryTypeChanged = sharedCategoryTypeVM::categoryTypeChanged,
-        onStatisticsPeriodChanged = sharedStatisticsPeriodVM::statisticsPeriodChanged
     )
 }
 
@@ -109,8 +91,6 @@ fun TransactionListScreen(
 fun TransactionListScreen(
     state: TransactionListState,
     onEvent: (TransactionListEvent) -> Unit,
-    onCategoryTypeChanged: (CategoryType) -> Unit,
-    onStatisticsPeriodChanged: (StatisticsPeriod) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -143,12 +123,11 @@ fun TransactionListScreen(
                 .padding(paddingValues),
             tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = state.selectedTabIndex,
-            onTabClick = { categoryType -> onCategoryTypeChanged(categoryType) }
+            onTabClick = { categoryType -> onEvent(TransactionListEvent.OnTabClick(categoryType)) }
         ) {
             TransactionListContent(
                 state = state,
                 onEvent = onEvent,
-                onStatisticsPeriodChanged = onStatisticsPeriodChanged
             )
         }
     }
@@ -158,7 +137,6 @@ fun TransactionListScreen(
 fun TransactionListContent(
     state: TransactionListState,
     onEvent: (TransactionListEvent) -> Unit,
-    onStatisticsPeriodChanged: (StatisticsPeriod) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -167,10 +145,12 @@ fun TransactionListContent(
             .background(HarmTheme.colors.surface)
     ) {
         HarmDate.HarmStatisticPeriodList(
-            data = state.statisticsDate,
-            periods = StatisticsPeriod.entries.toImmutableList(),
-            selectedPeriod = state.selectedStatisticsPeriod,
-            onPeriodClick = { newPeriod -> onStatisticsPeriodChanged(newPeriod) }
+            data = state.selectedStatisticsPeriod.date,
+            periods = StatisticsPeriodType.entries.toImmutableList(),
+            selectedPeriod = state.selectedStatisticsPeriod.type,
+            onPeriodClick = { newPeriod ->
+                onEvent(TransactionListEvent.OnStatisticsPeriodClick(newPeriod))
+            }
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -272,14 +252,15 @@ private fun TransactionListScreen_DarkEmptyPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                statisticsDate = "01.03.2026 - 31.03.2026",
+                selectedStatisticsPeriod = StatisticsPeriodUi(
+                    type = StatisticsPeriodType.CURRENT_MONTH,
+                    date = "01.03.2026 - 31.03.2026"
+                ),
                 totalAmount = "0 ₽",
                 oneDayTransactionsList = persistentListOf(),
                 selectedFilter = TransactionsFilterUi(id = 0, name = "Все категории")
             ),
             onEvent = {},
-            onCategoryTypeChanged = {},
-            onStatisticsPeriodChanged = {}
         )
     }
 }
@@ -292,14 +273,15 @@ fun TransactionListScreen_LightEmptyPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                statisticsDate = "01.03.2026 - 31.03.2026",
+                selectedStatisticsPeriod = StatisticsPeriodUi(
+                    type = StatisticsPeriodType.CURRENT_MONTH,
+                    date = "01.03.2026 - 31.03.2026"
+                ),
                 totalAmount = "0 ₽",
                 oneDayTransactionsList = persistentListOf(),
                 selectedFilter = TransactionsFilterUi(id = 0, name = "Все категории")
             ),
             onEvent = {},
-            onCategoryTypeChanged = {},
-            onStatisticsPeriodChanged = {}
         )
     }
 }
@@ -312,14 +294,15 @@ private fun TransactionListScreen_DarkPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                statisticsDate = "01.03.2026 - 31.03.2026",
+                selectedStatisticsPeriod = StatisticsPeriodUi(
+                    type = StatisticsPeriodType.CURRENT_MONTH,
+                    date = "01.03.2026 - 31.03.2026"
+                ),
                 totalAmount = "62 000 ₽",
                 oneDayTransactionsList = PreviewData.getExpensesTransactions(),
                 selectedFilter = TransactionsFilterUi(id = 0, name = "Все категории")
             ),
             onEvent = {},
-            onCategoryTypeChanged = {},
-            onStatisticsPeriodChanged = {}
         )
     }
 }
@@ -332,14 +315,15 @@ private fun TransactionListScreen_LightPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                statisticsDate = "01.03.2026 - 31.03.2026",
+                selectedStatisticsPeriod = StatisticsPeriodUi(
+                    type = StatisticsPeriodType.CURRENT_MONTH,
+                    date = "01.03.2026 - 31.03.2026"
+                ),
                 totalAmount = "62 000 ₽",
                 oneDayTransactionsList = PreviewData.getExpensesTransactions(),
                 selectedFilter = TransactionsFilterUi(id = 0, name = "Все категории")
             ),
             onEvent = {},
-            onCategoryTypeChanged = {},
-            onStatisticsPeriodChanged = {}
         )
     }
 }
@@ -352,7 +336,10 @@ private fun TransactionListScreen_DarkMenuPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                statisticsDate = "01.03.2026 - 31.03.2026",
+                selectedStatisticsPeriod = StatisticsPeriodUi(
+                    type = StatisticsPeriodType.CURRENT_MONTH,
+                    date = "01.03.2026 - 31.03.2026"
+                ),
                 totalAmount = "62 000 ₽",
                 oneDayTransactionsList = PreviewData.getExpensesTransactions(),
                 selectedFilter = TransactionsFilterUi(id = 0, name = "Все категории"),
@@ -360,8 +347,6 @@ private fun TransactionListScreen_DarkMenuPreview() {
                 transactionsFilters = PreviewData.getExpensesFilters()
             ),
             onEvent = {},
-            onCategoryTypeChanged = {},
-            onStatisticsPeriodChanged = {}
         )
     }
 }
@@ -374,7 +359,10 @@ private fun TransactionListScreen_LightMenuPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                statisticsDate = "01.03.2026 - 31.03.2026",
+                selectedStatisticsPeriod = StatisticsPeriodUi(
+                    type = StatisticsPeriodType.CURRENT_MONTH,
+                    date = "01.03.2026 - 31.03.2026"
+                ),
                 totalAmount = "62 000 ₽",
                 oneDayTransactionsList = PreviewData.getExpensesTransactions(),
                 selectedFilter = TransactionsFilterUi(id = 0, name = "Все категории"),
@@ -382,8 +370,6 @@ private fun TransactionListScreen_LightMenuPreview() {
                 transactionsFilters = PreviewData.getExpensesFilters()
             ),
             onEvent = {},
-            onCategoryTypeChanged = {},
-            onStatisticsPeriodChanged = {}
         )
     }
 }
@@ -396,15 +382,16 @@ private fun TransactionListScreen_DarkFilteredPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                statisticsDate = "01.03.2026 - 31.03.2026",
+                selectedStatisticsPeriod = StatisticsPeriodUi(
+                    type = StatisticsPeriodType.CURRENT_MONTH,
+                    date = "01.03.2026 - 31.03.2026"
+                ),
                 totalAmount = "56 500 ₽",
                 oneDayTransactionsList = PreviewData.getFilteredTransactions(),
                 selectedFilter = TransactionsFilterUi(id = 3, name = "Отпуск"),
                 isFilterMenuOpened = false,
             ),
             onEvent = {},
-            onCategoryTypeChanged = {},
-            onStatisticsPeriodChanged = {}
         )
     }
 }
@@ -417,15 +404,16 @@ private fun TransactionListScreen_LightFilteredPreview() {
         TransactionListScreen(
             state = TransactionListState(
                 currentBalance = "20 000 ₽",
-                statisticsDate = "01.03.2026 - 31.03.2026",
+                selectedStatisticsPeriod = StatisticsPeriodUi(
+                    type = StatisticsPeriodType.CURRENT_MONTH,
+                    date = "01.03.2026 - 31.03.2026"
+                ),
                 totalAmount = "56 500 ₽",
                 oneDayTransactionsList = PreviewData.getFilteredTransactions(),
                 selectedFilter = TransactionsFilterUi(id = 3, name = "Отпуск"),
                 isFilterMenuOpened = false,
             ),
             onEvent = {},
-            onCategoryTypeChanged = {},
-            onStatisticsPeriodChanged = {}
         )
     }
 }

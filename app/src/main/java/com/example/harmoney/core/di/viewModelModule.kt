@@ -1,8 +1,6 @@
 package com.example.harmoney.core.di
 
 import com.example.harmoney.MainViewModel
-import com.example.harmoney.domain.models.CategoryType
-import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorHandler
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorViewModel
 import com.example.harmoney.presentation.category.viewModel.CategoryViewModel
@@ -18,12 +16,12 @@ import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.converters.NumbersFormatterImpl
 import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverter
 import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverterImpl
+import com.example.harmoney.presentation.converters.StatisticsPeriodUiConverter
+import com.example.harmoney.presentation.converters.StatisticsPeriodUiConverterImpl
 import com.example.harmoney.presentation.converters.TransactionUiConverter
 import com.example.harmoney.presentation.converters.TransactionUiConverterImpl
 import com.example.harmoney.presentation.converters.TransactionsFilterUiConverter
 import com.example.harmoney.presentation.converters.TransactionsFilterUiConverterImpl
-import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
-import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
 import com.example.harmoney.presentation.test.TestDataSource
 import com.example.harmoney.presentation.transaction.viewModel.TransactionViewModel
 import com.example.harmoney.presentation.transactionList.viewModel.TransactionListViewModel
@@ -31,33 +29,35 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    viewModel { (categoryType: CategoryType, statisticsPeriod: StatisticsPeriod) ->
+    viewModel {
         CategoryStatisticsViewModel(
-            categoryType = categoryType,
-            statisticsPeriod = statisticsPeriod,
             test = get(),
             categoryStatisticsUiConverter = get(),
             numbersFormatter = get(),
-            setThemeUseCase = get()
+            setThemeUseCase = get(),
+            firstDayMonthInteractor = get(),
+            getStatisticsPeriodsUseCase = get(),
+            statisticsPeriodUiConverter = get(),
+            sessionSateHolder = get()
         )
     }
 
-    viewModel { (categoryType: CategoryType, statisticsPeriod: StatisticsPeriod,
-                    categoryId: Long?) ->
+    viewModel { (categoryId: Long?) ->
         TransactionListViewModel(
-            categoryType = categoryType,
-            statisticsPeriod = statisticsPeriod,
             categoryId = categoryId,
             test = get(),
             oneDayTransactionsUiConverter = get(),
             numberFormatter = get(),
-            transactionsFilterUiConverter = get()
+            transactionsFilterUiConverter = get(),
+            statisticsPeriodUiConverter = get(),
+            getStatisticsPeriodsUseCase = get(),
+            sessionStateHolder = get()
         )
     }
 
-    viewModel { (categoryType: CategoryType, categoryId: Long?, transactionId: Long?) ->
+    viewModel { (categoryId: Long?, transactionId: Long?) ->
         TransactionViewModel(
-            categoryType = categoryType,
+            sessionSateHolder = get(),
             categoryId = categoryId,
             transactionId = transactionId,
             test = get(),
@@ -68,29 +68,21 @@ val viewModelModule = module {
         )
     }
 
-    viewModel { (categoryType: CategoryType) ->
+    viewModel {
         CategoryListViewModel(
-            categoryType = categoryType,
+            sessionSateHolder = get(),
             test = get(),
             categoryUiConverter = get()
         )
     }
 
-    viewModel { (categoryType: CategoryType, categoryId: Long?) ->
+    viewModel { (categoryId: Long?) ->
         CategoryViewModel(
-            categoryType = categoryType,
+            sessionSateHolder = get(),
             categoryId = categoryId,
             test = get(),
             categoryUiConverter = get()
         )
-    }
-
-    viewModel {
-        SharedCategoryTypeViewModel()
-    }
-
-    viewModel {
-        SharedStatisticsPeriodViewModel()
     }
 
     viewModel {
@@ -137,9 +129,13 @@ val viewModelModule = module {
         TransactionsFilterUiConverterImpl()
     }
 
+    factory<StatisticsPeriodUiConverter> {
+        StatisticsPeriodUiConverterImpl(dateFormatter = get())
+    }
+
     //временный класс
     single {
-        TestDataSource(dateFormatter = get())
+        TestDataSource()
     }
 
     viewModel {

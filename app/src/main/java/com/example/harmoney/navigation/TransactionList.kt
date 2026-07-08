@@ -4,8 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.example.harmoney.presentation.sharedViewModel.SharedCategoryTypeViewModel
-import com.example.harmoney.presentation.sharedViewModel.SharedStatisticsPeriodViewModel
+import com.example.harmoney.presentation.transactionList.viewModel.TransactionListViewModel
 import com.example.harmoney.ui.screens.TransactionListScreen
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -18,23 +17,15 @@ fun NavGraphBuilder.transactionListScreen(
     onBackClick: () -> Unit,
     onNavigateToCreateTransaction: (Long?) -> Unit,
     onNavigateToOpenTransaction: (Long?) -> Unit,
-    sharedCategoryTypeVM: SharedCategoryTypeViewModel,
-    sharedStatisticsPeriodVM: SharedStatisticsPeriodViewModel
 ) {
     composable<TransactionList> { navBackStackEntry ->
         val route = navBackStackEntry.toRoute<TransactionList>()
         TransactionListScreen(
-            sharedCategoryTypeVM = sharedCategoryTypeVM,
-            sharedStatisticsPeriodVM = sharedStatisticsPeriodVM,
             onBackClick = onBackClick,
             onNavigateToCreateTransaction = onNavigateToCreateTransaction,
             onNavigateToOpenTransaction = onNavigateToOpenTransaction,
-            viewModel = koinViewModel() {
-                parametersOf(
-                    sharedCategoryTypeVM.selectedCategoryType.value,
-                    sharedStatisticsPeriodVM.selectedStatisticsPeriod.value,
-                    route.categoryId
-                )
+            viewModel = koinViewModel<TransactionListViewModel>() {
+                parametersOf(route.categoryId)
             },
         )
     }

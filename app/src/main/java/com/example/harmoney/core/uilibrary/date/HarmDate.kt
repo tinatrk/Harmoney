@@ -16,6 +16,7 @@ import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.getSelectedDate
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,11 +28,12 @@ import androidx.compose.ui.unit.dp
 import com.example.harmoney.R
 import com.example.harmoney.annotation.UiLibrary
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
-import com.example.harmoney.domain.models.StatisticsPeriod
+import com.example.harmoney.domain.models.StatisticsPeriodType
 import com.example.harmoney.ui.mappers.StatisticsPeriodUiMapper.toStringRes
 import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import java.time.LocalDate
 
 /**
  * - `HarmDatePickerModal` - Date Picker Dialog
@@ -43,7 +45,7 @@ object HarmDate {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun HarmDatePickerModal(
-        onDateSelected: (Long?) -> Unit,
+        onDateSelected: (LocalDate?) -> Unit,
         onDismiss: () -> Unit,
     ) {
         val colors = HarmTheme.colors
@@ -55,7 +57,7 @@ object HarmDate {
                 HarmButton.HarmPrimaryButton(
                     text = stringResource(R.string.btn_dialog_select_text),
                     onClick = {
-                        onDateSelected(datePickerState.selectedDateMillis)
+                        onDateSelected(datePickerState.getSelectedDate())//selectedDateMillis)
                         onDismiss()
                     }
                 )
@@ -112,9 +114,9 @@ object HarmDate {
     @Composable
     fun HarmStatisticPeriodList(
         data: String,
-        periods: ImmutableList<StatisticsPeriod>,
-        selectedPeriod: StatisticsPeriod,
-        onPeriodClick: (StatisticsPeriod) -> Unit,
+        periods: ImmutableList<StatisticsPeriodType>,
+        selectedPeriod: StatisticsPeriodType,
+        onPeriodClick: (StatisticsPeriodType) -> Unit,
         modifier: Modifier = Modifier,
     ) {
         Column(modifier = modifier.fillMaxWidth()) {
@@ -191,8 +193,8 @@ private fun HarmStatisticPeriodList_DarkPreview() {
     HarmTheme(darkTheme = true) {
         HarmDate.HarmStatisticPeriodList(
             data = "01.03.2026 - 31.03.2026",
-            periods = StatisticsPeriod.entries.toImmutableList(),
-            selectedPeriod = StatisticsPeriod.CURRENT_MONTH,
+            periods = StatisticsPeriodType.entries.toImmutableList(),
+            selectedPeriod = StatisticsPeriodType.CURRENT_MONTH,
             onPeriodClick = {}
         )
     }
@@ -204,8 +206,8 @@ private fun HarmStatisticPeriodList_LightPreview() {
     HarmTheme(darkTheme = false) {
         HarmDate.HarmStatisticPeriodList(
             data = "01.03.2026 - 31.03.2026",
-            periods = StatisticsPeriod.entries.toImmutableList(),
-            selectedPeriod = StatisticsPeriod.CURRENT_MONTH,
+            periods = StatisticsPeriodType.entries.toImmutableList(),
+            selectedPeriod = StatisticsPeriodType.CURRENT_MONTH,
             onPeriodClick = {}
         )
     }

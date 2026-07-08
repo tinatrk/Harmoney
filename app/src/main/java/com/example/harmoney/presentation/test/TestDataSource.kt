@@ -1,15 +1,17 @@
 package com.example.harmoney.presentation.test
 
+import com.example.harmoney.data.converters.DateConverter
 import com.example.harmoney.domain.models.Category
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
-import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.OneDayTransactions
+import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.StatisticsPeriod
+import com.example.harmoney.domain.models.StatisticsPeriodType
 import com.example.harmoney.domain.models.Transaction
 import com.example.harmoney.domain.models.TransactionsFilter
 import com.example.harmoney.presentation.converters.DateFormatter
@@ -20,7 +22,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 /** A temporary class to simulate a data source until the domain part is implemented */
-class TestDataSource(private val dateFormatter: DateFormatter) {
+class TestDataSource {
 
     private val categories: MutableList<Category> = mutableListOf(
         Category(
@@ -271,97 +273,97 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         Transaction(
             id = 1,
             category = categories.first { it.id == 1L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("01.03.2026")),
+            date = parseDateFromString("01.06.2026"),
             amount = 1500.0,
             note = "Вкусняшки"
         ),
         Transaction(
             id = 2,
             category = categories.first { it.id == 2L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("01.03.2026")),
+            date = parseDateFromString("01.06.2026"),
             amount = 500.0,
             note = "8 марта"
         ),
         Transaction(
             id = 3,
             category = categories.first { it.id == 3L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("05.03.2026")),
+            date = parseDateFromString("05.06.2026"),
             amount = 15000.0,
             note = "Билеты"
         ),
         Transaction(
             id = 4,
             category = categories.first { it.id == 1L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("10.03.2026")),
+            date = parseDateFromString("10.06.2026"),
             amount = 2000.0,
         ),
         Transaction(
             id = 5,
             category = categories.first { it.id == 2L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("10.03.2026")),
+            date = parseDateFromString("10.06.2026"),
             amount = 3000.0,
             note = "Сумку себе любимой"
         ),
         Transaction(
             id = 6,
             category = categories.first { it.id == 2L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("12.03.2026")),
+            date = parseDateFromString("12.03.2026"),
             amount = 4000.0,
         ),
         //-------------------------------------------------------------
         Transaction(
             id = 7,
             category = categories.first { it.id == 1L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("05.02.2026")),
+            date = parseDateFromString("05.02.2026"),
             amount = 2000.0,
             note = "Продукты к ужину"
         ),
         Transaction(
             id = 8,
             category = categories.first { it.id == 3L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("05.02.2026")),
+            date = parseDateFromString("05.07.2026"),
             amount = 15000.0,
             note = "Хата"
         ),
         Transaction(
             id = 9,
             category = categories.first { it.id == 2L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("07.02.2026")),
+            date = parseDateFromString("07.07.2026"),
             amount = 1500.0,
             note = "Валентинка"
         ),
         Transaction(
             id = 10,
             category = categories.first { it.id == 1L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("16.02.2026")),
+            date = parseDateFromString("16.07.2026"),
             amount = 4000.0,
         ),
         Transaction(
             id = 11,
             category = categories.first { it.id == 2L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("16.02.2026")),
+            date = parseDateFromString("16.07.2026"),
             amount = 1000.0,
             note = "Носки"
         ),
         //---------------------------------------------------------------------
         Transaction(
             id = 12,
-            category = categories.first { it.id == 6L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("08.03.2026")),
+            category = categories.first { it.id == 21L },
+            date = parseDateFromString("08.07.2026"),
             amount = 2000.0,
             note = "От мамы"
         ),
         Transaction(
             id = 13,
-            category = categories.first { it.id == 6L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("08.03.2026")),
+            category = categories.first { it.id == 21L },
+            date = parseDateFromString("08.07.2026"),
             amount = 1500.0,
             note = "От бабушки"
         ),
         Transaction(
             id = 14,
-            category = categories.first { it.id == 5L },
-            dateMillis = dateFormatter.dateToMillis(parseDateFromString("25.02.2026")),
+            category = categories.first { it.id == 20L },
+            date = parseDateFromString("25.06.2026"),
             amount = 25000.0,
             note = "Зарплата"
         ),
@@ -369,17 +371,34 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
 
     private var categorySortOption: SortOption = SortOption.ALPHABET
 
-    private val curMonthFirstDay: Long =
-        dateFormatter.dateToMillis(parseDateFromString("25.05.2026"))
+    private val statisticsPeriods: List<StatisticsPeriod> = listOf(
+        StatisticsPeriod(
+            type = StatisticsPeriodType.LAST_MONTH,
+            firstDay = parseDateFromString("25.05.2026"),
+            lastDay = parseDateFromString("24.06.2026")
+        ),
+        StatisticsPeriod(
+            type = StatisticsPeriodType.CURRENT_MONTH,
+            firstDay = parseDateFromString("25.06.2026"),
+            lastDay = parseDateFromString("24.07.2026")
+        )
+    )
+
+    /*private val curMonthFirstDay: Long =
+        dateFormatter.dateToMillis(parseDateFromString("25.06.2026"))
     private val curMonthLastDay: Long =
-        dateFormatter.dateToMillis(parseDateFromString("24.06.2026"))
+        dateFormatter.dateToMillis(parseDateFromString("24.07.2026"))
     private val pastMonthFirstDay: Long =
-        dateFormatter.dateToMillis(parseDateFromString("25.01.2026"))
+        dateFormatter.dateToMillis(parseDateFromString("25.05.2026"))
     private val pastMonthLastDay: Long =
-        dateFormatter.dateToMillis(parseDateFromString("24.02.2026"))
+        dateFormatter.dateToMillis(parseDateFromString("24.06.2026"))*/
 
     // для корректной работы updateCategoryUserOrder
     private val userOrder = USER_ORDER_IN_ASCENDING_ORDER
+
+    fun getStatisticsPeriodList(): List<StatisticsPeriod> {
+        return statisticsPeriods
+    }
 
     fun getBalance(): Double {
         var totalExpenses: Double = 0.0
@@ -398,20 +417,25 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         return LocalDate.parse(date, formatter)
     }
 
-    private fun parseStringFromDate(date: LocalDate): String {
+    /*private fun parseStringFromDate(date: LocalDate): String {
         val formatter = DateTimeFormatter.ofPattern(DatePattern.TITLE_FORMAL)
         return date.format(formatter)
     }
 
     fun getStatisticsDate(statisticsPeriod: StatisticsPeriod): String {
-        return if (statisticsPeriod == StatisticsPeriod.CURRENT_MONTH) {
+        return dateFormatter.formatPeriod(
+            statisticsPeriod.firstDay,
+            statisticsPeriod.lastDay,
+        )
+
+        /*return if (statisticsPeriodType == StatisticsPeriodType.CURRENT_MONTH) {
             parseStringFromDate(dateFormatter.millisToDate(curMonthFirstDay)) + " - " +
                     parseStringFromDate(dateFormatter.millisToDate(curMonthLastDay))
         } else {
             parseStringFromDate(dateFormatter.millisToDate(pastMonthFirstDay)) + " - " +
                     parseStringFromDate(dateFormatter.millisToDate(pastMonthLastDay))
-        }
-    }
+        }*/
+    }*/
 
     fun getCategoriesForStatistics(
         statisticsPeriod: StatisticsPeriod,
@@ -464,20 +488,23 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         var firstDay: Long
         var lastDay: Long
 
-        when (statisticsPeriod) {
-            StatisticsPeriod.CURRENT_MONTH -> {
+        /*when (statisticsPeriod) {
+            StatisticsPeriodType.CURRENT_MONTH -> {
                 firstDay = curMonthFirstDay
                 lastDay = curMonthLastDay
             }
 
-            StatisticsPeriod.LAST_MONTH -> {
+            StatisticsPeriodType.LAST_MONTH -> {
                 firstDay = pastMonthFirstDay
                 lastDay = pastMonthLastDay
             }
-        }
+        }*/
 
         val filteredTransactions = transactions
-            .filter { ((it.dateMillis >= firstDay) && (it.dateMillis <= lastDay)) }
+            .filter {
+                ((it.date >= statisticsPeriod.firstDay)
+                        && (it.date <= statisticsPeriod.lastDay))
+            }
             .filter { it.category.type == categoryType }
 
         return if (categoryId != null) {
@@ -499,18 +526,21 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         filterId: Long?
     ): List<OneDayTransactions> {
         val filteredTransactions = if (filterId != null && filterId > 0) {
-            getTransactions(statisticsPeriod, categoryType).filter { it.category.id == filterId }
+            getTransactions(
+                statisticsPeriod,
+                categoryType
+            ).filter { it.category.id == filterId }
         } else {
             getTransactions(statisticsPeriod, categoryType)
         }
         val total = filteredTransactions.sumOf { it.amount }
 
-        val days = filteredTransactions.map { it.dateMillis }.distinct().sortedDescending()
+        val days = filteredTransactions.map { it.date }.distinct().sortedDescending()
 
         return days.map { day ->
-            val transactions = filteredTransactions.filter { it.dateMillis == day }
+            val transactions = filteredTransactions.filter { it.date == day }
             OneDayTransactions(
-                dateMillis = day,
+                date = day,
                 transactions = transactions,
                 totalAmount = transactions.sumOf { it.amount }
             )
@@ -537,16 +567,18 @@ class TestDataSource(private val dateFormatter: DateFormatter) {
         ) + filters
     }
 
-    fun getFirstDay(): Long {
-        return curMonthFirstDay
+    fun getFirstDay(): LocalDate {
+        return statisticsPeriods[1].firstDay//curMonthFrstDay
     }
 
-    fun getLastDay(): Long {
-        return curMonthLastDay
+    fun getLastDay(): LocalDate {
+        return statisticsPeriods[1].lastDay//curMonthLastDay
     }
 
-    fun isDateInCorrectRange(dateMillis: Long?): Boolean {
-        return dateMillis in curMonthFirstDay..curMonthLastDay
+    fun isDateInCorrectRange(dateMillis: LocalDate?): Boolean {
+        return dateMillis?.let {
+            it in statisticsPeriods[1].firstDay..statisticsPeriods[1].lastDay
+        } ?: false
     }
 
     // Добавить логику?

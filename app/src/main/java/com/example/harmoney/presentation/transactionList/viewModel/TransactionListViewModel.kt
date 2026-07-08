@@ -1,11 +1,15 @@
 package com.example.harmoney.presentation.transactionList.viewModel
 
+import androidx.lifecycle.viewModelScope
 import com.example.harmoney.base.BaseViewModel
+import com.example.harmoney.core.session.SessionStateHolder
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
-import com.example.harmoney.domain.models.StatisticsPeriod
+import com.example.harmoney.domain.models.StatisticsPeriodType
+import com.example.harmoney.domain.settings.period.api.useCase.GetStatisticsPeriodsUseCase
 import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverter
+import com.example.harmoney.presentation.converters.StatisticsPeriodUiConverter
 import com.example.harmoney.presentation.converters.TransactionsFilterUiConverter
 import com.example.harmoney.presentation.models.DecimalPlaces
 import com.example.harmoney.presentation.models.TransactionsFilterUi
@@ -13,72 +17,96 @@ import com.example.harmoney.presentation.test.TestDataSource
 import com.example.harmoney.presentation.transactionList.models.TransactionListAction
 import com.example.harmoney.presentation.transactionList.models.TransactionListEvent
 import com.example.harmoney.presentation.transactionList.models.TransactionListState
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
 @Suppress("detekt:LongParameterList", "detekt:TooManyFunctions")
 class TransactionListViewModel(
-    categoryType: CategoryType,
-    statisticsPeriod: StatisticsPeriod,
+    private val sessionStateHolder: SessionStateHolder,
     categoryId: Long?,
     private val test: TestDataSource,
     private val oneDayTransactionsUiConverter: OneDayTransactionsUiConverter,
     private val numberFormatter: NumbersFormatter,
-    private val transactionsFilterUiConverter: TransactionsFilterUiConverter
+    private val transactionsFilterUiConverter: TransactionsFilterUiConverter,
+    private val getStatisticsPeriodsUseCase: GetStatisticsPeriodsUseCase,
+    private val statisticsPeriodUiConverter: StatisticsPeriodUiConverter,
 ) : BaseViewModel<TransactionListEvent, TransactionListAction, TransactionListState>(
     state = TransactionListState(
-        selectedCategoryType = categoryType,
-        selectedTabIndex = categoryType.ordinal,
-        selectedStatisticsPeriod = statisticsPeriod
+        selectedCategoryType = sessionStateHolder.state.value.categoryType,
+        selectedTabIndex = sessionStateHolder.state.value.categoryType.ordinal,
     )
 ) {
     override val tag: String = TransactionListViewModel::class.java.simpleName ?: ""
     private val currency: Currency
     private val selectedFilters: MutableList<Long>
 
+    private val sessionFlow = sessionStateHolder.state
+    private val periodsFlow = getStatisticsPeriodsUseCase()
+
+    //private val filtersFlow = useCase (filters + selectedFilter)
+    /*private val filtersFlow = sessionFlow.map { it.categoryType }.collectLatest {categoryType ->
+        test.getTransactionFilters(categoryType)
+    }*/
+    // private balanceFlow = useCase
+
     init {
-        val filters = transactionsFilterUiConverter
-            .map(filters = test.getTransactionFilters(state.value.selectedCategoryType))
-        val filter = categoryId?.let { filters.find { it.id == categoryId } } ?: filters.first()
-
-        selectedFilters = if (filters.isNotEmpty()) {
-            CategoryType.entries.map { filters.first().id }.toMutableList()
-        } else {
-            CategoryType.entries.map { ZERO_ID }.toMutableList()
-        }
-        selectedFilters[state.value.selectedCategoryType.ordinal] = filter.id
-
-        val transactions = test.getTransactionList(
-            statisticsPeriod = state.value.selectedStatisticsPeriod,
-            categoryType = state.value.selectedCategoryType,
-            filterId = filter.id
-        )
-        val balance = test.getBalance()
         // TODO() в будущем считывать валюту из sharedPreferences
         currency = Currency.RUB
-        val totalAmount = transactions.sumOf { it.totalAmount }
+        selectedFilters = mutableListOf()
 
-        writableState.update {
-            it.copy(
-                currentBalance = numberFormatter.toStringWithCurrency(
-                    number = balance,
-                    decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
-                    currency = currency,
-                    isNeededThousandSeparator = true
-                ),
-                statisticsDate = test.getStatisticsDate(it.selectedStatisticsPeriod),
-                totalAmount = numberFormatter.toStringWithCurrency(
-                    number = totalAmount,
-                    decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
-                    currency = currency,
-                    isNeededThousandSeparator = true
-                ),
-                oneDayTransactionsList = oneDayTransactionsUiConverter
-                    .map(days = transactions, currency = currency),
-                transactionsFilters = filters,
-                isFilterMenuOpened = false,
-                selectedFilter = filter
+        combine(
+            sessionFlow,
+            periodsFlow,
+            //filterFlow
+        ) { sessionData, periods ->//filter
+            val selectedPeriod = periods.first { it.type == sessionData.statisticsPeriodType }
+            val transactions = test.getTransactionList(
+                selectedPeriod, sessionData.categoryType, null
             )
-        }
+
+            val balance = test.getBalance()
+            val totalAmount = transactions.sumOf { it.totalAmount }
+
+            val filters = transactionsFilterUiConverter
+                .map(filters = test.getTransactionFilters(state.value.selectedCategoryType))
+            val filter = categoryId?.let { filters.find { it.id == categoryId } } ?: filters.first()
+
+            selectedFilters.addAll(
+                if (filters.isNotEmpty()) {
+                    CategoryType.entries.map { filters.first().id }.toMutableList()
+                } else {
+                    CategoryType.entries.map { ZERO_ID }.toMutableList()
+                }
+            )
+            selectedFilters[state.value.selectedCategoryType.ordinal] = filter.id
+
+            writableState.update {
+                it.copy(
+                    currentBalance = numberFormatter.toStringWithCurrency(
+                        number = balance,
+                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
+                        currency = currency,
+                        isNeededThousandSeparator = true
+                    ),
+                    totalAmount = numberFormatter.toStringWithCurrency(
+                        number = totalAmount,
+                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
+                        currency = currency,
+                        isNeededThousandSeparator = true
+                    ),
+                    oneDayTransactionsList = oneDayTransactionsUiConverter
+                        .map(days = transactions, currency = currency),
+                    transactionsFilters = filters,
+                    isFilterMenuOpened = false,
+                    selectedFilter = filter,
+                    selectedCategoryType = sessionData.categoryType,
+                    selectedTabIndex = sessionData.categoryType.ordinal,
+                    selectedStatisticsPeriod = statisticsPeriodUiConverter.map(selectedPeriod)
+                )
+            }
+        }.launchIn(viewModelScope)
     }
 
     override fun obtainEvent(event: TransactionListEvent) {
@@ -104,66 +132,15 @@ class TransactionListViewModel(
 
     private fun onTabClick(newCategoryType: CategoryType) {
         if (writableState.value.selectedCategoryType.id != newCategoryType.id) {
-            val filters = transactionsFilterUiConverter.map(
-                filters = test.getTransactionFilters(newCategoryType)
-            )
-            val curFilter = filters.find {
-                it.id == selectedFilters[newCategoryType.ordinal]
-            } ?: filters.first()
-            selectedFilters[newCategoryType.ordinal] = curFilter.id
 
-            val transactions = test.getTransactionList(
-                statisticsPeriod = state.value.selectedStatisticsPeriod,
-                categoryType = newCategoryType,
-                filterId = curFilter.id
-            )
-            val totalAmount = transactions.sumOf { it.totalAmount }
-            writableState.update {
-                it.copy(
-                    selectedCategoryType = newCategoryType,
-                    selectedTabIndex = newCategoryType.ordinal,
-                    totalAmount = numberFormatter.toStringWithCurrency(
-                        number = totalAmount,
-                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
-                        currency = currency,
-                        isNeededThousandSeparator = true
-                    ),
-                    oneDayTransactionsList = oneDayTransactionsUiConverter.map(
-                        days = transactions,
-                        currency = currency
-                    ),
-                    transactionsFilters = filters,
-                    selectedFilter = curFilter
-                )
-            }
+            sessionStateHolder.setCategoryType(newCategoryType)
         }
     }
 
-    private fun onStatisticPeriodClick(newPeriod: StatisticsPeriod) {
-        if (newPeriod.id != state.value.selectedStatisticsPeriod.id) {
-            val transactions = test.getTransactionList(
-                statisticsPeriod = newPeriod,
-                categoryType = state.value.selectedCategoryType,
-                filterId = state.value.selectedFilter.id
-            )
-            val totalAmount = transactions.sumOf { it.totalAmount }
+    private fun onStatisticPeriodClick(newPeriod: StatisticsPeriodType) {
+        if (newPeriod.id != state.value.selectedStatisticsPeriod.type.id) {
 
-            writableState.update {
-                it.copy(
-                    statisticsDate = test.getStatisticsDate(statisticsPeriod = newPeriod),
-                    selectedStatisticsPeriod = newPeriod,
-                    totalAmount = numberFormatter.toStringWithCurrency(
-                        number = totalAmount,
-                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
-                        currency = currency,
-                        isNeededThousandSeparator = true
-                    ),
-                    oneDayTransactionsList = oneDayTransactionsUiConverter.map(
-                        days = transactions,
-                        currency = currency
-                    ),
-                )
-            }
+            sessionStateHolder.setPeriodType(newPeriod)
         }
     }
 
@@ -179,6 +156,8 @@ class TransactionListViewModel(
     }
 
     private fun onOpenTransaction(transactionId: Long?) {
+        // Log.d("HarmAppTag", "TransactionListViewModel -> onOpenTransaction ->
+        // transactionId = $transactionId")
         writableAction.tryEmit(
             TransactionListAction.NavigateToOpeningTransaction(transactionId)
         )
@@ -192,7 +171,10 @@ class TransactionListViewModel(
 
     private fun onFilterMenuChanged(filter: TransactionsFilterUi) {
         if (state.value.selectedFilter.id != filter.id) {
-            val transactions = test.getTransactionList(
+
+            // UseCase по изменению фильтра
+
+            /*val transactions = test.getTransactionList(
                 statisticsPeriod = state.value.selectedStatisticsPeriod,
                 categoryType = state.value.selectedCategoryType,
                 filterId = filter.id
@@ -215,7 +197,7 @@ class TransactionListViewModel(
                         isNeededThousandSeparator = true
                     )
                 )
-            }
+            }*/
         } else {
             onFilterMenuDismiss()
         }
