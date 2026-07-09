@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.example.harmoney.data.category.entity.CategoryEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CategoryDao {
@@ -24,10 +25,13 @@ interface CategoryDao {
     suspend fun getCategory(id: Long): CategoryEntity?
 
     @Query("SELECT * FROM category WHERE name = :name AND typeId = :categoryTypeId")
-    suspend fun getCategory(name: String, categoryTypeId: Long) : CategoryEntity?
+    suspend fun getCategory(name: String, categoryTypeId: Long): CategoryEntity?
 
     @Query("SELECT * FROM category WHERE typeId = :categoryTypeId")
-    suspend fun getCategoryList(categoryTypeId: Long): List<CategoryEntity>?
+    fun getCategoryList(categoryTypeId: Long): Flow<List<CategoryEntity>?>
+
+    @Query("UPDATE category SET userOrder = :newUserOrder WHERE id = :categoryId")
+    suspend fun updateCategoryUserOrder(categoryId: Long, newUserOrder: Double)
 
     // Если вставляем категорию в конец списка
     @Query("SELECT MAX(userOrder) FROM category WHERE typeId = :categoryTypeId")

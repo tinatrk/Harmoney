@@ -4,6 +4,7 @@ import com.example.harmoney.core.util.Resource
 import com.example.harmoney.domain.category.models.CategoryFailure
 import com.example.harmoney.domain.models.Category
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.SortOption
 import kotlinx.coroutines.flow.Flow
 
 interface CategoryRepository {
@@ -15,7 +16,8 @@ interface CategoryRepository {
 
     suspend fun getCategory(categoryId: Long): Resource<Category, CategoryFailure>
 
-    fun getCategoryList(categoryType: CategoryType): Flow<Resource<List<Category>, CategoryFailure>>
+    fun getCategoryList(categoryType: CategoryType, sortOption: SortOption)
+            : Flow<Resource<List<Category>, CategoryFailure>>
 
     suspend fun updateCategoryUsedOrder(
         categoryId: Long,
@@ -26,5 +28,5 @@ interface CategoryRepository {
     suspend fun checkCategoryAlreadyExists(
         categoryName: String,
         categoryType: CategoryType
-    ): Flow<Resource<Boolean, CategoryFailure>>
+    ): Resource<Boolean, CategoryFailure>
 }

@@ -6,6 +6,8 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import com.example.harmoney.core.database.AppDatabase
+import com.example.harmoney.data.category.converter.CategoryDBConverter
+import com.example.harmoney.data.category.converter.CategoryDBConverterImpl
 import com.example.harmoney.data.category.dao.CategoryDao
 import com.example.harmoney.data.converters.DateConverter
 import com.example.harmoney.data.transaction.dao.TransactionDao
@@ -42,5 +44,9 @@ val dataModule = module {
 
     factory {
         DateConverter()
+    }
+
+    factory<CategoryDBConverter> {
+        CategoryDBConverterImpl()
     }
 }
