@@ -1,6 +1,7 @@
-package com.example.harmoney.data.category.entity
+package com.example.harmoney.data.core
 
 import androidx.room.Embedded
+import com.example.harmoney.data.category.entity.CategoryEntity
 import com.example.harmoney.data.transaction.entity.TransactionEntity
 
 data class TransactionWithCategory(
