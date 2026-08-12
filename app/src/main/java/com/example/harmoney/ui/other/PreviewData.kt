@@ -9,7 +9,7 @@ import com.example.harmoney.presentation.models.CategoryUi
 import com.example.harmoney.presentation.models.OneDayTransactionsUi
 import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.models.TransactionUi
-import com.example.harmoney.presentation.models.TransactionsFilterUi
+import com.example.harmoney.presentation.models.TransactionFilterUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -187,9 +187,9 @@ object PreviewData {
         )
     }
 
-    fun getExpensesFilters(): ImmutableList<TransactionsFilterUi> {
-        val filters = persistentListOf(TransactionsFilterUi(id = 0, name = "Все категории")) +
-                expensesCategories.map { TransactionsFilterUi(it.id, it.name) }
+    fun getExpensesFilters(): ImmutableList<TransactionFilterUi> {
+        val filters = persistentListOf(TransactionFilterUi.All) +
+                expensesCategories.map { TransactionFilterUi.CategoryUi(it.id, it.name) }
                     .sortedBy { it.name }
 
         return filters.toImmutableList()

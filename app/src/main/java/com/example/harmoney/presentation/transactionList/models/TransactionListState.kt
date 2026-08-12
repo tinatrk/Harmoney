@@ -5,7 +5,7 @@ import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriodType
 import com.example.harmoney.presentation.models.OneDayTransactionsUi
 import com.example.harmoney.presentation.models.StatisticsPeriodUi
-import com.example.harmoney.presentation.models.TransactionsFilterUi
+import com.example.harmoney.presentation.models.TransactionFilterUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -23,7 +23,7 @@ data class TransactionListState(
     val totalAmount: String = "0.00",
     val oneDayTransactionsList: ImmutableList<OneDayTransactionsUi> = persistentListOf(),
 
-    val transactionsFilters: ImmutableList<TransactionsFilterUi> = persistentListOf(),
+    val transactionsFilters: ImmutableList<TransactionFilterUi> = persistentListOf(),
     val isFilterMenuOpened: Boolean = false,
-    val selectedFilter: TransactionsFilterUi = TransactionsFilterUi(id = -1, name = "")
+    val selectedFilter: TransactionFilterUi = TransactionFilterUi.All
 )

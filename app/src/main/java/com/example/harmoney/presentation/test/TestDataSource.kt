@@ -13,7 +13,7 @@ import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.domain.models.StatisticsPeriodType
 import com.example.harmoney.domain.models.Transaction
-import com.example.harmoney.domain.models.TransactionsFilter
+import com.example.harmoney.domain.models.TransactionFilter
 import com.example.harmoney.presentation.converters.DateFormatter
 import com.example.harmoney.presentation.models.DatePattern
 import java.time.LocalDate
@@ -549,22 +549,20 @@ class TestDataSource {
 
     fun getTransactionFilters(
         categoryType: CategoryType,
-    ): List<TransactionsFilter> {
+    ): List<TransactionFilter> {
         val categories = getCategories(categoryType)
 
         val filters = categories.map {
-            TransactionsFilter(
+            TransactionFilter.Category(
                 id = it.id,
                 name = it.name
             )
         }
 
-        return listOf(
-            TransactionsFilter(
-                id = 0,
-                name = "Все категории",
-            )
-        ) + filters
+        return buildList {
+            add(TransactionFilter.All)
+            addAll(filters)
+        }
     }
 
     fun getFirstDay(): LocalDate {

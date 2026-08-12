@@ -10,16 +10,15 @@ import com.example.harmoney.domain.settings.period.api.useCase.GetStatisticsPeri
 import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverter
 import com.example.harmoney.presentation.converters.StatisticsPeriodUiConverter
-import com.example.harmoney.presentation.converters.TransactionsFilterUiConverter
+import com.example.harmoney.presentation.converters.TransactionFilterUiConverter
 import com.example.harmoney.presentation.models.DecimalPlaces
-import com.example.harmoney.presentation.models.TransactionsFilterUi
+import com.example.harmoney.presentation.models.TransactionFilterUi
 import com.example.harmoney.presentation.test.TestDataSource
 import com.example.harmoney.presentation.transactionList.models.TransactionListAction
 import com.example.harmoney.presentation.transactionList.models.TransactionListEvent
 import com.example.harmoney.presentation.transactionList.models.TransactionListState
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
 @Suppress("detekt:LongParameterList", "detekt:TooManyFunctions")
@@ -29,7 +28,7 @@ class TransactionListViewModel(
     private val test: TestDataSource,
     private val oneDayTransactionsUiConverter: OneDayTransactionsUiConverter,
     private val numberFormatter: NumbersFormatter,
-    private val transactionsFilterUiConverter: TransactionsFilterUiConverter,
+    private val transactionFilterUiConverter: TransactionFilterUiConverter,
     private val getStatisticsPeriodsUseCase: GetStatisticsPeriodsUseCase,
     private val statisticsPeriodUiConverter: StatisticsPeriodUiConverter,
 ) : BaseViewModel<TransactionListEvent, TransactionListAction, TransactionListState>(
@@ -40,7 +39,7 @@ class TransactionListViewModel(
 ) {
     override val tag: String = TransactionListViewModel::class.java.simpleName ?: ""
     private val currency: Currency
-    private val selectedFilters: MutableList<Long>
+    private val selectedFilters: MutableList<Long?>
 
     private val sessionFlow = sessionStateHolder.state
     private val periodsFlow = getStatisticsPeriodsUseCase()
@@ -69,18 +68,24 @@ class TransactionListViewModel(
             val balance = test.getBalance()
             val totalAmount = transactions.sumOf { it.totalAmount }
 
-            val filters = transactionsFilterUiConverter
+            val filters = transactionFilterUiConverter // cчитывать из БД
                 .map(filters = test.getTransactionFilters(state.value.selectedCategoryType))
-            val filter = categoryId?.let { filters.find { it.id == categoryId } } ?: filters.first()
+            val filter = getFilterByCategoryId(categoryId, filters) /*categoryId?.let { id ->
+                getCategoriesAsFilters(filters)
+                    .find { it.id == id }
+            } ?: TransactionFilterUi.All*/
 
             selectedFilters.addAll(
-                if (filters.isNotEmpty()) {
-                    CategoryType.entries.map { filters.first().id }.toMutableList()
+                CategoryType.entries.map { null }.toMutableList()
+                /*if (getCategoriesAsFilters(filters).isNotEmpty()) {
+                    CategoryType.entries.map {
+                    getCategoriesAsFilters(filters).first().id
+                    }.toMutableList()
                 } else {
-                    CategoryType.entries.map { ZERO_ID }.toMutableList()
-                }
+                    CategoryType.entries.map { null }.toMutableList()
+                }*/
             )
-            selectedFilters[state.value.selectedCategoryType.ordinal] = filter.id
+            selectedFilters[state.value.selectedCategoryType.ordinal] = getFilterId(filter)
 
             writableState.update {
                 it.copy(
@@ -126,6 +131,29 @@ class TransactionListViewModel(
         }
     }
 
+    private fun getCategoriesAsFilters(filters: List<TransactionFilterUi>):
+            List<TransactionFilterUi.CategoryUi> {
+        return filters.filterIsInstance<TransactionFilterUi.CategoryUi>()
+    }
+
+    private fun getFilterId(filter: TransactionFilterUi): Long? {
+        return when (filter) {
+            is TransactionFilterUi.CategoryUi -> filter.id
+            is TransactionFilterUi.All -> null
+        }
+    }
+
+    private fun getFilterByCategoryId(
+        categoryId: Long?,
+        filters: List<TransactionFilterUi>
+    ): TransactionFilterUi {
+        return categoryId?.let { id ->
+            filters
+                .filterIsInstance<TransactionFilterUi.CategoryUi>()
+                .find { it.id == id }
+        } ?: TransactionFilterUi.All
+    }
+
     private fun onNavigateBack() {
         writableAction.tryEmit(TransactionListAction.NavigateBack)
     }
@@ -145,11 +173,12 @@ class TransactionListViewModel(
     }
 
     private fun onCreateTransaction() {
-        val filterId: Long? = if (state.value.selectedFilter.id > ZERO_ID) {
+        val filterId: Long? = getFilterId(state.value.selectedFilter)
+        /*if (getFilterId(state.value.selectedFilter) != null) {
             state.value.selectedFilter.id
         } else {
             null
-        }
+        }*/
         writableAction.tryEmit(
             TransactionListAction.NavigateToCreatingTransaction(filterId)
         )
@@ -169,8 +198,8 @@ class TransactionListViewModel(
         }
     }
 
-    private fun onFilterMenuChanged(filter: TransactionsFilterUi) {
-        if (state.value.selectedFilter.id != filter.id) {
+    private fun onFilterMenuChanged(filter: TransactionFilterUi) {
+        if (getFilterId(state.value.selectedFilter) != getFilterId(filter)) {
 
             // UseCase по изменению фильтра
 
