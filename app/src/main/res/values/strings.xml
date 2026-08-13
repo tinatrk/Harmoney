@@ -75,6 +75,7 @@
     <string name="title_drawer_item_category_list">Список категорий</string>
     <string name="title_category">Категория</string>
     <string name="title_color">Цвет</string>
+    <string name="title_all_filters">Все транзакции</string>
 
     <!-- Заголовки для периодов (для статистики) -->
     <string name="period_last_month">Прошлый месяц</string>

@@ -18,10 +18,10 @@ import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverte
 import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverterImpl
 import com.example.harmoney.presentation.converters.StatisticsPeriodUiConverter
 import com.example.harmoney.presentation.converters.StatisticsPeriodUiConverterImpl
+import com.example.harmoney.presentation.converters.TransactionFilterUiConverter
+import com.example.harmoney.presentation.converters.TransactionFilterUiConverterImpl
 import com.example.harmoney.presentation.converters.TransactionUiConverter
 import com.example.harmoney.presentation.converters.TransactionUiConverterImpl
-import com.example.harmoney.presentation.converters.TransactionsFilterUiConverter
-import com.example.harmoney.presentation.converters.TransactionsFilterUiConverterImpl
 import com.example.harmoney.presentation.test.TestDataSource
 import com.example.harmoney.presentation.transaction.viewModel.TransactionViewModel
 import com.example.harmoney.presentation.transactionList.viewModel.TransactionListViewModel
@@ -48,7 +48,7 @@ val viewModelModule = module {
             test = get(),
             oneDayTransactionsUiConverter = get(),
             numberFormatter = get(),
-            transactionsFilterUiConverter = get(),
+            transactionFilterUiConverter = get(),
             statisticsPeriodUiConverter = get(),
             getStatisticsPeriodsUseCase = get(),
             sessionStateHolder = get()
@@ -126,8 +126,8 @@ val viewModelModule = module {
         )
     }
 
-    factory<TransactionsFilterUiConverter> {
-        TransactionsFilterUiConverterImpl()
+    factory<TransactionFilterUiConverter> {
+        TransactionFilterUiConverterImpl()
     }
 
     factory<StatisticsPeriodUiConverter> {

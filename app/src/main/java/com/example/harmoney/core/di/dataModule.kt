@@ -16,6 +16,7 @@ import org.koin.dsl.module
 import java.io.File
 
 val dataModule = module {
+    // region core
     single {
         Room.databaseBuilder(
             androidContext(),
@@ -24,16 +25,30 @@ val dataModule = module {
         ).build()
     }
 
+    factory {
+        DateConverter()
+    }
+    // endregion
+
+    // region category
     factory<CategoryDao> {
         val database = get<AppDatabase>()
         database.categoryDao()
     }
 
+    factory<CategoryDBConverter> {
+        CategoryDBConverterImpl()
+    }
+    // endregion
+
+    // region transaction
     factory<TransactionDao> {
         val database = get<AppDatabase>()
         database.transactionDao()
     }
+    // endregion
 
+    // region settings
     single<DataStore<Preferences>> {
         PreferenceDataStoreFactory.create(
             produceFile = {
@@ -41,12 +56,5 @@ val dataModule = module {
             }
         )
     }
-
-    factory {
-        DateConverter()
-    }
-
-    factory<CategoryDBConverter> {
-        CategoryDBConverterImpl()
-    }
+    // endregion
 }

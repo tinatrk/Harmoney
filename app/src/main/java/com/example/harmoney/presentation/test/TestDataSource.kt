@@ -1,6 +1,5 @@
 package com.example.harmoney.presentation.test
 
-import com.example.harmoney.data.converters.DateConverter
 import com.example.harmoney.domain.models.Category
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
@@ -8,13 +7,12 @@ import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
-import com.example.harmoney.domain.models.OneDayTransactions
+import com.example.harmoney.domain.models.TransactionsPerDay
 import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.domain.models.StatisticsPeriodType
 import com.example.harmoney.domain.models.Transaction
-import com.example.harmoney.domain.models.TransactionsFilter
-import com.example.harmoney.presentation.converters.DateFormatter
+import com.example.harmoney.domain.models.TransactionFilter
 import com.example.harmoney.presentation.models.DatePattern
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -524,7 +522,7 @@ class TestDataSource {
         statisticsPeriod: StatisticsPeriod,
         categoryType: CategoryType,
         filterId: Long?
-    ): List<OneDayTransactions> {
+    ): List<TransactionsPerDay> {
         val filteredTransactions = if (filterId != null && filterId > 0) {
             getTransactions(
                 statisticsPeriod,
@@ -539,7 +537,7 @@ class TestDataSource {
 
         return days.map { day ->
             val transactions = filteredTransactions.filter { it.date == day }
-            OneDayTransactions(
+            TransactionsPerDay(
                 date = day,
                 transactions = transactions,
                 totalAmount = transactions.sumOf { it.amount }
@@ -549,22 +547,20 @@ class TestDataSource {
 
     fun getTransactionFilters(
         categoryType: CategoryType,
-    ): List<TransactionsFilter> {
+    ): List<TransactionFilter> {
         val categories = getCategories(categoryType)
 
         val filters = categories.map {
-            TransactionsFilter(
+            TransactionFilter.Category(
                 id = it.id,
                 name = it.name
             )
         }
 
-        return listOf(
-            TransactionsFilter(
-                id = 0,
-                name = "Все категории",
-            )
-        ) + filters
+        return buildList {
+            add(TransactionFilter.All)
+            addAll(filters)
+        }
     }
 
     fun getFirstDay(): LocalDate {
