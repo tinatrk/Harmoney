@@ -77,13 +77,8 @@ class TransactionRepositoryImpl : TransactionRepository {
             emit(
                 Resource.Success(
                     CategoriesSummary(
-                        id = 0,
-                        name = "",
-                        typeId = CategoryType.EXPENSES.id,
-                        iconId = 0,
-                        iconColorId = 0,
-                        totalAmount = 0.0,
-                        percentage = 0f
+                        categories = listOf(),
+                        totalAmount = 0.0
                     )
                 )
             )

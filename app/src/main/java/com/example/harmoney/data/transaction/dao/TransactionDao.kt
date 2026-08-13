@@ -7,7 +7,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.harmoney.data.core.TransactionWithCategory
+import com.example.harmoney.data.transaction.dto.CategoryStatisticsDb
 import com.example.harmoney.data.transaction.entity.TransactionEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TransactionDao {
@@ -30,43 +32,75 @@ interface TransactionDao {
     @Query("DELETE FROM `transaction` WHERE dateMillis < :firstDayOfPeriodMillis")
     suspend fun deleteTransactionListOutOfRange(firstDayOfPeriodMillis: Long)
 
-    @Query("SELECT * FROM `transaction` WHERE id = :id")
-    suspend fun getTransaction(id: Long): TransactionEntity?
+    @Query(
+        """
+            SELECT *
+            FROM transaction_with_category_view
+            WHERE id = :id
+        """
+    )
+    suspend fun getTransaction(id: Long): TransactionWithCategory?
 
     @Query(
-        """SELECT `transaction`.*,
-        category.id AS category_id,
-        category.name AS category_name,
-        category.typeId AS category_typeId,
-        category.iconId AS category_iconId,
-        category.iconColorId AS category_iconColorId,
-        category.createdAt AS category_createdAt,
-        category.userOrder AS category_userOrder
-        FROM `transaction`
-        INNER JOIN category ON `transaction`.categoryId = category.id
-        WHERE category.typeId = :categoryTypeId 
-            AND `transaction`.dateMillis >= :firstDayOfPeriodMillis
-            AND `transaction`.dateMillis <= :lastDayOfPeriodMillis
+        """
+            SELECT *
+            FROM transaction_with_category_view
+            WHERE category_typeId = :categoryTypeId
+                AND dateMillis BETWEEN :firstDayOfPeriodMillis
+                                   AND :lastDayOfPeriodMillis
+                AND ( :categoryId IS NULL OR categoryId = :categoryId)
     """
     )
-    suspend fun getTransactionListWithCategoryByTypeAndPeriod(
+    fun getTransactionListWithCategory(
         categoryTypeId: Long,
         firstDayOfPeriodMillis: Long,
         lastDayOfPeriodMillis: Long,
-    ): List<TransactionWithCategory>?
+        categoryId: Long?
+    ): Flow<List<TransactionWithCategory>>
 
     @Query(
-        """SELECT COALESCE(SUM(`transaction`.amount), 0.0)
-        FROM `transaction`
-        INNER JOIN category ON `transaction`.categoryId = category.id
-        WHERE category.typeId = :categoryTypeId
-            AND `transaction`.dateMillis >= :firstDayOfPeriodMillis
-            AND `transaction`.dateMillis <= :lastDayOfPeriodMillis
+        """
+            SELECT COALESCE(SUM(amount), 0.0)
+        FROM transaction_with_category_view
+        WHERE category_typeId = :categoryTypeId
+            AND dateMillis BETWEEN :firstDayOfPeriodMillis
+                               AND :lastDayOfPeriodMillis
+            AND (:categoryId IS NULL OR categoryId = :categoryId)
     """
     )
-    suspend fun getTotalAmountByTypeAndPeriod(
+    fun getTotalAmount(
         categoryTypeId: Long,
         firstDayOfPeriodMillis: Long,
         lastDayOfPeriodMillis: Long,
-    ): Double
+        categoryId: Long?
+    ): Flow<Double>
+
+    @Query(
+        """SELECT
+            category_id,
+            category_name,
+            category_typeId,
+            category_iconId,
+            category_iconColorId,
+            category_createdAt,
+            category_userOrder,
+            
+            SUM(amount) AS totalAmount,
+            
+            SUM(amount)
+                / SUM(SUM(amount)) OVER() * 100
+                AS percentage
+            
+        FROM transaction_with_category_view
+        WHERE category_typeId = :categoryTypeId
+            AND dateMillis BETWEEN :firstDayOfPeriodMillis
+                               AND :lastDayOfPeriodMillis
+        GROUP BY category_id
+        """
+    )
+    fun getCategoryStatisticsList(
+        categoryTypeId: Long,
+        firstDayOfPeriodMillis: Long,
+        lastDayOfPeriodMillis: Long,
+    ): Flow<List<CategoryStatisticsDb>>
 }
