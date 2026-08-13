@@ -6,7 +6,7 @@ import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.CategoryUi
-import com.example.harmoney.presentation.models.OneDayTransactionsUi
+import com.example.harmoney.presentation.models.TransactionsPerDayUi
 import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.models.TransactionUi
 import com.example.harmoney.presentation.models.TransactionFilterUi
@@ -162,24 +162,24 @@ object PreviewData {
         )
     }
 
-    fun getExpensesTransactions(): ImmutableList<OneDayTransactionsUi> {
+    fun getExpensesTransactions(): ImmutableList<TransactionsPerDayUi> {
         return persistentListOf(
-            OneDayTransactionsUi(
+            TransactionsPerDayUi(
                 date = "06 Марта",
                 totalAmount = "5 000 ₽",
                 transactions = expensesTransactions.subList(0, 2)
             ),
-            OneDayTransactionsUi(
+            TransactionsPerDayUi(
                 date = "15 Марта",
                 totalAmount = "2 000 ₽",
                 transactions = expensesTransactions.subList(3, 3)
             ),
-            OneDayTransactionsUi(
+            TransactionsPerDayUi(
                 date = "20 Марта",
                 totalAmount = "30 000 ₽",
                 transactions = expensesTransactions.subList(4, 4)
             ),
-            OneDayTransactionsUi(
+            TransactionsPerDayUi(
                 date = "25 Марта",
                 totalAmount = "25 000 ₽",
                 transactions = expensesTransactions.subList(5, 5)
@@ -195,19 +195,19 @@ object PreviewData {
         return filters.toImmutableList()
     }
 
-    fun getFilteredTransactions(): ImmutableList<OneDayTransactionsUi> {
+    fun getFilteredTransactions(): ImmutableList<TransactionsPerDayUi> {
         return persistentListOf(
-            OneDayTransactionsUi(
+            TransactionsPerDayUi(
                 date = "06 Марта",
                 totalAmount = "1 500 ₽",
                 transactions = persistentListOf(expensesTransactions[2])
             ),
-            OneDayTransactionsUi(
+            TransactionsPerDayUi(
                 date = "20 Марта",
                 totalAmount = "30 000 ₽",
                 transactions = persistentListOf(expensesTransactions[4])
             ),
-            OneDayTransactionsUi(
+            TransactionsPerDayUi(
                 date = "25 Марта",
                 totalAmount = "25 000 ₽",
                 transactions = persistentListOf(expensesTransactions[5])

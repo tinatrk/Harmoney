@@ -3,7 +3,7 @@ package com.example.harmoney.presentation.transactionList.models
 import androidx.compose.runtime.Stable
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriodType
-import com.example.harmoney.presentation.models.OneDayTransactionsUi
+import com.example.harmoney.presentation.models.TransactionsPerDayUi
 import com.example.harmoney.presentation.models.StatisticsPeriodUi
 import com.example.harmoney.presentation.models.TransactionFilterUi
 import kotlinx.collections.immutable.ImmutableList
@@ -21,7 +21,7 @@ data class TransactionListState(
     ),
 
     val totalAmount: String = "0.00",
-    val oneDayTransactionsList: ImmutableList<OneDayTransactionsUi> = persistentListOf(),
+    val oneDayTransactionsList: ImmutableList<TransactionsPerDayUi> = persistentListOf(),
 
     val transactionsFilters: ImmutableList<TransactionFilterUi> = persistentListOf(),
     val isFilterMenuOpened: Boolean = false,
