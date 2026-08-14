@@ -28,14 +28,12 @@ import com.example.harmoney.domain.settings.theme.impl.SetThemeUseCaseImpl
 import com.example.harmoney.domain.transaction.api.useCase.AddTransactionUseCase
 import com.example.harmoney.domain.transaction.api.useCase.DeleteTransactionUseCase
 import com.example.harmoney.domain.transaction.api.useCase.GetCategoriesSummaryUseCase
-import com.example.harmoney.domain.transaction.api.useCase.GetFilterListUseCase
 import com.example.harmoney.domain.transaction.api.useCase.GetTransactionUseCase
 import com.example.harmoney.domain.transaction.api.useCase.GetTransactionsSummaryUseCase
 import com.example.harmoney.domain.transaction.api.useCase.UpdateTransactionUseCase
 import com.example.harmoney.domain.transaction.impl.AddTransactionUseCaseImpl
 import com.example.harmoney.domain.transaction.impl.DeleteTransactionUseCaseImpl
 import com.example.harmoney.domain.transaction.impl.GetCategoriesSummaryUseCaseImpl
-import com.example.harmoney.domain.transaction.impl.GetFilterListUseCaseImpl
 import com.example.harmoney.domain.transaction.impl.GetTransactionUseCaseImpl
 import com.example.harmoney.domain.transaction.impl.GetTransactionsSummaryUseCaseImpl
 import com.example.harmoney.domain.transaction.impl.UpdateTransactionUseCaseImpl
@@ -122,10 +120,6 @@ val useCaseModule = module {
 
     factory<GetTransactionsSummaryUseCase> {
         GetTransactionsSummaryUseCaseImpl(repository = get())
-    }
-
-    factory<GetFilterListUseCase> {
-        GetFilterListUseCaseImpl(repository = get())
     }
 
     factory<GetCategoriesSummaryUseCase> {

@@ -77,13 +77,13 @@ interface TransactionDao {
 
     @Query(
         """SELECT
-            category_id,
-            category_name,
-            category_typeId,
-            category_iconId,
-            category_iconColorId,
-            category_createdAt,
-            category_userOrder,
+            category_id as id,
+            category_name as name,
+            category_typeId as typeId,
+            category_iconId as iconId,
+            category_iconColorId as iconColorId,
+            category_createdAt as createdAt,
+            category_userOrder as userOrder,
             
             SUM(amount) AS totalAmount,
             

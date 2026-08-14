@@ -26,9 +26,6 @@ interface TransactionRepository {
     )
             : Flow<Resource<TransactionsSummary, TransactionFailure>>
 
-    fun getFilterList(categoryType: CategoryType)
-            : Flow<Resource<List<TransactionFilter>, TransactionFailure>>
-
     // в этом репозитории, т.к. происходит группировка транзакций по категориям
     fun getCategoriesSummary(
         categoryType: CategoryType,

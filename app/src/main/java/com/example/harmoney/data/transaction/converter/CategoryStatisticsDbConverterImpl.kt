@@ -40,4 +40,8 @@ class CategoryStatisticsDbConverterImpl : CategoryStatisticsDbConverter {
             percentage = categoryStatistics.percentage
         )
     }
+
+    override fun map(categoryStatisticsList: List<CategoryStatisticsDb>): List<CategoryStatistics> {
+        return categoryStatisticsList.map { this.map(it) }
+    }
 }

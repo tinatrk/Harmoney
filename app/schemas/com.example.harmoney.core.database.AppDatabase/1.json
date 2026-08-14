@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d28a192741713c563512cdebdb24b930",
+    "identityHash": "ba178ce4449304815d67fd6ae44b00fa",
     "entities": [
       {
         "tableName": "category",
@@ -131,9 +131,15 @@
         ]
       }
     ],
+    "views": [
+      {
+        "viewName": "transaction_with_category_view",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT `transaction`.*,\n        category.id AS category_id,\n        category.name AS category_name,\n        category.typeId AS category_typeId,\n        category.iconId AS category_iconId,\n        category.iconColorId AS category_iconColorId,\n        category.createdAt AS category_createdAt,\n        category.userOrder AS category_userOrder\n        FROM `transaction`\n        INNER JOIN category ON `transaction`.categoryId = category.id"
+      }
+    ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd28a192741713c563512cdebdb24b930')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ba178ce4449304815d67fd6ae44b00fa')"
     ]
   }
 }

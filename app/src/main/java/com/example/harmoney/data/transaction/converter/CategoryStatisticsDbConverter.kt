@@ -7,4 +7,6 @@ interface CategoryStatisticsDbConverter {
     fun map(categoryStatistics: CategoryStatisticsDb): CategoryStatistics
 
     fun map(categoryStatistics: CategoryStatistics): CategoryStatisticsDb
+
+    fun map(categoryStatisticsList: List<CategoryStatisticsDb>) : List<CategoryStatistics>
 }
