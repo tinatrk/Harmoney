@@ -10,7 +10,7 @@ import com.example.harmoney.domain.transaction.api.useCase.GetTransactionsSummar
 import com.example.harmoney.domain.transaction.models.TransactionFailure
 import kotlinx.coroutines.flow.Flow
 
-class GetTransactionsSummaryUseCaseImpl(val repository: TransactionRepository) :
+class GetTransactionsSummaryUseCaseImpl(private val repository: TransactionRepository) :
     GetTransactionsSummaryUseCase {
     override fun execute(
         categoryType: CategoryType,

@@ -6,7 +6,7 @@ import com.example.harmoney.domain.transaction.api.repository.TransactionReposit
 import com.example.harmoney.domain.transaction.api.useCase.GetTransactionUseCase
 import com.example.harmoney.domain.transaction.models.TransactionFailure
 
-class GetTransactionUseCaseImpl(val repository: TransactionRepository) : GetTransactionUseCase {
+class GetTransactionUseCaseImpl(private val repository: TransactionRepository) : GetTransactionUseCase {
     override suspend fun execute(transactionId: Long): Resource<Transaction, TransactionFailure> {
         return repository.getTransaction(transactionId)
     }

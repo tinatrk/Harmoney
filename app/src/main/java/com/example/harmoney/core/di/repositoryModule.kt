@@ -30,6 +30,11 @@ val repositoryModule = module {
     }
 
     factory<TransactionRepository> {
-        TransactionRepositoryImpl()
+        TransactionRepositoryImpl(
+            transactionDao = get(),
+            transactionDbConverter = get(),
+            categoryStatisticsDbConverter = get(),
+            dateConverter = get()
+        )
     }
 }

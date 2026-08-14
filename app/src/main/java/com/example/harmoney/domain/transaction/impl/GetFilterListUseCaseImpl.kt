@@ -8,7 +8,7 @@ import com.example.harmoney.domain.transaction.api.useCase.GetFilterListUseCase
 import com.example.harmoney.domain.transaction.models.TransactionFailure
 import kotlinx.coroutines.flow.Flow
 
-class GetFilterListUseCaseImpl(val repository: TransactionRepository) : GetFilterListUseCase {
+class GetFilterListUseCaseImpl(private val repository: TransactionRepository) : GetFilterListUseCase {
     override fun execute(categoryType: CategoryType)
             : Flow<Resource<List<TransactionFilter>, TransactionFailure>> {
         return repository.getFilterList(categoryType)
