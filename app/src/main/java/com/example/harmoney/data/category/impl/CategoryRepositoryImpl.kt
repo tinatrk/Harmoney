@@ -90,9 +90,13 @@ class CategoryRepositoryImpl(
                     }
                 }
                 Resource.Success(categoryDBConverter.map(sortedCategories))
+                        as Resource<List<Category>, CategoryFailure>
             }.catch { e ->
                 Log.e(DATABASE_TAG, "Error when getting categoryList: ${e.message}", e)
-                Resource.Error(CategoryFailure.DatabaseError)
+                when (e) {
+                    is SQLiteException -> emit(Resource.Error(CategoryFailure.DatabaseError))
+                    else -> throw e
+                }
             }
 
     override suspend fun updateCategory(category: Category): Resource<Unit, CategoryFailure> {
@@ -134,8 +138,8 @@ class CategoryRepositoryImpl(
 
     companion object {
         private const val DATABASE_TAG = "HarmApp_CategoryDB"
-        const val USER_ORDER_STEP = 100.0
-        const val USER_ORDER_IN_ASCENDING_ORDER = 1 // значение не менять
-        const val USER_ORDER_IN_DESCENDING_ORDER = -1 // значение не менять
+        private const val USER_ORDER_STEP = 100.0
+        private const val USER_ORDER_IN_ASCENDING_ORDER = 1 // значение не менять
+        private const val USER_ORDER_IN_DESCENDING_ORDER = -1 // значение не менять
     }
 }

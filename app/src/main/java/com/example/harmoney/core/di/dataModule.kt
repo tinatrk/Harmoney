@@ -10,6 +10,10 @@ import com.example.harmoney.data.category.converter.CategoryDBConverter
 import com.example.harmoney.data.category.converter.CategoryDBConverterImpl
 import com.example.harmoney.data.category.dao.CategoryDao
 import com.example.harmoney.data.converters.DateConverter
+import com.example.harmoney.data.transaction.converter.CategoryStatisticsDbConverter
+import com.example.harmoney.data.transaction.converter.CategoryStatisticsDbConverterImpl
+import com.example.harmoney.data.transaction.converter.TransactionDbConverter
+import com.example.harmoney.data.transaction.converter.TransactionDbConverterImpl
 import com.example.harmoney.data.transaction.dao.TransactionDao
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -45,6 +49,14 @@ val dataModule = module {
     factory<TransactionDao> {
         val database = get<AppDatabase>()
         database.transactionDao()
+    }
+
+    factory<TransactionDbConverter> {
+        TransactionDbConverterImpl(dateConverter = get())
+    }
+
+    factory<CategoryStatisticsDbConverter> {
+        CategoryStatisticsDbConverterImpl()
     }
     // endregion
 

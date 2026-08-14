@@ -6,7 +6,8 @@ import com.example.harmoney.domain.transaction.api.repository.TransactionReposit
 import com.example.harmoney.domain.transaction.api.useCase.AddTransactionUseCase
 import com.example.harmoney.domain.transaction.models.TransactionFailure
 
-class AddTransactionUseCaseImpl(val repository: TransactionRepository) : AddTransactionUseCase {
+class AddTransactionUseCaseImpl(private val repository: TransactionRepository) :
+    AddTransactionUseCase {
     override suspend fun execute(transaction: Transaction): Resource<Unit, TransactionFailure> {
         return repository.addTransaction(transaction)
     }
