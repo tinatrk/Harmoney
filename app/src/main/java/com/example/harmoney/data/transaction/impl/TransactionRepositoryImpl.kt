@@ -9,6 +9,7 @@ import com.example.harmoney.data.transaction.converter.TransactionDbConverter
 import com.example.harmoney.data.transaction.dao.TransactionDao
 import com.example.harmoney.domain.models.CategoriesSummary
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.Money
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.domain.models.Transaction
 import com.example.harmoney.domain.models.TransactionFilter
@@ -101,8 +102,7 @@ class TransactionRepositoryImpl(
         )
 
         return combine(
-            transactionsWithCategoryFlow,
-            totalAmountFlow
+            transactionsWithCategoryFlow, totalAmountFlow
         ) { transactionsWithCategory, totalAmount ->
             TransactionsSummary(
                 days = transactionsWithCategory.groupBy { transactionWithCategory ->
@@ -113,11 +113,13 @@ class TransactionRepositoryImpl(
                         transactions = items.map { item ->
                             transactionDbConverter.map(item)
                         },
-                        totalAmount = items.sumOf { item -> item.transaction.amount }
+                        totalAmount = Money(
+                            minorUnits = items.sumOf { item -> item.transaction.amount }
+                        )
                     )
                 }.sortedByDescending { it.date },
 
-                totalAmount = totalAmount
+                totalAmount = Money(totalAmount)
             )
         }
             .map<TransactionsSummary, Resource<TransactionsSummary, TransactionFailure>> {
@@ -141,11 +143,11 @@ class TransactionRepositoryImpl(
             lastDayOfPeriodMillis = dateConverter.dateToMillis(period.lastDay)
         ).map { categoriesDB ->
             val categories = categoryStatisticsDbConverter.map(categoriesDB)
-            val totalAmount = categories.sumOf { it.totalAmount }
+            val totalAmount = categories.sumOf { it.totalAmount.minorUnits }
             Resource.Success(
                 CategoriesSummary(
                     categories = categories,
-                    totalAmount = totalAmount
+                    totalAmount = Money(totalAmount)
                 )
             ) as Resource<CategoriesSummary, TransactionFailure>
         }.catch { e ->

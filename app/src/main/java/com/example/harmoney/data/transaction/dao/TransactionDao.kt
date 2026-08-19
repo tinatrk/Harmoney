@@ -24,7 +24,7 @@ interface TransactionDao {
         "UPDATE `transaction` " +
                 "SET amount = `transaction`.amount * :currencyExchangedCoeff"
     )
-    suspend fun updateAmount(currencyExchangedCoeff: Double)
+    suspend fun updateAmount(currencyExchangedCoeff: Long)
 
     @Delete
     suspend fun deleteTransaction(transaction: TransactionEntity)
@@ -60,7 +60,7 @@ interface TransactionDao {
 
     @Query(
         """
-            SELECT COALESCE(SUM(amount), 0.0)
+            SELECT COALESCE(SUM(amount), 0)
         FROM transaction_with_category_view
         WHERE category_typeId = :categoryTypeId
             AND dateMillis BETWEEN :firstDayOfPeriodMillis
@@ -73,7 +73,7 @@ interface TransactionDao {
         firstDayOfPeriodMillis: Long,
         lastDayOfPeriodMillis: Long,
         categoryId: Long?
-    ): Flow<Double>
+    ): Flow<Long>
 
     @Query(
         """SELECT

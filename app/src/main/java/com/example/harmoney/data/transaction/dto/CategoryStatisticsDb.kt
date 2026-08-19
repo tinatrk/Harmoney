@@ -8,6 +8,6 @@ data class CategoryStatisticsDb(
     val iconColorId: Long,
     val createdAt: Long,
     val userOrder: Double,
-    val totalAmount: Double,
+    val totalAmount: Long,
     val percentage: Float,
 )

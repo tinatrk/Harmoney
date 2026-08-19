@@ -24,7 +24,7 @@ data class TransactionEntity(
     @ColumnInfo(name = "id") val id: Long,
     @ColumnInfo(name = "categoryId") val categoryId: Long,
     @ColumnInfo(name = "dateMillis") val dateMillis: Long,
-    @ColumnInfo(name = "amount") val amount: Double,
+    @ColumnInfo(name = "amount") val amount: Long,
     @ColumnInfo(name = "note") val note: String,
     @ColumnInfo(name = "createdAt") val createdAt: Long
 )

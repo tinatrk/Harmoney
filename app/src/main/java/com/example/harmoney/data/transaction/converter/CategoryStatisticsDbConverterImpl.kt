@@ -7,6 +7,7 @@ import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.Money
 
 class CategoryStatisticsDbConverterImpl : CategoryStatisticsDbConverter {
     override fun map(categoryStatistics: CategoryStatisticsDb): CategoryStatistics {
@@ -22,7 +23,7 @@ class CategoryStatisticsDbConverterImpl : CategoryStatisticsDbConverter {
                 createdAt = categoryStatistics.createdAt,
                 userOrder = categoryStatistics.userOrder
             ),
-            totalAmount = categoryStatistics.totalAmount,
+            totalAmount = Money(categoryStatistics.totalAmount),
             percentage = categoryStatistics.percentage
         )
     }
@@ -36,7 +37,7 @@ class CategoryStatisticsDbConverterImpl : CategoryStatisticsDbConverter {
             iconColorId = categoryStatistics.category.icon.color.id,
             createdAt = categoryStatistics.category.createdAt,
             userOrder = categoryStatistics.category.userOrder,
-            totalAmount = categoryStatistics.totalAmount,
+            totalAmount = categoryStatistics.totalAmount.minorUnits,
             percentage = categoryStatistics.percentage
         )
     }

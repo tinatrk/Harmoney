@@ -8,59 +8,42 @@ import java.util.Locale
 
 class NumbersFormatterImpl : NumbersFormatter {
 
-    override fun toStringWithCurrency(
-        number: Double,
-        decimalPlaces: Int,
+    override fun moneyToStringWithCurrency(
+        moneyMinorUnits: Long,
         currency: Currency,
-        isNeededThousandSeparator: Boolean
     ): String {
-        val roundedNumber = roundNumber(number, decimalPlaces)
-        val numberWithSeparator = if (isNeededThousandSeparator) {
-            toStringWithThousandSeparator(roundedNumber)
-        } else {
-            roundedNumber.toString()
-        }
-        return toStringWithCurrency(numberWithSeparator, currency)
+        val moneyStr = moneyToString(moneyMinorUnits, currency)
+        return String.format(Locale.ENGLISH, "%s ${currency.symbol}", moneyStr)
     }
 
-    private fun toStringWithThousandSeparator(number: BigDecimal): String {
+    override fun moneyToString(
+        moneyMinorUnits: Long,
+        currency: Currency
+    ): String {
+        // convert cents to dollars, kopecks to rubles and so on
+        val money = BigDecimal.valueOf(
+            moneyMinorUnits, currency.minorUnitScale
+        )
+
         val formatter = NumberFormat.getNumberInstance(Locale.US).apply {
-            minimumFractionDigits = MIN_DECIMAL_PLACES
-            maximumFractionDigits = MAX_DECIMAL_PLACES
+            minimumFractionDigits = MIN_MONEY_DECIMAL_PLACES
+            maximumFractionDigits = currency.minorUnitScale
             isGroupingUsed = true
         }
         return formatter
-            .format(number)
+            .format(money)
             .replace(oldValue = SEPARATOR_COMMA, newValue = SEPARATOR_SPACE)
-
     }
 
-    private fun toStringWithCurrency(number: String, currency: Currency): String {
-        return String.format(Locale.ENGLISH, "%s ${currency.symbol}", number)
-    }
-
-    override fun toString(
-        number: Double,
-        decimalPlaces: Int,
-        isNeededThousandSeparator: Boolean
-    ): String {
-        val roundedNumber = roundNumber(number, decimalPlaces)
-        return if (isNeededThousandSeparator) {
-            toStringWithThousandSeparator(roundedNumber)
-        } else {
-            roundedNumber.toString()
-        }
-    }
-
-    override fun toStringWithPercent(number: Double, decimalPlaces: Int): String {
-        val roundedNumber = roundNumber(number, decimalPlaces)
+    override fun percentageToString(number: Float): String {
+        val roundedNumber = roundNumber(number, PERCENTAGE_DECIMAL_PLACES)
         // Используется не String.format, чтобы сохранить округление
         return "${roundedNumber}$PERCENT"
     }
 
-    private fun roundNumber(number: Double, decimalPlaces: Int): BigDecimal {
+    private fun roundNumber(number: Float, decimalPlaces: Int): BigDecimal {
         val longres = number.toLong()
-        val digits = if (longres.toDouble() == number) MIN_DECIMAL_PLACES else decimalPlaces
+        val digits = if (longres.toFloat() == number) MIN_DECIMAL_PLACES else decimalPlaces
 
         return number
             .toBigDecimal()
@@ -72,6 +55,7 @@ class NumbersFormatterImpl : NumbersFormatter {
         const val SEPARATOR_SPACE = " "
         const val PERCENT = "%"
         const val MIN_DECIMAL_PLACES = 0
-        const val MAX_DECIMAL_PLACES = 10
+        const val MIN_MONEY_DECIMAL_PLACES = 0
+        const val PERCENTAGE_DECIMAL_PLACES = 1
     }
 }

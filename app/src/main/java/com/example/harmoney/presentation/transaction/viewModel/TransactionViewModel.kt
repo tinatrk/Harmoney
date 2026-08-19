@@ -9,12 +9,12 @@ import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
+import com.example.harmoney.domain.models.Money
 import com.example.harmoney.domain.models.Transaction
 import com.example.harmoney.presentation.converters.CategoryUiConverter
 import com.example.harmoney.presentation.converters.DateFormatter
 import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.converters.TransactionUiConverter
-import com.example.harmoney.presentation.models.DecimalPlaces
 import com.example.harmoney.presentation.test.TestDataSource
 import com.example.harmoney.presentation.transaction.models.EditableTransaction
 import com.example.harmoney.presentation.transaction.models.TransactionAction
@@ -51,7 +51,7 @@ class TransactionViewModel(
 
     private val initialTransaction: Transaction
     private var editableTransaction: EditableTransaction
-    private var amountInLocalCurrency: Double
+    private var amountInLocalCurrency: Long
 
     private val selectedCategories: MutableList<Long> =
         CategoryType.entries.map { ZERO_ID }.toMutableList()
@@ -71,12 +71,11 @@ class TransactionViewModel(
         )
         selectedCategories[editableTransaction.categoryType.ordinal] =
             editableTransaction.categoryId
-        val amountString = numbersFormatter.toString(
-            number = editableTransaction.amount,
-            decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
-            isNeededThousandSeparator = true
+        val amountString = numbersFormatter.moneyToString(
+            moneyMinorUnits = editableTransaction.amount.minorUnits,
+            currency = state.value.globalCurrency
         )
-        amountInLocalCurrency = editableTransaction.amount
+        amountInLocalCurrency = editableTransaction.amount.minorUnits
 
         sessionSateHolder.setCategoryType(editableTransaction.categoryType)
 
@@ -229,37 +228,41 @@ class TransactionViewModel(
     }
 
     private fun onAmountChange(newAmount: Double) {
-        if (editableTransaction.amount == newAmount) return
+        val newMoneyAmount = if (state.value.isUsedCurrencyExchange) {
+            Money.fromDouble(newAmount, state.value.localCurrency)
+        } else {
+            Money.fromDouble(newAmount, state.value.globalCurrency)
+        }
 
         // преобразовать валюты, считав актуальный курс из интеренета по API
         val globalAmount = if (state.value.isUsedCurrencyExchange) {
             test.getAmountAfterCurrencyExchanged(
                 localCurrency = state.value.localCurrency,
                 targetCurrency = state.value.globalCurrency,
-                localAmount = newAmount
+                localAmount = newMoneyAmount.minorUnits
             )
         } else {
-            newAmount
+            newMoneyAmount
         }
 
-        val globalAmountString = numbersFormatter.toString(
-            number = globalAmount,
-            decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
-            isNeededThousandSeparator = true
+        if (editableTransaction.amount.minorUnits == globalAmount.minorUnits) return
+
+        val globalAmountString = numbersFormatter.moneyToString(
+            moneyMinorUnits = globalAmount.minorUnits,
+            currency = state.value.globalCurrency
         )
 
         val localAmountString = if (state.value.isUsedCurrencyExchange) {
-            numbersFormatter.toString(
-                number = newAmount,
-                decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
-                isNeededThousandSeparator = true
+            numbersFormatter.moneyToString(
+                moneyMinorUnits = newMoneyAmount.minorUnits,
+                currency = state.value.localCurrency
             )
         } else {
             globalAmountString
         }
 
         editableTransaction = editableTransaction.copy(amount = globalAmount)
-        amountInLocalCurrency = newAmount
+        amountInLocalCurrency = newMoneyAmount.minorUnits
 
         writableState.update {
             it.copy(
@@ -294,10 +297,9 @@ class TransactionViewModel(
 
             writableState.update {
                 it.copy(
-                    amountInGlobalCurrency = numbersFormatter.toString(
-                        number = newGlobalAmount,
-                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
-                        isNeededThousandSeparator = true
+                    amountInGlobalCurrency = numbersFormatter.moneyToString(
+                        moneyMinorUnits = newGlobalAmount.minorUnits,
+                        currency = state.value.globalCurrency
                     ),
                     isUsedCurrencyExchange = newCurrency.id != it.globalCurrency.id,
                     isCurrencyMenuOpened = false,
@@ -362,7 +364,7 @@ class TransactionViewModel(
         val isCategoryError =
             editableTransaction.categoryId == ZERO_ID
 
-        val amountError = if (editableTransaction.amount < 0) {
+        val amountError = if (editableTransaction.amount.minorUnits < 0) {
             TransactionAmountError.IncorrectInput
         } else {
             state.value.amountError
@@ -445,7 +447,7 @@ class TransactionViewModel(
             id = ZERO_ID,
             category = getEmptyCategory(CategoryType.EXPENSES),
             date = LocalDate.now(),
-            amount = ZERO_AMOUNT,
+            amount = Money(ZERO_AMOUNT),
         )
     }
 
@@ -463,6 +465,6 @@ class TransactionViewModel(
 
     private companion object {
         const val ZERO_ID = 0L
-        const val ZERO_AMOUNT = 0.0
+        const val ZERO_AMOUNT = 0L
     }
 }
