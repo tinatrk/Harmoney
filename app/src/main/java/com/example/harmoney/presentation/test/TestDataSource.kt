@@ -7,12 +7,13 @@ import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
-import com.example.harmoney.domain.models.TransactionsPerDay
+import com.example.harmoney.domain.models.Money
 import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.domain.models.StatisticsPeriodType
 import com.example.harmoney.domain.models.Transaction
 import com.example.harmoney.domain.models.TransactionFilter
+import com.example.harmoney.domain.models.TransactionsPerDay
 import com.example.harmoney.presentation.models.DatePattern
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -271,98 +272,98 @@ class TestDataSource {
         Transaction(
             id = 1,
             category = categories.first { it.id == 1L },
-            date = parseDateFromString("01.06.2026"),
-            amount = 1500.0,
+            date = parseDateFromString("01.08.2026"),
+            amount = Money(150000L),
             note = "Вкусняшки"
         ),
         Transaction(
             id = 2,
             category = categories.first { it.id == 2L },
-            date = parseDateFromString("01.06.2026"),
-            amount = 500.0,
+            date = parseDateFromString("01.08.2026"),
+            amount = Money(50000L),
             note = "8 марта"
         ),
         Transaction(
             id = 3,
             category = categories.first { it.id == 3L },
-            date = parseDateFromString("05.06.2026"),
-            amount = 15000.0,
+            date = parseDateFromString("05.08.2026"),
+            amount = Money(1500000L),
             note = "Билеты"
         ),
         Transaction(
             id = 4,
             category = categories.first { it.id == 1L },
-            date = parseDateFromString("10.06.2026"),
-            amount = 2000.0,
+            date = parseDateFromString("10.08.2026"),
+            amount = Money(200000L),
         ),
         Transaction(
             id = 5,
             category = categories.first { it.id == 2L },
-            date = parseDateFromString("10.06.2026"),
-            amount = 3000.0,
+            date = parseDateFromString("10.08.2026"),
+            amount = Money(300000L),
             note = "Сумку себе любимой"
         ),
         Transaction(
             id = 6,
             category = categories.first { it.id == 2L },
-            date = parseDateFromString("12.03.2026"),
-            amount = 4000.0,
+            date = parseDateFromString("12.08.2026"),
+            amount = Money(400000L),
         ),
         //-------------------------------------------------------------
         Transaction(
             id = 7,
             category = categories.first { it.id == 1L },
-            date = parseDateFromString("05.02.2026"),
-            amount = 2000.0,
+            date = parseDateFromString("05.09.2026"),
+            amount = Money(200000L),
             note = "Продукты к ужину"
         ),
         Transaction(
             id = 8,
             category = categories.first { it.id == 3L },
-            date = parseDateFromString("05.07.2026"),
-            amount = 15000.0,
+            date = parseDateFromString("05.09.2026"),
+            amount = Money(1500000L),
             note = "Хата"
         ),
         Transaction(
             id = 9,
             category = categories.first { it.id == 2L },
-            date = parseDateFromString("07.07.2026"),
-            amount = 1500.0,
+            date = parseDateFromString("07.09.2026"),
+            amount = Money(150000L),
             note = "Валентинка"
         ),
         Transaction(
             id = 10,
             category = categories.first { it.id == 1L },
-            date = parseDateFromString("16.07.2026"),
-            amount = 4000.0,
+            date = parseDateFromString("16.09.2026"),
+            amount = Money(400000L),
         ),
         Transaction(
             id = 11,
             category = categories.first { it.id == 2L },
-            date = parseDateFromString("16.07.2026"),
-            amount = 1000.0,
+            date = parseDateFromString("16.09.2026"),
+            amount = Money(100000L),
             note = "Носки"
         ),
         //---------------------------------------------------------------------
         Transaction(
             id = 12,
             category = categories.first { it.id == 21L },
-            date = parseDateFromString("08.07.2026"),
-            amount = 2000.0,
+            date = parseDateFromString("08.08.2026"),
+            amount = Money(200000L),
             note = "От мамы"
         ),
         Transaction(
             id = 13,
             category = categories.first { it.id == 21L },
-            date = parseDateFromString("08.07.2026"),
-            amount = 1500.0,
+            date = parseDateFromString("08.08.2026"),
+            amount = Money(150000L),
             note = "От бабушки"
         ),
         Transaction(
             id = 14,
             category = categories.first { it.id == 20L },
-            date = parseDateFromString("25.06.2026"),
-            amount = 25000.0,
+            date = parseDateFromString("25.09.2026"),
+            amount = Money(2500000L),
             note = "Зарплата"
         ),
     )
@@ -398,14 +399,14 @@ class TestDataSource {
         return statisticsPeriods
     }
 
-    fun getBalance(): Double {
-        var totalExpenses: Double = 0.0
+    fun getBalance(): Long {
+        var totalExpenses: Long = 0L
         transactions.filter { it.category.type == CategoryType.EXPENSES }
-            .forEach { totalExpenses += it.amount }
+            .forEach { totalExpenses += it.amount.minorUnits }
 
-        var totalIncome: Double = 0.0
+        var totalIncome: Long = 0L
         transactions.filter { it.category.type == CategoryType.INCOME }
-            .forEach { totalIncome += it.amount }
+            .forEach { totalIncome += it.amount.minorUnits }
 
         return totalIncome - totalExpenses
     }
@@ -440,17 +441,18 @@ class TestDataSource {
         categoryType: CategoryType
     ): List<CategoryStatistics> {
         val filteredTransactions = getTransactions(statisticsPeriod, categoryType)
-        val total = filteredTransactions.sumOf { it.amount }
+        val total = filteredTransactions.sumOf { it.amount.minorUnits }
 
         val categories = filteredTransactions.map { it.category }.distinct()
 
         return categories.map { category ->
             val categoryTotal =
-                filteredTransactions.filter { it.category.id == category.id }.sumOf { it.amount }
+                filteredTransactions.filter { it.category.id == category.id }
+                    .sumOf { it.amount.minorUnits }
             CategoryStatistics(
                 category = category,
-                totalAmount = categoryTotal,
-                percentage = (categoryTotal / total * 100).toFloat()
+                totalAmount = Money(categoryTotal),
+                percentage = (categoryTotal.toFloat() / total.toFloat() * 100)
             )
         }.sortedByDescending { it.percentage }
     }
@@ -531,7 +533,7 @@ class TestDataSource {
         } else {
             getTransactions(statisticsPeriod, categoryType)
         }
-        val total = filteredTransactions.sumOf { it.amount }
+        //val total = filteredTransactions.sumOf { it.amount }
 
         val days = filteredTransactions.map { it.date }.distinct().sortedDescending()
 
@@ -540,7 +542,7 @@ class TestDataSource {
             TransactionsPerDay(
                 date = day,
                 transactions = transactions,
-                totalAmount = transactions.sumOf { it.amount }
+                totalAmount = Money(transactions.sumOf { it.amount.minorUnits })
             )
         }
     }
@@ -564,7 +566,7 @@ class TestDataSource {
     }
 
     fun getFirstDay(): LocalDate {
-        return statisticsPeriods[1].firstDay//curMonthFrstDay
+        return statisticsPeriods[1].firstDay//curMonthFirstDay
     }
 
     fun getLastDay(): LocalDate {
@@ -579,41 +581,43 @@ class TestDataSource {
 
     // Добавить логику?
     fun getAmountAfterCurrencyExchanged(
-        localAmount: Double,
+        localAmount: Long,
         localCurrency: Currency,
         targetCurrency: Currency
-    ): Double {
+    ): Money {
         val index = localCurrency.ordinal + targetCurrency.ordinal
-        return when (index) {
-            // EUR и RUB
-            1 -> {
-                if (targetCurrency == Currency.RUB) {
-                    localAmount * COUNT_RUB_IN_ONE_EUR
-                } else {
-                    localAmount / COUNT_RUB_IN_ONE_EUR
+        return Money(
+            when (index) {
+                // EUR и RUB
+                1 -> {
+                    if (targetCurrency == Currency.RUB) {
+                        localAmount * COUNT_RUB_IN_ONE_EUR
+                    } else {
+                        localAmount / COUNT_RUB_IN_ONE_EUR
+                    }
                 }
-            }
 
-            // EUR и USD
-            2 -> {
-                if (targetCurrency == Currency.USD) {
-                    localAmount * COUNT_EUR_IN_ONE_USD
-                } else {
-                    localAmount / COUNT_EUR_IN_ONE_USD
+                // EUR и USD
+                2 -> {
+                    if (targetCurrency == Currency.USD) {
+                        localAmount * COUNT_EUR_IN_ONE_USD
+                    } else {
+                        localAmount / COUNT_EUR_IN_ONE_USD
+                    }
                 }
-            }
 
-            // USD и RUB
-            3 -> {
-                if (targetCurrency == Currency.RUB) {
-                    localAmount * COUNT_RUB_IN_ONE_USD
-                } else {
-                    localAmount / COUNT_RUB_IN_ONE_USD
+                // USD и RUB
+                3 -> {
+                    if (targetCurrency == Currency.RUB) {
+                        localAmount * COUNT_RUB_IN_ONE_USD
+                    } else {
+                        localAmount / COUNT_RUB_IN_ONE_USD
+                    }
                 }
-            }
 
-            else -> localAmount
-        }
+                else -> localAmount
+            }
+        )
     }
 
     fun createTransaction(transaction: Transaction) {
@@ -697,9 +701,9 @@ class TestDataSource {
     }
 
     private companion object {
-        const val COUNT_RUB_IN_ONE_EUR = 80.0
-        const val COUNT_RUB_IN_ONE_USD = 70.0
-        const val COUNT_EUR_IN_ONE_USD = 0.86
+        const val COUNT_RUB_IN_ONE_EUR = 8000L
+        const val COUNT_RUB_IN_ONE_USD = 7000L
+        const val COUNT_EUR_IN_ONE_USD = 86L
         const val USER_ORDER_STEP = 100.0
         const val USER_ORDER_IN_ASCENDING_ORDER = 1 // значение не менять
         const val USER_ORDER_IN_DESCENDING_ORDER = -1 // значение не менять

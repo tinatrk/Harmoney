@@ -8,6 +8,7 @@ import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.Money
 import com.example.harmoney.domain.models.Transaction
 
 class TransactionDbConverterImpl(private val dateConverter: DateConverter) :
@@ -17,7 +18,7 @@ class TransactionDbConverterImpl(private val dateConverter: DateConverter) :
             id = transaction.id,
             categoryId = transaction.category.id,
             dateMillis = dateConverter.dateToMillis(transaction.date),
-            amount = transaction.amount,
+            amount = transaction.amount.minorUnits,
             note = transaction.note,
             createdAt = transaction.createdAt,
         )
@@ -38,7 +39,7 @@ class TransactionDbConverterImpl(private val dateConverter: DateConverter) :
                 userOrder = transactionWithCategory.category.userOrder
             ),
             date = dateConverter.millisToDate(transactionWithCategory.transaction.dateMillis),
-            amount = transactionWithCategory.transaction.amount,
+            amount = Money(transactionWithCategory.transaction.amount),
             note = transactionWithCategory.transaction.note,
             createdAt = transactionWithCategory.transaction.createdAt
         )

@@ -11,7 +11,6 @@ import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverter
 import com.example.harmoney.presentation.converters.StatisticsPeriodUiConverter
 import com.example.harmoney.presentation.converters.TransactionFilterUiConverter
-import com.example.harmoney.presentation.models.DecimalPlaces
 import com.example.harmoney.presentation.models.TransactionFilterUi
 import com.example.harmoney.presentation.test.TestDataSource
 import com.example.harmoney.presentation.transactionList.models.TransactionListAction
@@ -66,7 +65,7 @@ class TransactionListViewModel(
             )
 
             val balance = test.getBalance()
-            val totalAmount = transactions.sumOf { it.totalAmount }
+            val totalAmount = transactions.sumOf { it.totalAmount.minorUnits }
 
             val filters = transactionFilterUiConverter // cчитывать из БД
                 .map(filters = test.getTransactionFilters(state.value.selectedCategoryType))
@@ -89,17 +88,13 @@ class TransactionListViewModel(
 
             writableState.update {
                 it.copy(
-                    currentBalance = numberFormatter.toStringWithCurrency(
-                        number = balance,
-                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
+                    currentBalance = numberFormatter.moneyToStringWithCurrency(
+                        moneyMinorUnits = balance,
                         currency = currency,
-                        isNeededThousandSeparator = true
                     ),
-                    totalAmount = numberFormatter.toStringWithCurrency(
-                        number = totalAmount,
-                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
+                    totalAmount = numberFormatter.moneyToStringWithCurrency(
+                        moneyMinorUnits = totalAmount,
                         currency = currency,
-                        isNeededThousandSeparator = true
                     ),
                     oneDayTransactionsList = oneDayTransactionsUiConverter
                         .map(days = transactions, currency = currency),

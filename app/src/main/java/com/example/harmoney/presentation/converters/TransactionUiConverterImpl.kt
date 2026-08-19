@@ -2,7 +2,6 @@ package com.example.harmoney.presentation.converters
 
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.Transaction
-import com.example.harmoney.presentation.models.DecimalPlaces
 import com.example.harmoney.presentation.models.TransactionUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -16,10 +15,8 @@ class TransactionUiConverterImpl(
         return TransactionUi(
             id = transaction.id,
             category = categoryUiConverter.map(transaction.category),
-            amount = numbersFormatter.toStringWithCurrency(
-                number = transaction.amount,
-                decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
-                isNeededThousandSeparator = true,
+            amount = numbersFormatter.moneyToStringWithCurrency(
+                moneyMinorUnits = transaction.amount.minorUnits,
                 currency = currency
             ),
             date = dateFormatter.formatShortDate(date = transaction.date),

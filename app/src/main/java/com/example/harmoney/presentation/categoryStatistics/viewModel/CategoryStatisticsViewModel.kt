@@ -17,7 +17,6 @@ import com.example.harmoney.presentation.categoryStatistics.models.FirstDayMonth
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverter
 import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.converters.StatisticsPeriodUiConverter
-import com.example.harmoney.presentation.models.DecimalPlaces
 import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.test.TestDataSource
 import kotlinx.collections.immutable.ImmutableList
@@ -74,7 +73,7 @@ class CategoryStatisticsViewModel(
             val formattedCategories =
                 categoryStatisticsUiConverter.map(categories, state.value.currency)
 
-            val total = categories.sumOf { category -> category.totalAmount }
+            val total = categories.sumOf { category -> category.totalAmount.minorUnits }
 
             writableState.update {
                 it.copy(
@@ -87,17 +86,13 @@ class CategoryStatisticsViewModel(
                         categoriesAmountString = formattedCategories
                             .map { category -> category.totalAmount }
                     ),
-                    currentBalance = numbersFormatter.toStringWithCurrency(
-                        number = test.getBalance(),//balance
-                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
+                    currentBalance = numbersFormatter.moneyToStringWithCurrency(
+                        moneyMinorUnits = test.getBalance(),//balance
                         currency = state.value.currency,//currency,
-                        isNeededThousandSeparator = true
                     ),
-                    total = numbersFormatter.toStringWithCurrency(
-                        number = total,
-                        decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
+                    total = numbersFormatter.moneyToStringWithCurrency(
+                        moneyMinorUnits = total,
                         currency = state.value.currency,//currency,it.currency,
-                        isNeededThousandSeparator = true
                     ),
                     firstDayMonth = firstDayMonth,
                     firstDayMonthText = firstDayMonth.toString()
@@ -190,12 +185,12 @@ class CategoryStatisticsViewModel(
     ): ImmutableList<PieChartItem> {
         val startAngle = START_ANGLE
 
-        val total = categories.sumOf { it.totalAmount }.toFloat()
+        val total = categories.sumOf { it.totalAmount.minorUnits }.toFloat()
         val pieChartItems: MutableList<PieChartItem> = mutableListOf()
 
         var curStartAngle = startAngle
         for (i in categories.indices) {
-            val rawSweep = (categories[i].totalAmount.toFloat() / total) * MAX_ANGLE
+            val rawSweep = (categories[i].totalAmount.minorUnits.toFloat() / total) * MAX_ANGLE
             val sweepAngle = (rawSweep - GAP_ANGLE).coerceAtLeast(MIN_ANGLE)
 
             pieChartItems.add(

@@ -3,7 +3,6 @@ package com.example.harmoney.presentation.converters
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.presentation.models.CategoryStatisticsUi
-import com.example.harmoney.presentation.models.DecimalPlaces
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -19,15 +18,12 @@ class CategoryStatisticsUiConverterImpl(
     ): CategoryStatisticsUi {
         return CategoryStatisticsUi(
             category = categoryUiConverter.map(categoryStatistics.category),
-            totalAmount = numberFormatter.toStringWithCurrency(
-                number = categoryStatistics.totalAmount,
-                decimalPlaces = DecimalPlaces.MONEY_DISPLAY,
+            totalAmount = numberFormatter.moneyToStringWithCurrency(
+                moneyMinorUnits = categoryStatistics.totalAmount.minorUnits,
                 currency = currency,
-                isNeededThousandSeparator = true
             ),
-            percentage = numberFormatter.toStringWithPercent(
-                number = categoryStatistics.percentage.toDouble(),
-                decimalPlaces = DecimalPlaces.PERCENT_DISPLAY
+            percentage = numberFormatter.percentageToString(
+                number = categoryStatistics.percentage,
             )
         )
     }

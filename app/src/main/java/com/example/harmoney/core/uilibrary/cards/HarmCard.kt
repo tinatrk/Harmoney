@@ -107,6 +107,7 @@ object HarmCard {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 
