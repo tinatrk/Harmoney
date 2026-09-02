@@ -79,10 +79,13 @@ val viewModelModule = module {
 
     viewModel { (categoryId: Long?) ->
         CategoryViewModel(
-            sessionSateHolder = get(),
+            sessionStateHolder = get(),
             categoryId = categoryId,
-            test = get(),
-            categoryUiConverter = get()
+            getCategoryUseCase = get(),
+            addCategoryUseCase = get(),
+            updateCategoryUseCase = get(),
+            deleteCategoryUseCase = get(),
+            checkCategoryAlreadyExistsUseCase = get()
         )
     }
 

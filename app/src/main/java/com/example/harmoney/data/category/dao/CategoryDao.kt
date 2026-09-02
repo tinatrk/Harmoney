@@ -27,8 +27,25 @@ interface CategoryDao {
     @Query("SELECT * FROM category WHERE name = :name AND typeId = :categoryTypeId")
     suspend fun getCategory(name: String, categoryTypeId: Long): CategoryEntity?
 
-    @Query("SELECT * FROM category WHERE typeId = :categoryTypeId")
-    fun getCategoryList(categoryTypeId: Long): Flow<List<CategoryEntity>?>
+    @Query("SELECT * FROM category WHERE typeId = :categoryTypeId ORDER BY name ASC")
+    fun getCategoryListSortedByName(categoryTypeId: Long): Flow<List<CategoryEntity>>
+
+    @Query("SELECT * FROM category WHERE typeId = :categoryTypeId ORDER BY createdAt ASC")
+    fun getCategoryListSortedByCreatedAt(categoryTypeId: Long): Flow<List<CategoryEntity>>
+
+    @Query(
+        """
+        SELECT * FROM category 
+        WHERE typeId = :categoryTypeId 
+        ORDER BY 
+                CASE WHEN :ascending = 1 THEN userOrder END ASC,
+                CASE WHEN :ascending = 0 THEN userOrder END DESC
+    """
+    )
+    fun getCategoryListSortedByUserOrder(
+        categoryTypeId: Long,
+        ascending: Boolean
+    ): Flow<List<CategoryEntity>>
 
     @Query("UPDATE category SET userOrder = :newUserOrder WHERE id = :categoryId")
     suspend fun updateCategoryUserOrder(categoryId: Long, newUserOrder: Double)

@@ -1,5 +1,6 @@
 package com.example.harmoney.ui.screens
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +28,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -62,14 +66,101 @@ fun CategoryScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.action
             .flowWithLifecycle(lifecycle, minActiveState = Lifecycle.State.STARTED)
             .collect { act ->
                 when (act) {
-                    CategoryAction.NavigateBack -> onBackClick()
-                    else -> {}
+                    is CategoryAction.NavigateBack -> onBackClick()
+
+                    is CategoryAction.CreateCategoryError -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.toast_category_create_error),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    is CategoryAction.UpdateCategoryError -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.toast_category_update_error),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                    }
+
+                    is CategoryAction.DeleteCategoryError -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.toast_category_delete_error),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    is CategoryAction.SaveCategoryError -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.toast_saving_error),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    is CategoryAction.DataLoadingError -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.toast_data_loading_error),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    is CategoryAction.CheckingCategoryAlreadyExistsError -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.error_something_went_wrong),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    is CategoryAction.CreatedSuccessfully -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(
+                                R.string.toast_category_created_successfully,
+                                act.name
+                            ),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        onBackClick()
+                    }
+
+                    is CategoryAction.UpdatedSuccessfully -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.toast_updated_successfully),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        onBackClick()
+                    }
+
+                    is CategoryAction.DeletedSuccessfully -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(
+                                R.string.toast_category_deletion_successfully,
+                                act.name
+                            ),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        onBackClick()
+                    }
+
+                    null -> Unit
                 }
             }
     }
@@ -80,14 +171,14 @@ fun CategoryScreen(
 
     CategoryScreen(
         state = state,
-        onEvent = viewModel::obtainEvent,
+        onEvent = viewModel::obtainEvent
     )
 }
 
 @Composable
 fun CategoryScreen(
     state: CategoryState,
-    onEvent: (CategoryEvent) -> Unit,
+    onEvent: (CategoryEvent) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -102,7 +193,7 @@ fun CategoryScreen(
                 onNavigationIconClick = { onEvent(CategoryEvent.OnBackClick) },
             )
         },
-        containerColor = HarmTheme.colors.surface
+        containerColor = HarmTheme.colors.surface,
     ) { paddingValues ->
         CategoryContent(
             modifier = Modifier
@@ -120,13 +211,20 @@ fun CategoryContent(
     onEvent: (CategoryEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusManager = LocalFocusManager.current
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(HarmTheme.colors.surface)
             .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
-        IconAndName(state = state, onEvent = onEvent, modifier = Modifier.fillMaxWidth())
+        IconAndName(
+            state = state,
+            onEvent = onEvent,
+            modifier = Modifier.fillMaxWidth(),
+            focusManager = focusManager
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
@@ -139,6 +237,7 @@ fun CategoryContent(
                     title = stringResource(type.toStringRes()),
                     checked = state.selectedCategoryType.id == type.id,
                     onCheckChanged = {
+                        focusManager.clearFocus()
                         onEvent(CategoryEvent.OnChangeCategoryTypeClick(type))
                     }
                 )
@@ -146,7 +245,12 @@ fun CategoryContent(
         }
         Spacer(modifier = Modifier.height(16.dp))
 
-        ColorList(state = state, onEvent = onEvent, modifier = Modifier.weight(1f))
+        ColorList(
+            state = state,
+            onEvent = onEvent,
+            modifier = Modifier.weight(1f),
+            focusManager = focusManager
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -154,14 +258,16 @@ fun CategoryContent(
                 HarmButton.HarmDangerousButton(
                     modifier = Modifier.weight(1f),
                     text = stringResource(R.string.btn_delete_text),
-                    onClick = { onEvent(CategoryEvent.OnDeleteClick) }
+                    onClick = { onEvent(CategoryEvent.OnDeleteClick) },
+                    enabled = state.isDataReadyForEditing
                 )
                 Spacer(modifier = Modifier.width(16.dp))
             }
             HarmButton.HarmPrimaryButton(
                 modifier = Modifier.weight(1f),
                 text = stringResource(R.string.btn_save_text),
-                onClick = { onEvent(CategoryEvent.OnSaveClick) }
+                onClick = { onEvent(CategoryEvent.OnSaveClick) },
+                enabled = state.isDataReadyForEditing
             )
         }
     }
@@ -173,6 +279,7 @@ fun CategoryContent(
 fun IconAndName(
     state: CategoryState,
     onEvent: (CategoryEvent) -> Unit,
+    focusManager: FocusManager,
     modifier: Modifier = Modifier,
 ) {
     val supportingText = when (state.categoryNameError) {
@@ -180,6 +287,8 @@ fun IconAndName(
         is CategoryNameError.AlreadyExists -> {
             stringResource(R.string.error_category_name_already_exists)
         }
+
+        is CategoryNameError.CheckFailed -> stringResource(R.string.error_something_went_wrong)
 
         is CategoryNameError.None -> ""
     }
@@ -196,17 +305,23 @@ fun IconAndName(
                 iconRes = state.selectedIcon.toDrawableRes(),
                 contentDescription = stringResource(R.string.ic_change_category_icon_desc),
                 iconBackground = Color(state.selectedColor.background),
-                onClick = { onEvent(CategoryEvent.OnOpenIconsBottomSheetClick) }
+                onClick = {
+                    focusManager.clearFocus()
+                    onEvent(CategoryEvent.OnOpenIconsBottomSheetClick)
+                }
             )
         }
         Spacer(modifier = Modifier.width(12.dp))
+
         HarmTextField.HarmBaseTextField(
             value = state.categoryName,
             placeholder = stringResource(R.string.label_text_field_category_name),
             label = stringResource(R.string.label_text_field_category_name),
             onValueChange = { newName -> onEvent(CategoryEvent.OnCategoryNameChanged(newName)) },
             isError = state.categoryNameError !is CategoryNameError.None,
-            supportingText = supportingText
+            supportingText = supportingText,
+            readOnly = !state.isDataReadyForEditing,
+            focusManager = focusManager,
         )
     }
 
@@ -257,6 +372,7 @@ fun IconAndName(
 fun ColorList(
     state: CategoryState,
     onEvent: (CategoryEvent) -> Unit,
+    focusManager: FocusManager,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -286,7 +402,10 @@ fun ColorList(
                         stringResource(R.string.ic_select_color_for_category_icon_desc)
                     },
                     iconBackground = Color(color.background),
-                    onClick = { onEvent(CategoryEvent.OnColorClick(color)) }
+                    onClick = {
+                        focusManager.clearFocus()
+                        onEvent(CategoryEvent.OnColorClick(color))
+                    }
                 )
             }
         }
@@ -319,11 +438,22 @@ fun Dialogs(
 
     if (state.isCategoryDeleteDialogOpened) {
         HarmDialog.HarmConfirmingDialog(
-            dialogTitle = stringResource(R.string.title_dialog_delete_category),
+            dialogTitle = stringResource(
+                R.string.title_dialog_delete_category,
+                state.initCategoryName
+            ),
             iconId = R.drawable.ic_warring_24px,
             iconContentDescription = stringResource(R.string.ic_alert_dialog_desc),
             onConfirmation = { onEvent(CategoryEvent.OnDeleteDialogConfirm) },
             onDismissRequest = { onEvent(CategoryEvent.OnDeleteDialogDismiss) }
+        )
+    }
+
+    if (state.isDataLoadingErrorDialogOpened) {
+        HarmDialog.HarmWarningDialog(
+            dialogTitle = stringResource(R.string.title_dialog_category_loading_error),
+            dialogText = stringResource(R.string.text_dialog_data_loading_error),
+            onDismissRequest = { onEvent(CategoryEvent.OnDataLoadingErrorDialogConfirm) }
         )
     }
 }

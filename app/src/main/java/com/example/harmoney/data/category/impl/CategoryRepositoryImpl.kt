@@ -73,31 +73,35 @@ class CategoryRepositoryImpl(
     }
 
     override fun getCategoryList(categoryType: CategoryType, sortOption: SortOption)
-            : Flow<Resource<List<Category>, CategoryFailure>> =
-        categoryDao.getCategoryList(categoryType.id)
-            .map { entities ->
-                val categories = entities ?: emptyList()
-                val sortedCategories = when (sortOption) {
-                    SortOption.ALPHABET -> categories.sortedBy { it.name }
-                    SortOption.TIME_CREATED -> categories.sortedBy { it.createdAt }
-                    SortOption.USER_ORDER -> {
-                        // для корректной работы updateCategoryUserOrder
-                        if (sortingDirection == USER_ORDER_IN_ASCENDING_ORDER) {
-                            categories.sortedBy { it.userOrder }
-                        } else {
-                            categories.sortedByDescending { it.userOrder }
-                        }
-                    }
-                }
-                Resource.Success(categoryDBConverter.map(sortedCategories))
-                        as Resource<List<Category>, CategoryFailure>
-            }.catch { e ->
-                Log.e(DATABASE_TAG, "Error when getting categoryList: ${e.message}", e)
-                when (e) {
-                    is SQLiteException -> emit(Resource.Error(CategoryFailure.DatabaseError))
-                    else -> throw e
-                }
+            : Flow<Resource<List<Category>, CategoryFailure>> {
+        val categoriesFlow = when (sortOption) {
+            SortOption.ALPHABET -> {
+                categoryDao.getCategoryListSortedByName(categoryType.id)
             }
+
+            SortOption.TIME_CREATED -> {
+                categoryDao.getCategoryListSortedByCreatedAt(categoryType.id)
+            }
+
+            SortOption.USER_ORDER -> {
+                categoryDao.getCategoryListSortedByUserOrder(
+                    categoryTypeId = categoryType.id,
+                    ascending = sortingDirection == USER_ORDER_IN_ASCENDING_ORDER
+                )
+            }
+        }
+
+        return categoriesFlow.map { entities ->
+            Resource.Success(categoryDBConverter.map(entities))
+                    as Resource<List<Category>, CategoryFailure>
+        }.catch { e ->
+            Log.e(DATABASE_TAG, "Error when getting categoryList: ${e.message}", e)
+            when (e) {
+                is SQLiteException -> emit(Resource.Error(CategoryFailure.DatabaseError))
+                else -> throw e
+            }
+        }
+    }
 
     override suspend fun updateCategory(category: Category): Resource<Unit, CategoryFailure> {
         return try {
