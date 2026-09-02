@@ -97,7 +97,7 @@ fun CategoryStatisticsScreen(
                     is CategoryStatisticsAction.ShowChangeThemeError -> {
                         snackbarHostState.showSnackbar(
                             context.getString(
-                                R.string.snackbar_changed_theme_error
+                                R.string.toast_changed_theme_error
                             )
                         )
                     }

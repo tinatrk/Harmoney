@@ -4,9 +4,6 @@ import androidx.compose.runtime.Stable
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 
 @Stable
 data class CategoryState(
@@ -25,4 +22,9 @@ data class CategoryState(
     val isSaveCategoryErrorDialogOpened: Boolean = false,
     val isCategoryNotSavedDialogOpened: Boolean = false,
     val isCategoryDeleteDialogOpened: Boolean = false,
+    val initCategoryName: String = "",
+
+    val isDataLoadingErrorDialogOpened: Boolean = false,
+
+    val isDataReadyForEditing: Boolean = false
 )

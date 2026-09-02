@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class ThemeRepositoryImpl(private val dataStore: DataStore<Preferences>) : ThemeRepository {
-    override fun getIsThemeDark(): Flow<Boolean?> =
+    override fun getIsThemeDark(): Flow<Boolean> =
         dataStore.data.map { prefs ->
-            prefs[DARK_THEME_KEY]
+            prefs[DARK_THEME_KEY] ?: DEFAULT_THEME
         }
 
     override suspend fun setTheme(isThemeDark: Boolean) {
@@ -22,5 +22,6 @@ class ThemeRepositoryImpl(private val dataStore: DataStore<Preferences>) : Theme
 
     companion object {
         private val DARK_THEME_KEY = booleanPreferencesKey("dark_theme")
+        private const val DEFAULT_THEME = false
     }
 }

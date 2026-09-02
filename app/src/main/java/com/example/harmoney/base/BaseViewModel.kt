@@ -29,23 +29,36 @@ abstract class BaseViewModel<Event, Action, State>(state: State) : ViewModel() {
 
     abstract fun obtainEvent(event: Event)
 
-    protected fun runSafely(
-        block: suspend () -> Unit,
+    protected fun launchSafely(
+        errorMessage: String,
         onError: (suspend (Throwable) -> Unit)? = null,
-        errorMessage: String
+        block: suspend () -> Unit,
     ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            runCatching {
-                block()
-            }.onFailure { error ->
-                if (error is CancellationException) {
-                    throw error
-                }
-                if (BuildConfig.DEBUG) {
-                    Log.e(tag, errorMessage, error)
-                }
-                onError?.invoke(error)
+        viewModelScope.launch {
+            executeSafely(
+                errorMessage,
+                onError,
+                block
+            )
+        }
+    }
+
+    @Suppress("detekt:TooGenericExceptionCaught")
+    protected suspend fun <T> executeSafely(
+        errorMessage: String,
+        onError: (suspend (Exception) -> Unit)? = null,
+        block: suspend () -> T
+    ): T? {
+        return try {
+            block()
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Exception) {
+            if (BuildConfig.DEBUG) {
+                Log.e(tag, errorMessage, error)
             }
+            onError?.invoke(error)
+            null
         }
     }
 }

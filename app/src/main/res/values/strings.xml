@@ -85,11 +85,13 @@
     <string name="title_dialog_exit">Вы точно хотите выйти?</string>
     <string name="text_dialog_exit">Изменения не сохранены.</string>
     <string name="title_dialog_delete_transaction">Вы уверены, что хотите удалить транзакцию?</string>
-    <string name="title_dialog_delete_category">Вы уверены, что хотите удалить категорию?</string>
+    <string name="title_dialog_delete_category">Вы уверены, что хотите удалить категорию \"%s\"?</string>
     <string name="title_dialog_set_first_day_month">Введите номер первого дня финансового месяца</string>
     <string name="title_dialog_transaction_save_error">Невозможно сохранить транзакцию</string>
     <string name="title_dialog_category_save_error">Невозможно сохранить категорию</string>
     <string name="text_dialog_saving_error">Некоторые поля не заполнены или заполнены некорректно.</string>
+    <string name="title_dialog_category_loading_error">Не удалось загрузить категорию.</string>
+    <string name="text_dialog_data_loading_error">Попробуйте еще раз.</string>
 
     <!-- Заголовки видов сортировки -->
     <string name="title_sort_time_created">По времени создания</string>
@@ -113,9 +115,17 @@
     <string name="error_incorrect_first_day_month_pattern">Введите число в диапазоне от %d до %d</string>
     <string name="error_incorrect_date">Выберите дату в рамках текущего финансового месяца: с %s по %s</string>
     <string name="error_incorrect_amount">Введите положительное число больше нуля</string>
-    <string name="error_category_name_already_exists">Категория с таким названием уже существует</string>
+    <string name="error_category_name_already_exists">Категория с таким названием и типом уже существует</string>
+    <string name="error_something_went_wrong">Что-то пошло не так</string>
 
-    <!-- snackbarText -->
-    <string name="snackbar_changed_theme_error">Ошибка при переключении темы</string>
-
+    <!-- toast Text -->
+    <string name="toast_changed_theme_error">Ошибка при переключении темы</string>
+    <string name="toast_category_create_error">Не удалось создать категорию</string>
+    <string name="toast_category_update_error">Не удалось обновить категорию</string>
+    <string name="toast_category_delete_error">Не удалось удалить категорию</string>
+    <string name="toast_data_loading_error">Не удалось загрузить данные</string>
+    <string name="toast_saving_error">Не удалось сохранить изменения</string>
+    <string name="toast_category_created_successfully">Категория \"%s\" создана</string>
+    <string name="toast_updated_successfully">Изменения сохранены</string>
+    <string name="toast_category_deletion_successfully">Категория \"%s\" удалена</string>
 </resources>

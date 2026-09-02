@@ -4,4 +4,5 @@ sealed class CategoryNameError {
     data object None : CategoryNameError()
     data object Empty : CategoryNameError()
     data object AlreadyExists : CategoryNameError()
+    data object CheckFailed : CategoryNameError()
 }

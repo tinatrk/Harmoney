@@ -25,4 +25,6 @@ sealed interface CategoryEvent {
     data object OnDeleteClick : CategoryEvent
     data object OnDeleteDialogConfirm : CategoryEvent
     data object OnDeleteDialogDismiss : CategoryEvent
+
+    data object OnDataLoadingErrorDialogConfirm : CategoryEvent
 }

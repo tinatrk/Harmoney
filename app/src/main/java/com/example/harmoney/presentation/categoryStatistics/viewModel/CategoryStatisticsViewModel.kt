@@ -209,7 +209,7 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onThemeChanged(isThemeDark: Boolean) {
-        runSafely(
+        launchSafely(
             errorMessage = CHANGE_THEME_ERROR,
             block = {
                 setThemeUseCase.execute(isThemeDark = isThemeDark)
@@ -235,7 +235,7 @@ class CategoryStatisticsViewModel(
         }
 
         if (isFirstDayCorrect) {
-            runSafely(
+            launchSafely(
                 block = {
                     firstDayMonthInteractor.setFirstDayMonth(firstDay!!)
                 },
