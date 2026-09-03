@@ -1,8 +1,8 @@
 package com.example.harmoney.presentation.categoryList.models
 
 import androidx.compose.runtime.Stable
-import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.presentation.models.CategoryUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -16,4 +16,6 @@ data class CategoryListState(
     val isSortMenuOpened: Boolean = false,
 
     val categories: ImmutableList<CategoryUi> = persistentListOf(),
+
+    val isDataLoadingError: Boolean = false
 )

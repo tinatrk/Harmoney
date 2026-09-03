@@ -8,4 +8,5 @@ interface CategoryUiConverter {
     fun map(category: Category): CategoryUi
     fun map(category: CategoryUi): Category
     fun map(categories: List<Category>): ImmutableList<CategoryUi>
+    fun map(categories: List<CategoryUi>): List<Category>
 }

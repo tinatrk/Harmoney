@@ -85,7 +85,7 @@ val useCaseModule = module {
     }
 
     factory<GetCategoryListUseCase> {
-        GetCategoryListUseCaseImpl(categoryRepository = get(), sortOptionRepository = get())
+        GetCategoryListUseCaseImpl(categoryRepository = get())
     }
 
     factory<GetCategoryUseCase> {

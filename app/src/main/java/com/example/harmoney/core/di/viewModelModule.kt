@@ -71,9 +71,10 @@ val viewModelModule = module {
     viewModel {
         CategoryListViewModel(
             sessionSateHolder = get(),
-            test = get(),
             categoryUiConverter = get(),
-            categorySortOptionInteractor = get()
+            categorySortOptionInteractor = get(),
+            getCategoryListUseCase = get(),
+            updateCategoryUserOrderUseCase = get()
         )
     }
 
