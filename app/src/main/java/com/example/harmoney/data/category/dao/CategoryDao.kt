@@ -27,7 +27,13 @@ interface CategoryDao {
     @Query("SELECT * FROM category WHERE name = :name AND typeId = :categoryTypeId")
     suspend fun getCategory(name: String, categoryTypeId: Long): CategoryEntity?
 
-    @Query("SELECT * FROM category WHERE typeId = :categoryTypeId ORDER BY name ASC")
+    @Query(
+        """
+        SELECT * FROM category 
+        WHERE typeId = :categoryTypeId 
+        ORDER BY name COLLATE LOCALIZED ASC
+    """
+    )
     fun getCategoryListSortedByName(categoryTypeId: Long): Flow<List<CategoryEntity>>
 
     @Query("SELECT * FROM category WHERE typeId = :categoryTypeId ORDER BY createdAt ASC")

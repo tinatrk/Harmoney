@@ -128,4 +128,7 @@
     <string name="toast_category_created_successfully">Категория \"%s\" создана</string>
     <string name="toast_updated_successfully">Изменения сохранены</string>
     <string name="toast_category_deletion_successfully">Категория \"%s\" удалена</string>
+    <string name="toast_get_category_list_error">Не удалось загрузить список категорий</string>
+    <string name="toast_update_user_order_error">Не удалось поменять порядок категорий</string>
+    <string name="toast_set_sort_option_error">Не удалось поменять режим сортировки</string>
 </resources>

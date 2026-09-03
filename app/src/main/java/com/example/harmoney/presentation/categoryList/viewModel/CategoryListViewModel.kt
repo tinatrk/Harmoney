@@ -1,8 +1,10 @@
 package com.example.harmoney.presentation.categoryList.viewModel
 
-import androidx.lifecycle.viewModelScope
 import com.example.harmoney.base.BaseViewModel
 import com.example.harmoney.core.session.SessionStateHolder
+import com.example.harmoney.core.util.Resource
+import com.example.harmoney.domain.category.api.useCase.GetCategoryListUseCase
+import com.example.harmoney.domain.category.api.useCase.UpdateCategoryUserOrderUseCase
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.settings.categorySortingMode.api.useCase.CategorySortOptionInteractor
@@ -10,22 +12,21 @@ import com.example.harmoney.presentation.categoryList.models.CategoryListAction
 import com.example.harmoney.presentation.categoryList.models.CategoryListEvent
 import com.example.harmoney.presentation.categoryList.models.CategoryListState
 import com.example.harmoney.presentation.converters.CategoryUiConverter
-import com.example.harmoney.presentation.test.TestDataSource
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class CategoryListViewModel(
     private val sessionSateHolder: SessionStateHolder,
-    private val test: TestDataSource,
     private val categoryUiConverter: CategoryUiConverter,
-    private val categorySortOptionInteractor: CategorySortOptionInteractor
+    private val categorySortOptionInteractor: CategorySortOptionInteractor,
+    private val getCategoryListUseCase: GetCategoryListUseCase,
+    private val updateCategoryUserOrderUseCase: UpdateCategoryUserOrderUseCase
 ) : BaseViewModel<CategoryListEvent, CategoryListAction, CategoryListState>(
     state = CategoryListState(
         selectedCategoryType = sessionSateHolder.state.value.categoryType,
@@ -36,27 +37,47 @@ class CategoryListViewModel(
 
     init {
         combine(
-            sessionSateHolder.state.map { it.categoryType },
-            categorySortOptionInteractor.getSortOption()
+            sessionSateHolder.state.map { it.categoryType }.distinctUntilChanged(),
+            categorySortOptionInteractor.getSortOption().distinctUntilChanged()
         ) { categoryType, sortOption ->
             categoryType to sortOption
-        }.distinctUntilChanged()
-            .flatMapLatest { (categoryType, sortOption) ->
-                flow {
-                    // sortOption тут не передаем, т.к. передадим в UseCase-е
-                    val categories = test.getCategories(categoryType)
-                    emit(Triple(categoryType, sortOption, categories))
-                }
-            }.onEach { (categoryType, sortOption, categories) ->
-                writableState.update {
-                    it.copy(
-                        selectedSortOption = sortOption,
-                        selectedCategoryType = categoryType,
-                        selectedTabIndex = categoryType.ordinal,
-                        categories = categoryUiConverter.map(categories)
+        }.flatMapLatest { (categoryType, sortOption) ->
+
+            getCategoryListUseCase.execute(categoryType, sortOption)
+                .map { getCategoryListResult ->
+                    Triple(
+                        categoryType,
+                        sortOption,
+                        getCategoryListResult
                     )
                 }
-            }.launchIn(viewModelScope)
+        }.onEach { (categoryType, sortOption, getCategoryListResult) ->
+            when (getCategoryListResult) {
+                is Resource.Success -> {
+                    writableState.update {
+                        it.copy(
+                            selectedSortOption = sortOption,
+                            selectedCategoryType = categoryType,
+                            selectedTabIndex = categoryType.ordinal,
+                            categories = categoryUiConverter
+                                .map(getCategoryListResult.data),
+                            isDataLoadingError = false
+                        )
+                    }
+                }
+
+                is Resource.Error -> {
+                    writableAction.emit(CategoryListAction.GetCategoryListError)
+                    writableState.update { it.copy(isDataLoadingError = true) }
+                }
+            }
+        }.collectWithErrorHandling(
+            errorMessage = GET_CATEGORY_LIST_UNEXPECTED_ERROR,
+            onError = {
+                writableAction.emit(CategoryListAction.GetCategoryListError)
+                writableState.update { it.copy(isDataLoadingError = true) }
+            }
+        )
     }
 
     override fun obtainEvent(event: CategoryListEvent) {
@@ -96,16 +117,18 @@ class CategoryListViewModel(
 
     private fun onSortOptionClick(newSortOption: SortOption) {
         if (state.value.selectedSortOption != newSortOption) {
-            // в будущем обновлять sortOption через UseCase, а категории обновятся автоматически
 
-            viewModelScope.launch { categorySortOptionInteractor.setSortOption(newSortOption) }
+            launchWithErrorHandling(
+                errorMessage = SET_SORT_OPTION_UNEXPECTED_ERROR,
+                onError = { writableAction.emit(CategoryListAction.SetSortOptionError) }
+            ) {
+                categorySortOptionInteractor.setSortOption(newSortOption)
 
-            test.updateCategorySortOption(newSortOption)
-
-            writableState.update {
-                it.copy(
-                    isSortMenuOpened = false
-                )
+                writableState.update {
+                    it.copy(
+                        isSortMenuOpened = false
+                    )
+                }
             }
         } else {
             onSortMenuDismiss()
@@ -114,14 +137,26 @@ class CategoryListViewModel(
 
     private fun onUpdateCategoryUserOrder(from: Int, to: Int) {
         if (from == to) return
-        // пока при смене порядка категории автоматически не обновятся
-        test.updateCategoryUserOrder(from, to, state.value.selectedCategoryType)
-        writableState.update {
-            it.copy(
-                categories = categoryUiConverter.map(
-                    test.getCategories(state.value.selectedCategoryType)
-                )
+
+        launchWithErrorHandling(
+            errorMessage = UPDATE_CATEGORY_USER_ORDER_ERROR,
+            onError = {
+                writableAction.emit(CategoryListAction.UpdateCategoryUserOrderError)
+            }
+        ) {
+            val result = updateCategoryUserOrderUseCase.execute(
+                from,
+                to,
+                categoryUiConverter.map(state.value.categories)
             )
+
+            when (result) {
+                is Resource.Success -> Unit
+
+                is Resource.Error -> {
+                    writableAction.emit(CategoryListAction.UpdateCategoryUserOrderError)
+                }
+            }
         }
     }
 
@@ -135,5 +170,11 @@ class CategoryListViewModel(
 
     private fun onNavigateBack() {
         writableAction.tryEmit(CategoryListAction.NavigateBack)
+    }
+
+    companion object {
+        private const val GET_CATEGORY_LIST_UNEXPECTED_ERROR = "Error_getting_category_list"
+        private const val SET_SORT_OPTION_UNEXPECTED_ERROR = "Error_setting_sort_option"
+        private const val UPDATE_CATEGORY_USER_ORDER_ERROR = "Error_updating_category_user_order"
     }
 }

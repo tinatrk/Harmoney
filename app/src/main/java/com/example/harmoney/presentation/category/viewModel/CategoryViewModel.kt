@@ -20,16 +20,19 @@ import com.example.harmoney.presentation.category.models.CategoryEvent
 import com.example.harmoney.presentation.category.models.CategoryNameError
 import com.example.harmoney.presentation.category.models.CategoryState
 import com.example.harmoney.presentation.category.models.EditableCategory
+import com.example.harmoney.presentation.converters.DateFormatter
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Suppress("detekt:TooManyFunctions", "detekt:LongParameterList")
 class CategoryViewModel(
     private val sessionStateHolder: SessionStateHolder,
-    categoryId: Long?,
+    private val categoryId: Long?,
     private val getCategoryUseCase: GetCategoryUseCase,
     private val addCategoryUseCase: AddCategoryUseCase,
     private val updateCategoryUseCase: UpdateCategoryUseCase,
@@ -52,7 +55,7 @@ class CategoryViewModel(
     )
 
     init {
-        launchSafely(
+        launchWithErrorHandling(
             errorMessage = GET_CATEGORY_UNEXPECTED_ERROR,
             onError = { writableAction.emit(CategoryAction.DataLoadingError) }
         ) {
@@ -227,7 +230,7 @@ class CategoryViewModel(
     }
 
     private fun onSaveClick() {
-        launchSafely(
+        launchWithErrorHandling(
             errorMessage = SAVE_CATEGORY_UNEXPECTED_ERROR,
             onError = { writableAction.emit(CategoryAction.SaveCategoryError) }
         ) {
@@ -244,7 +247,7 @@ class CategoryViewModel(
                         categoryNameError = categoryNameError
                     )
                 }
-                return@launchSafely
+                return@launchWithErrorHandling
             }
 
             val isEdited = editableCategory.name != initialCategory.name
@@ -254,7 +257,7 @@ class CategoryViewModel(
 
             if (!isEdited) {
                 onNavigateBack()
-                return@launchSafely
+                return@launchWithErrorHandling
             }
 
             if (state.value.isCreateCategoryScreen) {
@@ -273,7 +276,8 @@ class CategoryViewModel(
                 icon = CategoryIcon(
                     icon = editableCategory.icon,
                     color = editableCategory.iconColor
-                )
+                ),
+                createdAt = System.currentTimeMillis()
             )
         )
 
@@ -322,7 +326,7 @@ class CategoryViewModel(
     }
 
     private fun onDeleteDialogConfirm() {
-        launchSafely(
+        launchWithErrorHandling(
             errorMessage = DELETE_CATEGORY_UNEXPECTED_ERROR,
             onError = { writableAction.emit(CategoryAction.DeleteCategoryError) }
         ) {

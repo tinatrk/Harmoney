@@ -1,5 +1,6 @@
 package com.example.harmoney.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,6 +71,7 @@ fun CategoryListScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.action
@@ -82,8 +86,33 @@ fun CategoryListScreen(
                         onNavigateToOpenCategory(act.categoryId)
                     }
 
-                    CategoryListAction.NavigateBack -> onBackClick()
-                    else -> {}
+                    is CategoryListAction.NavigateBack -> onBackClick()
+
+                    is CategoryListAction.GetCategoryListError -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.toast_get_category_list_error),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    is CategoryListAction.UpdateCategoryUserOrderError -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.toast_set_sort_option_error),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    is CategoryListAction.SetSortOptionError -> {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.toast_update_user_order_error),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    null -> Unit
                 }
             }
     }
@@ -164,8 +193,12 @@ fun CategoryListContent(
     state: CategoryListState,
     onEvent: (CategoryListEvent) -> Unit,
 ) {
-
-    if (state.categories.isEmpty()) {
+    if (state.isDataLoadingError) {
+        ErrorScreen(
+            modifier = Modifier.fillMaxSize(),
+            errorMessage = stringResource(R.string.error_something_went_wrong)
+        )
+    } else if (state.categories.isEmpty()) {
         EmptyScreen(message = stringResource(R.string.placeholder_empty_category_list))
     } else {
         if (state.selectedSortOption == SortOption.USER_ORDER) {
@@ -173,6 +206,24 @@ fun CategoryListContent(
         } else {
             VerticalCommonGrid(state = state, onEvent = onEvent)
         }
+    }
+}
+
+@Composable
+fun ErrorScreen(
+    errorMessage: String,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = errorMessage,
+            style = HarmTheme.typography.titleLargeSemiBold,
+            color = HarmTheme.colors.onSurface
+        )
     }
 }
 
