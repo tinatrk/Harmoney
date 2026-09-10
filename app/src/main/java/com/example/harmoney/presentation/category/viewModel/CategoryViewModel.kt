@@ -1,7 +1,7 @@
 package com.example.harmoney.presentation.category.viewModel
 
 import androidx.lifecycle.viewModelScope
-import com.example.harmoney.base.BaseViewModel
+import com.example.harmoney.core.util.BaseViewModel
 import com.example.harmoney.core.session.SessionStateHolder
 import com.example.harmoney.core.util.Resource
 import com.example.harmoney.domain.category.api.useCase.AddCategoryUseCase

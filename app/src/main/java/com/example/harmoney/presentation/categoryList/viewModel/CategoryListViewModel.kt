@@ -1,7 +1,7 @@
 package com.example.harmoney.presentation.categoryList.viewModel
 
-import com.example.harmoney.base.BaseViewModel
 import com.example.harmoney.core.session.SessionStateHolder
+import com.example.harmoney.core.util.BaseViewModel
 import com.example.harmoney.core.util.Resource
 import com.example.harmoney.domain.category.api.useCase.GetCategoryListUseCase
 import com.example.harmoney.domain.category.api.useCase.UpdateCategoryUserOrderUseCase

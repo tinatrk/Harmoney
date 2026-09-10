@@ -16,6 +16,10 @@ import com.example.harmoney.domain.category.impl.UpdateCategoryUseCaseImpl
 import com.example.harmoney.domain.category.impl.UpdateCategoryUserOrderUseCaseImpl
 import com.example.harmoney.domain.settings.categorySortingMode.api.useCase.CategorySortOptionInteractor
 import com.example.harmoney.domain.settings.categorySortingMode.impl.CategorySortOptionInteractorImpl
+import com.example.harmoney.domain.settings.currency.api.useCase.GetReportingCurrencyUseCase
+import com.example.harmoney.domain.settings.currency.api.useCase.SetReportingCurrencyUseCase
+import com.example.harmoney.domain.settings.currency.impl.GetReportingCurrencyUseCaseImpl
+import com.example.harmoney.domain.settings.currency.impl.SetReportingCurrencyUseCaseImpl
 import com.example.harmoney.domain.settings.period.api.useCase.FirstDayMonthInteractor
 import com.example.harmoney.domain.settings.period.api.useCase.GetStatisticsPeriodsUseCase
 import com.example.harmoney.domain.settings.period.impl.FirstDayMonthInteractorImpl
@@ -64,6 +68,16 @@ val useCaseModule = module {
     // region first day month
     factory<FirstDayMonthInteractor> {
         FirstDayMonthInteractorImpl(repository = get())
+    }
+    // endregion
+
+    // region reporting currency
+    factory<GetReportingCurrencyUseCase> {
+        GetReportingCurrencyUseCaseImpl(repository = get())
+    }
+
+    factory<SetReportingCurrencyUseCase> {
+        SetReportingCurrencyUseCaseImpl(repository = get())
     }
     // endregion
 

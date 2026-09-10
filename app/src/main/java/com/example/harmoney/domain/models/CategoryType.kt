@@ -1,7 +1,7 @@
 package com.example.harmoney.domain.models
 
-import com.example.harmoney.base.IdEnum
-import com.example.harmoney.base.IdEnumRegistry
+import com.example.harmoney.core.util.IdEnum
+import com.example.harmoney.core.util.IdEnumRegistry
 
 enum class CategoryType(override val id: Long) : IdEnum {
     EXPENSES(id = 1),

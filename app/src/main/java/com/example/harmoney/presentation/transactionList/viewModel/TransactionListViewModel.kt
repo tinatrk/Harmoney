@@ -1,7 +1,7 @@
 package com.example.harmoney.presentation.transactionList.viewModel
 
 import androidx.lifecycle.viewModelScope
-import com.example.harmoney.base.BaseViewModel
+import com.example.harmoney.core.util.BaseViewModel
 import com.example.harmoney.core.session.SessionStateHolder
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency

@@ -1,4 +1,4 @@
-package com.example.harmoney.base
+package com.example.harmoney.core.util
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

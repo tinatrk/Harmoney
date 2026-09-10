@@ -35,18 +35,15 @@ import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.cards.HarmCard
 import com.example.harmoney.core.uilibrary.dialogs.HarmDialog
 import com.example.harmoney.core.uilibrary.drawers.HarmDrawer
-import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.core.uilibrary.snackbar.HarmSnackbar
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
 import com.example.harmoney.domain.models.CategoryType
-import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.StatisticsPeriodType
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
 import com.example.harmoney.presentation.categoryStatistics.models.FirstDayMonthError
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
-import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.presentation.models.StatisticsPeriodUi
 import com.example.harmoney.ui.components.EmptyScreen
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
@@ -61,6 +58,7 @@ fun CategoryStatisticsScreen(
     onNavigateToTransactionList: (categoryId: Long?) -> Unit,
     onNavigateToCreateTransaction: () -> Unit,
     onNavigateToCategoryList: () -> Unit,
+    onNavigateToCurrency: (currencyId: Long) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -93,6 +91,10 @@ fun CategoryStatisticsScreen(
                     }
 
                     is CategoryStatisticsAction.NavigateToCategoryList -> onNavigateToCategoryList()
+
+                    is CategoryStatisticsAction.NavigateToCurrency -> {
+                        onNavigateToCurrency(act.currencyId)
+                    }
 
                     is CategoryStatisticsAction.ShowChangeThemeError -> {
                         snackbarHostState.showSnackbar(
@@ -130,7 +132,6 @@ fun CategoryStatisticsScreen(
             SettingsDrawerItems(
                 isThemeDark = HarmTheme.colors.isDark,
                 firstDayMonth = state.firstDayMonth.toString(),
-                isCurrencyMenuOpened = state.isCurrencyMenuOpened,
                 currentCurrencyCode = state.currency.code,
                 onEvent = onEvent
             )
@@ -198,7 +199,6 @@ fun CategoryStatisticsScreen(
 private fun SettingsDrawerItems(
     isThemeDark: Boolean,
     firstDayMonth: String,
-    isCurrencyMenuOpened: Boolean,
     currentCurrencyCode: String,
     onEvent: (CategoryStatisticsEvent) -> Unit,
 ) {
@@ -230,25 +230,11 @@ private fun SettingsDrawerItems(
         selected = false,
         onClick = { onEvent(CategoryStatisticsEvent.OnCurrencySettingsClick) },
         badge = {
-            HarmMenu.HarmDropdownMenu(
-                expanded = isCurrencyMenuOpened,
-                menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
-                    MenuOption(
-                        text = currency.code,
-                        expanded = currentCurrencyCode == currency.code
-                    ) {
-                        onEvent(CategoryStatisticsEvent.OnCurrencyChanged(currency))
-                    }
-                }.toImmutableList(),
-                onDismissRequest = { onEvent(CategoryStatisticsEvent.OnCurrencyMenuDismiss) },
-                isNeededHighlightSelectedOption = true
-            ) {
-                Text(
-                    text = currentCurrencyCode,
-                    style = HarmTheme.typography.bodyLarge,
-                    color = HarmTheme.colors.onSurface
-                )
-            }
+            Text(
+                text = currentCurrencyCode,
+                style = HarmTheme.typography.bodyLarge,
+                color = HarmTheme.colors.onSurface
+            )
         }
     )
     HarmDrawer.HarmDrawerItem(

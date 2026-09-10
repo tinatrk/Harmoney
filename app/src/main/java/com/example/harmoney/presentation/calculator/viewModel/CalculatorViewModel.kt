@@ -1,6 +1,6 @@
 package com.example.harmoney.presentation.calculator.viewModel
 
-import com.example.harmoney.base.BaseViewModel
+import com.example.harmoney.core.util.BaseViewModel
 import com.example.harmoney.presentation.calculator.models.CalculatorAction
 import com.example.harmoney.presentation.calculator.models.CalculatorEvent
 import com.example.harmoney.presentation.calculator.models.CalculatorOperation

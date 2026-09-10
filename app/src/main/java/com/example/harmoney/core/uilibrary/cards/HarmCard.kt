@@ -50,12 +50,13 @@ import kotlinx.collections.immutable.toImmutableList
 
 /**
  * - `HarmCardTransactionList` - A list with data and transactions for one day
- * - `HarmCategoryCard` - A card for displaying all types of category cards
  * - `HarmCategoryCardOneTransaction` - A card for displaying one transaction of a category
  * - `HarmCategoryCardSumTransactions` - A card for displaying the total amount of transactions
  *   for a category (with percentage)
  * - `HarmCategoryCardWithMenu` - A card for displaying categories when creating a category
  *   (with dropdown menu)
+ * - `HarmCommonCard` - A card for displaying all types of category cards
+ * - `HarmCurrencyCard` - A card for displaying currency
  * - `HarmSimpleCategoryCard` - A simple card with icon and title
  * - `HarmStatisticCard` - A card with a pie chart (shows the total amount of transactions
  *   of each category)
@@ -111,36 +112,6 @@ object HarmCard {
         }
     }
 
-    /** A card for displaying all types of category cards */
-    @Composable
-    fun HarmCategoryCard(
-        onCardClick: () -> Unit,
-        mainContent: @Composable (RowScope.() -> Unit),
-        modifier: Modifier = Modifier,
-        endContent: @Composable (RowScope.() -> Unit)? = null,
-    ) {
-        Card(
-            modifier = modifier.clickable { onCardClick() },
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(2.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = HarmTheme.colors.surfaceContainerHigh,
-                contentColor = HarmTheme.colors.onSurface,
-            )
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                mainContent()
-
-                endContent?.let { endContent() }
-            }
-        }
-    }
-
     /** A card for displaying one transaction of a category */
     @Composable
     fun HarmCategoryCardOneTransaction(
@@ -150,7 +121,7 @@ object HarmCard {
         transactionNote: String?,
         modifier: Modifier = Modifier,
     ) {
-        HarmCategoryCard(
+        HarmCommonCard(
             modifier = modifier,
             onCardClick = onCardClick,
             mainContent = {
@@ -179,7 +150,7 @@ object HarmCard {
         onCardClick: () -> Unit,
         modifier: Modifier = Modifier,
     ) {
-        HarmCategoryCard(
+        HarmCommonCard(
             modifier = modifier,
             onCardClick = onCardClick,
             mainContent = {
@@ -220,7 +191,7 @@ object HarmCard {
         modifier: Modifier = Modifier,
         iconContentDescription: String?,
     ) {
-        HarmCategoryCard(
+        HarmCommonCard(
             modifier = modifier,
             onCardClick = onCardClick,
             mainContent = {
@@ -243,6 +214,65 @@ object HarmCard {
         )
     }
 
+    /** A card for displaying all types of category cards */
+    @Composable
+    fun HarmCommonCard(
+        onCardClick: () -> Unit,
+        mainContent: @Composable (RowScope.() -> Unit),
+        modifier: Modifier = Modifier,
+        endContent: @Composable (RowScope.() -> Unit)? = null,
+    ) {
+        Card(
+            modifier = modifier.clickable { onCardClick() },
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(2.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = HarmTheme.colors.surfaceContainerHigh,
+                contentColor = HarmTheme.colors.onSurface,
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                mainContent()
+
+                endContent?.let { endContent() }
+            }
+        }
+    }
+
+    /** A card for displaying currency */
+    @Composable
+    fun HarmCurrencyCard(
+        currencyName: String,
+        currencyCode: String,
+        onCardClick: () -> Unit,
+        modifier: Modifier = Modifier
+    ) {
+        HarmCommonCard(
+            modifier = modifier,
+            onCardClick = onCardClick,
+            mainContent = {
+                Text(
+                    text = currencyName,
+                    style = HarmTheme.typography.bodyLarge,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            endContent = {
+                Text(
+                    text = currencyCode,
+                    style = HarmTheme.typography.bodyLarge,
+                    maxLines = 1
+                )
+            }
+        )
+    }
+
     /** A simple card with icon and title */
     @Composable
     fun HarmSimpleCategoryCard(
@@ -250,7 +280,7 @@ object HarmCard {
         onCardClick: () -> Unit,
         modifier: Modifier = Modifier,
     ) {
-        HarmCategoryCard(
+        HarmCommonCard(
             modifier = modifier,
             onCardClick = onCardClick,
             mainContent = {

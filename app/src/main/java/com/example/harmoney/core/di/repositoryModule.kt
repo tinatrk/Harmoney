@@ -2,11 +2,13 @@ package com.example.harmoney.core.di
 
 import com.example.harmoney.data.category.impl.CategoryRepositoryImpl
 import com.example.harmoney.data.settings.categorySortingMode.impl.CategorySortOptionRepositoryImpl
+import com.example.harmoney.data.settings.currency.impl.ReportingCurrencyRepositoryImpl
 import com.example.harmoney.data.settings.firstDayMonth.impl.FirstDayMonthRepositoryImpl
 import com.example.harmoney.data.settings.theme.impl.ThemeRepositoryImpl
 import com.example.harmoney.data.transaction.impl.TransactionRepositoryImpl
 import com.example.harmoney.domain.category.api.reposiory.CategoryRepository
 import com.example.harmoney.domain.settings.categorySortingMode.api.repository.CategorySortOptionRepository
+import com.example.harmoney.domain.settings.currency.api.repository.ReportingCurrencyRepository
 import com.example.harmoney.domain.settings.period.api.repository.FirstDayMonthRepository
 import com.example.harmoney.domain.settings.theme.api.repository.ThemeRepository
 import com.example.harmoney.domain.transaction.api.repository.TransactionRepository
@@ -36,5 +38,9 @@ val repositoryModule = module {
             categoryStatisticsDbConverter = get(),
             dateConverter = get()
         )
+    }
+
+    factory<ReportingCurrencyRepository> {
+        ReportingCurrencyRepositoryImpl(dataStore = get())
     }
 }

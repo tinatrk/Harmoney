@@ -1,6 +1,8 @@
 package com.example.harmoney.core.di
 
 import com.example.harmoney.MainViewModel
+import com.example.harmoney.core.util.AndroidStringProvider
+import com.example.harmoney.core.util.StringProvider
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorHandler
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorViewModel
 import com.example.harmoney.presentation.category.viewModel.CategoryViewModel
@@ -10,6 +12,8 @@ import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverte
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverterImpl
 import com.example.harmoney.presentation.converters.CategoryUiConverter
 import com.example.harmoney.presentation.converters.CategoryUiConverterImpl
+import com.example.harmoney.presentation.converters.CurrencyUiConverter
+import com.example.harmoney.presentation.converters.CurrencyUiConverterImpl
 import com.example.harmoney.presentation.converters.DateFormatter
 import com.example.harmoney.presentation.converters.DateFormatterImpl
 import com.example.harmoney.presentation.converters.NumbersFormatter
@@ -22,9 +26,11 @@ import com.example.harmoney.presentation.converters.TransactionFilterUiConverter
 import com.example.harmoney.presentation.converters.TransactionFilterUiConverterImpl
 import com.example.harmoney.presentation.converters.TransactionUiConverter
 import com.example.harmoney.presentation.converters.TransactionUiConverterImpl
+import com.example.harmoney.presentation.currency.viewModel.CurrencyViewModel
 import com.example.harmoney.presentation.test.TestDataSource
 import com.example.harmoney.presentation.transaction.viewModel.TransactionViewModel
 import com.example.harmoney.presentation.transactionList.viewModel.TransactionListViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -38,7 +44,8 @@ val viewModelModule = module {
             firstDayMonthInteractor = get(),
             getStatisticsPeriodsUseCase = get(),
             statisticsPeriodUiConverter = get(),
-            sessionSateHolder = get()
+            sessionSateHolder = get(),
+            getReportingCurrencyUseCase = get()
         )
     }
 
@@ -94,6 +101,14 @@ val viewModelModule = module {
         CalculatorViewModel(calculatorHandler = get())
     }
 
+    viewModel { (currencyId: Long) ->
+        CurrencyViewModel(
+            selectedCurrencyId = currencyId,
+            setReportingCurrencyUseCase = get(),
+            currencyUiConverter = get()
+        )
+    }
+
     single {
         CalculatorHandler()
     }
@@ -145,5 +160,13 @@ val viewModelModule = module {
 
     viewModel {
         MainViewModel(getIsThemeDarkUseCase = get())
+    }
+
+    factory<CurrencyUiConverter> {
+        CurrencyUiConverterImpl(stringProvider = get())
+    }
+
+    factory<StringProvider> {
+        AndroidStringProvider(context = androidContext())
     }
 }

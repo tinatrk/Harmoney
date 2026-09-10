@@ -1,4 +1,4 @@
-package com.example.harmoney.base
+package com.example.harmoney.core.util
 
 class IdEnumRegistry<T>(
     private val enumClass: Class<T>,

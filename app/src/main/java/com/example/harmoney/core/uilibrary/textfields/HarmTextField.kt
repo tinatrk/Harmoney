@@ -58,6 +58,7 @@ object HarmTextField {
         isError: Boolean = false,
         supportingText: String? = null,
         onDoneAction: (() -> Unit) = {},
+        leadingIcon: @Composable() (() -> Unit)? = null,
         trailingIcon: @Composable() (() -> Unit)? = null,
     ) {
         val isFocused = remember { mutableStateOf(false) }
@@ -94,6 +95,7 @@ object HarmTextField {
                 )
             },
             textStyle = typography.bodyLarge,
+            leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = colors.primary,

@@ -13,12 +13,14 @@ fun NavGraphBuilder.categoryStatisticsScreen(
     onNavigateToTransactionList: (categoryId: Long?) -> Unit,
     onNavigateToCreateTransaction: () -> Unit,
     onNavigateToCategoryList: () -> Unit,
+    onNavigateToCurrency: (currencyId: Long) -> Unit,
 ) {
     composable<CategoryStatistics> {
         CategoryStatisticsScreen(
             onNavigateToTransactionList = onNavigateToTransactionList,
             onNavigateToCreateTransaction = onNavigateToCreateTransaction,
             onNavigateToCategoryList = onNavigateToCategoryList,
+            onNavigateToCurrency = onNavigateToCurrency,
             viewModel = koinViewModel(),
         )
     }

@@ -4,12 +4,14 @@ import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.CategoryUi
-import com.example.harmoney.presentation.models.TransactionsPerDayUi
+import com.example.harmoney.presentation.models.CurrencyUi
 import com.example.harmoney.presentation.models.PieChartItem
-import com.example.harmoney.presentation.models.TransactionUi
 import com.example.harmoney.presentation.models.TransactionFilterUi
+import com.example.harmoney.presentation.models.TransactionUi
+import com.example.harmoney.presentation.models.TransactionsPerDayUi
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -118,6 +120,20 @@ object PreviewData {
         ),
     )
 
+    private val currencies: ImmutableList<CurrencyUi> = persistentListOf(
+        CurrencyUi(currency = Currency.AMD, name = "Армянский драм"),
+        CurrencyUi(currency = Currency.AUD, name = "Австралийский доллар"),
+        CurrencyUi(currency = Currency.BYN, name = "Белорусский рубль"),
+        CurrencyUi(currency = Currency.GBP, name = "Британский фунт стерлингов"),
+        CurrencyUi(currency = Currency.BTN, name = "Бутанский нгултрум"),
+        CurrencyUi(currency = Currency.EUR, name = "Евро"),
+        CurrencyUi(currency = Currency.EGP, name = "Египетский фунт"),
+        CurrencyUi(currency = Currency.USD, name = "Доллар США"),
+        CurrencyUi(currency = Currency.CNY, name = "Китайский юань"),
+        CurrencyUi(currency = Currency.RUB, name = "Российский рубль"),
+        CurrencyUi(currency = Currency.CHF, name = "Швейцарский франк"),
+    )
+
     fun getExpensesCategoryStatistics(): ImmutableList<CategoryStatisticsUi> {
         return persistentListOf(
             CategoryStatisticsUi(
@@ -217,5 +233,12 @@ object PreviewData {
 
     fun getExpensesCategories(): ImmutableList<CategoryUi> {
         return expensesCategories.sortedBy { it.name }.toImmutableList()
+    }
+
+    fun getFilteredCurrencyList(query: String): ImmutableList<CurrencyUi> {
+        return currencies.filter { item ->
+            item.name.contains(query, ignoreCase = true) ||
+                    item.currency.code.contains(query, ignoreCase = true)
+        }.toImmutableList()
     }
 }

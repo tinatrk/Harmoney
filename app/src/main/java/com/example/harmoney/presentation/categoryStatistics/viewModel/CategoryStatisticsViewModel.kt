@@ -1,12 +1,12 @@
 package com.example.harmoney.presentation.categoryStatistics.viewModel
 
 import androidx.lifecycle.viewModelScope
-import com.example.harmoney.base.BaseViewModel
 import com.example.harmoney.core.session.SessionStateHolder
+import com.example.harmoney.core.util.BaseViewModel
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
-import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.StatisticsPeriodType
+import com.example.harmoney.domain.settings.currency.api.useCase.GetReportingCurrencyUseCase
 import com.example.harmoney.domain.settings.period.api.useCase.FirstDayMonthInteractor
 import com.example.harmoney.domain.settings.period.api.useCase.GetStatisticsPeriodsUseCase
 import com.example.harmoney.domain.settings.theme.api.useCase.SetThemeUseCase
@@ -34,7 +34,8 @@ class CategoryStatisticsViewModel(
     private val statisticsPeriodUiConverter: StatisticsPeriodUiConverter,
     private val setThemeUseCase: SetThemeUseCase,
     private val firstDayMonthInteractor: FirstDayMonthInteractor,
-    private val getStatisticsPeriodsUseCase: GetStatisticsPeriodsUseCase
+    private val getStatisticsPeriodsUseCase: GetStatisticsPeriodsUseCase,
+    private val getReportingCurrencyUseCase: GetReportingCurrencyUseCase,
 ) :
     BaseViewModel<CategoryStatisticsEvent, CategoryStatisticsAction, CategoryStatisticsState>(
         state = CategoryStatisticsState(
@@ -47,8 +48,8 @@ class CategoryStatisticsViewModel(
     private val sessionFlow = sessionSateHolder.state
     private val periodsFlow = getStatisticsPeriodsUseCase()
     private val firstDayMonthFlow = firstDayMonthInteractor.getFirstDayMonth()
+    private val reportingCurrencyFlow = getReportingCurrencyUseCase()
     //private val balanceFlow = getBalanceUseCase()
-    //private val currencyFlow = getCurrencyUseCase()
 
     init {
         //TODO() считать валюту из shared preferences
@@ -57,13 +58,13 @@ class CategoryStatisticsViewModel(
             sessionFlow,
             periodsFlow,
             firstDayMonthFlow,
+            reportingCurrencyFlow,
             //balanceFlow,
-            //currencyFlow
-        ) { sessionData, periods, firstDayMonth ->//balance, currency
+        ) { sessionData, periods, firstDayMonth, reportingCurrency ->//balance
 
             val selectedPeriod = periods.first { it.type == sessionData.statisticsPeriodType }
             val categories = test.getCategoriesForStatistics(
-                selectedPeriod, sessionData.categoryType
+                selectedPeriod, sessionData.categoryType//reportingCurrency
             )
 
             //Log.d("HarmAppTag", "catStatViewModel -> init -> combine -> selectedCategoryType =
@@ -95,7 +96,8 @@ class CategoryStatisticsViewModel(
                         currency = state.value.currency,//currency,it.currency,
                     ),
                     firstDayMonth = firstDayMonth,
-                    firstDayMonthText = firstDayMonth.toString()
+                    firstDayMonthText = firstDayMonth.toString(),
+                    currency = reportingCurrency
                 )
             }
         }.launchIn(viewModelScope)
@@ -138,8 +140,6 @@ class CategoryStatisticsViewModel(
             }
 
             is CategoryStatisticsEvent.OnCurrencySettingsClick -> onCurrencySettingsClick()
-            is CategoryStatisticsEvent.OnCurrencyChanged -> onCurrencyChanged(event.newCurrency)
-            is CategoryStatisticsEvent.OnCurrencyMenuDismiss -> onCurrencyMenuDismiss()
 
             is CategoryStatisticsEvent.OnCategoryListClick -> {
                 onNavigateToCategoryList()
@@ -287,24 +287,9 @@ class CategoryStatisticsViewModel(
     }
 
     private fun onCurrencySettingsClick() {
-        writableState.update {
-            it.copy(isCurrencyMenuOpened = !it.isCurrencyMenuOpened)
-        }
-    }
-
-    private fun onCurrencyChanged(newCurrency: Currency) {
-        // TODO() реализовать пересчет баланса, списка категорий и общей суммы для новой валюты
-        if (state.value.currency.code != newCurrency.code) {
-            writableState.update {
-                it.copy(currency = newCurrency, isCurrencyMenuOpened = false)
-            }
-        } else {
-            onCurrencyMenuDismiss()
-        }
-    }
-
-    private fun onCurrencyMenuDismiss() {
-        writableState.update { it.copy(isCurrencyMenuOpened = false) }
+        writableAction.tryEmit(
+            CategoryStatisticsAction.NavigateToCurrency(state.value.currency.id)
+        )
     }
 
     private companion object {

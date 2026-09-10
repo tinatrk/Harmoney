@@ -31,5 +31,4 @@ data class CategoryStatisticsState(
     val firstDayMonthError: FirstDayMonthError = FirstDayMonthError.None,
 
     val currency: Currency = Currency.RUB,
-    val isCurrencyMenuOpened: Boolean = false
 )

@@ -28,6 +28,9 @@ fun AppRoot() {
             },
             onNavigateToCategoryList = {
                 navController.navigateToCategoryList()
+            },
+            onNavigateToCurrency = { currencyId ->
+                navController.navigateToCurrency(currencyId)
             }
         )
 
@@ -64,6 +67,10 @@ fun AppRoot() {
 
         categoryScreen(
             onBackClick = { navController.popBackStack() },
+        )
+
+        currencyScreen(
+            onBackClick = { navController.popBackStack() }
         )
     }
 }
