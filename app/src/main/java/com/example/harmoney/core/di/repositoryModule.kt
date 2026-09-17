@@ -1,12 +1,14 @@
 package com.example.harmoney.core.di
 
 import com.example.harmoney.data.category.impl.CategoryRepositoryImpl
+import com.example.harmoney.data.currencyList.CurrencyListRepositoryImpl
 import com.example.harmoney.data.settings.categorySortingMode.impl.CategorySortOptionRepositoryImpl
-import com.example.harmoney.data.settings.currency.impl.ReportingCurrencyRepositoryImpl
 import com.example.harmoney.data.settings.firstDayMonth.impl.FirstDayMonthRepositoryImpl
+import com.example.harmoney.data.settings.reportingCurrency.impl.ReportingCurrencyRepositoryImpl
 import com.example.harmoney.data.settings.theme.impl.ThemeRepositoryImpl
 import com.example.harmoney.data.transaction.impl.TransactionRepositoryImpl
 import com.example.harmoney.domain.category.api.reposiory.CategoryRepository
+import com.example.harmoney.domain.currencyList.api.repository.CurrencyListRepository
 import com.example.harmoney.domain.settings.categorySortingMode.api.repository.CategorySortOptionRepository
 import com.example.harmoney.domain.settings.currency.api.repository.ReportingCurrencyRepository
 import com.example.harmoney.domain.settings.period.api.repository.FirstDayMonthRepository
@@ -42,5 +44,14 @@ val repositoryModule = module {
 
     factory<ReportingCurrencyRepository> {
         ReportingCurrencyRepositoryImpl(dataStore = get())
+    }
+
+    factory<CurrencyListRepository> {
+        CurrencyListRepositoryImpl(
+            currencyListDao = get(),
+            remoteDataSource = get(),
+            currencyListDBConverter = get(),
+            currencyListDtoConverter = get()
+        )
     }
 }

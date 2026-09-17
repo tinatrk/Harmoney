@@ -9,7 +9,7 @@ enum class SortOption(override val id: Long) : IdEnum {
     USER_ORDER(id = 3);
 
     companion object {
-        private val registry = IdEnumRegistry(SortOption::class.java) { it.id }
+        private val registry = IdEnumRegistry(SortOption::class.java)
         fun fromId(id: Long) = registry.fromId(id)
     }
 }

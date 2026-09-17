@@ -8,7 +8,7 @@ enum class CategoryType(override val id: Long) : IdEnum {
     INCOME(id = 2);
 
     companion object {
-        private val registry = IdEnumRegistry(CategoryType::class.java) { it.id }
+        private val registry = IdEnumRegistry(CategoryType::class.java)
         fun fromId(id: Long) = registry.fromId(id)
     }
 }

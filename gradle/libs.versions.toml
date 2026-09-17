@@ -31,11 +31,16 @@ ksp = "2.0.21-1.0.26"
 kotlinxCoroutinesAndroid = "1.9.0"
 kotlinxCollectionsImmutable = "0.3.7"
 
+#Retrofit
+retrofit = "2.10.0"
+kotlinxSerialization = "1.7.3"
+
 # Other
 exp4j = "0.4.8"
 lucf15ModalBottomSheet = "1.0.1"
 composeReorderable = "0.9.6"
 datastorePreferences = "1.1.7"
+timber = "5.0.1"
 
 [libraries]
 #AndroidX
@@ -70,7 +75,7 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 
 # Room
-androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime"}
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 
@@ -78,11 +83,17 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 
+#Retrofit
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-converter-kotlinx-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit"}
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization"}
+
 # Other
 objecthunter_exp4j = { group = "net.objecthunter", name = "exp4j", version.ref = "exp4j" }
 lucf15-modal-bottom-sheet = { module = "com.github.lucf15:ModalBottomSheet", version.ref = "lucf15ModalBottomSheet" }
 compose-reorderable = { module = "org.burnoutcrew.composereorderable:reorderable", version.ref = "composeReorderable" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

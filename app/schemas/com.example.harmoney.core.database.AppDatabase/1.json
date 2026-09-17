@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b38fd448b27aeca954e143d711a1d304",
+    "identityHash": "f112448648682745203352f45fdf0fd8",
     "entities": [
       {
         "tableName": "category",
@@ -129,6 +129,35 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "supported_currencies",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`isoCode` TEXT NOT NULL, `startDateEpochDay` INTEGER NOT NULL, `endDateEpochDay` INTEGER, PRIMARY KEY(`isoCode`))",
+        "fields": [
+          {
+            "fieldPath": "isoCode",
+            "columnName": "isoCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startDateEpochDay",
+            "columnName": "startDateEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endDateEpochDay",
+            "columnName": "endDateEpochDay",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "isoCode"
+          ]
+        }
       }
     ],
     "views": [
@@ -139,7 +168,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b38fd448b27aeca954e143d711a1d304')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f112448648682745203352f45fdf0fd8')"
     ]
   }
 }

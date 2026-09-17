@@ -2,25 +2,19 @@ package com.example.harmoney.core.util
 
 class IdEnumRegistry<T>(
     private val enumClass: Class<T>,
-    private val idSelector: (T) -> Long
 ) where T : Enum<T>, T : IdEnum {
 
-    private val byId: Map<Long, T>
-    private val usedIds = mutableSetOf<Long>()
+    private val byId: Map<Long, T> = buildMap {
+        for (value in enumClass.enumConstants ?: emptyArray()) {
+            val previous = put(value.id, value)
 
-    init {
-        val constants = enumClass.enumConstants ?: emptyArray()
-
-        byId = constants.associateBy { value ->
-            val id = idSelector(value)
-            require(usedIds.add(id)) {
-                "Duplicate id '$id' in enum ${enumClass.simpleName}: " +
-                        "element '${(value as Enum<*>).name}'"
+            check(previous == null) {
+                "Duplicate id '${value.id}' in enum ${enumClass.simpleName}: " +
+                        "'${previous?.name}' and '${value.name}'"
             }
-            id
         }
     }
 
     fun fromId(id: Long): T =
-        byId[id] ?: error("Unknown ${byId.values.first()::class.simpleName} id: $id")
+        byId[id] ?: error("Unknown ${enumClass.simpleName} id: $id")
 }

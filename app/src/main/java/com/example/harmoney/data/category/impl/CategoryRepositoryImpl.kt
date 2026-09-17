@@ -1,6 +1,5 @@
 package com.example.harmoney.data.category.impl
 
-import android.util.Log
 import androidx.sqlite.SQLiteException
 import com.example.harmoney.core.util.Resource
 import com.example.harmoney.data.category.converter.CategoryDBConverter
@@ -13,6 +12,7 @@ import com.example.harmoney.domain.models.SortOption
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 
 class CategoryRepositoryImpl(
     private val categoryDao: CategoryDao,
@@ -26,7 +26,7 @@ class CategoryRepositoryImpl(
             categoryDao.insertCategory(categoryDBConverter.map(category))
             Resource.Success(Unit)
         } catch (e: SQLiteException) {
-            Log.e(DATABASE_TAG, "Error when inserting category: ${e.message}", e)
+            Timber.e(e, "Error when inserting category")
             Resource.Error(CategoryFailure.DatabaseError)
         }
     }
@@ -39,11 +39,7 @@ class CategoryRepositoryImpl(
             val category = categoryDao.getCategory(categoryName, categoryType.id)
             Resource.Success(category != null)
         } catch (e: SQLiteException) {
-            Log.e(
-                DATABASE_TAG,
-                "Error when getting category (checkCategoryAlreadyExists): ${e.message}",
-                e
-            )
+            Timber.e(e, "Error when getting category (checkCategoryAlreadyExists)")
             Resource.Error(CategoryFailure.DatabaseError)
         }
     }
@@ -53,7 +49,7 @@ class CategoryRepositoryImpl(
             categoryDao.deleteCategory(categoryDBConverter.map(category))
             Resource.Success(Unit)
         } catch (e: SQLiteException) {
-            Log.e(DATABASE_TAG, "Error when deleting category: ${e.message}", e)
+            Timber.e(e, "Error when deleting category")
             Resource.Error(CategoryFailure.DatabaseError)
         }
     }
@@ -67,7 +63,7 @@ class CategoryRepositoryImpl(
                 Resource.Error(CategoryFailure.BadRequest)
             }
         } catch (e: SQLiteException) {
-            Log.e(DATABASE_TAG, "Error when getting category: ${e.message}", e)
+            Timber.e("Error when getting category")
             Resource.Error(CategoryFailure.DatabaseError)
         }
     }
@@ -95,7 +91,7 @@ class CategoryRepositoryImpl(
             Resource.Success(categoryDBConverter.map(entities))
                     as Resource<List<Category>, CategoryFailure>
         }.catch { e ->
-            Log.e(DATABASE_TAG, "Error when getting categoryList: ${e.message}", e)
+            Timber.e(e, "Error when getting categoryList")
             when (e) {
                 is SQLiteException -> emit(Resource.Error(CategoryFailure.DatabaseError))
                 else -> throw e
@@ -108,7 +104,7 @@ class CategoryRepositoryImpl(
             categoryDao.updateCategory(categoryDBConverter.map(category))
             Resource.Success(Unit)
         } catch (e: SQLiteException) {
-            Log.e(DATABASE_TAG, "Error when updating category: ${e.message}", e)
+            Timber.e(e, "Error when updating category")
             Resource.Error(CategoryFailure.DatabaseError)
         }
     }
@@ -131,17 +127,12 @@ class CategoryRepositoryImpl(
             categoryDao.updateCategoryUserOrder(categoryId, newUserOrder)
             Resource.Success(Unit)
         } catch (e: SQLiteException) {
-            Log.e(
-                DATABASE_TAG,
-                "Error when updating category user order: ${e.message}",
-                e
-            )
+            Timber.e(e, "Error when updating category user order")
             Resource.Error(CategoryFailure.DatabaseError)
         }
     }
 
     companion object {
-        private const val DATABASE_TAG = "HarmApp_CategoryDB"
         private const val USER_ORDER_STEP = 100.0
         private const val USER_ORDER_IN_ASCENDING_ORDER = 1 // значение не менять
         private const val USER_ORDER_IN_DESCENDING_ORDER = -1 // значение не менять

@@ -30,5 +30,5 @@ data class CategoryStatisticsState(
     val firstDayMonthText: String = firstDayMonth.toString(),
     val firstDayMonthError: FirstDayMonthError = FirstDayMonthError.None,
 
-    val currency: Currency = Currency.RUB,
+    val reportingCurrency: Currency = Currency.EUR,
 )

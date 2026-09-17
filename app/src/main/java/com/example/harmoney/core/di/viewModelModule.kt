@@ -1,5 +1,6 @@
 package com.example.harmoney.core.di
 
+import androidx.lifecycle.SavedStateHandle
 import com.example.harmoney.MainViewModel
 import com.example.harmoney.core.util.AndroidStringProvider
 import com.example.harmoney.core.util.StringProvider
@@ -35,6 +36,8 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
+
+    // region viewModel
     viewModel {
         CategoryStatisticsViewModel(
             test = get(),
@@ -45,7 +48,9 @@ val viewModelModule = module {
             getStatisticsPeriodsUseCase = get(),
             statisticsPeriodUiConverter = get(),
             sessionSateHolder = get(),
-            getReportingCurrencyUseCase = get()
+            getReportingCurrencyUseCase = get(),
+            setReportingCurrencyUseCase = get(),
+            savedStateHandle = get(),
         )
     }
 
@@ -104,15 +109,19 @@ val viewModelModule = module {
     viewModel { (currencyId: Long) ->
         CurrencyViewModel(
             selectedCurrencyId = currencyId,
-            setReportingCurrencyUseCase = get(),
-            currencyUiConverter = get()
+            savedStateHandle = get(),
+            currencyUiConverter = get(),
+            getSupportedCurrencyListUseCase = get()
         )
     }
 
-    single {
-        CalculatorHandler()
+    viewModel {
+        MainViewModel(getIsThemeDarkUseCase = get())
     }
+    // endregion
 
+
+    // region ui converters
     factory<CategoryStatisticsUiConverter> {
         CategoryStatisticsUiConverterImpl(categoryUiConverter = get(), numberFormatter = get())
     }
@@ -153,20 +162,28 @@ val viewModelModule = module {
         StatisticsPeriodUiConverterImpl(dateFormatter = get())
     }
 
+    factory<CurrencyUiConverter> {
+        CurrencyUiConverterImpl(stringProvider = get())
+    }
+    // endregion
+
+
+    // region others
+    single {
+        CalculatorHandler()
+    }
+
     //временный класс
     single {
         TestDataSource()
     }
 
-    viewModel {
-        MainViewModel(getIsThemeDarkUseCase = get())
-    }
-
-    factory<CurrencyUiConverter> {
-        CurrencyUiConverterImpl(stringProvider = get())
-    }
-
     factory<StringProvider> {
         AndroidStringProvider(context = androidContext())
     }
+
+    single {
+        SavedStateHandle()
+    }
+    // endregion
 }

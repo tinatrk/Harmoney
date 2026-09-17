@@ -1,6 +1,5 @@
 package com.example.harmoney.data.transaction.impl
 
-import android.util.Log
 import androidx.sqlite.SQLiteException
 import com.example.harmoney.core.util.Resource
 import com.example.harmoney.data.converters.DateConverter
@@ -21,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 
 class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao,
@@ -34,7 +34,7 @@ class TransactionRepositoryImpl(
             transactionDao.insertTransaction(transactionDbConverter.map(transaction))
             Resource.Success(Unit)
         } catch (e: SQLiteException) {
-            Log.e(DATABASE_TAG, "Error when inserting transaction: ${e.message}", e)
+            Timber.e(e, "Error when inserting transaction")
             Resource.Error(TransactionFailure.DatabaseError)
         }
     }
@@ -45,7 +45,7 @@ class TransactionRepositoryImpl(
             transactionDao.deleteTransaction(transactionDbConverter.map(transaction))
             Resource.Success(Unit)
         } catch (e: SQLiteException) {
-            Log.e(DATABASE_TAG, "Error when deleting transaction: ${e.message}", e)
+            Timber.e(e, "Error when deleting transaction")
             Resource.Error(TransactionFailure.DatabaseError)
         }
     }
@@ -56,7 +56,7 @@ class TransactionRepositoryImpl(
             transactionDao.updateTransaction(transactionDbConverter.map(transaction))
             Resource.Success(Unit)
         } catch (e: SQLiteException) {
-            Log.e(DATABASE_TAG, "Error when updating transaction: ${e.message}", e)
+            Timber.e(e, "Error when updating transaction")
             Resource.Error(TransactionFailure.DatabaseError)
         }
     }
@@ -71,7 +71,7 @@ class TransactionRepositoryImpl(
                 Resource.Error(TransactionFailure.BadRequest)
             }
         } catch (e: SQLiteException) {
-            Log.e(DATABASE_TAG, "Error getting transaction: ${e.message}", e)
+            Timber.e(e, "Error getting transaction")
             Resource.Error(TransactionFailure.DatabaseError)
         }
     }
@@ -126,9 +126,7 @@ class TransactionRepositoryImpl(
                 Resource.Success(it)
             }
             .catch { e ->
-                Log.e(
-                    DATABASE_TAG, "Error getting transactions summary: ${e.message}", e
-                )
+                Timber.e(e, "Error getting transactions summary")
                 emit(Resource.Error(TransactionFailure.DatabaseError))
             }
     }
@@ -151,14 +149,10 @@ class TransactionRepositoryImpl(
                 )
             ) as Resource<CategoriesSummary, TransactionFailure>
         }.catch { e ->
-            Log.e(DATABASE_TAG, "Error getting categories summary: ${e.message}", e)
+            Timber.e(e, "Error getting categories summary")
             when (e) {
                 is SQLiteException -> emit(Resource.Error(TransactionFailure.DatabaseError))
                 else -> throw e
             }
         }
-
-    companion object {
-        private const val DATABASE_TAG = "HarmApp_TransactionDB"
-    }
 }

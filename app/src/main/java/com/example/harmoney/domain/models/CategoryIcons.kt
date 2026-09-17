@@ -110,7 +110,7 @@ enum class CategoryIcons(
     IC_EULER(id = 83);
 
     companion object {
-        private val registry = IdEnumRegistry(CategoryIcons::class.java) { it.id }
+        private val registry = IdEnumRegistry(CategoryIcons::class.java)
         fun fromId(id: Long) = registry.fromId(id)
     }
 }

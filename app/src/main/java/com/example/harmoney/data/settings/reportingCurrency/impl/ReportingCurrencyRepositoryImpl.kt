@@ -1,4 +1,4 @@
-package com.example.harmoney.data.settings.currency.impl
+package com.example.harmoney.data.settings.reportingCurrency.impl
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -14,7 +14,7 @@ class ReportingCurrencyRepositoryImpl(
 ) : ReportingCurrencyRepository {
     override fun getReportingCurrency(): Flow<Currency> =
         dataStore.data.map { prefs ->
-            Currency.fromId(prefs[REPORTING_CURRENCY_ID_KEY] ?: Currency.RUB.id)
+            Currency.fromId(prefs[REPORTING_CURRENCY_ID_KEY] ?: Currency.EUR.id)
         }
 
     override suspend fun setReportingCurrency(currency: Currency) {

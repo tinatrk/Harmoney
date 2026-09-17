@@ -1,9 +1,7 @@
 package com.example.harmoney.core.util
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.harmoney.BuildConfig
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 abstract class BaseViewModel<Event, Action, State>(state: State) : ViewModel() {
 
@@ -27,8 +26,6 @@ abstract class BaseViewModel<Event, Action, State>(state: State) : ViewModel() {
         extraBufferCapacity = 1
     )
     val action: SharedFlow<Action?> = writableAction.asSharedFlow()
-
-    abstract val tag: String
 
     abstract fun obtainEvent(event: Event)
 
@@ -44,9 +41,7 @@ abstract class BaseViewModel<Event, Action, State>(state: State) : ViewModel() {
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
-                if (BuildConfig.DEBUG) {
-                    Log.e(tag, errorMessage, error)
-                }
+                Timber.e(error, errorMessage)
                 onError.invoke(error)
             }
         }
@@ -60,10 +55,7 @@ abstract class BaseViewModel<Event, Action, State>(state: State) : ViewModel() {
             if (error is CancellationException) {
                 throw error
             }
-
-            if (BuildConfig.DEBUG) {
-                Log.e(tag, errorMessage, error)
-            }
+            Timber.e(error, errorMessage)
             onError.invoke(error)
         }.launchIn(viewModelScope)
     }

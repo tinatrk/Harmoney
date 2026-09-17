@@ -93,11 +93,18 @@ dependencies {
     implementation(libs.kotlinx.collections.immutable)
     // endregion
 
+    // region Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+    implementation(libs.kotlinx.serialization.json)
+    //endregion
+
     // region Other
     implementation(libs.objecthunter.exp4j)
     implementation(libs.lucf15.modal.bottom.sheet)
     implementation(libs.compose.reorderable)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.timber)
     // endregion
 }
 

@@ -238,7 +238,7 @@ object PreviewData {
     fun getFilteredCurrencyList(query: String): ImmutableList<CurrencyUi> {
         return currencies.filter { item ->
             item.name.contains(query, ignoreCase = true) ||
-                    item.currency.code.contains(query, ignoreCase = true)
+                    item.currency.isoCode.contains(query, ignoreCase = true)
         }.toImmutableList()
     }
 }

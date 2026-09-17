@@ -10,14 +10,30 @@ import com.example.harmoney.data.category.converter.CategoryDBConverter
 import com.example.harmoney.data.category.converter.CategoryDBConverterImpl
 import com.example.harmoney.data.category.dao.CategoryDao
 import com.example.harmoney.data.converters.DateConverter
+import com.example.harmoney.data.currencyList.db.converter.CurrencyListDBConverter
+import com.example.harmoney.data.currencyList.db.converter.CurrencyListDBConverterImpl
+import com.example.harmoney.data.currencyList.db.dao.CurrencyListDao
+import com.example.harmoney.data.currencyList.network.converter.CurrencyListDtoConverter
+import com.example.harmoney.data.currencyList.network.converter.CurrencyListDtoConverterImpl
+import com.example.harmoney.data.network.FrankfurterApi
+import com.example.harmoney.data.network.RemoteDataSource
+import com.example.harmoney.data.network.FrankfurterRemoteDataSourceImpl
 import com.example.harmoney.data.transaction.converter.CategoryStatisticsDbConverter
 import com.example.harmoney.data.transaction.converter.CategoryStatisticsDbConverterImpl
 import com.example.harmoney.data.transaction.converter.TransactionDbConverter
 import com.example.harmoney.data.transaction.converter.TransactionDbConverterImpl
 import com.example.harmoney.data.transaction.dao.TransactionDao
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
+import retrofit2.Retrofit
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.io.File
+
+private const val BASE_URL_API = "https://api.frankfurter.dev/v2/"
+private const val SHARED_PREFERENCES_FILE = "settings.preferences_pb"
+private const val DATABASE_NAME = "harm_database"
 
 val dataModule = module {
     // region core
@@ -25,7 +41,7 @@ val dataModule = module {
         Room.databaseBuilder(
             androidContext(),
             AppDatabase::class.java,
-            "harm_database"
+            DATABASE_NAME
         ).build()
     }
 
@@ -33,6 +49,7 @@ val dataModule = module {
         DateConverter()
     }
     // endregion
+
 
     // region category
     factory<CategoryDao> {
@@ -44,6 +61,7 @@ val dataModule = module {
         CategoryDBConverterImpl()
     }
     // endregion
+
 
     // region transaction
     factory<TransactionDao> {
@@ -60,13 +78,51 @@ val dataModule = module {
     }
     // endregion
 
+
     // region settings
     single<DataStore<Preferences>> {
         PreferenceDataStoreFactory.create(
             produceFile = {
-                File(get<Context>().filesDir, "settings.preferences_pb")
+                File(get<Context>().filesDir, SHARED_PREFERENCES_FILE)
             }
         )
     }
     // endregion
+
+
+    // region network
+    single<FrankfurterApi> {
+        val json = Json {
+            ignoreUnknownKeys = true
+        }
+
+        Retrofit.Builder()
+            .baseUrl(BASE_URL_API)
+            .addConverterFactory(
+                json.asConverterFactory(MediaType.get("application/json"))
+            )
+            .build()
+            .create(FrankfurterApi::class.java)
+    }
+
+    single<RemoteDataSource> {
+        FrankfurterRemoteDataSourceImpl(frankfurterApi = get())
+    }
+    // endregion
+
+
+    // region currency list
+    factory<CurrencyListDao> {
+        val database = get<AppDatabase>()
+        database.currencyListDao()
+    }
+
+    factory<CurrencyListDBConverter> {
+        CurrencyListDBConverterImpl()
+    }
+    // endregion
+
+    factory<CurrencyListDtoConverter> {
+        CurrencyListDtoConverterImpl()
+    }
 }

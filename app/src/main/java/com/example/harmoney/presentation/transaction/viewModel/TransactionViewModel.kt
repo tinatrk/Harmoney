@@ -47,8 +47,6 @@ class TransactionViewModel(
             isCreateTransactionScreen = transactionId == null,
         )
 ) {
-    override val tag: String = TransactionViewModel::class.java.simpleName ?: ""
-
     private val initialTransaction: Transaction
     private var editableTransaction: EditableTransaction
     private var amountInLocalCurrency: Long

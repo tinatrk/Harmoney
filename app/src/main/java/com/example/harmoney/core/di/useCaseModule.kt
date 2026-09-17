@@ -14,6 +14,8 @@ import com.example.harmoney.domain.category.impl.GetCategoryListUseCaseImpl
 import com.example.harmoney.domain.category.impl.GetCategoryUseCaseImpl
 import com.example.harmoney.domain.category.impl.UpdateCategoryUseCaseImpl
 import com.example.harmoney.domain.category.impl.UpdateCategoryUserOrderUseCaseImpl
+import com.example.harmoney.domain.currencyList.api.useCase.GetSupportedCurrencyListUseCase
+import com.example.harmoney.domain.currencyList.impl.GetSupportedCurrencyListUseCaseImpl
 import com.example.harmoney.domain.settings.categorySortingMode.api.useCase.CategorySortOptionInteractor
 import com.example.harmoney.domain.settings.categorySortingMode.impl.CategorySortOptionInteractorImpl
 import com.example.harmoney.domain.settings.currency.api.useCase.GetReportingCurrencyUseCase
@@ -55,6 +57,7 @@ val useCaseModule = module {
     }
     // endregion
 
+
     // region statistics periods
     factory<GetStatisticsPeriodsUseCase> {
         GetStatisticsPeriodsUseCaseImpl(repository = get(), calculator = get())
@@ -65,21 +68,13 @@ val useCaseModule = module {
     }
     // endregion
 
+
     // region first day month
     factory<FirstDayMonthInteractor> {
         FirstDayMonthInteractorImpl(repository = get())
     }
     // endregion
 
-    // region reporting currency
-    factory<GetReportingCurrencyUseCase> {
-        GetReportingCurrencyUseCaseImpl(repository = get())
-    }
-
-    factory<SetReportingCurrencyUseCase> {
-        SetReportingCurrencyUseCaseImpl(repository = get())
-    }
-    // endregion
 
     // region category
     factory<CategorySortOptionInteractor> {
@@ -115,6 +110,7 @@ val useCaseModule = module {
     }
     // endregion
 
+
     // region transaction
     factory<AddTransactionUseCase> {
         AddTransactionUseCaseImpl(repository = get())
@@ -138,6 +134,24 @@ val useCaseModule = module {
 
     factory<GetCategoriesSummaryUseCase> {
         GetCategoriesSummaryUseCaseImpl(repository = get())
+    }
+    // endregion
+
+
+    // region reporting currency
+    factory<GetReportingCurrencyUseCase> {
+        GetReportingCurrencyUseCaseImpl(repository = get())
+    }
+
+    factory<SetReportingCurrencyUseCase> {
+        SetReportingCurrencyUseCaseImpl(repository = get())
+    }
+    // endregion
+
+
+    // region currency list
+    factory<GetSupportedCurrencyListUseCase> {
+        GetSupportedCurrencyListUseCaseImpl(repository = get())
     }
     // endregion
 }

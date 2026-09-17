@@ -12,8 +12,6 @@ class CalculatorViewModel(
     private val calculatorHandler: CalculatorHandler
 ) : BaseViewModel<CalculatorEvent, CalculatorAction, CalculatorState>(CalculatorState()) {
 
-    override val tag: String = CalculatorViewModel::class.java.simpleName ?: ""
-
     override fun obtainEvent(event: CalculatorEvent) {
         when (event) {
             is CalculatorEvent.OnOpenCalculator -> initializeEquation(event.initEquation)

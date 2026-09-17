@@ -12,4 +12,6 @@ sealed class CurrencyEvent {
     data object OnSearchStartClick : CurrencyEvent()
 
     data class OnCurrencyClick(val newCurrency: CurrencyUi) : CurrencyEvent()
+
+    data object OnRefreshClick: CurrencyEvent()
 }

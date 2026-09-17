@@ -44,7 +44,7 @@ import com.example.harmoney.presentation.transactionList.models.TransactionListA
 import com.example.harmoney.presentation.transactionList.models.TransactionListEvent
 import com.example.harmoney.presentation.transactionList.models.TransactionListState
 import com.example.harmoney.presentation.transactionList.viewModel.TransactionListViewModel
-import com.example.harmoney.ui.components.EmptyScreen
+import com.example.harmoney.ui.components.HarmMessage
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.other.PreviewData
 import com.example.harmoney.ui.theme.HarmTheme
@@ -239,7 +239,11 @@ fun TransactionListContent(
         }
 
         if (state.oneDayTransactionsList.isEmpty()) {
-            EmptyScreen(message = stringResource(R.string.placeholder_empty_transaction_list))
+            HarmMessage(
+                modifier = Modifier.fillMaxSize(),
+                message = stringResource(R.string.placeholder_empty_transaction_list),
+                imageRes = R.drawable.im_empty_screen
+            )
         } else {
             Spacer(modifier = Modifier.height(12.dp))
 

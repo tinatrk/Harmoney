@@ -45,7 +45,7 @@ import com.example.harmoney.presentation.categoryStatistics.models.CategoryStati
 import com.example.harmoney.presentation.categoryStatistics.models.FirstDayMonthError
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
 import com.example.harmoney.presentation.models.StatisticsPeriodUi
-import com.example.harmoney.ui.components.EmptyScreen
+import com.example.harmoney.ui.components.HarmMessage
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.other.PreviewData
 import com.example.harmoney.ui.theme.HarmTheme
@@ -132,7 +132,7 @@ fun CategoryStatisticsScreen(
             SettingsDrawerItems(
                 isThemeDark = HarmTheme.colors.isDark,
                 firstDayMonth = state.firstDayMonth.toString(),
-                currentCurrencyCode = state.currency.code,
+                currentCurrencyCode = state.reportingCurrency.isoCode,
                 onEvent = onEvent
             )
         }
@@ -279,7 +279,11 @@ fun CategoryStatisticsContent(
         )
 
         if (state.categories.isEmpty()) {
-            EmptyScreen(message = stringResource(R.string.placeholder_empty_transaction_list))
+            HarmMessage(
+                modifier = Modifier.fillMaxSize(),
+                message = stringResource(R.string.placeholder_empty_transaction_list),
+                imageRes = R.drawable.im_empty_screen
+            )
         } else {
             Spacer(modifier = Modifier.height(16.dp))
             LazyColumn(modifier = Modifier.fillMaxWidth()) {

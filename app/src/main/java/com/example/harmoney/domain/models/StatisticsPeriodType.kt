@@ -8,7 +8,7 @@ enum class StatisticsPeriodType(override val id: Long) : IdEnum {
     CURRENT_MONTH(id = 2);
 
     companion object {
-        private val registry = IdEnumRegistry(StatisticsPeriodType::class.java) { it.id }
+        private val registry = IdEnumRegistry(StatisticsPeriodType::class.java)
         fun fromId(id: Long) = registry.fromId(id)
     }
 }

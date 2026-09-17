@@ -33,8 +33,6 @@ class CategoryListViewModel(
         selectedTabIndex = sessionSateHolder.state.value.categoryType.ordinal
     )
 ) {
-    override val tag: String = CategoryListViewModel::class.java.simpleName ?: ""
-
     init {
         combine(
             sessionSateHolder.state.map { it.categoryType }.distinctUntilChanged(),

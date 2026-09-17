@@ -59,7 +59,7 @@ enum class CategoryColors(
     SLATE_T55(id = 38, background = CategoryColor.SLATE_T55);
 
     companion object {
-        private val registry = IdEnumRegistry(CategoryColors::class.java) { it.id }
+        private val registry = IdEnumRegistry(CategoryColors::class.java)
         fun fromId(id: Long) = registry.fromId(id)
     }
 }

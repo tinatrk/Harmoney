@@ -48,7 +48,7 @@ import com.example.harmoney.presentation.categoryList.models.CategoryListState
 import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
 import com.example.harmoney.presentation.models.CategoryUi
 import com.example.harmoney.presentation.models.MenuOption
-import com.example.harmoney.ui.components.EmptyScreen
+import com.example.harmoney.ui.components.HarmMessage
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.mappers.CategoryIconUiMapper.toDrawableRes
 import com.example.harmoney.ui.mappers.SortOptionUiMapper.toDrawableRes
@@ -194,36 +194,22 @@ fun CategoryListContent(
     onEvent: (CategoryListEvent) -> Unit,
 ) {
     if (state.isDataLoadingError) {
-        ErrorScreen(
+        HarmMessage(
             modifier = Modifier.fillMaxSize(),
-            errorMessage = stringResource(R.string.error_something_went_wrong)
+            message = stringResource(R.string.error_something_went_wrong)
         )
     } else if (state.categories.isEmpty()) {
-        EmptyScreen(message = stringResource(R.string.placeholder_empty_category_list))
+        HarmMessage(
+            modifier = Modifier.fillMaxSize(),
+            message = stringResource(R.string.placeholder_empty_category_list),
+            imageRes = R.drawable.im_empty_screen
+        )
     } else {
         if (state.selectedSortOption == SortOption.USER_ORDER) {
             VerticalReorderableGrid(state = state, onEvent = onEvent)
         } else {
             VerticalCommonGrid(state = state, onEvent = onEvent)
         }
-    }
-}
-
-@Composable
-fun ErrorScreen(
-    errorMessage: String,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = errorMessage,
-            style = HarmTheme.typography.titleLargeSemiBold,
-            color = HarmTheme.colors.onSurface
-        )
     }
 }
 

@@ -36,7 +36,6 @@ class TransactionListViewModel(
         selectedTabIndex = sessionStateHolder.state.value.categoryType.ordinal,
     )
 ) {
-    override val tag: String = TransactionListViewModel::class.java.simpleName ?: ""
     private val currency: Currency
     private val selectedFilters: MutableList<Long?>
 

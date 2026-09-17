@@ -13,13 +13,13 @@ import org.koin.core.parameter.parametersOf
 data class Currency(val currencyId: Long)
 
 fun NavGraphBuilder.currencyScreen(
-    onBackClick: () -> Unit,
+    onBackWithChosenCurrency: () -> Unit,
 ) {
     composable<Currency> { navBackStackEntry ->
         val route = navBackStackEntry.toRoute<Currency>()
         CurrencyScreen(
             viewModel = koinViewModel() { parametersOf(route.currencyId) },
-            onBackClick = onBackClick
+            onBackClick = onBackWithChosenCurrency
         )
     }
 }

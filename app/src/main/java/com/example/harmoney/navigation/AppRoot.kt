@@ -70,7 +70,17 @@ fun AppRoot() {
         )
 
         currencyScreen(
-            onBackClick = { navController.popBackStack() }
+            onBackWithChosenCurrency = {
+                val result = navController.currentBackStackEntry
+                    ?.savedStateHandle
+                    ?.get<Long>(NavResultKeys.SELECTED_CURRENCY)
+
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set(NavResultKeys.SELECTED_CURRENCY, result)
+
+                navController.popBackStack()
+            }
         )
     }
 }

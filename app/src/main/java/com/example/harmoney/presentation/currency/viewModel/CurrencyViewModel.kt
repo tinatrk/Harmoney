@@ -1,16 +1,20 @@
 package com.example.harmoney.presentation.currency.viewModel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.harmoney.core.util.BaseViewModel
+import com.example.harmoney.core.util.Resource
+import com.example.harmoney.domain.currencyList.api.useCase.GetSupportedCurrencyListUseCase
+import com.example.harmoney.domain.currencyList.models.CurrencyListFailure
 import com.example.harmoney.domain.models.Currency
-import com.example.harmoney.domain.settings.currency.api.useCase.SetReportingCurrencyUseCase
+import com.example.harmoney.navigation.NavResultKeys
 import com.example.harmoney.presentation.converters.CurrencyUiConverter
 import com.example.harmoney.presentation.currency.models.CurrencyAction
 import com.example.harmoney.presentation.currency.models.CurrencyEvent
 import com.example.harmoney.presentation.currency.models.CurrencyState
+import com.example.harmoney.presentation.models.ContentState
 import com.example.harmoney.presentation.models.CurrencyUi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
@@ -20,23 +24,73 @@ import kotlinx.coroutines.launch
 
 class CurrencyViewModel(
     selectedCurrencyId: Long,
-    private val setReportingCurrencyUseCase: SetReportingCurrencyUseCase,
+    private val savedStateHandle: SavedStateHandle,
     private val currencyUiConverter: CurrencyUiConverter,
+    private val getSupportedCurrencyListUseCase: GetSupportedCurrencyListUseCase,
 ) : BaseViewModel<CurrencyEvent, CurrencyAction, CurrencyState>(
     CurrencyState(selectedCurrencyId = selectedCurrencyId)
 ) {
-    override val tag: String = CurrencyViewModel::class.java.simpleName ?: ""
-
-    private val initCurrencyList: List<CurrencyUi> =
+    private var initCurrencyList: List<CurrencyUi> =
         currencyUiConverter.map(Currency.entries).sortedBy { it.name }
 
-    private var debounceJob: Job? = null
     private val typedQuery = MutableStateFlow("")
-    private var lastSearchQuery: String? = null
-    private var searchResult = mutableListOf<CurrencyUi>()
 
     init {
-        writableState.update { it.copy(currencyList = initCurrencyList) }
+        getSupportedCurrencyList()
+        observeSearchQuery()
+    }
+
+    private fun getSupportedCurrencyList(isRefreshRequired: Boolean = false) {
+        writableState.update { it.copy(contentState = ContentState.LOADING) }
+
+        launchWithErrorHandling(
+            errorMessage = GET_SUPPORTED_CURRENCY_LIST_UNEXPECTED_ERROR,
+            onError = { writableState.update { it.copy(contentState = ContentState.ERROR) } }
+        ) {
+            var contentState = ContentState.IDLE
+            val res = getSupportedCurrencyListUseCase.execute(isRefreshRequired)
+
+            when (res) {
+                is Resource.Success -> {
+                    initCurrencyList = currencyUiConverter.map(res.data)
+                    contentState = ContentState.SUCCESS
+                }
+
+                is Resource.Error -> {
+                    initCurrencyList = emptyList()
+
+                    contentState = when (res.error) {
+                        is CurrencyListFailure.NetworkConnectionError -> {
+                            ContentState.NETWORK_CONNECTION_ERROR
+                        }
+
+                        else -> {
+                            ContentState.ERROR
+                        }
+                    }
+                }
+            }
+
+            writableState.update {
+                it.copy(
+                    currencyList = initCurrencyList,
+                    contentState = contentState,
+                    refreshCurrencyListId = state.value.refreshCurrencyListId + 1
+                )
+            }
+        }
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun observeSearchQuery() {
+        viewModelScope.launch {
+            typedQuery
+                .debounce { SEARCH_DEBOUNCE }
+                .distinctUntilChanged()
+                .collectLatest { query ->
+                    searchCurrency(query)
+                }
+        }
     }
 
     override fun obtainEvent(event: CurrencyEvent) {
@@ -46,99 +100,71 @@ class CurrencyViewModel(
             is CurrencyEvent.OnClearSearchLineClick -> onClearSearchLineClick()
             is CurrencyEvent.OnSearchStartClick -> searchCurrency(state.value.searchText)
             is CurrencyEvent.OnCurrencyClick -> onCurrencyClick(event.newCurrency)
+            is CurrencyEvent.OnRefreshClick -> onRefreshClick()
         }
     }
 
     private fun onBackClick() {
-        debounceJob?.cancel()
+        onReturnWithoutParam()
+    }
+
+    private fun onReturnWithoutParam() {
+        savedStateHandle[NavResultKeys.SELECTED_CURRENCY] = null
+        writableAction.tryEmit(CurrencyAction.NavigateBack)
+    }
+
+    private fun onReturnWithParam(param: Long) {
+        savedStateHandle[NavResultKeys.SELECTED_CURRENCY] = param
         writableAction.tryEmit(CurrencyAction.NavigateBack)
     }
 
     private fun onSearchTextChanged(newText: String) {
         typedQuery.value = newText
         writableState.update { it.copy(searchText = newText) }
-        startDebounceWatcher()
     }
 
     private fun onClearSearchLineClick() {
-        debounceJob?.cancel()
-        lastSearchQuery = ""
-        searchResult.clear()
+        typedQuery.value = ""
         writableState.update {
             it.copy(
                 searchText = "",
-                currencyList = initCurrencyList
+                currencyList = initCurrencyList,
+                refreshCurrencyListId = state.value.refreshCurrencyListId + 1
             )
         }
     }
 
     private fun onCurrencyClick(newCurrency: CurrencyUi) {
         if (state.value.selectedCurrencyId != newCurrency.currency.id) {
-            launchWithErrorHandling(
-                errorMessage = SET_REPORTING_CURRENCY_UNEXPECTED_ERROR,
-                onError = {
-                    writableAction.emit(
-                        CurrencyAction.SetCurrencyError(newCurrency.currency)
-                    )
-                }
-            ) {
-                // TODO() проверить работает ли api с этой валютой
-                setReportingCurrencyUseCase.execute(newCurrency.currency)
-                writableAction.emit(CurrencyAction.NavigateBack)
-            }
+            onReturnWithParam(newCurrency.currency.id)
         }
     }
 
     private fun searchCurrency(query: String) {
-        debounceJob?.cancel()
-
-        if (query.isEmpty()) {
-            lastSearchQuery = null
-            searchResult.clear()
-            writableState.update { it.copy(currencyList = initCurrencyList) }
-            return
-        }
-
-        if (query == lastSearchQuery) {
-            return
-        }
-
-        lastSearchQuery = query
-        searchResult.clear()
-
-        searchResult = initCurrencyList.filter { item ->
-            item.name.contains(lastSearchQuery ?: "", ignoreCase = true) ||
-                    item.currency.code.contains(lastSearchQuery ?: "", ignoreCase = true)
-        }.toMutableList()
-
-        // если к моменту получения результата запрос изменился
-        if (query != lastSearchQuery) {
-            searchResult.clear()
+        val result = if (query.isBlank()) {
+            initCurrencyList
         } else {
-            writableState.update {
-                it.copy(
-                    currencyList = searchResult
-                )
+            initCurrencyList.filter { item ->
+                item.name.contains(query, ignoreCase = true) ||
+                        item.currency.isoCode.contains(query, ignoreCase = true)
             }
+        }
+
+        writableState.update {
+            it.copy(
+                currencyList = result,
+                refreshCurrencyListId = state.value.refreshCurrencyListId + 1
+            )
         }
     }
 
-
-    @OptIn(FlowPreview::class)
-    private fun startDebounceWatcher() {
-        debounceJob?.cancel()
-        debounceJob = viewModelScope.launch {
-            typedQuery.debounce(SEARCH_DEBOUNCE)
-                .distinctUntilChanged()
-                .collectLatest { query ->
-                    searchCurrency(query)
-                }
-        }
+    private fun onRefreshClick() {
+        getSupportedCurrencyList(isRefreshRequired = true)
     }
 
     companion object {
-        private const val SET_REPORTING_CURRENCY_UNEXPECTED_ERROR =
-            "Error_setting_reporting_currency"
         private const val SEARCH_DEBOUNCE = 1000L
+        private const val GET_SUPPORTED_CURRENCY_LIST_UNEXPECTED_ERROR =
+            "Error_getting_supported_currency_list"
     }
 }

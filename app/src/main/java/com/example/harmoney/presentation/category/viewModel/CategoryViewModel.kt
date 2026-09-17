@@ -44,8 +44,6 @@ class CategoryViewModel(
         isCreateCategoryScreen = categoryId == null
     )
 ) {
-    override val tag: String = CategoryViewModel::class.java.simpleName ?: ""
-
     private var initialCategory: Category = createEmptyCategory()
     private var editableCategory: EditableCategory = EditableCategory(
         type = initialCategory.type,

@@ -1,15 +1,19 @@
 package com.example.harmoney.presentation.categoryStatistics.viewModel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.harmoney.core.session.SessionStateHolder
 import com.example.harmoney.core.util.BaseViewModel
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.StatisticsPeriodType
 import com.example.harmoney.domain.settings.currency.api.useCase.GetReportingCurrencyUseCase
+import com.example.harmoney.domain.settings.currency.api.useCase.SetReportingCurrencyUseCase
 import com.example.harmoney.domain.settings.period.api.useCase.FirstDayMonthInteractor
 import com.example.harmoney.domain.settings.period.api.useCase.GetStatisticsPeriodsUseCase
 import com.example.harmoney.domain.settings.theme.api.useCase.SetThemeUseCase
+import com.example.harmoney.navigation.NavResultKeys
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
@@ -21,13 +25,16 @@ import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.test.TestDataSource
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 @Suppress("detekt:LongParameterList", "detekt:TooManyFunctions")
 class CategoryStatisticsViewModel(
     private val sessionSateHolder: SessionStateHolder,
+    private val savedStateHandle: SavedStateHandle,
     private val test: TestDataSource,
     private val categoryStatisticsUiConverter: CategoryStatisticsUiConverter,
     private val numbersFormatter: NumbersFormatter,
@@ -36,6 +43,7 @@ class CategoryStatisticsViewModel(
     private val firstDayMonthInteractor: FirstDayMonthInteractor,
     private val getStatisticsPeriodsUseCase: GetStatisticsPeriodsUseCase,
     private val getReportingCurrencyUseCase: GetReportingCurrencyUseCase,
+    private val setReportingCurrencyUseCase: SetReportingCurrencyUseCase,
 ) :
     BaseViewModel<CategoryStatisticsEvent, CategoryStatisticsAction, CategoryStatisticsState>(
         state = CategoryStatisticsState(
@@ -43,17 +51,16 @@ class CategoryStatisticsViewModel(
             selectedTabIndex = sessionSateHolder.state.value.categoryType.ordinal,
         )
     ) {
-    override val tag: String = CategoryStatisticsViewModel::class.java.simpleName ?: ""
-
     private val sessionFlow = sessionSateHolder.state
     private val periodsFlow = getStatisticsPeriodsUseCase()
     private val firstDayMonthFlow = firstDayMonthInteractor.getFirstDayMonth()
     private val reportingCurrencyFlow = getReportingCurrencyUseCase()
+
     //private val balanceFlow = getBalanceUseCase()
+    private val navNewReportingCurrencyFlow: StateFlow<Long?> =
+        savedStateHandle.getStateFlow(NavResultKeys.SELECTED_CURRENCY, null)
 
     init {
-        //TODO() считать валюту из shared preferences
-
         combine(
             sessionFlow,
             periodsFlow,
@@ -72,7 +79,7 @@ class CategoryStatisticsViewModel(
             // firstDay = $firstDayMonth")//, statisticsSize = ${statistics.size}")
 
             val formattedCategories =
-                categoryStatisticsUiConverter.map(categories, state.value.currency)
+                categoryStatisticsUiConverter.map(categories, state.value.reportingCurrency)
 
             val total = categories.sumOf { category -> category.totalAmount.minorUnits }
 
@@ -89,18 +96,29 @@ class CategoryStatisticsViewModel(
                     ),
                     currentBalance = numbersFormatter.moneyToStringWithCurrency(
                         moneyMinorUnits = test.getBalance(),//balance
-                        currency = state.value.currency,//currency,
+                        currency = state.value.reportingCurrency,//currency,
                     ),
                     total = numbersFormatter.moneyToStringWithCurrency(
                         moneyMinorUnits = total,
-                        currency = state.value.currency,//currency,it.currency,
+                        currency = state.value.reportingCurrency,//currency,it.currency,
                     ),
                     firstDayMonth = firstDayMonth,
                     firstDayMonthText = firstDayMonth.toString(),
-                    currency = reportingCurrency
+                    reportingCurrency = reportingCurrency
                 )
             }
         }.launchIn(viewModelScope)
+
+        viewModelScope.launch {
+            navNewReportingCurrencyFlow.collect { returnedCurrencyId ->
+                if (returnedCurrencyId != null
+                    && returnedCurrencyId != state.value.reportingCurrency.id
+                ) {
+                    // launchSafely?
+                    setReportingCurrencyUseCase.execute(Currency.fromId(returnedCurrencyId))
+                }
+            }
+        }
     }
 
     @Suppress("detekt:CyclomaticComplexMethod")
@@ -288,7 +306,8 @@ class CategoryStatisticsViewModel(
 
     private fun onCurrencySettingsClick() {
         writableAction.tryEmit(
-            CategoryStatisticsAction.NavigateToCurrency(state.value.currency.id)
+            CategoryStatisticsAction
+                .NavigateToCurrency(state.value.reportingCurrency.id)
         )
     }
 
