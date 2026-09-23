@@ -15,6 +15,7 @@ class IdEnumRegistry<T>(
         }
     }
 
+    /** Throws `IllegalStateException` if id is unknown */
     fun fromId(id: Long): T =
         byId[id] ?: error("Unknown ${enumClass.simpleName} id: $id")
 }

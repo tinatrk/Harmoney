@@ -1089,11 +1089,13 @@ enum class Currency(
         private val byIsoCode: Map<String, Currency> =
             entries.associateByUnique { it.isoCode }
 
+        /** Throws `IllegalStateException` if id is unknown */
         fun fromId(id: Long) = registry.fromId(id)
 
         fun fromIsoCodeOrNull(isoCode: String): Currency? =
             byIsoCode[isoCode.trim().uppercase()]
 
+        /** Throws `IllegalStateException` if isoCode is unknown */
         fun fromIsoCode(isoCode: String): Currency =
             byIsoCode[isoCode.trim().uppercase()]
                 ?: error("Unknown ${Currency::class.java.simpleName} isoCode: $isoCode")

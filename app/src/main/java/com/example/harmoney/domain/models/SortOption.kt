@@ -10,6 +10,7 @@ enum class SortOption(override val id: Long) : IdEnum {
 
     companion object {
         private val registry = IdEnumRegistry(SortOption::class.java)
+        /** Throws `IllegalStateException` if id is unknown */
         fun fromId(id: Long) = registry.fromId(id)
     }
 }

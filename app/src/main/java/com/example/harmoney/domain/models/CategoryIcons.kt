@@ -111,6 +111,7 @@ enum class CategoryIcons(
 
     companion object {
         private val registry = IdEnumRegistry(CategoryIcons::class.java)
+        /** Throws `IllegalStateException` if id is unknown */
         fun fromId(id: Long) = registry.fromId(id)
     }
 }

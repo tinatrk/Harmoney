@@ -1,11 +1,13 @@
 package com.example.harmoney.core.di
 
+import com.example.harmoney.data.account.impl.AccountRepositoryImpl
 import com.example.harmoney.data.category.impl.CategoryRepositoryImpl
 import com.example.harmoney.data.currencyList.CurrencyListRepositoryImpl
 import com.example.harmoney.data.settings.categorySortingMode.impl.CategorySortOptionRepositoryImpl
 import com.example.harmoney.data.settings.firstDayMonth.impl.FirstDayMonthRepositoryImpl
 import com.example.harmoney.data.settings.reportingCurrency.impl.ReportingCurrencyRepositoryImpl
 import com.example.harmoney.data.settings.theme.impl.ThemeRepositoryImpl
+import com.example.harmoney.data.statistics.impl.StatisticsRepositoryImpl
 import com.example.harmoney.data.transaction.impl.TransactionRepositoryImpl
 import com.example.harmoney.domain.category.api.reposiory.CategoryRepository
 import com.example.harmoney.domain.currencyList.api.repository.CurrencyListRepository
@@ -15,6 +17,8 @@ import com.example.harmoney.domain.settings.period.api.repository.FirstDayMonthR
 import com.example.harmoney.domain.settings.theme.api.repository.ThemeRepository
 import com.example.harmoney.domain.transaction.api.repository.TransactionRepository
 import org.koin.dsl.module
+import com.example.harmoney.domain.account.api.repository.AccountRepository
+import com.example.harmoney.domain.statistics.api.repository.StatisticsRepository
 
 val repositoryModule = module {
     factory<ThemeRepository> {
@@ -37,8 +41,8 @@ val repositoryModule = module {
         TransactionRepositoryImpl(
             transactionDao = get(),
             transactionDbConverter = get(),
-            categoryStatisticsDbConverter = get(),
-            dateConverter = get()
+            dateConverter = get(),
+            statisticsDao = get(),
         )
     }
 
@@ -52,6 +56,18 @@ val repositoryModule = module {
             remoteDataSource = get(),
             currencyListDBConverter = get(),
             currencyListDtoConverter = get()
+        )
+    }
+
+    factory<AccountRepository> {
+        AccountRepositoryImpl(accountDao = get(), accountDBConverter = get())
+    }
+
+    factory<StatisticsRepository> {
+        StatisticsRepositoryImpl(
+            statisticsDao = get(),
+            dateConverter = get(),
+            categoryStatisticsDbConverter = get()
         )
     }
 }

@@ -6,22 +6,28 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import com.example.harmoney.core.database.AppDatabase
+import com.example.harmoney.data.account.converter.AccountDBConverter
+import com.example.harmoney.data.account.converter.AccountDBConverterImpl
+import com.example.harmoney.data.account.dao.AccountDao
 import com.example.harmoney.data.category.converter.CategoryDBConverter
 import com.example.harmoney.data.category.converter.CategoryDBConverterImpl
 import com.example.harmoney.data.category.dao.CategoryDao
 import com.example.harmoney.data.converters.DateConverter
+import com.example.harmoney.data.core.bd.converter.TotalMoneyDtoConverter
+import com.example.harmoney.data.core.bd.converter.TotalMoneyDtoConverterImpl
 import com.example.harmoney.data.currencyList.db.converter.CurrencyListDBConverter
 import com.example.harmoney.data.currencyList.db.converter.CurrencyListDBConverterImpl
 import com.example.harmoney.data.currencyList.db.dao.CurrencyListDao
 import com.example.harmoney.data.currencyList.network.converter.CurrencyListDtoConverter
 import com.example.harmoney.data.currencyList.network.converter.CurrencyListDtoConverterImpl
 import com.example.harmoney.data.network.FrankfurterApi
-import com.example.harmoney.data.network.RemoteDataSource
 import com.example.harmoney.data.network.FrankfurterRemoteDataSourceImpl
-import com.example.harmoney.data.transaction.converter.CategoryStatisticsDbConverter
-import com.example.harmoney.data.transaction.converter.CategoryStatisticsDbConverterImpl
-import com.example.harmoney.data.transaction.converter.TransactionDbConverter
-import com.example.harmoney.data.transaction.converter.TransactionDbConverterImpl
+import com.example.harmoney.data.network.RemoteDataSource
+import com.example.harmoney.data.statistics.converter.CategoryStatisticsDbConverter
+import com.example.harmoney.data.statistics.converter.CategoryStatisticsDbConverterImpl
+import com.example.harmoney.data.statistics.dao.StatisticsDao
+import com.example.harmoney.data.transaction.converter.TransactionDBConverter
+import com.example.harmoney.data.transaction.converter.TransactionDBConverterImpl
 import com.example.harmoney.data.transaction.dao.TransactionDao
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType
@@ -69,12 +75,10 @@ val dataModule = module {
         database.transactionDao()
     }
 
-    factory<TransactionDbConverter> {
-        TransactionDbConverterImpl(dateConverter = get())
-    }
-
-    factory<CategoryStatisticsDbConverter> {
-        CategoryStatisticsDbConverterImpl()
+    factory<TransactionDBConverter> {
+        TransactionDBConverterImpl(
+            dateConverter = get(), categoryDBConverter = get(), accountDBConverter = get()
+        )
     }
     // endregion
 
@@ -122,7 +126,36 @@ val dataModule = module {
     }
     // endregion
 
+
     factory<CurrencyListDtoConverter> {
         CurrencyListDtoConverterImpl()
     }
+
+
+    // region account
+    factory<AccountDao> {
+        val database = get<AppDatabase>()
+        database.accountDao()
+    }
+
+    factory<AccountDBConverter> {
+        AccountDBConverterImpl()
+    }
+    // endregion
+
+
+    // region statistics
+    factory<StatisticsDao> {
+        val database = get<AppDatabase>()
+        database.statisticsDao()
+    }
+
+    factory<CategoryStatisticsDbConverter> {
+        CategoryStatisticsDbConverterImpl(totalMoneyDtoConverter = get())
+    }
+
+    factory<TotalMoneyDtoConverter> {
+        TotalMoneyDtoConverterImpl()
+    }
+    // endregion
 }

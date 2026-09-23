@@ -9,6 +9,7 @@ enum class StatisticsPeriodType(override val id: Long) : IdEnum {
 
     companion object {
         private val registry = IdEnumRegistry(StatisticsPeriodType::class.java)
+        /** Throws `IllegalStateException` if id is unknown */
         fun fromId(id: Long) = registry.fromId(id)
     }
 }

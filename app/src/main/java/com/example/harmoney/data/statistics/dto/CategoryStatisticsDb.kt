@@ -1,4 +1,4 @@
-package com.example.harmoney.data.transaction.dto
+package com.example.harmoney.data.statistics.dto
 
 data class CategoryStatisticsDb(
     val id: Long,
@@ -8,6 +8,6 @@ data class CategoryStatisticsDb(
     val iconColorId: Long,
     val createdAt: Long,
     val userOrder: Double,
-    val totalAmount: Long,
-    val percentage: Float,
+    val currencyId: Long,
+    val moneyAmountMinorUnits: Long,
 )

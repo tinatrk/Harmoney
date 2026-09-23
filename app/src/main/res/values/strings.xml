@@ -72,7 +72,7 @@
     <string name="title_top_app_bar_create_category">Создание категории</string>
     <string name="title_top_app_bar_edit_category">Редактирование категории</string>
     <string name="title_top_app_bar_currency">Выбор валюты</string>
-    <string name="title_currency_screen">Выберете валюту для статистики (баланс и другие суммы между счетами будут отображаться в этой валюте).</string>
+    <string name="title_currency_screen">Выберете валюту для статистики (баланс и другие суммы между счетами будут конвертироваться в эту валюту по текущему курсу).</string>
     <string name="title_drawer_settings">Настройки</string>
     <string name="title_drawer_item_theme">Темная тема</string>
     <string name="title_drawer_item_first_day_month">Первый день месяца</string>

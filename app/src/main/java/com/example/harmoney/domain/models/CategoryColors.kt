@@ -60,6 +60,7 @@ enum class CategoryColors(
 
     companion object {
         private val registry = IdEnumRegistry(CategoryColors::class.java)
+        /** Throws `IllegalStateException` if id is unknown */
         fun fromId(id: Long) = registry.fromId(id)
     }
 }

@@ -23,10 +23,13 @@ class CategoryRepositoryImpl(
 
     override suspend fun addCategory(category: Category): Resource<Unit, CategoryFailure> {
         return try {
-            categoryDao.insertCategory(categoryDBConverter.map(category))
+            categoryDao.insertCategoryWithAutoUserOrder(
+                category = categoryDBConverter.map(category),
+                userOrderStep = USER_ORDER_STEP,
+            )
             Resource.Success(Unit)
         } catch (e: SQLiteException) {
-            Timber.e(e, "Error when inserting category")
+            Timber.e(e, "Error when inserting category with auto user order")
             Resource.Error(CategoryFailure.DatabaseError)
         }
     }
@@ -109,6 +112,14 @@ class CategoryRepositoryImpl(
         }
     }
 
+    /** `categoryId` - id `category`, которая была размещена на новую позицию в списке
+     *
+     * `prevCategory` - элемент списка, идущий до `сategory` (выше/левее) на ее новой позиции
+     * (независимо от направления сортировки)
+     *
+     * `nextCategory` - элемент списка, идущий после `сategory` (ниже/правее) на ее новой позиции
+     *  (независимо от направления сортировки)
+     * */
     override suspend fun updateCategoryUsedOrder(
         categoryId: Long,
         prevCategory: Category?,
@@ -116,12 +127,13 @@ class CategoryRepositoryImpl(
     ): Resource<Unit, CategoryFailure> {
         return try {
             val newUserOrder = when {
+                // если список сategories пуст и теперь сategory первый элемент списка
                 prevCategory == null && nextCategory == null -> USER_ORDER_STEP
-                prevCategory == null -> {
-                    nextCategory!!.userOrder - sortingDirection * USER_ORDER_STEP
-                }
-
+                // если сategory переместили в самый верх списка
+                prevCategory == null -> nextCategory!!.userOrder - sortingDirection * USER_ORDER_STEP
+                // если сategory переместили в самый низ списка
                 nextCategory == null -> prevCategory.userOrder + sortingDirection * USER_ORDER_STEP
+                // если сategory переместили на позицию между двумя другими сategories
                 else -> (prevCategory.userOrder + nextCategory.userOrder) / 2.0
             }
             categoryDao.updateCategoryUserOrder(categoryId, newUserOrder)
@@ -134,7 +146,7 @@ class CategoryRepositoryImpl(
 
     companion object {
         private const val USER_ORDER_STEP = 100.0
-        private const val USER_ORDER_IN_ASCENDING_ORDER = 1 // значение не менять
-        private const val USER_ORDER_IN_DESCENDING_ORDER = -1 // значение не менять
+        private const val USER_ORDER_IN_ASCENDING_ORDER = 1 // значение не менять, это множитель
+        private const val USER_ORDER_IN_DESCENDING_ORDER = -1 // значение не менять, это множитель
     }
 }

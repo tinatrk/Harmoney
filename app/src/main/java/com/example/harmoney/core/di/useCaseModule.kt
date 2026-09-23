@@ -1,5 +1,17 @@
 package com.example.harmoney.core.di
 
+import com.example.harmoney.domain.account.api.useCase.AddAccountUseCase
+import com.example.harmoney.domain.account.api.useCase.DeleteAccountUseCase
+import com.example.harmoney.domain.account.api.useCase.GetAccountListUseCase
+import com.example.harmoney.domain.account.api.useCase.GetAccountUseCase
+import com.example.harmoney.domain.account.api.useCase.UpdateAccountUseCase
+import com.example.harmoney.domain.account.api.useCase.UpdateAccountUserOrderUseCase
+import com.example.harmoney.domain.account.impl.AddAccountUseCaseImpl
+import com.example.harmoney.domain.account.impl.DeleteAccountUseCaseImpl
+import com.example.harmoney.domain.account.impl.GetAccountListUseCaseImpl
+import com.example.harmoney.domain.account.impl.GetAccountUseCaseImpl
+import com.example.harmoney.domain.account.impl.UpdateAccountUseCaseImpl
+import com.example.harmoney.domain.account.impl.UpdateAccountUserOrderUseCaseImpl
 import com.example.harmoney.domain.category.api.useCase.AddCategoryUseCase
 import com.example.harmoney.domain.category.api.useCase.CheckCategoryAlreadyExistsUseCase
 import com.example.harmoney.domain.category.api.useCase.DeleteCategoryUseCase
@@ -14,6 +26,8 @@ import com.example.harmoney.domain.category.impl.GetCategoryListUseCaseImpl
 import com.example.harmoney.domain.category.impl.GetCategoryUseCaseImpl
 import com.example.harmoney.domain.category.impl.UpdateCategoryUseCaseImpl
 import com.example.harmoney.domain.category.impl.UpdateCategoryUserOrderUseCaseImpl
+import com.example.harmoney.domain.statistics.api.useCase.GetCategoryStatisticsUseCase
+import com.example.harmoney.domain.statistics.impl.GetCategoryStatisticsUseCaseImpl
 import com.example.harmoney.domain.currencyList.api.useCase.GetSupportedCurrencyListUseCase
 import com.example.harmoney.domain.currencyList.impl.GetSupportedCurrencyListUseCaseImpl
 import com.example.harmoney.domain.settings.categorySortingMode.api.useCase.CategorySortOptionInteractor
@@ -33,13 +47,13 @@ import com.example.harmoney.domain.settings.theme.impl.GetIsThemeDarkUseCaseImpl
 import com.example.harmoney.domain.settings.theme.impl.SetThemeUseCaseImpl
 import com.example.harmoney.domain.transaction.api.useCase.AddTransactionUseCase
 import com.example.harmoney.domain.transaction.api.useCase.DeleteTransactionUseCase
-import com.example.harmoney.domain.transaction.api.useCase.GetCategoriesSummaryUseCase
+import com.example.harmoney.domain.statistics.api.useCase.GetCategoriesSummaryUseCase
 import com.example.harmoney.domain.transaction.api.useCase.GetTransactionUseCase
 import com.example.harmoney.domain.transaction.api.useCase.GetTransactionsSummaryUseCase
 import com.example.harmoney.domain.transaction.api.useCase.UpdateTransactionUseCase
 import com.example.harmoney.domain.transaction.impl.AddTransactionUseCaseImpl
 import com.example.harmoney.domain.transaction.impl.DeleteTransactionUseCaseImpl
-import com.example.harmoney.domain.transaction.impl.GetCategoriesSummaryUseCaseImpl
+import com.example.harmoney.domain.statistics.impl.GetCategoriesSummaryUseCaseImpl
 import com.example.harmoney.domain.transaction.impl.GetTransactionUseCaseImpl
 import com.example.harmoney.domain.transaction.impl.GetTransactionsSummaryUseCaseImpl
 import com.example.harmoney.domain.transaction.impl.UpdateTransactionUseCaseImpl
@@ -152,6 +166,42 @@ val useCaseModule = module {
     // region currency list
     factory<GetSupportedCurrencyListUseCase> {
         GetSupportedCurrencyListUseCaseImpl(repository = get())
+    }
+    // endregion
+
+    factory<GetCategoryStatisticsUseCase> {
+        GetCategoryStatisticsUseCaseImpl(
+            getCategoriesSummaryUseCase = get()
+        )
+    }
+
+    // region account
+    factory<AddAccountUseCase> {
+        AddAccountUseCaseImpl(repository = get())
+    }
+
+    factory<UpdateAccountUseCase> {
+        UpdateAccountUseCaseImpl(repository = get())
+    }
+
+    factory<DeleteAccountUseCase> {
+        DeleteAccountUseCaseImpl(repository = get())
+    }
+
+    factory<GetAccountUseCase> {
+        GetAccountUseCaseImpl(repository = get())
+    }
+
+    factory<GetAccountListUseCase> {
+        GetAccountListUseCaseImpl(repository = get())
+    }
+
+    factory<UpdateAccountUserOrderUseCase> {
+        UpdateAccountUserOrderUseCaseImpl(repository = get())
+    }
+
+    factory<CheckCategoryAlreadyExistsUseCase> {
+        CheckCategoryAlreadyExistsUseCaseImpl(repository = get())
     }
     // endregion
 }
