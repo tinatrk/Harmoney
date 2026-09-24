@@ -3,6 +3,7 @@ package com.example.harmoney.core.di
 import com.example.harmoney.data.account.impl.AccountRepositoryImpl
 import com.example.harmoney.data.category.impl.CategoryRepositoryImpl
 import com.example.harmoney.data.currencyList.CurrencyListRepositoryImpl
+import com.example.harmoney.data.exchangeRate.ExchangeRateRepositoryImpl
 import com.example.harmoney.data.settings.categorySortingMode.impl.CategorySortOptionRepositoryImpl
 import com.example.harmoney.data.settings.firstDayMonth.impl.FirstDayMonthRepositoryImpl
 import com.example.harmoney.data.settings.reportingCurrency.impl.ReportingCurrencyRepositoryImpl
@@ -18,6 +19,7 @@ import com.example.harmoney.domain.settings.theme.api.repository.ThemeRepository
 import com.example.harmoney.domain.transaction.api.repository.TransactionRepository
 import org.koin.dsl.module
 import com.example.harmoney.domain.account.api.repository.AccountRepository
+import com.example.harmoney.domain.exchangeRate.api.repository.ExchangeRateRepository
 import com.example.harmoney.domain.statistics.api.repository.StatisticsRepository
 
 val repositoryModule = module {
@@ -68,6 +70,15 @@ val repositoryModule = module {
             statisticsDao = get(),
             dateConverter = get(),
             categoryStatisticsDbConverter = get()
+        )
+    }
+
+    factory<ExchangeRateRepository> {
+        ExchangeRateRepositoryImpl(
+            remoteDataSource = get(),
+            exchangeRateDao = get(),
+            exchangeRateDBConverter = get(),
+            exchangeRateDtoConverter = get()
         )
     }
 }

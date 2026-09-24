@@ -1,7 +1,7 @@
 package com.example.harmoney.data.network
 
 import com.example.harmoney.data.currencyList.network.dto.CurrencyDto
-import com.example.harmoney.data.exchangeRate.netwok.dto.CurrencyRateDto
+import com.example.harmoney.data.exchangeRate.netwok.dto.ExchangeRateDto
 import kotlinx.coroutines.CancellationException
 import java.io.IOException
 
@@ -17,7 +17,7 @@ class FrankfurterRemoteDataSourceImpl(
         baseIsoCode: String,
         quoteIsoCode: String,
         date: String?
-    ): NetworkResult<CurrencyRateDto> {
+    ): NetworkResult<ExchangeRateDto> {
         return executeRequest {
             frankfurterApi.getRate(
                 baseIsoCode = baseIsoCode,
@@ -32,7 +32,7 @@ class FrankfurterRemoteDataSourceImpl(
         quoteIsoCodes: String,
         from: String?,
         to: String?
-    ): NetworkResult<List<CurrencyRateDto>> {
+    ): NetworkResult<List<ExchangeRateDto>> {
         return executeRequest {
             frankfurterApi.getRates(
                 baseIsoCode = baseIsoCode,

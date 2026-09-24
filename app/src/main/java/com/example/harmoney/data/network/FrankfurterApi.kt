@@ -1,7 +1,7 @@
 package com.example.harmoney.data.network
 
 import com.example.harmoney.data.currencyList.network.dto.CurrencyDto
-import com.example.harmoney.data.exchangeRate.netwok.dto.CurrencyRateDto
+import com.example.harmoney.data.exchangeRate.netwok.dto.ExchangeRateDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -16,7 +16,7 @@ interface FrankfurterApi {
         @Path("base") baseIsoCode: String,
         @Path("quote") quoteIsoCode: String,
         @Query("date") date: String? = null,
-    ): retrofit2.Response<CurrencyRateDto>
+    ): retrofit2.Response<ExchangeRateDto>
 
     @GET("rates")
     suspend fun getRates(
@@ -24,5 +24,5 @@ interface FrankfurterApi {
         @Query("quotes") quoteIsoCodes: String? = null,
         @Query("from") from: String? = null,
         @Query("to") to: String? = null,
-    ): retrofit2.Response<List<CurrencyRateDto>>
+    ): retrofit2.Response<List<ExchangeRateDto>>
 }

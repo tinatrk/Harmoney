@@ -51,6 +51,7 @@ val viewModelModule = module {
             getReportingCurrencyUseCase = get(),
             setReportingCurrencyUseCase = get(),
             savedStateHandle = get(),
+            getCategoryStatisticsUseCase = get()
         )
     }
 

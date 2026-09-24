@@ -1,7 +1,7 @@
 package com.example.harmoney.data.network
 
 import com.example.harmoney.data.currencyList.network.dto.CurrencyDto
-import com.example.harmoney.data.exchangeRate.netwok.dto.CurrencyRateDto
+import com.example.harmoney.data.exchangeRate.netwok.dto.ExchangeRateDto
 
 interface RemoteDataSource {
 
@@ -11,12 +11,12 @@ interface RemoteDataSource {
         baseIsoCode: String,
         quoteIsoCode: String,
         date: String? = null,
-    ): NetworkResult<CurrencyRateDto>
+    ): NetworkResult<ExchangeRateDto>
 
     suspend fun getRates(
         baseIsoCode: String,
         quoteIsoCodes: String,
         from: String? = null,
         to: String? = null,
-    ): NetworkResult<List<CurrencyRateDto>>
+    ): NetworkResult<List<ExchangeRateDto>>
 }

@@ -20,6 +20,11 @@ import com.example.harmoney.data.currencyList.db.converter.CurrencyListDBConvert
 import com.example.harmoney.data.currencyList.db.dao.CurrencyListDao
 import com.example.harmoney.data.currencyList.network.converter.CurrencyListDtoConverter
 import com.example.harmoney.data.currencyList.network.converter.CurrencyListDtoConverterImpl
+import com.example.harmoney.data.exchangeRate.db.converter.ExchangeRateDBConverter
+import com.example.harmoney.data.exchangeRate.db.converter.ExchangeRateDBConverterImpl
+import com.example.harmoney.data.exchangeRate.db.dao.ExchangeRateDao
+import com.example.harmoney.data.exchangeRate.netwok.converter.ExchangeRateDtoConverter
+import com.example.harmoney.data.exchangeRate.netwok.converter.ExchangeRateDtoConverterImpl
 import com.example.harmoney.data.network.FrankfurterApi
 import com.example.harmoney.data.network.FrankfurterRemoteDataSourceImpl
 import com.example.harmoney.data.network.RemoteDataSource
@@ -156,6 +161,21 @@ val dataModule = module {
 
     factory<TotalMoneyDtoConverter> {
         TotalMoneyDtoConverterImpl()
+    }
+    // endregion
+
+    // region exchange rate
+    factory<ExchangeRateDao> {
+        val database = get<AppDatabase>()
+        database.exchangeRateDao()
+    }
+
+    factory<ExchangeRateDBConverter> {
+        ExchangeRateDBConverterImpl()
+    }
+
+    factory<ExchangeRateDtoConverter> {
+        ExchangeRateDtoConverterImpl()
     }
     // endregion
 }
