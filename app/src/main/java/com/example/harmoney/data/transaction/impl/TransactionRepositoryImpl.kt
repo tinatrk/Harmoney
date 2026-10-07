@@ -3,16 +3,17 @@ package com.example.harmoney.data.transaction.impl
 import androidx.sqlite.SQLiteException
 import com.example.harmoney.core.util.Resource
 import com.example.harmoney.data.converters.DateConverter
-import com.example.harmoney.data.transaction.converter.CategoryStatisticsDbConverter
-import com.example.harmoney.data.transaction.converter.TransactionDbConverter
+import com.example.harmoney.data.statistics.dao.StatisticsDao
+import com.example.harmoney.data.transaction.converter.TransactionDBConverter
 import com.example.harmoney.data.transaction.dao.TransactionDao
-import com.example.harmoney.domain.models.CategoriesSummary
+import com.example.harmoney.domain.models.Account
 import com.example.harmoney.domain.models.CategoryType
+import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.Money
+import com.example.harmoney.domain.models.MoneyAmount
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.domain.models.Transaction
 import com.example.harmoney.domain.models.TransactionFilter
-import com.example.harmoney.domain.models.TransactionsPerDay
 import com.example.harmoney.domain.models.TransactionsSummary
 import com.example.harmoney.domain.transaction.api.repository.TransactionRepository
 import com.example.harmoney.domain.transaction.models.TransactionFailure
@@ -24,9 +25,9 @@ import timber.log.Timber
 
 class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao,
-    private val transactionDbConverter: TransactionDbConverter,
-    private val categoryStatisticsDbConverter: CategoryStatisticsDbConverter,
-    private val dateConverter: DateConverter
+    private val transactionDbConverter: TransactionDBConverter,
+    private val dateConverter: DateConverter,
+    private val statisticsDao: StatisticsDao,
 ) : TransactionRepository {
     override suspend fun addTransaction(transaction: Transaction)
             : Resource<Unit, TransactionFailure> {
@@ -77,24 +78,31 @@ class TransactionRepositoryImpl(
     }
 
     override fun getTransactionsSummary(
+        accounts: List<Account>,
         categoryType: CategoryType,
         period: StatisticsPeriod,
         filter: TransactionFilter
     ): Flow<Resource<TransactionsSummary, TransactionFailure>> {
-        val transactionsWithCategoryFlow = transactionDao.getTransactionListWithCategory(
+        val accountIds = accounts.map { it.id }
+        val firstDayMillis = dateConverter.dateToMillis(period.firstDay)
+        val lastDayMillis = dateConverter.dateToMillis(period.lastDay)
+
+        val transactionsFlow = transactionDao.getTransactionList(
+            accountIds = accountIds,
             categoryTypeId = categoryType.id,
-            firstDayOfPeriodMillis = dateConverter.dateToMillis(period.firstDay),
-            lastDayOfPeriodMillis = dateConverter.dateToMillis(period.lastDay),
+            firstDayOfPeriodMillis = firstDayMillis,
+            lastDayOfPeriodMillis = lastDayMillis,
             categoryId = when (filter) {
                 is TransactionFilter.All -> null
                 is TransactionFilter.Category -> filter.id
             }
         )
 
-        val totalAmountFlow = transactionDao.getTotalAmount(
+        val totalsAmountFlow = statisticsDao.observeTotalAmountByCategoryType(
+            accountIds = accountIds,
             categoryTypeId = categoryType.id,
-            firstDayOfPeriodMillis = dateConverter.dateToMillis(period.firstDay),
-            lastDayOfPeriodMillis = dateConverter.dateToMillis(period.lastDay),
+            firstDayOfPeriodMillis = firstDayMillis,
+            lastDayOfPeriodMillis = lastDayMillis,
             categoryId = when (filter) {
                 is TransactionFilter.All -> null
                 is TransactionFilter.Category -> filter.id
@@ -102,24 +110,16 @@ class TransactionRepositoryImpl(
         )
 
         return combine(
-            transactionsWithCategoryFlow, totalAmountFlow
-        ) { transactionsWithCategory, totalAmount ->
+            transactionsFlow, totalsAmountFlow
+        ) { transactions, totalsAmount ->
             TransactionsSummary(
-                days = transactionsWithCategory.groupBy { transactionWithCategory ->
-                    dateConverter.millisToDate(transactionWithCategory.transaction.dateMillis)
-                }.map { (date, items) ->
-                    TransactionsPerDay(
-                        date = date,
-                        transactions = items.map { item ->
-                            transactionDbConverter.map(item)
-                        },
-                        totalAmount = Money(
-                            minorUnits = items.sumOf { item -> item.transaction.amount }
-                        )
+                transactions = transactionDbConverter.map(transactions),
+                totalAmounts = totalsAmount.map { total ->
+                    Money(
+                        amount = MoneyAmount(total.moneyAmountMinorUnits),
+                        currency = Currency.fromId(total.currencyId)
                     )
-                }.sortedByDescending { it.date },
-
-                totalAmount = Money(totalAmount)
+                }
             )
         }
             .map<TransactionsSummary, Resource<TransactionsSummary, TransactionFailure>> {
@@ -130,29 +130,4 @@ class TransactionRepositoryImpl(
                 emit(Resource.Error(TransactionFailure.DatabaseError))
             }
     }
-
-    override fun getCategoriesSummary(
-        categoryType: CategoryType,
-        period: StatisticsPeriod
-    ): Flow<Resource<CategoriesSummary, TransactionFailure>> =
-        transactionDao.getCategoryStatisticsList(
-            categoryTypeId = categoryType.id,
-            firstDayOfPeriodMillis = dateConverter.dateToMillis(period.firstDay),
-            lastDayOfPeriodMillis = dateConverter.dateToMillis(period.lastDay)
-        ).map { categoriesDB ->
-            val categories = categoryStatisticsDbConverter.map(categoriesDB)
-            val totalAmount = categories.sumOf { it.totalAmount.minorUnits }
-            Resource.Success(
-                CategoriesSummary(
-                    categories = categories,
-                    totalAmount = Money(totalAmount)
-                )
-            ) as Resource<CategoriesSummary, TransactionFailure>
-        }.catch { e ->
-            Timber.e(e, "Error getting categories summary")
-            when (e) {
-                is SQLiteException -> emit(Resource.Error(TransactionFailure.DatabaseError))
-                else -> throw e
-            }
-        }
 }

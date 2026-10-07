@@ -1,8 +1,8 @@
 package com.example.harmoney.presentation.transaction.viewModel
 
 import androidx.lifecycle.viewModelScope
-import com.example.harmoney.core.util.BaseViewModel
 import com.example.harmoney.core.session.SessionStateHolder
+import com.example.harmoney.core.util.BaseViewModel
 import com.example.harmoney.domain.models.Category
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
@@ -10,6 +10,7 @@ import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.Money
+import com.example.harmoney.domain.models.MoneyAmount
 import com.example.harmoney.domain.models.Transaction
 import com.example.harmoney.presentation.converters.CategoryUiConverter
 import com.example.harmoney.presentation.converters.DateFormatter
@@ -70,8 +71,10 @@ class TransactionViewModel(
         selectedCategories[editableTransaction.categoryType.ordinal] =
             editableTransaction.categoryId
         val amountString = numbersFormatter.moneyToString(
-            moneyMinorUnits = editableTransaction.amount.minorUnits,
-            currency = state.value.globalCurrency
+            Money(
+                amount = editableTransaction.amount,
+                currency = state.value.globalCurrency
+            )
         )
         amountInLocalCurrency = editableTransaction.amount.minorUnits
 
@@ -237,30 +240,28 @@ class TransactionViewModel(
             test.getAmountAfterCurrencyExchanged(
                 localCurrency = state.value.localCurrency,
                 targetCurrency = state.value.globalCurrency,
-                localAmount = newMoneyAmount.minorUnits
+                localAmount = newMoneyAmount.amount.minorUnits
             )
         } else {
-            newMoneyAmount
+            newMoneyAmount.amount
         }
 
         if (editableTransaction.amount.minorUnits == globalAmount.minorUnits) return
 
         val globalAmountString = numbersFormatter.moneyToString(
-            moneyMinorUnits = globalAmount.minorUnits,
-            currency = state.value.globalCurrency
+            Money(amount = globalAmount, currency = state.value.globalCurrency)
         )
 
         val localAmountString = if (state.value.isUsedCurrencyExchange) {
             numbersFormatter.moneyToString(
-                moneyMinorUnits = newMoneyAmount.minorUnits,
-                currency = state.value.localCurrency
+                Money(amount = newMoneyAmount.amount, currency = state.value.localCurrency)
             )
         } else {
             globalAmountString
         }
 
         editableTransaction = editableTransaction.copy(amount = globalAmount)
-        amountInLocalCurrency = newMoneyAmount.minorUnits
+        amountInLocalCurrency = newMoneyAmount.amount.minorUnits
 
         writableState.update {
             it.copy(
@@ -296,8 +297,7 @@ class TransactionViewModel(
             writableState.update {
                 it.copy(
                     amountInGlobalCurrency = numbersFormatter.moneyToString(
-                        moneyMinorUnits = newGlobalAmount.minorUnits,
-                        currency = state.value.globalCurrency
+                        Money(amount = newGlobalAmount, currency = state.value.globalCurrency)
                     ),
                     isUsedCurrencyExchange = newCurrency.id != it.globalCurrency.id,
                     isCurrencyMenuOpened = false,
@@ -445,7 +445,17 @@ class TransactionViewModel(
             id = ZERO_ID,
             category = getEmptyCategory(CategoryType.EXPENSES),
             date = LocalDate.now(),
-            amount = Money(ZERO_AMOUNT),
+            amount = MoneyAmount(ZERO_AMOUNT),
+            accountId = ZERO_ID,
+            /*Account(
+                            id = ZERO_ID,
+                            name = "",
+                            currency = Currency.EUR,
+                            initialBalance = MoneyAmount(0L),
+                            currentBalance = MoneyAmount(0L),
+                            isArchived = false,
+                            createdAt = Instant.now() // по идее, нужен 0 или null
+                        )*/
         )
     }
 

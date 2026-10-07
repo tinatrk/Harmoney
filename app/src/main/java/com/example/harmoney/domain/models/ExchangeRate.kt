@@ -4,8 +4,8 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 data class ExchangeRate(
-    val baseCurrency: Currency,
-    val quoteCurrency: Currency,
+    val sourceCurrency: Currency,
+    val targetCurrency: Currency,
     val rate: BigDecimal,
     val rateDate: LocalDate,
 )

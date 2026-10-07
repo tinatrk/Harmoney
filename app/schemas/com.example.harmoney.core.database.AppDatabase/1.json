@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f112448648682745203352f45fdf0fd8",
+    "identityHash": "effb4e5afe81f88f01f66da1ed6f1fee",
     "entities": [
       {
         "tableName": "category",
@@ -60,11 +60,17 @@
       },
       {
         "tableName": "transaction",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `categoryId` INTEGER NOT NULL, `dateMillis` INTEGER NOT NULL, `amount` INTEGER NOT NULL, `note` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, FOREIGN KEY(`categoryId`) REFERENCES `category`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `accountId` INTEGER NOT NULL, `categoryId` INTEGER NOT NULL, `dateMillis` INTEGER NOT NULL, `moneyAmountMinorUnits` INTEGER NOT NULL, `note` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, FOREIGN KEY(`categoryId`) REFERENCES `category`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`accountId`) REFERENCES `account`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "accountId",
+            "columnName": "accountId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -81,8 +87,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "amount",
-            "columnName": "amount",
+            "fieldPath": "moneyAmountMinorUnits",
+            "columnName": "moneyAmountMinorUnits",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -114,6 +120,15 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_transaction_categoryId` ON `${TABLE_NAME}` (`categoryId`)"
+          },
+          {
+            "name": "index_transaction_accountId",
+            "unique": false,
+            "columnNames": [
+              "accountId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_transaction_accountId` ON `${TABLE_NAME}` (`accountId`)"
           }
         ],
         "foreignKeys": [
@@ -123,6 +138,17 @@
             "onUpdate": "NO ACTION",
             "columns": [
               "categoryId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "account",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "accountId"
             ],
             "referencedColumns": [
               "id"
@@ -158,17 +184,141 @@
             "isoCode"
           ]
         }
+      },
+      {
+        "tableName": "account",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `currencyId` INTEGER NOT NULL, `initialBalanceMinorUnits` INTEGER NOT NULL, `isArchived` INTEGER NOT NULL, `createdAtMillis` INTEGER NOT NULL, `userOrder` REAL NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currencyId",
+            "columnName": "currencyId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "initialBalanceMinorUnits",
+            "columnName": "initialBalanceMinorUnits",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isArchived",
+            "columnName": "isArchived",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAtMillis",
+            "columnName": "createdAtMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userOrder",
+            "columnName": "userOrder",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "exchange_rates",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`baseCurrencyId` INTEGER NOT NULL, `quoteCurrencyId` INTEGER NOT NULL, `dateEpochDay` INTEGER NOT NULL, `rateToBase` INTEGER NOT NULL, PRIMARY KEY(`baseCurrencyId`, `quoteCurrencyId`, `dateEpochDay`))",
+        "fields": [
+          {
+            "fieldPath": "baseCurrencyId",
+            "columnName": "baseCurrencyId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quoteCurrencyId",
+            "columnName": "quoteCurrencyId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateEpochDay",
+            "columnName": "dateEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rateToBase",
+            "columnName": "rateToBase",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "baseCurrencyId",
+            "quoteCurrencyId",
+            "dateEpochDay"
+          ]
+        }
+      },
+      {
+        "tableName": "exchange_rate_sync",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`baseCurrencyId` INTEGER NOT NULL, `quoteCurrencyId` INTEGER NOT NULL, `dateEpochDay` INTEGER NOT NULL, PRIMARY KEY(`baseCurrencyId`, `quoteCurrencyId`, `dateEpochDay`))",
+        "fields": [
+          {
+            "fieldPath": "baseCurrencyId",
+            "columnName": "baseCurrencyId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quoteCurrencyId",
+            "columnName": "quoteCurrencyId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateEpochDay",
+            "columnName": "dateEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "baseCurrencyId",
+            "quoteCurrencyId",
+            "dateEpochDay"
+          ]
+        }
       }
     ],
     "views": [
       {
         "viewName": "transaction_with_category_view",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT `transaction`.*,\n        category.id AS category_id,\n        category.name AS category_name,\n        category.typeId AS category_typeId,\n        category.iconId AS category_iconId,\n        category.iconColorId AS category_iconColorId,\n        category.createdAt AS category_createdAt,\n        category.userOrder AS category_userOrder\n        FROM `transaction`\n        INNER JOIN category ON `transaction`.categoryId = category.id"
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT `transaction`.*,\n        category.id AS category_id,\n        category.name AS category_name,\n        category.typeId AS category_typeId,\n        category.iconId AS category_iconId,\n        category.iconColorId AS category_iconColorId,\n        category.createdAt AS category_createdAt,\n        category.userOrder AS category_userOrder,\n        \n        account.id AS account_id,\n        account.name AS account_name,\n        account.currencyId AS account_currencyId,\n        account.initialBalanceMinorUnits AS account_initialBalanceMinorUnits,\n        account.isArchived AS account_isArchived,\n        account.createdAtMillis AS account_createdAtMillis,\n        account.userOrder AS account_userOrder\n        \n        FROM `transaction`\n        INNER JOIN category ON `transaction`.categoryId = category.id\n        INNER JOIN account ON `transaction`.accountId = account.id"
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f112448648682745203352f45fdf0fd8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'effb4e5afe81f88f01f66da1ed6f1fee')"
     ]
   }
 }

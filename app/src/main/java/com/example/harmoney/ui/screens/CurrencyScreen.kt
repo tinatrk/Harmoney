@@ -172,7 +172,7 @@ fun CurrencyContent(
                 HarmMessage(
                     modifier = Modifier.fillMaxSize(),
                     message =
-                        stringResource(R.string.toast_get_supported_currency_list_error)
+                        stringResource(R.string.error_something_went_wrong)
                 )
             }
 

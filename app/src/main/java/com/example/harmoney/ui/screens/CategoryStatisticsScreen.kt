@@ -44,6 +44,7 @@ import com.example.harmoney.presentation.categoryStatistics.models.CategoryStati
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
 import com.example.harmoney.presentation.categoryStatistics.models.FirstDayMonthError
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
+import com.example.harmoney.presentation.models.AccountScopeUi
 import com.example.harmoney.presentation.models.StatisticsPeriodUi
 import com.example.harmoney.ui.components.HarmMessage
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
@@ -104,6 +105,46 @@ fun CategoryStatisticsScreen(
                         )
                     }
 
+                    is CategoryStatisticsAction.ShowUpdateReportingCurrencyError -> {
+                        snackbarHostState.showSnackbar(
+                            context.getString(
+                                R.string.toast_update_reporting_currency_error
+                            )
+                        )
+                    }
+
+                    is CategoryStatisticsAction.ShowGetSettingsError -> {
+                        snackbarHostState.showSnackbar(
+                            context.getString(
+                                R.string.toast_load_settings_error
+                            )
+                        )
+                    }
+
+                    is CategoryStatisticsAction.ShowGetAccountsError -> {
+                        snackbarHostState.showSnackbar(
+                            context.getString(
+                                R.string.toast_load_accounts_error
+                            )
+                        )
+                    }
+
+                    is CategoryStatisticsAction.ShowGetStatisticsError -> {
+                        snackbarHostState.showSnackbar(
+                            context.getString(
+                                R.string.toast_load_statistics_error
+                            )
+                        )
+                    }
+
+                    is CategoryStatisticsAction.ShowUpdateFirstDayMonthError -> {
+                        snackbarHostState.showSnackbar(
+                            context.getString(
+                                R.string.toast_update_first_day_month_error
+                            )
+                        )
+                    }
+
                     null -> {}
                 }
             }
@@ -141,8 +182,9 @@ fun CategoryStatisticsScreen(
             modifier = modifier,
             topBar = {
                 HarmTopBar.HarmCommonTopBar(
-                    title = state.currentBalance,
-                    subtitle = stringResource(R.string.title_balance),
+                    title = state.selectedAccountScope?.balance ?: "",
+                    subtitle = state.selectedAccountScope?.name
+                        ?: "",//stringResource(R.string.title_balance),
                     navigationIcon = {
                         HarmButton.HarmTopBarIconButton(
                             iconRes = R.drawable.ic_arrow_back_24px,
@@ -271,7 +313,7 @@ fun CategoryStatisticsContent(
             periods = StatisticsPeriodType.entries.toImmutableList(),
             data = state.selectedStatisticsPeriod.date,
             pieChartItems = state.pieChartCategories,
-            total = state.total,
+            total = state.totalByCategoryType,
             selectedPeriod = state.selectedStatisticsPeriod.type,
             onPeriodClick = { newPeriod ->
                 onEvent(CategoryStatisticsEvent.OnStatisticsPeriodClick(newPeriod))
@@ -344,7 +386,13 @@ private fun CategoryStatisticsScreenDarkPreviewEmpty() {
                     type = StatisticsPeriodType.CURRENT_MONTH,
                     date = "01.03.2026 - 31.03.2026"
                 ),
-                currentBalance = "0.00 ₽"
+                selectedAccountScope = AccountScopeUi(
+                    id = 0,
+                    name = "Основная карта [RUB]",
+                    balance = "0.00 ₽",
+                    balanceOriginals = null,
+                    isArchivedMark = false
+                )
             ),
             drawerState = drawerState,
             snackbarState = snackbarHostState
@@ -365,7 +413,13 @@ private fun CategoryStatisticsScreenLightPreviewEmpty() {
                     type = StatisticsPeriodType.CURRENT_MONTH,
                     date = "01.03.2026 - 31.03.2026"
                 ),
-                currentBalance = "0.00 ₽"
+                selectedAccountScope = AccountScopeUi(
+                    id = 0,
+                    name = "Основная карта [RUB]",
+                    balance = "0.00 ₽",
+                    balanceOriginals = null,
+                    isArchivedMark = false
+                )
             ),
             drawerState = drawerState,
             snackbarState = snackbarHostState
@@ -392,8 +446,14 @@ private fun CategoryStatisticsScreenDarkPreview() {
                 ),
                 categories = categories,
                 pieChartCategories = pieChartItems,
-                total = total,
-                currentBalance = "20 000 ₽"
+                totalByCategoryType = total,
+                selectedAccountScope = AccountScopeUi(
+                    id = 0,
+                    name = "Основная карта [RUB]",
+                    balance = "20 000 ₽",
+                    balanceOriginals = null,
+                    isArchivedMark = false
+                )
             ),
             drawerState = drawerState,
             snackbarState = snackbarHostState
@@ -420,8 +480,14 @@ private fun CategoryStatisticsScreenLightPreview() {
                 ),
                 categories = categories,
                 pieChartCategories = pieChartItems,
-                total = total,
-                currentBalance = "20 000 ₽"
+                totalByCategoryType = total,
+                selectedAccountScope = AccountScopeUi(
+                    id = 0,
+                    name = "Основная карта [RUB]",
+                    balance = "20 000 ₽",
+                    balanceOriginals = null,
+                    isArchivedMark = false
+                )
             ),
             drawerState = drawerState,
             snackbarState = snackbarHostState

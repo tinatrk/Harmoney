@@ -8,4 +8,9 @@ sealed interface CategoryStatisticsAction {
     data class NavigateToCurrency(val currencyId: Long) : CategoryStatisticsAction
 
     data object ShowChangeThemeError : CategoryStatisticsAction
+    data object ShowUpdateReportingCurrencyError: CategoryStatisticsAction
+    data object ShowGetSettingsError: CategoryStatisticsAction
+    data object ShowGetAccountsError: CategoryStatisticsAction
+    data object ShowGetStatisticsError: CategoryStatisticsAction
+    data object ShowUpdateFirstDayMonthError: CategoryStatisticsAction
 }

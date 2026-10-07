@@ -9,14 +9,20 @@ import com.example.harmoney.presentation.calculator.viewModel.CalculatorViewMode
 import com.example.harmoney.presentation.category.viewModel.CategoryViewModel
 import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
+import com.example.harmoney.presentation.converters.AccountScopeUiConverter
+import com.example.harmoney.presentation.converters.AccountScopeUiConverterImpl
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverter
 import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverterImpl
 import com.example.harmoney.presentation.converters.CategoryUiConverter
 import com.example.harmoney.presentation.converters.CategoryUiConverterImpl
+import com.example.harmoney.presentation.converters.ConvertedTotalFormatter
+import com.example.harmoney.presentation.converters.ConvertedTotalFormatterImpl
 import com.example.harmoney.presentation.converters.CurrencyUiConverter
 import com.example.harmoney.presentation.converters.CurrencyUiConverterImpl
 import com.example.harmoney.presentation.converters.DateFormatter
 import com.example.harmoney.presentation.converters.DateFormatterImpl
+import com.example.harmoney.presentation.converters.ExchangeRateFormatter
+import com.example.harmoney.presentation.converters.ExchangeRateFormatterImpl
 import com.example.harmoney.presentation.converters.NumbersFormatter
 import com.example.harmoney.presentation.converters.NumbersFormatterImpl
 import com.example.harmoney.presentation.converters.OneDayTransactionsUiConverter
@@ -40,18 +46,28 @@ val viewModelModule = module {
     // region viewModel
     viewModel {
         CategoryStatisticsViewModel(
-            test = get(),
-            categoryStatisticsUiConverter = get(),
-            numbersFormatter = get(),
+            savedStateHandle = get(),
+            sessionSateHolder = get(),
+            getStatisticsPeriodsUseCase = get(),
             setThemeUseCase = get(),
             firstDayMonthInteractor = get(),
-            getStatisticsPeriodsUseCase = get(),
+            reportingCurrencyInteractor = get(),
+
+            getAccountListUseCase = get(),
+            selectedAccountScopeInteractor = get(),
+            getAccountScopesUseCase = get(),
+
+            getCategoryStatisticsUseCase = get(),
+            getCategoryTotalUseCase = get(),
+            convertCategoryStatisticsUseCase = get(),
+            convertTotalMoneyUseCase = get(),
+
+            numbersFormatter = get(),
+            accountScopeUiConverter = get(),
             statisticsPeriodUiConverter = get(),
-            sessionSateHolder = get(),
-            getReportingCurrencyUseCase = get(),
-            setReportingCurrencyUseCase = get(),
-            savedStateHandle = get(),
-            getCategoryStatisticsUseCase = get()
+            categoryStatisticsUiConverter = get(),
+            exchangeRateFormatter = get(),
+            convertedTotalFormatter = get(),
         )
     }
 
@@ -124,7 +140,11 @@ val viewModelModule = module {
 
     // region ui converters
     factory<CategoryStatisticsUiConverter> {
-        CategoryStatisticsUiConverterImpl(categoryUiConverter = get(), numberFormatter = get())
+        CategoryStatisticsUiConverterImpl(
+            categoryUiConverter = get(),
+            numberFormatter = get(),
+            convertedTotalFormatter = get(),
+        )
     }
 
     factory<CategoryUiConverter> {
@@ -165,6 +185,22 @@ val viewModelModule = module {
 
     factory<CurrencyUiConverter> {
         CurrencyUiConverterImpl(stringProvider = get())
+    }
+
+    factory<AccountScopeUiConverter> {
+        AccountScopeUiConverterImpl(
+            stringProvider = get(),
+            numbersFormatter = get(),
+            convertedTotalFormatter = get()
+        )
+    }
+
+    factory<ExchangeRateFormatter> {
+        ExchangeRateFormatterImpl(stringProvider = get(), dateFormatter = get())
+    }
+
+    factory<ConvertedTotalFormatter> {
+        ConvertedTotalFormatterImpl(numbersFormatter = get(), stringProvider = get())
     }
     // endregion
 

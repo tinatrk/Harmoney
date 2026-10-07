@@ -81,9 +81,7 @@ val dataModule = module {
     }
 
     factory<TransactionDBConverter> {
-        TransactionDBConverterImpl(
-            dateConverter = get(), categoryDBConverter = get(), accountDBConverter = get()
-        )
+        TransactionDBConverterImpl(dateConverter = get(), categoryDBConverter = get())
     }
     // endregion
 

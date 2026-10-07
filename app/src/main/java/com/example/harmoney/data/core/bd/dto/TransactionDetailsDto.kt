@@ -21,7 +21,7 @@ import com.example.harmoney.data.transaction.entity.TransactionEntity
         account.id AS account_id,
         account.name AS account_name,
         account.currencyId AS account_currencyId,
-        account.initialBalanceMinorUnits AS account_initialBalance,
+        account.initialBalanceMinorUnits AS account_initialBalanceMinorUnits,
         account.isArchived AS account_isArchived,
         account.createdAtMillis AS account_createdAtMillis,
         account.userOrder AS account_userOrder
@@ -39,3 +39,4 @@ data class TransactionDetailsDto(
     @Embedded(prefix = "category_")
     val category: CategoryEntity,
 )
+// точно ли здесь нужны другие поля account кроме accountId?

@@ -10,8 +10,9 @@ import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
 
-class CategoryStatisticsDbConverterImpl(private val totalMoneyDtoConverter: TotalMoneyDtoConverter) :
-    CategoryStatisticsDbConverter {
+class CategoryStatisticsDbConverterImpl(
+    private val totalMoneyDtoConverter: TotalMoneyDtoConverter
+) : CategoryStatisticsDbConverter {
     override fun map(
         categoryStatistics: CategoryStatisticsDb,
         totals: List<TotalMoneyDto>

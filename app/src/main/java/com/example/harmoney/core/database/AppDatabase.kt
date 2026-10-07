@@ -2,6 +2,7 @@ package com.example.harmoney.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.harmoney.data.account.dao.AccountDao
 import com.example.harmoney.data.account.entity.AccountEntity
 import com.example.harmoney.data.category.dao.CategoryDao
@@ -23,6 +24,7 @@ import com.example.harmoney.data.transaction.entity.TransactionEntity
     version = 1,
     exportSchema = true
 )
+@TypeConverters(BigDecimalConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
 

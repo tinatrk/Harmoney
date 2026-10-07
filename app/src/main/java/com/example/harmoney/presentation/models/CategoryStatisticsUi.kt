@@ -6,5 +6,6 @@ import androidx.compose.runtime.Immutable
 data class CategoryStatisticsUi(
     val category: CategoryUi,
     val totalAmount: String,
+    val totalOrigins: String,
     val percentage: String,
 )

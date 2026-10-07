@@ -466,6 +466,7 @@ private fun HarmCategoryCardSumTransactions_DarkPreview() {
                     )
                 ),
                 totalAmount = "2 000 ₽",
+                totalOrigins = "",
                 percentage = "10.0%"
             ),
             onCardClick = {}
@@ -489,6 +490,7 @@ private fun HarmCategoryCardSumTransactions_LightPreview() {
                     )
                 ),
                 totalAmount = "2 000 ₽",
+                totalOrigins = "",
                 percentage = "10.0%"
             ),
             onCardClick = {}
@@ -512,6 +514,7 @@ private fun HarmCategoryCardWithMenu_DarkPreview() {
                     )
                 ),
                 totalAmount = "2 000 ₽",
+                totalOrigins = "",
                 percentage = "10.0%"
             ),
             onCardClick = {},
@@ -544,6 +547,7 @@ private fun HarmCategoryCardWithMenu_LightPreview() {
                     )
                 ),
                 totalAmount = "2 000 ₽",
+                totalOrigins = "",
                 percentage = "10.0%"
             ),
             onCardClick = {},

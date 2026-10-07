@@ -139,16 +139,19 @@ object PreviewData {
             CategoryStatisticsUi(
                 category = expensesCategories[2],
                 totalAmount = "15 000 ₽",
+                totalOrigins = "",
                 percentage = "57.7%",
             ),
             CategoryStatisticsUi(
                 category = expensesCategories[1],
                 totalAmount = "7 500 ₽",
+                totalOrigins = "",
                 percentage = "28.8%",
             ),
             CategoryStatisticsUi(
                 category = expensesCategories[0],
                 totalAmount = "3 500 ₽",
+                totalOrigins = "",
                 percentage = "13.5%",
             ),
         )

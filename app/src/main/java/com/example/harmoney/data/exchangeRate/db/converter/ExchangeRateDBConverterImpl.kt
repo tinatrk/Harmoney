@@ -8,8 +8,8 @@ import java.time.LocalDate
 class ExchangeRateDBConverterImpl : ExchangeRateDBConverter {
     override fun map(exchangeRate: ExchangeRate): ExchangeRateEntity {
         return ExchangeRateEntity(
-            baseCurrencyId = exchangeRate.baseCurrency.id,
-            quoteCurrencyId = exchangeRate.quoteCurrency.id,
+            baseCurrencyId = exchangeRate.sourceCurrency.id,
+            quoteCurrencyId = exchangeRate.targetCurrency.id,
             dateEpochDay = exchangeRate.rateDate.toEpochDay(),
             rateToBase = exchangeRate.rate
         )
@@ -17,8 +17,8 @@ class ExchangeRateDBConverterImpl : ExchangeRateDBConverter {
 
     override fun map(exchangeRate: ExchangeRateEntity): ExchangeRate {
         return ExchangeRate(
-            baseCurrency = Currency.fromId(exchangeRate.baseCurrencyId),
-            quoteCurrency = Currency.fromId(exchangeRate.quoteCurrencyId),
+            sourceCurrency = Currency.fromId(exchangeRate.baseCurrencyId),
+            targetCurrency = Currency.fromId(exchangeRate.quoteCurrencyId),
             rate = exchangeRate.rateToBase,
             rateDate = LocalDate.ofEpochDay(exchangeRate.dateEpochDay),
         )

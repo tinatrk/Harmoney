@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.harmoney.data.account.entity.AccountEntity
 import com.example.harmoney.data.category.entity.CategoryEntity
 
 @Entity(
@@ -15,16 +16,23 @@ import com.example.harmoney.data.category.entity.CategoryEntity
             parentColumns = ["id"],
             childColumns = ["categoryId"],
             onDelete = ForeignKey.CASCADE,
+        ),
+        ForeignKey(
+            entity = AccountEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["accountId"],
+            onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["categoryId"])]
+    indices = [Index(value = ["categoryId"]), Index(value = ["accountId"])]
 )
 data class TransactionEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id") val id: Long,
+    @ColumnInfo("accountId") val accountId: Long,
     @ColumnInfo(name = "categoryId") val categoryId: Long,
     @ColumnInfo(name = "dateMillis") val dateMillis: Long,
-    @ColumnInfo(name = "amount") val amount: Long,
+    @ColumnInfo(name = "moneyAmountMinorUnits") val moneyAmountMinorUnits: Long,
     @ColumnInfo(name = "note") val note: String,
     @ColumnInfo(name = "createdAt") val createdAt: Long
 )

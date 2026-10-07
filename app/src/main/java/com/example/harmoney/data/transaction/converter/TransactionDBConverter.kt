@@ -1,11 +1,13 @@
 package com.example.harmoney.data.transaction.converter
 
-import com.example.harmoney.data.core.TransactionWithCategory
+import com.example.harmoney.data.core.bd.dto.TransactionDetailsDto
 import com.example.harmoney.data.transaction.entity.TransactionEntity
 import com.example.harmoney.domain.models.Transaction
 
-interface TransactionDbConverter {
+interface TransactionDBConverter {
     fun map(transaction: Transaction): TransactionEntity
 
-    fun map(transactionWithCategory: TransactionWithCategory): Transaction
+    fun map(transaction: TransactionDetailsDto): Transaction
+
+    fun map(transactions: List<TransactionDetailsDto>): List<Transaction>
 }

@@ -1,6 +1,5 @@
 package com.example.harmoney.data.currencyList
 
-import android.util.Log
 import androidx.sqlite.SQLiteException
 import com.example.harmoney.core.util.Resource
 import com.example.harmoney.data.currencyList.db.converter.CurrencyListDBConverter
@@ -8,8 +7,8 @@ import com.example.harmoney.data.currencyList.db.dao.CurrencyListDao
 import com.example.harmoney.data.currencyList.db.entity.CurrencyEntity
 import com.example.harmoney.data.currencyList.network.converter.CurrencyListDtoConverter
 import com.example.harmoney.data.currencyList.network.dto.CurrencyDto
-import com.example.harmoney.data.network.RemoteDataSource
 import com.example.harmoney.data.network.NetworkResult
+import com.example.harmoney.data.network.RemoteDataSource
 import com.example.harmoney.domain.currencyList.api.repository.CurrencyListRepository
 import com.example.harmoney.domain.currencyList.models.CurrencyListFailure
 import com.example.harmoney.domain.models.Currency
@@ -43,7 +42,9 @@ class CurrencyListRepositoryImpl(
 
             is NetworkResult.HttpError -> {
                 when (result.code) {
-                    in 400..499 -> Resource.Error(CurrencyListFailure.BadRequest)
+                    in HTTP_CODE_400..HTTP_CODE_499 ->
+                        Resource.Error(CurrencyListFailure.BadRequest)
+
                     else -> Resource.Error(CurrencyListFailure.NetworkError)
                 }
             }
@@ -78,7 +79,7 @@ class CurrencyListRepositoryImpl(
     }
 
     private suspend fun processCurrencies(currencies: List<CurrencyDto>)
-    : Resource<List<Currency>, CurrencyListFailure> {
+            : Resource<List<Currency>, CurrencyListFailure> {
         val supportedCurrenciesDto =
             currencies.filter { currencyDto ->
                 currencyDto
@@ -100,5 +101,10 @@ class CurrencyListRepositoryImpl(
         return Resource.Success(
             data = currencyListDtoConverter.map(currencies = supportedCurrenciesDto)
         )
+    }
+
+    companion object {
+        private const val HTTP_CODE_400 = 400
+        private const val HTTP_CODE_499 = 499
     }
 }

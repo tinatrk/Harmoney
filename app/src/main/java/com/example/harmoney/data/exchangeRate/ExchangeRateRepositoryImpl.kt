@@ -13,7 +13,9 @@ import com.example.harmoney.domain.exchangeRate.api.repository.ExchangeRateRepos
 import com.example.harmoney.domain.exchangeRate.models.ExchangeRateFailure
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.ExchangeRate
+import com.example.harmoney.domain.models.ExchangeRateResult
 import timber.log.Timber
+import java.math.BigDecimal
 import java.time.LocalDate
 
 class ExchangeRateRepositoryImpl(
@@ -23,24 +25,155 @@ class ExchangeRateRepositoryImpl(
     private val exchangeRateDtoConverter: ExchangeRateDtoConverter,
 ) : ExchangeRateRepository {
 
-    override suspend fun getRates(
-        baseCurrency: Currency,
-        quoteCurrencies: Set<Currency>,
-    ): Resource<List<ExchangeRate>, ExchangeRateFailure> {
+    private val baseCurrency = Currency.EUR
 
-        if (quoteCurrencies.isEmpty()) return Resource.Success(emptyList())
+    override suspend fun getRates(
+        sources: Set<Currency>,
+        target: Currency,
+    ): Resource<List<ExchangeRateResult>, ExchangeRateFailure> {
+
+        if (sources.isEmpty()) return Resource.Success(emptyList())
 
         return try {
-            val result = getRatesInternal(baseCurrency, quoteCurrencies)
-            Resource.Success(exchangeRateDBConverter.map(result))
+            val result = getAvailableRatesFromBaseToQuote(
+                baseCurrency, sources + target
+            )
+            val ratesFromBaseToAll = exchangeRateDBConverter.map(result)
+
+            val rates = sources.map { source ->
+                when {
+                    // это условие идет строго первым, иначе некорректно обработается случай
+                    // source.id = target.id = baseCurrency.id -> rate not required
+                    source.id == target.id -> {
+                        ExchangeRateResult.NotRequired(source, target)
+                    }
+
+                    source.id == baseCurrency.id -> {
+                        getBaseToTargetRate(target, ratesFromBaseToAll)
+                    }
+
+                    target.id == baseCurrency.id -> {
+                        getSourceToBaseRate(source, ratesFromBaseToAll)
+                    }
+
+                    else -> {
+                        getCrossRate(source, target, ratesFromBaseToAll)
+                    }
+                }
+            }
+
+            Resource.Success(rates)
         } catch (e: SQLiteException) {
             Timber.e(e, "Error getting exchange rates")
             Resource.Error(ExchangeRateFailure.DatabaseError)
         }
-
     }
 
-    private suspend fun getRatesInternal(
+    /** Обязательное условие `source` == `baseCurrency` && `target` != `baseCurrency`
+     *
+     * В противном случае будет возвращенно некорректное значение для случая
+     * `source` == `baseCurrency` && `target` == `baseCurrency`
+     * (вернется NotAvailable вместо NotRequired)
+     */
+    private fun getBaseToTargetRate(
+        target: Currency,
+        ratesFromBaseToAll: List<ExchangeRate>
+    ): ExchangeRateResult {
+        require(target.id != baseCurrency.id) {
+            "Target currency must differ from base currency"
+        }
+
+        val fromBaseToTarget = getRateFromBaseToCurrency(currency = target, ratesFromBaseToAll)
+            ?: return ExchangeRateResult.NotAvailable(baseCurrency, target)
+
+        return ExchangeRateResult.Available(
+            ExchangeRate(
+                sourceCurrency = baseCurrency,
+                targetCurrency = target,
+                rate = fromBaseToTarget.rate,
+                rateDate = fromBaseToTarget.rateDate,
+            )
+        )
+    }
+
+    /** Обязательное условие  `source` != `baseCurrency` && `target` == `baseCurrency`
+     *
+     * В противном случае будет возвращенно некорректное значение для случая
+     * `source` == `baseCurrency` && `target` == `baseCurrency`
+     *  (вернется NotAvailable вместо NotRequired)
+     */
+    private fun getSourceToBaseRate(
+        source: Currency,
+        ratesFromBaseToAll: List<ExchangeRate>
+    ): ExchangeRateResult {
+        require(source.id != baseCurrency.id) {
+            "Source currency must differ from base currency"
+        }
+
+        val fromBaseToSource = getRateFromBaseToCurrency(currency = source, ratesFromBaseToAll)
+            ?: return ExchangeRateResult.NotAvailable(source, baseCurrency)
+
+        return ExchangeRateResult.Available(
+            ExchangeRate(
+                sourceCurrency = source,
+                targetCurrency = baseCurrency,
+                rate = BigDecimal.ONE.divide(fromBaseToSource.rate),
+                rateDate = fromBaseToSource.rateDate,
+            )
+        )
+    }
+
+    /** Обязательное условие `source` != `target` && `source` != `baseCurrency` &&
+     * `target` != `baseCurrency`
+     *
+     * В противном случае некорректные значения будут возвращены для особых ситуаций:
+     *
+     * `source` = `target`,
+     *
+     * `source` = `baseCurrency`,
+     *
+     * `target` = `baseCurrency`,
+     *
+     * `source` = `target` = `baseCurrency`
+     */
+    private fun getCrossRate(
+        source: Currency,
+        target: Currency,
+        ratesFromBaseToAll: List<ExchangeRate>,
+    ): ExchangeRateResult {
+        require(
+            source.id != target.id &&
+                    source.id != baseCurrency.id &&
+                    target.id != baseCurrency.id
+        ) {
+            "Incorrect input data for getting cross rate"
+        }
+
+        val fromBaseToSource = getRateFromBaseToCurrency(currency = source, ratesFromBaseToAll)
+        val fromBaseToTarget = getRateFromBaseToCurrency(currency = target, ratesFromBaseToAll)
+
+        if (fromBaseToSource == null || fromBaseToTarget == null) {
+            return ExchangeRateResult.NotAvailable(source, target)
+        }
+
+        return ExchangeRateResult.Available(
+            ExchangeRate(
+                sourceCurrency = fromBaseToSource.targetCurrency,
+                targetCurrency = fromBaseToTarget.targetCurrency,
+                rate = fromBaseToTarget.rate.divide(fromBaseToSource.rate),
+                rateDate = minOf(fromBaseToSource.rateDate, fromBaseToTarget.rateDate)
+            )
+        )
+    }
+
+    private fun getRateFromBaseToCurrency(
+        currency: Currency,
+        ratesFromBaseToAll: List<ExchangeRate>
+    ): ExchangeRate? {
+        return ratesFromBaseToAll.find { it.targetCurrency.id == currency.id }
+    }
+
+    private suspend fun getAvailableRatesFromBaseToQuote(
         baseCurrency: Currency,
         quoteCurrencies: Set<Currency>,
     ): List<ExchangeRateEntity> {
@@ -100,7 +233,7 @@ class ExchangeRateRepositoryImpl(
             updateCacheRatesFromRemote(
                 baseCurrency = baseCurrency,
                 quoteCurrencies = quotesToFetch,
-                dateFrom = today.minusDays(7),
+                dateFrom = today.minusDays(AMOUNT_OF_DAYS_FOR_STALE_EXCHANGE_RATE),
                 dateTo = today,
             )
         }
@@ -146,217 +279,7 @@ class ExchangeRateRepositoryImpl(
         }
     }
 
-    /*override suspend fun getRates(
-        baseCurrency: Currency,
-        quoteCurrency: Currency
-    ): Resource<ExchangeRate, ExchangeRateFailure> {
-        val response = remoteDataSource.getRate(
-            baseIsoCode = baseCurrency.isoCode,
-            quoteIsoCode = quoteCurrency.isoCode,
-        )
-
-        return when (response) {
-            is NetworkResult.Success -> {
-                if (response.data.baseIsoCode
-                        .equals(baseCurrency.isoCode, ignoreCase = true)
-                    && response.data.quoteIsoCode.equals(
-                        quoteCurrency.isoCode,
-                        ignoreCase = true
-                    )
-                ) {
-                    val exchangeRate = ExchangeRate(
-                        baseCurrency = baseCurrency,
-                        quoteCurrency = quoteCurrency,
-                        rate = response.data.rate,
-                        rateDate = response.data.date
-                            .let(LocalDate::parse),
-                    )
-                    Resource.Success(exchangeRate)
-                } else {
-                    Resource.Error(ExchangeRateFailure.NetworkError)
-                }
-            }
-
-            else -> Resource.Error(ExchangeRateFailure.NetworkError)//????????
-
-            /* -> {
-                Resource.Error(ExchangeRateFailure.BadRequest)
-            }
-
-            HTTP_INTERNAL_ERROR -> {
-                Resource.Error(ExchangeRateFailure.NetworkError)
-            }
-
-            HTTP_UNAVAILABLE -> {
-                Resource.Error(ExchangeRateFailure.NetworkConnectionError)
-            }
-
-            else -> {
-                Resource.Error(ExchangeRateFailure.RateNotAvailable)//??????????
-            }*/
-        }
-    }*/
-
-    /* override suspend fun getHistoricalRate(
-         baseCurrency: Currency,
-         quoteCurrency: Currency,
-         date: LocalDate
-     ): Resource<ExchangeRate, ExchangeRateFailure> {
-         if (baseCurrency == quoteCurrency) {
-             return Resource.Success(
-                 ExchangeRate(
-                     baseCurrency = baseCurrency,
-                     quoteCurrency = quoteCurrency,
-                     rate = BigDecimal.ONE,
-                     rateDate = date,
-                 )
-             )
-         }
-
-         val directCachedRate = exchangeRateDao.getRate(
-             baseCurrencyId = baseCurrency.id,
-             quoteCurrencyId = quoteCurrency.id,
-             dateEpochDay = dateConverter.dateToMillis(date)
-         )
-
-         if (directCachedRate != null) {
-             return Resource.Success(
-                 exchangeRateDBConverter.map(directCachedRate)
-             )
-         }
-
-         val inverseCachedRate = exchangeRateDao.getRate(
-             baseCurrencyId = quoteCurrency.id,
-             quoteCurrencyId = baseCurrency.id,
-             dateEpochDay = dateConverter.dateToMillis(date)
-         )
-
-         if (inverseCachedRate != null) {
-             return Resource.Success(
-                 ExchangeRate(
-                     baseCurrency = baseCurrency,
-                     quoteCurrency = quoteCurrency,
-                     rate = BigDecimal.ONE.divide(
-                         inverseCachedRate.rateToBase,
-                         16,
-                         RoundingMode.HALF_EVEN,
-                     ),
-                     rateDate = date,
-                     requestedDate = date
-                 )
-             )
-         }
-
-         return fetchAndCache(
-             baseCurrency = baseCurrency,
-             quoteCurrency = quoteCurrency,
-             date = date
-         )
-     }
-
-     private suspend fun fetchAndCache(
-         baseCurrency: Currency,
-         quoteCurrency: Currency,
-         date: LocalDate,
-     ): Resource<ExchangeRate, ExchangeRateFailure> {
-
-         val response = remoteDataSource.getRate(
-             baseIsoCode = baseCurrency.isoCode,
-             quoteIsoCode = quoteCurrency.isoCode,
-             date = date.toString()
-         )
-
-         return when (response) {
-             is NetworkResult.Success -> {
-                 if (response.data.baseIsoCode
-                         .equals(baseCurrency.isoCode, ignoreCase = true)
-                     && response.data.quoteIsoCode.equals(
-                         quoteCurrency.isoCode,
-                         ignoreCase = true
-                     )
-                 ) {
-                     val exchangeRateEntity = ExchangeRateEntity(
-                         baseCurrencyId = baseCurrency.id,
-                         quoteCurrencyId = quoteCurrency.id,
-                         dateEpochDay = response.data.date.let(LocalDate::parse)
-                             ?.let(LocalDate::toEpochDay) ?: -1L,//????????
-                         rateToBase = response.data.rate
-                     )
-                     exchangeRateDao.insertRate(exchangeRateEntity)
-                     Resource.Success(exchangeRateDBConverter.map(exchangeRateEntity))
-                 } else {
-                     Resource.Error(ExchangeRateFailure.NetworkError)
-                 }
-             }
-
-             else -> Resource.Error(ExchangeRateFailure.NetworkError)//??????
-
-             /*HTTP_BAD_REQUEST -> {
-                 Resource.Error(ExchangeRateFailure.BadRequest)
-             }
-
-             HTTP_INTERNAL_ERROR -> {
-                 Resource.Error(ExchangeRateFailure.NetworkError)
-             }
-
-             HTTP_UNAVAILABLE -> {
-                 Resource.Error(ExchangeRateFailure.NetworkConnectionError)
-             }
-
-             else -> {
-                 Resource.Error(ExchangeRateFailure.RateNotAvailable)//??????????
-             }*/
-         }
-     }*/
-
-    /*override suspend fun preloadRates(
-        baseCurrency: Currency,
-        quoteCurrencies: Set<Currency>,
-        from: LocalDate,
-        to: LocalDate
-    ) {
-        val quotesString = quoteCurrencies.filter { it.id != baseCurrency.id }
-            .joinToString(",") { it.isoCode }
-
-        if (quotesString.isEmpty()) return
-
-        val response = remoteDataSource.getRates(
-            baseIsoCode = baseCurrency.isoCode,
-            quoteIsoCodes = quotesString,
-            from = from.toString(),
-            to = to.toString()
-        )
-
-        /*when (response.resultCode) {
-            HTTP_OK -> {
-                with(response as CurrencyRateListResponse) {
-
-                    exchangeRateDao.insertAll(response.rateList.map { dto ->
-                        ExchangeRateEntity(
-                            baseCurrencyId = dto.baseIsoCode,//????????
-                            quoteCurrencyId = dto.quoteIsoCode,
-                            dateMillis = dateConverter.dateToMillis(LocalDate.parse(dto.date)),
-                            rate = dto.rate
-                        )
-                    })
-                }
-            }
-
-            /*HTTP_BAD_REQUEST -> {
-                Resource.Error(ExchangeRateFailure.BadRequest)
-            }
-
-            HTTP_INTERNAL_ERROR -> {
-                Resource.Error(ExchangeRateFailure.NetworkError)
-            }
-
-            HTTP_UNAVAILABLE -> {
-                Resource.Error(ExchangeRateFailure.NetworkConnectionError)
-            }*/
-
-            else -> {
-                //Resource.Error(ExchangeRateFailure.RateNotAvailable)//??????????
-            }
-        }*/
-    }*/
+    companion object {
+        private const val AMOUNT_OF_DAYS_FOR_STALE_EXCHANGE_RATE = 7L
+    }
 }

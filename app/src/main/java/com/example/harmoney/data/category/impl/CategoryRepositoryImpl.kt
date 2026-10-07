@@ -130,7 +130,8 @@ class CategoryRepositoryImpl(
                 // если список сategories пуст и теперь сategory первый элемент списка
                 prevCategory == null && nextCategory == null -> USER_ORDER_STEP
                 // если сategory переместили в самый верх списка
-                prevCategory == null -> nextCategory!!.userOrder - sortingDirection * USER_ORDER_STEP
+                prevCategory == null ->
+                    nextCategory!!.userOrder - sortingDirection * USER_ORDER_STEP
                 // если сategory переместили в самый низ списка
                 nextCategory == null -> prevCategory.userOrder + sortingDirection * USER_ORDER_STEP
                 // если сategory переместили на позицию между двумя другими сategories

@@ -6,8 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.harmoney.data.core.TransactionWithCategory
-import com.example.harmoney.data.transaction.dto.CategoryStatisticsDb
+import com.example.harmoney.data.core.bd.dto.TransactionDetailsDto
 import com.example.harmoney.data.transaction.entity.TransactionEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -18,13 +17,6 @@ interface TransactionDao {
 
     @Update
     suspend fun updateTransaction(transaction: TransactionEntity)
-
-    // При смене валюты
-    @Query(
-        "UPDATE `transaction` " +
-                "SET amount = `transaction`.amount * :currencyExchangedCoeff"
-    )
-    suspend fun updateAmount(currencyExchangedCoeff: Long)
 
     @Delete
     suspend fun deleteTransaction(transaction: TransactionEntity)
@@ -39,68 +31,25 @@ interface TransactionDao {
             WHERE id = :id
         """
     )
-    suspend fun getTransaction(id: Long): TransactionWithCategory?
+    suspend fun getTransaction(id: Long): TransactionDetailsDto?
 
     @Query(
         """
             SELECT *
             FROM transaction_with_category_view
-            WHERE category_typeId = :categoryTypeId
+            WHERE account_id IN (:accountIds)
+                AND category_typeId = :categoryTypeId
                 AND dateMillis BETWEEN :firstDayOfPeriodMillis
                                    AND :lastDayOfPeriodMillis
                 AND ( :categoryId IS NULL OR categoryId = :categoryId)
+            ORDER BY dateMillis DESC
     """
     )
-    fun getTransactionListWithCategory(
+    fun getTransactionList(
+        accountIds: List<Long>,
         categoryTypeId: Long,
         firstDayOfPeriodMillis: Long,
         lastDayOfPeriodMillis: Long,
         categoryId: Long?
-    ): Flow<List<TransactionWithCategory>>
-
-    @Query(
-        """
-            SELECT COALESCE(SUM(amount), 0)
-        FROM transaction_with_category_view
-        WHERE category_typeId = :categoryTypeId
-            AND dateMillis BETWEEN :firstDayOfPeriodMillis
-                               AND :lastDayOfPeriodMillis
-            AND (:categoryId IS NULL OR categoryId = :categoryId)
-    """
-    )
-    fun getTotalAmount(
-        categoryTypeId: Long,
-        firstDayOfPeriodMillis: Long,
-        lastDayOfPeriodMillis: Long,
-        categoryId: Long?
-    ): Flow<Long>
-
-    @Query(
-        """SELECT
-            category_id as id,
-            category_name as name,
-            category_typeId as typeId,
-            category_iconId as iconId,
-            category_iconColorId as iconColorId,
-            category_createdAt as createdAt,
-            category_userOrder as userOrder,
-            
-            SUM(amount) AS totalAmount,
-            
-            SUM(amount)
-                / SUM(SUM(amount)) OVER() * 100
-                AS percentage
-            
-        FROM transaction_with_category_view
-        WHERE category_typeId = :categoryTypeId
-            AND dateMillis BETWEEN :firstDayOfPeriodMillis
-                               AND :lastDayOfPeriodMillis
-        GROUP BY category_id
-        """
-    )
-    fun getCategoryStatisticsList(
-        categoryTypeId: Long,
-        firstDayOfPeriodMillis: Long,
-        lastDayOfPeriodMillis: Long,
-    ): Flow<List<CategoryStatisticsDb>>
+    ): Flow<List<TransactionDetailsDto>>
 }
