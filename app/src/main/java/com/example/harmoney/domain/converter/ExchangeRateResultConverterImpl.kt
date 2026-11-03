@@ -24,14 +24,14 @@ class ExchangeRateResultConverterImpl : ExchangeRateResultConverter {
                     ExchangeRateStatus.Stale(
                         source = result.source,
                         target = result.target,
-                        rate = result.rate.rate,
+                        rateValue = result.rate.rateValue,
                         date = result.rate.rateDate,
                     )
                 } else {
                     ExchangeRateStatus.Fresh(
                         source = result.source,
                         target = result.target,
-                        rate = result.rate.rate,
+                        rateValue = result.rate.rateValue,
                     )
                 }
             }

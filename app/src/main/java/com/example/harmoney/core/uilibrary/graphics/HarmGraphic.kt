@@ -70,7 +70,7 @@ object HarmGraphic {
     @Composable
     fun PieChartWithTitle(
         items: ImmutableList<PieChartItem>,
-        title: String,
+        title: @Composable () -> Unit,
         modifier: Modifier = Modifier,
     ) {
         val configuration = LocalConfiguration.current
@@ -94,17 +94,9 @@ object HarmGraphic {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(pieStrokeWidthDp.floatValue.dp + 12.dp),
+                        .padding(pieStrokeWidthDp.floatValue.dp + 8.dp),
                     contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = title,
-                        style = HarmTheme.typography.bodyLarge,
-                        color = HarmTheme.colors.onSurface,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                ) { title() }
             }
         }
     }
@@ -176,7 +168,15 @@ private fun PieChartWithTitle_DarkPreview() {
     HarmTheme(darkTheme = true) {
         Box(modifier = Modifier.fillMaxWidth()) {
             HarmGraphic.PieChartWithTitle(
-                title = "26 000 ₽",
+                title = {
+                    Text(
+                        text = "26 000 ₽",
+                        style = HarmTheme.typography.bodyLarge,
+                        color = HarmTheme.colors.onSurface,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
                 items = persistentListOf(
                     PieChartItem(
                         value = "15 000 ₽",
@@ -208,7 +208,15 @@ private fun PieChartWithTitle_LightPreview() {
     HarmTheme(darkTheme = false) {
         Box(modifier = Modifier.fillMaxWidth()) {
             HarmGraphic.PieChartWithTitle(
-                title = "26 000 ₽",
+                title = {
+                    Text(
+                        text = "26 000 ₽",
+                        style = HarmTheme.typography.bodyLarge,
+                        color = HarmTheme.colors.onSurface,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
                 items = persistentListOf(
                     PieChartItem(
                         value = "15 000 ₽",

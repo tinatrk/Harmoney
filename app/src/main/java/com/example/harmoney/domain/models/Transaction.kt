@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 data class Transaction(
     val id: Long = 0L,
-    val accountId: Long,//Account,
+    val accountId: Long,
     val category: Category,
     val date: LocalDate,
     val amount: MoneyAmount,

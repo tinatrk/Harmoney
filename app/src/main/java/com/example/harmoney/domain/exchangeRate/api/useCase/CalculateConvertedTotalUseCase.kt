@@ -5,7 +5,7 @@ import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.ExchangeRateResult
 import com.example.harmoney.domain.models.Money
 
-interface GetConvertedTotalByMoneyListUseCase {
+interface CalculateConvertedTotalUseCase {
     fun execute(
         moneyList: List<Money>,
         rates: Set<ExchangeRateResult>,

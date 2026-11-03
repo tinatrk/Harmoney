@@ -26,12 +26,12 @@ import com.example.harmoney.ui.theme.HarmTheme
 @Composable
 fun HarmMessage(
     modifier: Modifier = Modifier,
-    message: String,// = "",
+    message: String,
     @DrawableRes imageRes: Int? = null,
 ) {
     Column(
         modifier = modifier
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
             .background(Color.Transparent),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -54,7 +54,6 @@ fun HarmMessage(
             color = HarmTheme.colors.onSurface,
             textAlign = TextAlign.Center
         )
-        Spacer(Modifier.height(16.dp))
     }
 }
 

@@ -33,14 +33,14 @@ class NumbersFormatterImpl : NumbersFormatter {
             .replace(oldValue = SEPARATOR_COMMA, newValue = SEPARATOR_SPACE)
     }
 
-    override fun percentageToString(number: BigDecimal): String {
-        val roundedNumber = roundNumber(number, PERCENTAGE_DECIMAL_PLACES)
+    override fun percentageToString(number: BigDecimal, scale: Int?): String {
+        val roundedNumber = roundNumber(number, scale ?: PERCENTAGE_DECIMAL_PLACES)
         // Используется не String.format, чтобы сохранить округление
         return "${roundedNumber}$PERCENT"
     }
 
-    private fun roundNumber(number: BigDecimal, decimalPlaces: Int): BigDecimal {
-        val rounded = number.setScale(decimalPlaces, RoundingMode.HALF_UP)
+    private fun roundNumber(number: BigDecimal, scale: Int): BigDecimal {
+        val rounded = number.setScale(scale, RoundingMode.HALF_UP)
 
         return if (rounded.stripTrailingZeros().scale() <= 0) {
             rounded.setScale(MIN_DECIMAL_PLACES)
@@ -53,6 +53,11 @@ class NumbersFormatterImpl : NumbersFormatter {
         return moneyList.joinToString(MONEY_LIST_SEPARATOR) {
             moneyToStringWithCurrency(it)
         }
+    }
+
+    override fun numberToString(number: BigDecimal, scale: Int?): String {
+        return scale?.let { roundNumber(number, scale).toPlainString() }
+            ?: number.toPlainString()
     }
 
     private companion object {

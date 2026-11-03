@@ -184,7 +184,7 @@ private fun PreviewDrawerItems(
             HarmMenu.HarmDropdownMenu(
                 expanded = isCurrencyMenuOpened,
                 menuOptions = Currency.entries.sortedBy { it.isoCode }.map { currency ->
-                    MenuOption(text = currency.isoCode) {}
+                    MenuOption(body = { HarmMenu.HarmMenuTextItem(currency.isoCode) }) {}
                 }.toImmutableList(),
                 onDismissRequest = {}
             ) {

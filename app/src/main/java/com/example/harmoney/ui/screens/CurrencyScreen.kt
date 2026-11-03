@@ -35,6 +35,7 @@ import com.example.harmoney.core.uilibrary.textfields.HarmTextField
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
 import com.example.harmoney.presentation.currency.models.CurrencyAction
 import com.example.harmoney.presentation.currency.models.CurrencyEvent
+import com.example.harmoney.presentation.currency.models.CurrencyScreenError
 import com.example.harmoney.presentation.currency.models.CurrencyState
 import com.example.harmoney.presentation.currency.viewModel.CurrencyViewModel
 import com.example.harmoney.presentation.models.ContentState
@@ -158,28 +159,29 @@ fun CurrencyContent(
             }
         )
 
-        when (state.contentState) {
-            ContentState.IDLE -> {}
-            ContentState.LOADING -> HarmProgressBar(modifier = Modifier.fillMaxSize())
-            ContentState.NETWORK_CONNECTION_ERROR -> {
-                HarmMessage(
-                    modifier = Modifier.fillMaxSize(),
-                    message = stringResource(R.string.toast_network_connection_error),
-                )
-            }
+        when (state.content) {
+            is ContentState.Idle -> {}
+            is ContentState.Loading -> HarmProgressBar(modifier = Modifier.fillMaxSize())
+            is ContentState.Error ->
+                when (state.content.errorType) {
+                    CurrencyScreenError.UPDATE_DATA_ERROR -> HarmMessage(
+                        modifier = Modifier.fillMaxSize(),
+                        message =
+                            stringResource(R.string.error_something_went_wrong)
+                    )
 
-            ContentState.ERROR -> {
-                HarmMessage(
-                    modifier = Modifier.fillMaxSize(),
-                    message =
-                        stringResource(R.string.error_something_went_wrong)
-                )
-            }
+                    CurrencyScreenError.NETWORK_CONNECTION_ERROR -> HarmMessage(
+                        modifier = Modifier.fillMaxSize(),
+                        message = stringResource(R.string.toast_network_connection_error),
+                    )
+                }
 
-            ContentState.SUCCESS -> {
-                if (state.currencyList.isEmpty()) {
+            is ContentState.Success -> {
+                if (state.content.content.isEmpty()) {
                     HarmMessage(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
                         message = stringResource(R.string.placeholder_nothing_found)
                     )
                 } else {
@@ -187,7 +189,7 @@ fun CurrencyContent(
                         modifier = Modifier.fillMaxWidth(),
                         state = currencyListState
                     ) {
-                        items(items = state.currencyList) { currency ->
+                        items(items = state.content.content) { currency ->
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -252,9 +254,10 @@ private fun CurrencyScreen_DarkPreview() {
             onEvent = {},
             state = CurrencyState(
                 searchText = "",
-                currencyList = PreviewData.getFilteredCurrencyList(query = ""),
                 selectedCurrencyId = 117L,
-                contentState = ContentState.SUCCESS
+                content = ContentState.Success(
+                    PreviewData.getFilteredCurrencyList(query = "")
+                ),
             )
         )
     }
@@ -268,9 +271,10 @@ private fun CurrencyScreen_LightPreview() {
             onEvent = {},
             state = CurrencyState(
                 searchText = "",
-                currencyList = PreviewData.getFilteredCurrencyList(query = ""),
                 selectedCurrencyId = 117L,
-                contentState = ContentState.SUCCESS
+                content = ContentState.Success(
+                    PreviewData.getFilteredCurrencyList(query = "")
+                )
             )
         )
     }
@@ -284,9 +288,10 @@ private fun CurrencyScreen_Search_DarkPreview() {
             onEvent = {},
             state = CurrencyState(
                 searchText = "дол",
-                currencyList = PreviewData.getFilteredCurrencyList(query = "дол"),
                 selectedCurrencyId = 117L,
-                contentState = ContentState.SUCCESS
+                content = ContentState.Success(
+                    PreviewData.getFilteredCurrencyList(query = "дол")
+                )
             )
         )
     }
@@ -300,9 +305,10 @@ private fun CurrencyScreen_Search_LightPreview() {
             onEvent = {},
             state = CurrencyState(
                 searchText = "дол",
-                currencyList = PreviewData.getFilteredCurrencyList(query = "дол"),
                 selectedCurrencyId = 117L,
-                contentState = ContentState.SUCCESS
+                content = ContentState.Success(
+                    PreviewData.getFilteredCurrencyList(query = "дол")
+                )
             )
         )
     }
@@ -316,9 +322,10 @@ private fun CurrencyScreen_NotFound_DarkPreview() {
             onEvent = {},
             state = CurrencyState(
                 searchText = "клмн",
-                currencyList = PreviewData.getFilteredCurrencyList(query = "клмн"),
                 selectedCurrencyId = 117L,
-                contentState = ContentState.SUCCESS
+                content = ContentState.Success(
+                    PreviewData.getFilteredCurrencyList(query = "клмн")
+                )
             )
         )
     }
@@ -332,9 +339,10 @@ private fun CurrencyScreen_NotFound_LightPreview() {
             onEvent = {},
             state = CurrencyState(
                 searchText = "клмн",
-                currencyList = PreviewData.getFilteredCurrencyList(query = "клмн"),
                 selectedCurrencyId = 117L,
-                contentState = ContentState.SUCCESS
+                content = ContentState.Success(
+                    PreviewData.getFilteredCurrencyList(query = "клмн")
+                )
             )
         )
     }
@@ -348,9 +356,8 @@ private fun CurrencyScreen_Loading_DarkPreview() {
             onEvent = {},
             state = CurrencyState(
                 searchText = "дол",
-                currencyList = PreviewData.getFilteredCurrencyList(query = "дол"),
                 selectedCurrencyId = 117L,
-                contentState = ContentState.LOADING
+                content = ContentState.Loading
             )
         )
     }
@@ -364,9 +371,8 @@ private fun CurrencyScreen_Loading_LightPreview() {
             onEvent = {},
             state = CurrencyState(
                 searchText = "дол",
-                currencyList = PreviewData.getFilteredCurrencyList(query = "дол"),
                 selectedCurrencyId = 117L,
-                contentState = ContentState.LOADING
+                content = ContentState.Loading
             )
         )
     }
@@ -380,9 +386,10 @@ private fun CurrencyScreen_Error_DarkPreview() {
             onEvent = {},
             state = CurrencyState(
                 searchText = "дол",
-                currencyList = PreviewData.getFilteredCurrencyList(query = "дол"),
                 selectedCurrencyId = 117L,
-                contentState = ContentState.NETWORK_CONNECTION_ERROR
+                content = ContentState.Error(
+                    CurrencyScreenError.NETWORK_CONNECTION_ERROR
+                )
             )
         )
     }
@@ -396,9 +403,10 @@ private fun CurrencyScreen_Error_LightPreview() {
             onEvent = {},
             state = CurrencyState(
                 searchText = "дол",
-                currencyList = PreviewData.getFilteredCurrencyList(query = "дол"),
                 selectedCurrencyId = 117L,
-                contentState = ContentState.NETWORK_CONNECTION_ERROR
+                content = ContentState.Error(
+                    CurrencyScreenError.NETWORK_CONNECTION_ERROR
+                )
             )
         )
     }

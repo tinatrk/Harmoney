@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "effb4e5afe81f88f01f66da1ed6f1fee",
+    "identityHash": "3b0c1313da9cd7864d1522d1b68bd32d",
     "entities": [
       {
         "tableName": "category",
@@ -241,7 +241,7 @@
       },
       {
         "tableName": "exchange_rates",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`baseCurrencyId` INTEGER NOT NULL, `quoteCurrencyId` INTEGER NOT NULL, `dateEpochDay` INTEGER NOT NULL, `rateToBase` INTEGER NOT NULL, PRIMARY KEY(`baseCurrencyId`, `quoteCurrencyId`, `dateEpochDay`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`baseCurrencyId` INTEGER NOT NULL, `quoteCurrencyId` INTEGER NOT NULL, `dateEpochDay` INTEGER NOT NULL, `rateFromBaseToQuote` TEXT NOT NULL, PRIMARY KEY(`baseCurrencyId`, `quoteCurrencyId`, `dateEpochDay`))",
         "fields": [
           {
             "fieldPath": "baseCurrencyId",
@@ -262,9 +262,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "rateToBase",
-            "columnName": "rateToBase",
-            "affinity": "INTEGER",
+            "fieldPath": "rateFromBaseToQuote",
+            "columnName": "rateFromBaseToQuote",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -308,6 +308,30 @@
             "dateEpochDay"
           ]
         }
+      },
+      {
+        "tableName": "currency_list_sync",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `lastSuccessfulSyncEpochDay` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastSuccessfulSyncEpochDay",
+            "columnName": "lastSuccessfulSyncEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
       }
     ],
     "views": [
@@ -318,7 +342,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'effb4e5afe81f88f01f66da1ed6f1fee')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3b0c1313da9cd7864d1522d1b68bd32d')"
     ]
   }
 }

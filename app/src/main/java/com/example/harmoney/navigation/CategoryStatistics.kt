@@ -2,7 +2,7 @@ package com.example.harmoney.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.example.harmoney.ui.screens.CategoryStatisticsScreen
+import com.example.harmoney.ui.screens.categoryStatisticsScreen.CategoryStatisticsScreen
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 

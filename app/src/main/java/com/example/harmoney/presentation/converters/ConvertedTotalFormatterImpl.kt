@@ -11,18 +11,23 @@ class ConvertedTotalFormatterImpl(
 ) : ConvertedTotalFormatter {
     override fun getOriginalsStr(total: ConvertedTotal): String {
         return buildString {
-            total.includedAmounts.forEach { item ->
-                append(getConvertedMoneyStr(item))
-                append(MONEY_LIST_SEPARATOR)
-            }
+            append(
+                total.includedAmounts.joinToString(MONEY_LIST_SEPARATOR) {
+                    getConvertedMoneyStr(it)
+                }
+            )
 
             if (total.excludedAmounts.isNotEmpty()) {
-                appendLine()
+                if (isNotEmpty()) append(BLOCK_SEPARATOR)
+
                 append(stringProvider.getString(R.string.title_excluded_amounts))
-                total.excludedAmounts.forEach { item ->
-                    append(numbersFormatter.moneyToStringWithCurrency(item))
-                    append(MONEY_LIST_SEPARATOR)
-                }
+                append(TITLE_SEPARATOR)
+
+                append(
+                    total.excludedAmounts.joinToString(MONEY_LIST_SEPARATOR) {
+                        numbersFormatter.moneyToStringWithCurrency(it)
+                    }
+                )
             }
         }
     }
@@ -41,6 +46,8 @@ class ConvertedTotalFormatterImpl(
 
     companion object {
         private const val CONVERTED_MONEY_SEPARATOR = " = "
-        private const val MONEY_LIST_SEPARATOR = ", "
+        private const val MONEY_LIST_SEPARATOR = "\n"
+        private const val BLOCK_SEPARATOR = "\n\n"
+        private const val TITLE_SEPARATOR = " "
     }
 }

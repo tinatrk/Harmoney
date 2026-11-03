@@ -57,18 +57,18 @@ class StatisticsRepositoryImpl(
 
         val totalListFlow =
             statisticsDao.observeTotalAmountByCategoryType(
-            accountIds = accountIds,
-            categoryTypeId = categoryType.id,
-            firstDayOfPeriodMillis = firstDayMillis,
-            lastDayOfPeriodMillis = lastDayMillis,
-        ).map { totalList ->
-            totalList.map { total ->
-                Money(
-                    amount = MoneyAmount(total.moneyAmountMinorUnits),
-                    currency = Currency.fromId(total.currencyId)
-                )
+                accountIds = accountIds,
+                categoryTypeId = categoryType.id,
+                firstDayOfPeriodMillis = firstDayMillis,
+                lastDayOfPeriodMillis = lastDayMillis,
+            ).map { totalList ->
+                totalList.map { total ->
+                    Money(
+                        amount = MoneyAmount(total.moneyAmountMinorUnits),
+                        currency = Currency.fromId(total.currencyId)
+                    )
+                }
             }
-        }
 
         return combine(
             categoryStatisticsListFlow,

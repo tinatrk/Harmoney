@@ -1,20 +1,12 @@
-package com.example.harmoney.ui.screens
+package com.example.harmoney.ui.screens.categoryStatisticsScreen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,31 +17,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
-import com.example.harmoney.core.uilibrary.cards.HarmCard
-import com.example.harmoney.core.uilibrary.dialogs.HarmDialog
 import com.example.harmoney.core.uilibrary.drawers.HarmDrawer
 import com.example.harmoney.core.uilibrary.snackbar.HarmSnackbar
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriodType
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsAction
+import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsContent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsEvent
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsState
 import com.example.harmoney.presentation.categoryStatistics.models.FirstDayMonthError
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
-import com.example.harmoney.presentation.models.AccountScopeUi
+import com.example.harmoney.presentation.models.ContentState
 import com.example.harmoney.presentation.models.StatisticsPeriodUi
-import com.example.harmoney.ui.components.HarmMessage
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.other.PreviewData
 import com.example.harmoney.ui.theme.HarmTheme
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
@@ -97,51 +87,9 @@ fun CategoryStatisticsScreen(
                         onNavigateToCurrency(act.currencyId)
                     }
 
-                    is CategoryStatisticsAction.ShowChangeThemeError -> {
+                    is CategoryStatisticsAction.ShowError -> {
                         snackbarHostState.showSnackbar(
-                            context.getString(
-                                R.string.toast_changed_theme_error
-                            )
-                        )
-                    }
-
-                    is CategoryStatisticsAction.ShowUpdateReportingCurrencyError -> {
-                        snackbarHostState.showSnackbar(
-                            context.getString(
-                                R.string.toast_update_reporting_currency_error
-                            )
-                        )
-                    }
-
-                    is CategoryStatisticsAction.ShowGetSettingsError -> {
-                        snackbarHostState.showSnackbar(
-                            context.getString(
-                                R.string.toast_load_settings_error
-                            )
-                        )
-                    }
-
-                    is CategoryStatisticsAction.ShowGetAccountsError -> {
-                        snackbarHostState.showSnackbar(
-                            context.getString(
-                                R.string.toast_load_accounts_error
-                            )
-                        )
-                    }
-
-                    is CategoryStatisticsAction.ShowGetStatisticsError -> {
-                        snackbarHostState.showSnackbar(
-                            context.getString(
-                                R.string.toast_load_statistics_error
-                            )
-                        )
-                    }
-
-                    is CategoryStatisticsAction.ShowUpdateFirstDayMonthError -> {
-                        snackbarHostState.showSnackbar(
-                            context.getString(
-                                R.string.toast_update_first_day_month_error
-                            )
+                            context.getString(act.error.resId)
                         )
                     }
 
@@ -157,6 +105,7 @@ fun CategoryStatisticsScreen(
         snackbarState = snackbarHostState
     )
 }
+
 
 @Composable
 fun CategoryStatisticsScreen(
@@ -181,10 +130,14 @@ fun CategoryStatisticsScreen(
         Scaffold(
             modifier = modifier,
             topBar = {
-                HarmTopBar.HarmCommonTopBar(
-                    title = state.selectedAccountScope?.balance ?: "",
-                    subtitle = state.selectedAccountScope?.name
-                        ?: "",//stringResource(R.string.title_balance),
+                HarmTopBar.HarmMainTopBar(
+                    title = {
+                        CategoryStatisticsTopAppBar(
+                            accountContentState = state.accountContent,
+                            isAccountScopesMenuOpen = state.isAccountMenuOpened,
+                            onEvent = onEvent
+                        )
+                    },
                     navigationIcon = {
                         HarmButton.HarmTopBarIconButton(
                             iconRes = R.drawable.ic_arrow_back_24px,
@@ -201,8 +154,8 @@ fun CategoryStatisticsScreen(
                             }
                         )
                     },
-                    isTitleCenterAlignment = true
                 )
+
             },
             containerColor = HarmTheme.colors.surface,
             floatingActionButton = {
@@ -229,153 +182,26 @@ fun CategoryStatisticsScreen(
                 }
             ) {
                 CategoryStatisticsContent(
-                    state = state,
+                    contentState = state.statisticsContent,
+                    exchangeRateStatus = (state.accountContent as? ContentState.Success)
+                        ?.content?.accountsExchangeRateStatus,
+                    selectedPeriod = state.selectedStatisticsPeriod,
                     onEvent = onEvent,
                 )
-            }
-        }
-    }
-}
-
-@Composable
-private fun SettingsDrawerItems(
-    isThemeDark: Boolean,
-    firstDayMonth: String,
-    currentCurrencyCode: String,
-    onEvent: (CategoryStatisticsEvent) -> Unit,
-) {
-    HarmDrawer.HarmDrawerItem(
-        label = stringResource(R.string.title_drawer_item_theme),
-        selected = false,
-        onClick = { onEvent(CategoryStatisticsEvent.OnChangeTheme(!isThemeDark)) },
-        badge = {
-            HarmButton.HarmSwitch(
-                isChecked = isThemeDark,
-                onClick = { onEvent(CategoryStatisticsEvent.OnChangeTheme(!isThemeDark)) }
-            )
-        }
-    )
-    HarmDrawer.HarmDrawerItem(
-        label = stringResource(R.string.title_drawer_item_first_day_month),
-        selected = false,
-        onClick = { onEvent(CategoryStatisticsEvent.OnFirstDayMonthClick) },
-        badge = {
-            Text(
-                text = firstDayMonth,
-                style = HarmTheme.typography.bodyLarge,
-                color = HarmTheme.colors.onSurface
-            )
-        }
-    )
-    HarmDrawer.HarmDrawerItem(
-        label = stringResource(R.string.title_drawer_currency),
-        selected = false,
-        onClick = { onEvent(CategoryStatisticsEvent.OnCurrencySettingsClick) },
-        badge = {
-            Text(
-                text = currentCurrencyCode,
-                style = HarmTheme.typography.bodyLarge,
-                color = HarmTheme.colors.onSurface
-            )
-        }
-    )
-    HarmDrawer.HarmDrawerItem(
-        label = stringResource(R.string.title_drawer_item_category_list),
-        selected = false,
-        onClick = { onEvent(CategoryStatisticsEvent.OnCategoryListClick) }
-    )
-}
-
-@Composable
-fun CategoryStatisticsContent(
-    state: CategoryStatisticsState,
-    onEvent: (CategoryStatisticsEvent) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val supportText =
-        when (val error = state.firstDayMonthError) {
-            is FirstDayMonthError.None -> ""
-            is FirstDayMonthError.OutOfRange -> {
-                stringResource(
-                    R.string.error_incorrect_first_day_month_pattern,
-                    error.minDay,
-                    error.maxDay
+                CategoryStatisticsDialog(
+                    firstDayMonthText = state.firstDayMonthText,
+                    firstDayMonthError = state.firstDayMonthError,
+                    isOpenedFirstDayMonthDialog = state.isOpenedFirstDayMonthDialog,
+                    onEvent = onEvent
                 )
             }
-        }
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(HarmTheme.colors.surface)
-    ) {
-        HarmCard.HarmStatisticCard(
-            periods = StatisticsPeriodType.entries.toImmutableList(),
-            data = state.selectedStatisticsPeriod.date,
-            pieChartItems = state.pieChartCategories,
-            total = state.totalByCategoryType,
-            selectedPeriod = state.selectedStatisticsPeriod.type,
-            onPeriodClick = { newPeriod ->
-                onEvent(CategoryStatisticsEvent.OnStatisticsPeriodClick(newPeriod))
-            }
-        )
-
-        if (state.categories.isEmpty()) {
-            HarmMessage(
-                modifier = Modifier.fillMaxSize(),
-                message = stringResource(R.string.placeholder_empty_transaction_list),
-                imageRes = R.drawable.im_empty_screen
-            )
-        } else {
-            Spacer(modifier = Modifier.height(16.dp))
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                items(state.categories) { category ->
-                    HarmCard.HarmCategoryCardSumTransactions(
-                        modifier = Modifier.fillMaxWidth(),
-                        category = category,
-                        onCardClick = {
-                            onEvent(
-                                CategoryStatisticsEvent.OnCategoryClick(
-                                    category.category.id
-                                )
-                            )
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
-                item {
-                    Spacer(modifier = Modifier.height(56.dp))
-                }
-            }
-        }
-
-        if (state.isOpenedFirstDayMonthDialog) {
-            HarmDialog.HarmSetFirstDayMonthDialog(
-                numberString = state.firstDayMonthText,
-                onNumberChanged = { newText ->
-                    onEvent(
-                        CategoryStatisticsEvent.OnFirstDayMonthTextChanged(
-                            newText
-                        )
-                    )
-                },
-                onConfirmation = { onEvent(CategoryStatisticsEvent.OnFirstDayMonthDialogConfirm) },
-                onDismissRequest = {
-                    onEvent(CategoryStatisticsEvent.OnFirstDayMonthDialogDismiss)
-                },
-                onTextFieldDoneAction = {
-                    onEvent(CategoryStatisticsEvent.OnFirstDayMonthDialogConfirm)
-                },
-                isError = (state.firstDayMonthError != FirstDayMonthError.None),
-                supportingText = supportText,
-            )
         }
     }
 }
 
 @Preview(showSystemUi = true)
 @Composable
-private fun CategoryStatisticsScreenDarkPreviewEmpty() {
+private fun CategoryStatisticsScreen_Empty_DarkPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = true) {
@@ -386,12 +212,12 @@ private fun CategoryStatisticsScreenDarkPreviewEmpty() {
                     type = StatisticsPeriodType.CURRENT_MONTH,
                     date = "01.03.2026 - 31.03.2026"
                 ),
-                selectedAccountScope = AccountScopeUi(
-                    id = 0,
-                    name = "Основная карта [RUB]",
-                    balance = "0.00 ₽",
-                    balanceOriginals = null,
-                    isArchivedMark = false
+                accountContent = ContentState.Success(PreviewData.getAccountContent()),
+                statisticsContent = ContentState.Success(
+                    CategoryStatisticsContent(
+                        categories = persistentListOf(),
+                        pieChartCategories = persistentListOf(),
+                    )
                 )
             ),
             drawerState = drawerState,
@@ -402,7 +228,7 @@ private fun CategoryStatisticsScreenDarkPreviewEmpty() {
 
 @Preview(showSystemUi = true)
 @Composable
-private fun CategoryStatisticsScreenLightPreviewEmpty() {
+private fun CategoryStatisticsScreen_Empty_LightPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = false) {
@@ -413,12 +239,12 @@ private fun CategoryStatisticsScreenLightPreviewEmpty() {
                     type = StatisticsPeriodType.CURRENT_MONTH,
                     date = "01.03.2026 - 31.03.2026"
                 ),
-                selectedAccountScope = AccountScopeUi(
-                    id = 0,
-                    name = "Основная карта [RUB]",
-                    balance = "0.00 ₽",
-                    balanceOriginals = null,
-                    isArchivedMark = false
+                accountContent = ContentState.Success(PreviewData.getAccountContent()),
+                statisticsContent = ContentState.Success(
+                    CategoryStatisticsContent(
+                        categories = persistentListOf(),
+                        pieChartCategories = persistentListOf(),
+                    )
                 )
             ),
             drawerState = drawerState,
@@ -429,7 +255,7 @@ private fun CategoryStatisticsScreenLightPreviewEmpty() {
 
 @Preview(showSystemUi = true)
 @Composable
-private fun CategoryStatisticsScreenDarkPreview() {
+private fun CategoryStatisticsScreen_DarkPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val snackbarHostState = remember { SnackbarHostState() }
     val categories = PreviewData.getExpensesCategoryStatistics()
@@ -444,16 +270,14 @@ private fun CategoryStatisticsScreenDarkPreview() {
                     type = StatisticsPeriodType.CURRENT_MONTH,
                     date = "01.03.2026 - 31.03.2026"
                 ),
-                categories = categories,
-                pieChartCategories = pieChartItems,
-                totalByCategoryType = total,
-                selectedAccountScope = AccountScopeUi(
-                    id = 0,
-                    name = "Основная карта [RUB]",
-                    balance = "20 000 ₽",
-                    balanceOriginals = null,
-                    isArchivedMark = false
-                )
+                accountContent = ContentState.Success(PreviewData.getAccountContent()),
+                statisticsContent = ContentState.Success(
+                    CategoryStatisticsContent(
+                        categories = categories,
+                        pieChartCategories = pieChartItems,
+                        totalByCategoryType = total,
+                    )
+                ),
             ),
             drawerState = drawerState,
             snackbarState = snackbarHostState
@@ -463,7 +287,7 @@ private fun CategoryStatisticsScreenDarkPreview() {
 
 @Preview(showSystemUi = true)
 @Composable
-private fun CategoryStatisticsScreenLightPreview() {
+private fun CategoryStatisticsScreen_LightPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val snackbarHostState = remember { SnackbarHostState() }
     val categories = PreviewData.getExpensesCategoryStatistics()
@@ -478,16 +302,80 @@ private fun CategoryStatisticsScreenLightPreview() {
                     type = StatisticsPeriodType.CURRENT_MONTH,
                     date = "01.03.2026 - 31.03.2026"
                 ),
-                categories = categories,
-                pieChartCategories = pieChartItems,
-                totalByCategoryType = total,
-                selectedAccountScope = AccountScopeUi(
-                    id = 0,
-                    name = "Основная карта [RUB]",
-                    balance = "20 000 ₽",
-                    balanceOriginals = null,
-                    isArchivedMark = false
-                )
+                statisticsContent = ContentState.Success(
+                    CategoryStatisticsContent(
+                        categories = categories,
+                        pieChartCategories = pieChartItems,
+                        totalByCategoryType = total,
+                    )
+                ),
+                accountContent = ContentState.Success(PreviewData.getAccountContent()),
+            ),
+            drawerState = drawerState,
+            snackbarState = snackbarHostState
+        )
+    }
+}
+
+@Preview(showSystemUi = true, showBackground = true, backgroundColor = 0xFF201923)
+@Composable
+private fun CategoryStatisticsScreen_WithOpenAccountMenu_DarkPreview() {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val categories = PreviewData.getExpensesCategoryStatistics()
+    val total = "26 000 ₽"
+    val pieChartItems = PreviewData.getExpensesPieChartCategories()
+
+    HarmTheme(darkTheme = true) {
+        CategoryStatisticsScreen(
+            onEvent = {},
+            state = CategoryStatisticsState(
+                selectedStatisticsPeriod = StatisticsPeriodUi(
+                    type = StatisticsPeriodType.CURRENT_MONTH,
+                    date = "01.03.2026 - 31.03.2026"
+                ),
+                accountContent = ContentState.Success(PreviewData.getAccountContent()),
+                statisticsContent = ContentState.Success(
+                    CategoryStatisticsContent(
+                        categories = categories,
+                        pieChartCategories = pieChartItems,
+                        totalByCategoryType = total,
+                    )
+                ),
+                isAccountMenuOpened = true
+            ),
+            drawerState = drawerState,
+            snackbarState = snackbarHostState
+        )
+    }
+}
+
+@Preview(showSystemUi = true, showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun CategoryStatisticsScreen_WithOpenAccountMenu_LightPreview() {
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val categories = PreviewData.getExpensesCategoryStatistics()
+    val total = "26 000 ₽"
+    val pieChartItems = PreviewData.getExpensesPieChartCategories()
+
+    HarmTheme(darkTheme = false) {
+        CategoryStatisticsScreen(
+            onEvent = {},
+            state = CategoryStatisticsState(
+                selectedStatisticsPeriod = StatisticsPeriodUi(
+                    type = StatisticsPeriodType.CURRENT_MONTH,
+                    date = "01.03.2026 - 31.03.2026"
+                ),
+                statisticsContent = ContentState.Success(
+                    CategoryStatisticsContent(
+                        categories = categories,
+                        pieChartCategories = pieChartItems,
+                        totalByCategoryType = total,
+                    )
+                ),
+                accountContent = ContentState.Success(PreviewData.getAccountContent()),
+                isAccountMenuOpened = true,
             ),
             drawerState = drawerState,
             snackbarState = snackbarHostState
@@ -497,7 +385,7 @@ private fun CategoryStatisticsScreenLightPreview() {
 
 @Preview(showSystemUi = true)
 @Composable
-private fun CategoryStatisticsScreenDarkPreviewWithSettings() {
+private fun CategoryStatisticsScreen_WithSettings_DarkPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
     val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = true) {
@@ -512,7 +400,7 @@ private fun CategoryStatisticsScreenDarkPreviewWithSettings() {
 
 @Preview(showSystemUi = true)
 @Composable
-private fun CategoryStatisticsScreenLightPreviewWithSettings() {
+private fun CategoryStatisticsScreen_WithSettings_LightPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
     val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = false) {
@@ -527,7 +415,7 @@ private fun CategoryStatisticsScreenLightPreviewWithSettings() {
 
 @Preview(showSystemUi = true)
 @Composable
-private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialog() {
+private fun CategoryStatisticsScreen_WithFirstDayMonthDialog_DarkPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
     val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = true) {
@@ -542,7 +430,7 @@ private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialog() {
 
 @Preview(showSystemUi = true)
 @Composable
-private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialog() {
+private fun CategoryStatisticsScreen_WithFirstDayMonthDialog_LightPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
     val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = false) {
@@ -558,7 +446,7 @@ private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialog() {
 @Suppress("detekt:MagicNumber")
 @Preview(showSystemUi = true)
 @Composable
-private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialogError() {
+private fun CategoryStatisticsScreen_WithFirstDayMonthDialogError_DarkPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
     val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = true) {
@@ -578,7 +466,7 @@ private fun CategoryStatisticsScreenDarkPreviewWithFirstDayMonthDialogError() {
 @Suppress("detekt:MagicNumber")
 @Preview(showSystemUi = true)
 @Composable
-private fun CategoryStatisticsScreenLightPreviewWithFirstDayMonthDialogError() {
+private fun CategoryStatisticsScreen_WithFirstDayMonthDialogError_LightPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
     val snackbarHostState = remember { SnackbarHostState() }
     HarmTheme(darkTheme = false) {

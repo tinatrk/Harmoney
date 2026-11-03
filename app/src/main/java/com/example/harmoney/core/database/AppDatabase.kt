@@ -10,6 +10,7 @@ import com.example.harmoney.data.category.entity.CategoryEntity
 import com.example.harmoney.data.core.bd.dto.TransactionDetailsDto
 import com.example.harmoney.data.currencyList.db.dao.CurrencyListDao
 import com.example.harmoney.data.currencyList.db.entity.CurrencyEntity
+import com.example.harmoney.data.currencyList.db.entity.CurrencyListSyncEntity
 import com.example.harmoney.data.exchangeRate.db.dao.ExchangeRateDao
 import com.example.harmoney.data.exchangeRate.db.entity.ExchangeRateEntity
 import com.example.harmoney.data.exchangeRate.db.entity.ExchangeRateSyncEntity
@@ -19,7 +20,8 @@ import com.example.harmoney.data.transaction.entity.TransactionEntity
 
 @Database(
     entities = [CategoryEntity::class, TransactionEntity::class, CurrencyEntity::class,
-        AccountEntity::class, ExchangeRateEntity::class, ExchangeRateSyncEntity::class],
+        AccountEntity::class, ExchangeRateEntity::class, ExchangeRateSyncEntity::class,
+        CurrencyListSyncEntity::class],
     views = [TransactionDetailsDto::class],
     version = 1,
     exportSchema = true

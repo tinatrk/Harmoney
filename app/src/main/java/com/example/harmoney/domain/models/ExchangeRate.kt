@@ -6,6 +6,6 @@ import java.time.LocalDate
 data class ExchangeRate(
     val sourceCurrency: Currency,
     val targetCurrency: Currency,
-    val rate: BigDecimal,
+    val rateValue: BigDecimal,
     val rateDate: LocalDate,
 )

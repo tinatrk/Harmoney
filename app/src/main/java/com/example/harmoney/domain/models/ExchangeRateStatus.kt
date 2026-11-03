@@ -10,13 +10,13 @@ sealed interface ExchangeRateStatus {
     data class Fresh(
         override val source: Currency,
         override val target: Currency,
-        val rate: BigDecimal,
+        val rateValue: BigDecimal,
     ) : ExchangeRateStatus
 
     data class Stale(
         override val source: Currency,
         override val target: Currency,
-        val rate: BigDecimal,
+        val rateValue: BigDecimal,
         val date: LocalDate,
     ) : ExchangeRateStatus
 

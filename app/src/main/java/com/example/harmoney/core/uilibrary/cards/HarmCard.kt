@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -32,6 +33,8 @@ import com.example.harmoney.core.uilibrary.buttons.HarmButton
 import com.example.harmoney.core.uilibrary.date.HarmDate
 import com.example.harmoney.core.uilibrary.graphics.HarmGraphic
 import com.example.harmoney.core.uilibrary.icons.HarmIcon
+import com.example.harmoney.core.uilibrary.menus.HarmMenu
+import com.example.harmoney.core.uilibrary.other.HarmPopup
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
@@ -43,6 +46,7 @@ import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.models.TransactionUi
 import com.example.harmoney.ui.mappers.CategoryIconUiMapper.toDrawableRes
+import com.example.harmoney.ui.other.PreviewData
 import com.example.harmoney.ui.theme.HarmTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -149,6 +153,7 @@ object HarmCard {
         category: CategoryStatisticsUi,
         onCardClick: () -> Unit,
         modifier: Modifier = Modifier,
+        popupInfo: String? = null,
     ) {
         HarmCommonCard(
             modifier = modifier,
@@ -160,20 +165,34 @@ object HarmCard {
             },
             endContent = {
                 Spacer(modifier = Modifier.width(8.dp))
-
-                Text(
-                    modifier = Modifier.wrapContentWidth(),
-                    text = category.percentage,
-                    style = HarmTheme.typography.bodyLarge
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Text(
-                    modifier = Modifier.wrapContentWidth(),
-                    text = category.totalAmount,
-                    style = HarmTheme.typography.bodyLarge
-                )
+                Column(
+                    modifier = Modifier.wrapContentSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Row(
+                        modifier = Modifier.wrapContentWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        popupInfo?.let {
+                            HarmPopup.HarmInfoPopup(
+                                info = popupInfo,
+                                popupSourceText = category.totalAmount,
+                            )
+                        } ?: Text(
+                            modifier = Modifier.wrapContentWidth(),
+                            text = category.totalAmount,
+                            style = HarmTheme.typography.bodyLarge,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        modifier = Modifier.wrapContentWidth(),
+                        text = category.percentage,
+                        style = HarmTheme.typography.bodyLarge
+                    )
+                }
             }
         )
     }
@@ -297,7 +316,7 @@ object HarmCard {
         periods: ImmutableList<StatisticsPeriodType>,
         data: String,
         pieChartItems: ImmutableList<PieChartItem>,
-        total: String,
+        total: @Composable () -> Unit, //String,
         selectedPeriod: StatisticsPeriodType,
         onPeriodClick: (StatisticsPeriodType) -> Unit,
         modifier: Modifier = Modifier,
@@ -334,6 +353,7 @@ object HarmCard {
                 if (pieChartItems.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     HarmGraphic.PieChartWithTitle(items = pieChartItems, title = total)
+                    Spacer(modifier = Modifier.height(12.dp))
                 }
             }
         }
@@ -388,7 +408,7 @@ private fun HarmCardTransactionList_DarkPreview() {
     HarmTheme(darkTheme = true) {
         HarmCard.HarmCardTransactionList(
             data = "01.03.2026",
-            transactions = getPreviewTransactionList(),
+            transactions = PreviewData.getExpensesTransactions(),
             onTransactionClick = {},
             totalAmount = "5 000 ₽"
         )
@@ -401,7 +421,7 @@ private fun HarmCardTransactionList_LightPreview() {
     HarmTheme(darkTheme = false) {
         HarmCard.HarmCardTransactionList(
             data = "01.03.2026",
-            transactions = getPreviewTransactionList(),
+            transactions = PreviewData.getExpensesTransactions(),
             onTransactionClick = {},
             totalAmount = "5 000 ₽"
         )
@@ -522,8 +542,16 @@ private fun HarmCategoryCardWithMenu_DarkPreview() {
             iconContentDescription = null,
             isMenuOpened = true,
             menuOptions = persistentListOf(
-                MenuOption(text = stringResource(R.string.ic_edit_desc), onClick = {}),
-                MenuOption(text = stringResource(R.string.ic_delete_desc), onClick = {}),
+                MenuOption(
+                    body = {
+                        HarmMenu.HarmMenuTextItem(
+                            stringResource(R.string.ic_edit_desc)
+                        )
+                    },
+                    onClick = {}),
+                MenuOption(
+                    body = { HarmMenu.HarmMenuTextItem(stringResource(R.string.ic_delete_desc)) },
+                    onClick = {}),
             ),
             onMenuClick = {},
             onMenuDismiss = {}
@@ -555,8 +583,16 @@ private fun HarmCategoryCardWithMenu_LightPreview() {
             iconContentDescription = null,
             isMenuOpened = true,
             menuOptions = persistentListOf(
-                MenuOption(text = stringResource(R.string.ic_edit_desc), onClick = {}),
-                MenuOption(text = stringResource(R.string.ic_delete_desc), onClick = {}),
+                MenuOption(
+                    body = {
+                        HarmMenu.HarmMenuTextItem(
+                            stringResource(R.string.ic_edit_desc)
+                        )
+                    },
+                    onClick = {}),
+                MenuOption(
+                    body = { HarmMenu.HarmMenuTextItem(stringResource(R.string.ic_delete_desc)) },
+                    onClick = {}),
             ),
             onMenuClick = {},
             onMenuDismiss = {}
@@ -609,70 +645,41 @@ private fun HarmStatisticCard_DarkPreview() {
         HarmCard.HarmStatisticCard(
             periods = StatisticsPeriodType.entries.toImmutableList(),
             data = "01.03.2026 - 31.03.2026",
-            pieChartItems = getPreviewDataPieChartCategories(),
+            pieChartItems = PreviewData.getExpensesPieChartCategories(),
             selectedPeriod = StatisticsPeriodType.CURRENT_MONTH,
             onPeriodClick = {},
-            total = "5 000 ₽"
+            total = {
+                Text(
+                    text = "5 000 ₽",
+                    style = HarmTheme.typography.bodyLarge,
+                    color = HarmTheme.colors.onSurface,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         )
     }
 }
 
-private fun getPreviewTransactionList(): ImmutableList<TransactionUi> {
-    return persistentListOf(
-        TransactionUi(
-            id = 1,
-            category = CategoryUi(
-                id = 1,
-                name = "Продукты",
-                type = CategoryType.EXPENSES,
-                icon = CategoryIcon(
-                    icon = CategoryIcons.IC_SHOP_CART,
-                    color = CategoryColors.PINK_T75
-                ),
-            ),
-            amount = "2 000 ₽",
-            note = "На ужин",
-            date = "01.03.2026"
-        ),
-        TransactionUi(
-            id = 2,
-            category = CategoryUi(
-                id = 2,
-                name = "Подарки",
-                type = CategoryType.EXPENSES,
-                icon = CategoryIcon(
-                    icon = CategoryIcons.IC_GIFT,
-                    color = CategoryColors.VIOLET_T68
-                ),
-            ),
-            amount = "3 000 ₽",
-            date = "03.03.2026"
+@Preview(showBackground = true, backgroundColor = 0xFFFEF7FF)
+@Composable
+private fun HarmStatisticCard_LightPreview() {
+    HarmTheme(darkTheme = false) {
+        HarmCard.HarmStatisticCard(
+            periods = StatisticsPeriodType.entries.toImmutableList(),
+            data = "01.03.2026 - 31.03.2026",
+            pieChartItems = PreviewData.getExpensesPieChartCategories(),
+            selectedPeriod = StatisticsPeriodType.CURRENT_MONTH,
+            onPeriodClick = {},
+            total = {
+                Text(
+                    text = "5 000 ₽",
+                    style = HarmTheme.typography.bodyLarge,
+                    color = HarmTheme.colors.onSurface,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         )
-    )
-}
-
-private fun getPreviewDataPieChartCategories(
-): ImmutableList<PieChartItem> {
-    return persistentListOf(
-        PieChartItem(
-            value = "15 000 ₽",
-            colorValue = CategoryColors.BLUE_T80.background,
-            startAngle = -90f,
-            sweepAngle = 205.69f,
-
-            ),
-        PieChartItem(
-            value = "7 500 ₽",
-            colorValue = CategoryColors.ORANGE_T70.background,
-            startAngle = 117.69f,
-            sweepAngle = 101.84f,
-
-            ),
-        PieChartItem(
-            value = "3 500 ₽",
-            colorValue = CategoryColors.VIOLET_T68.background,
-            startAngle = 221.53f,
-            sweepAngle = 46.46f,
-        )
-    )
+    }
 }

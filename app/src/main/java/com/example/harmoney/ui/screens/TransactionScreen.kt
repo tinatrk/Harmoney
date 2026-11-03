@@ -287,7 +287,7 @@ private fun TextFields(
                 HarmMenu.HarmDropdownMenu(
                     expanded = state.isCurrencyMenuOpened,
                     menuOptions = Currency.entries.sortedBy { it.isoCode }.map { currency ->
-                        MenuOption(text = currency.isoCode) {
+                        MenuOption(body = { HarmMenu.HarmMenuTextItem(currency.isoCode)}) {
                             onEvent(TransactionEvent.OnCurrencyChanged(currency))
                         }
                     }.toImmutableList(),

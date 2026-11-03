@@ -16,5 +16,5 @@ data class ExchangeRateEntity(
     @ColumnInfo(name = "baseCurrencyId") val baseCurrencyId: Long,
     @ColumnInfo(name = "quoteCurrencyId") val quoteCurrencyId: Long,
     @ColumnInfo(name = "dateEpochDay") val dateEpochDay: Long,
-    @ColumnInfo(name = "rateToBase") val rateToBase: BigDecimal
+    @ColumnInfo(name = "rateFromBaseToQuote") val rateFromBaseToQuote: BigDecimal
 )

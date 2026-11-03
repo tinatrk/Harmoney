@@ -23,7 +23,6 @@ interface ExchangeRateDao {
         WHERE baseCurrencyId = :baseCurrencyId
             AND quoteCurrencyId IN (:quoteCurrencyIds)
             AND dateEpochDay = :dateEpochDay
-        LIMIT 1
     """
     )
     suspend fun getRatesByDate(

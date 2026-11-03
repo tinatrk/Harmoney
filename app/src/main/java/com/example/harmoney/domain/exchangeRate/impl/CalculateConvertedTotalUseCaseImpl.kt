@@ -1,6 +1,6 @@
 package com.example.harmoney.domain.exchangeRate.impl
 
-import com.example.harmoney.domain.exchangeRate.api.useCase.GetConvertedTotalByMoneyListUseCase
+import com.example.harmoney.domain.exchangeRate.api.useCase.CalculateConvertedTotalUseCase
 import com.example.harmoney.domain.models.ConvertedMoney
 import com.example.harmoney.domain.models.ConvertedTotal
 import com.example.harmoney.domain.models.Currency
@@ -8,12 +8,13 @@ import com.example.harmoney.domain.models.ExchangeRateResult
 import com.example.harmoney.domain.models.Money
 import com.example.harmoney.domain.models.MoneyAmount
 
-class GetConvertedTotalByMoneyListUseCaseImpl : GetConvertedTotalByMoneyListUseCase {
+class CalculateConvertedTotalUseCaseImpl : CalculateConvertedTotalUseCase {
     override fun execute(
         moneyList: List<Money>,
         rates: Set<ExchangeRateResult>,
         targetCurrency: Currency
     ): ConvertedTotal {
+
         val includedMoney: MutableList<ConvertedMoney> = mutableListOf()
         val excludedMoney: MutableList<Money> = mutableListOf()
 
@@ -30,7 +31,7 @@ class GetConvertedTotalByMoneyListUseCaseImpl : GetConvertedTotalByMoneyListUseC
 
                 is ExchangeRateResult.Available -> {
                     val converted =
-                        money.amount.minorUnits.toBigDecimal().multiply(rate.rate.rate)
+                        money.amount.minorUnits.toBigDecimal().multiply(rate.rate.rateValue)
                     includedMoney.add(
                         ConvertedMoney(
                             original = money,

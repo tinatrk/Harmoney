@@ -2,8 +2,8 @@ package com.example.harmoney.domain.exchangeRate.impl
 
 import com.example.harmoney.core.util.Resource
 import com.example.harmoney.domain.converter.ExchangeRateResultConverter
+import com.example.harmoney.domain.exchangeRate.api.useCase.CalculateConvertedTotalUseCase
 import com.example.harmoney.domain.exchangeRate.api.useCase.ConvertCategoryStatisticsUseCase
-import com.example.harmoney.domain.exchangeRate.api.useCase.GetConvertedTotalByMoneyListUseCase
 import com.example.harmoney.domain.exchangeRate.api.useCase.GetExchangeRatesUseCase
 import com.example.harmoney.domain.exchangeRate.models.ExchangeRateFailure
 import com.example.harmoney.domain.models.CategoryStatistics
@@ -13,13 +13,15 @@ import com.example.harmoney.domain.models.Currency
 
 class ConvertCategoryStatisticsUseCaseImpl(
     private val getExchangeRatesUseCase: GetExchangeRatesUseCase,
-    private val getConvertedTotalByMoneyListUseCase: GetConvertedTotalByMoneyListUseCase,
+    private val calculateConvertedTotalUseCase: CalculateConvertedTotalUseCase,
     private val exchangeRateResultConverter: ExchangeRateResultConverter,
 ) : ConvertCategoryStatisticsUseCase {
+
     override suspend fun execute(
         categories: List<CategoryStatistics>,
         targetCurrency: Currency
     ): Resource<ConvertCategoryStatisticsResult, ExchangeRateFailure> {
+
         val currencies: MutableSet<Currency> = mutableSetOf()
         categories.forEach { category ->
             currencies.addAll(category.totalAmounts.map { it.currency })
@@ -38,7 +40,7 @@ class ConvertCategoryStatisticsUseCaseImpl(
                 val converted = categories.map { category ->
                     ConvertedCategoryStatistics(
                         category = category.category,
-                        total = getConvertedTotalByMoneyListUseCase.execute(
+                        total = calculateConvertedTotalUseCase.execute(
                             moneyList = category.totalAmounts,
                             rates = rateResults,
                             targetCurrency = targetCurrency,

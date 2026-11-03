@@ -48,6 +48,7 @@
     <string name="ic_search_line_desc">Поисковая строка</string>
     <string name="ic_clear_search_line_desc">Очистить поисковую строку</string>
     <string name="ic_refresh_desc">Презагрузить контент</string>
+    <string name="ic_info_arrow_down_desc">Открыть дополнительную информацию</string>
 
     <!-- Текст на кнопках -->
     <string name="btn_save_text">Сохранить</string>
@@ -70,7 +71,8 @@
     <string name="exchange_rate_unsupported_value">%1$s -> %2$s</string>
 
     <!-- Заголовки -->
-    <string name="title_balance">Текущий баланс</string>
+    <string name="title_current_balance">Текущий баланс</string>
+    <string name="title_balance">Баланс:</string>
     <string name="title_total_amount">Всего:</string>
     <string name="title_top_app_bar_create_transaction">Создание транзакции</string>
     <string name="title_top_app_bar_edit_transaction">Редактирование транзакции</string>
@@ -89,9 +91,13 @@
     <string name="title_all_filters">Все транзакции</string>
     <string name="title_account_scope_not_archived">Активные счета</string>
     <string name="title_account_scope_all">Все счета</string>
-    <string name="title_excluded_amounts">Не включено в итог: </string>
-    <string name="title_conversion_status">Статус конвертации валют: </string>
-    <string name="title_conversion_status_all_fresh">Для всех валют используются актуальные курсы</string>
+    <string name="title_excluded_amounts">Не включено в итог:</string>
+    <string name="title_exchange_rate_status">Статус конвертации валют</string>
+    <string name="title_exchange_rate_fresh_status">Найден актуальный курс:</string>
+    <string name="title_exchange_rate_stale_status">Найден только старый курс:</string>
+    <string name="title_exchange_rate_unsupported_status">Курс не найден:</string>
+    <string name="title_mark_as_archived">Не учитывать в общем балансе</string>
+    <string name="title_marked_as_archived">Не учитывается в общем балансе</string>
 
     <!-- Заголовки для периодов (для статистики) -->
     <string name="period_last_month">Прошлый месяц</string>
@@ -155,6 +161,7 @@
     <string name="toast_load_accounts_error">Не удалось загрузить счета</string>
     <string name="toast_update_reporting_currency_error">Не удалось обновить валюту отображения</string>
     <string name="toast_update_first_day_month_error">Не удалось обновить первый день месяца</string>
+    <string name="toast_save_selected_account_error">Не удалось сохранить выбранный аккаунт</string>
 
     <!-- Названия валют -->
     <string name="currency_name_aed">Дирхам ОАЭ</string>

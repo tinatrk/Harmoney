@@ -12,6 +12,7 @@ import com.example.harmoney.domain.models.SortOption
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -79,13 +80,16 @@ class AccountRepositoryImpl(
             : Flow<Resource<List<Account>, AccountFailure>> {
         val accountsFlow = when (sortOption) {
             SortOption.ALPHABET -> accountDao.getAccountListSortedByName()
+
             SortOption.TIME_CREATED -> accountDao.getAccountListSortedByCreatedAt()
+
             SortOption.USER_ORDER -> accountDao.getAccountListSortedByUserOrder(
                 ascending = (sortingDirection == USER_ORDER_IN_ASCENDING_ORDER)
             )
         }
 
         return accountsFlow
+            .distinctUntilChanged()
             .flatMapLatest { accountEntities ->
                 if (accountEntities.isEmpty()) {
                     flowOf(emptyList())
@@ -93,6 +97,7 @@ class AccountRepositoryImpl(
                     val accountIds = accountEntities.map { it.id }
 
                     accountDao.observeBalance(accountIds)
+                        .distinctUntilChanged()
                         .map { balances ->
                             val balancesByAccountId = balances.associateBy { it.accountId }
 
@@ -107,6 +112,7 @@ class AccountRepositoryImpl(
                         }
                 }
             }
+            .distinctUntilChanged()
             .map<List<Account>, Resource<List<Account>, AccountFailure>> { accounts ->
                 Resource.Success(accounts)
             }

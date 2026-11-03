@@ -1,28 +1,17 @@
 package com.example.harmoney.data.exchangeRate
 
-import androidx.sqlite.SQLiteException
 import com.example.harmoney.core.util.Resource
-import com.example.harmoney.data.exchangeRate.db.converter.ExchangeRateDBConverter
-import com.example.harmoney.data.exchangeRate.db.dao.ExchangeRateDao
-import com.example.harmoney.data.exchangeRate.db.entity.ExchangeRateEntity
-import com.example.harmoney.data.exchangeRate.db.entity.ExchangeRateSyncEntity
-import com.example.harmoney.data.exchangeRate.netwok.converter.ExchangeRateDtoConverter
-import com.example.harmoney.data.network.NetworkResult
-import com.example.harmoney.data.network.RemoteDataSource
 import com.example.harmoney.domain.exchangeRate.api.repository.ExchangeRateRepository
 import com.example.harmoney.domain.exchangeRate.models.ExchangeRateFailure
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.ExchangeRate
 import com.example.harmoney.domain.models.ExchangeRateResult
-import timber.log.Timber
 import java.math.BigDecimal
-import java.time.LocalDate
+import java.math.MathContext
+import java.math.RoundingMode
 
 class ExchangeRateRepositoryImpl(
-    private val remoteDataSource: RemoteDataSource,
-    private val exchangeRateDao: ExchangeRateDao,
-    private val exchangeRateDBConverter: ExchangeRateDBConverter,
-    private val exchangeRateDtoConverter: ExchangeRateDtoConverter,
+    private val exchangeRateProvider: ExchangeRateProvider,
 ) : ExchangeRateRepository {
 
     private val baseCurrency = Currency.EUR
@@ -34,38 +23,49 @@ class ExchangeRateRepositoryImpl(
 
         if (sources.isEmpty()) return Resource.Success(emptyList())
 
-        return try {
-            val result = getAvailableRatesFromBaseToQuote(
-                baseCurrency, sources + target
+        val currenciesToFetch = if (sources.all { it.id == target.id }) {
+            emptySet()
+        } else {
+            (sources + target).filterTo(mutableSetOf()) {
+                it.id != baseCurrency.id
+            }
+        }
+
+        val resourceRates = if (currenciesToFetch.isEmpty()) {
+            Resource.Success(emptyList())
+        } else {
+            exchangeRateProvider.getAvailableRatesFromBaseToQuote(
+                baseCurrency, currenciesToFetch
             )
-            val ratesFromBaseToAll = exchangeRateDBConverter.map(result)
+        }
 
-            val rates = sources.map { source ->
-                when {
-                    // это условие идет строго первым, иначе некорректно обработается случай
-                    // source.id = target.id = baseCurrency.id -> rate not required
-                    source.id == target.id -> {
-                        ExchangeRateResult.NotRequired(source, target)
-                    }
+        return when (resourceRates) {
+            is Resource.Error -> Resource.Error(resourceRates.error)
+            is Resource.Success -> {
+                val ratesFromBaseToAll = resourceRates.data
+                val rates = sources.map { source ->
+                    when {
+                        // это условие идет строго первым, иначе некорректно обработается случай
+                        // source.id = target.id = baseCurrency.id -> rate not required
+                        source.id == target.id -> {
+                            ExchangeRateResult.NotRequired(source, target)
+                        }
 
-                    source.id == baseCurrency.id -> {
-                        getBaseToTargetRate(target, ratesFromBaseToAll)
-                    }
+                        source.id == baseCurrency.id -> {
+                            getBaseToTargetRate(target, ratesFromBaseToAll)
+                        }
 
-                    target.id == baseCurrency.id -> {
-                        getSourceToBaseRate(source, ratesFromBaseToAll)
-                    }
+                        target.id == baseCurrency.id -> {
+                            getSourceToBaseRate(source, ratesFromBaseToAll)
+                        }
 
-                    else -> {
-                        getCrossRate(source, target, ratesFromBaseToAll)
+                        else -> {
+                            getCrossRate(source, target, ratesFromBaseToAll)
+                        }
                     }
                 }
+                Resource.Success(rates)
             }
-
-            Resource.Success(rates)
-        } catch (e: SQLiteException) {
-            Timber.e(e, "Error getting exchange rates")
-            Resource.Error(ExchangeRateFailure.DatabaseError)
         }
     }
 
@@ -79,6 +79,7 @@ class ExchangeRateRepositoryImpl(
         target: Currency,
         ratesFromBaseToAll: List<ExchangeRate>
     ): ExchangeRateResult {
+
         require(target.id != baseCurrency.id) {
             "Target currency must differ from base currency"
         }
@@ -90,7 +91,7 @@ class ExchangeRateRepositoryImpl(
             ExchangeRate(
                 sourceCurrency = baseCurrency,
                 targetCurrency = target,
-                rate = fromBaseToTarget.rate,
+                rateValue = fromBaseToTarget.rateValue,
                 rateDate = fromBaseToTarget.rateDate,
             )
         )
@@ -117,7 +118,10 @@ class ExchangeRateRepositoryImpl(
             ExchangeRate(
                 sourceCurrency = source,
                 targetCurrency = baseCurrency,
-                rate = BigDecimal.ONE.divide(fromBaseToSource.rate),
+                rateValue = BigDecimal.ONE.divide(
+                    fromBaseToSource.rateValue,
+                    MathContext(16, RoundingMode.HALF_EVEN)
+                ),
                 rateDate = fromBaseToSource.rateDate,
             )
         )
@@ -160,7 +164,10 @@ class ExchangeRateRepositoryImpl(
             ExchangeRate(
                 sourceCurrency = fromBaseToSource.targetCurrency,
                 targetCurrency = fromBaseToTarget.targetCurrency,
-                rate = fromBaseToTarget.rate.divide(fromBaseToSource.rate),
+                rateValue = fromBaseToTarget.rateValue.divide(
+                    fromBaseToSource.rateValue,
+                    MathContext(16, RoundingMode.HALF_EVEN)
+                ),
                 rateDate = minOf(fromBaseToSource.rateDate, fromBaseToTarget.rateDate)
             )
         )
@@ -171,115 +178,5 @@ class ExchangeRateRepositoryImpl(
         ratesFromBaseToAll: List<ExchangeRate>
     ): ExchangeRate? {
         return ratesFromBaseToAll.find { it.targetCurrency.id == currency.id }
-    }
-
-    private suspend fun getAvailableRatesFromBaseToQuote(
-        baseCurrency: Currency,
-        quoteCurrencies: Set<Currency>,
-    ): List<ExchangeRateEntity> {
-        val today = LocalDate.now()
-        val todayEpochDay = today.toEpochDay()
-        val quoteCurrencyIds = quoteCurrencies.map { it.id }
-
-        // 1. Ищем сегодняшний курс в кеше
-        val cachedRates = exchangeRateDao.getRatesByDate(
-            baseCurrencyId = baseCurrency.id,
-            quoteCurrencyIds = quoteCurrencyIds,
-            dateEpochDay = todayEpochDay
-        )
-
-        val cachedRateIds = cachedRates
-            .associateByTo(mutableMapOf()) { it.quoteCurrencyId }
-
-        // 2. Определяем валюты, для которых нет сегодняшнего курса в кеше
-        val missingQuotesInCache = quoteCurrencies
-            .filterNot { it.id in cachedRateIds }
-
-        if (missingQuotesInCache.isEmpty()) {
-            return cachedRateIds.values.toList()
-        }
-
-        // 3. Для отсутствующих курсов запрашиваем актуальные данные в api и сохраняем в БД
-        updateMissingRates(
-            baseCurrency = baseCurrency,
-            missingQuoteCurrencies = missingQuotesInCache.toSet(),
-            today = today
-        )
-
-        // 4. Возвращаем обновленные курсы из кеша
-        return exchangeRateDao.getRatesClosestToDate(
-            baseCurrencyId = baseCurrency.id,
-            quoteCurrencyIds = quoteCurrencyIds,
-            dateEpochDay = todayEpochDay
-        )
-    }
-
-    private suspend fun updateMissingRates(
-        baseCurrency: Currency,
-        missingQuoteCurrencies: Set<Currency>,
-        today: LocalDate,
-    ) {
-        val syncedIds = exchangeRateDao.getSyncedCurrencyIds(
-            baseCurrencyId = baseCurrency.id,
-            quoteCurrencyIds = missingQuoteCurrencies.map { it.id },
-            dateEpochDay = today.toEpochDay()
-        ).toSet()
-
-        val quotesToFetch = missingQuoteCurrencies
-            .filterNot { it.id in syncedIds }
-            .toSet()
-
-        if (quotesToFetch.isNotEmpty()) {
-            updateCacheRatesFromRemote(
-                baseCurrency = baseCurrency,
-                quoteCurrencies = quotesToFetch,
-                dateFrom = today.minusDays(AMOUNT_OF_DAYS_FOR_STALE_EXCHANGE_RATE),
-                dateTo = today,
-            )
-        }
-    }
-
-    private suspend fun updateCacheRatesFromRemote(
-        baseCurrency: Currency,
-        quoteCurrencies: Set<Currency>,
-        dateFrom: LocalDate,
-        dateTo: LocalDate,
-    ) {
-
-        val result = remoteDataSource.getRates(
-            baseIsoCode = baseCurrency.isoCode,
-            quoteIsoCodes = quoteCurrencies.joinToString(",") { it.isoCode },
-            from = dateFrom.toString(),
-            to = dateTo.toString()
-        )
-
-        if (result is NetworkResult.Success) {
-            val rates = exchangeRateDtoConverter.map(result.data)
-
-            val latestRates = rates
-                .groupBy { it.quoteCurrencyId }
-                .mapNotNull { (_, ratesByCurrency) ->
-                    ratesByCurrency.maxByOrNull { it.dateEpochDay }
-                }
-
-
-            if (latestRates.isNotEmpty()) {
-                exchangeRateDao.insertRates(latestRates)
-            }
-
-            exchangeRateDao.markAsSynced(
-                quoteCurrencies.map { quoteCurrency ->
-                    ExchangeRateSyncEntity(
-                        baseCurrencyId = baseCurrency.id,
-                        quoteCurrencyId = quoteCurrency.id,
-                        dateEpochDay = dateTo.toEpochDay(),
-                    )
-                }
-            )
-        }
-    }
-
-    companion object {
-        private const val AMOUNT_OF_DAYS_FOR_STALE_EXCHANGE_RATE = 7L
     }
 }

@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
+import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.SortOption
@@ -148,19 +148,24 @@ fun CategoryListScreen(
                         expanded = state.isSortMenuOpened,
                         menuOptions = SortOption.entries.map { sortOption ->
                             MenuOption(
-                                text = stringResource(sortOption.toStringRes()),
+                                body = {
+                                    HarmMenu.HarmMenuTextWithIconItem(
+                                        text = stringResource(sortOption.toStringRes()),
+                                        leadingIconResId = sortOption.toDrawableRes(),
+                                        leadingIconContentDescription = stringResource(
+                                            R.string.ic_sort_option_desc
+                                        ),
+                                    )
+                                },
                                 expanded = state.selectedSortOption.id == sortOption.id,
-                                leadingIconRes = sortOption.toDrawableRes()
                             ) {
                                 onEvent(
                                     CategoryListEvent.OnSortOptionClick(sortOption)
                                 )
                             }
                         }.toImmutableList(),
-                        isNeededHighlightSelectedOption = true
                     )
                 },
-                isTitleCenterAlignment = false
             )
         },
         floatingActionButton = {
@@ -178,7 +183,9 @@ fun CategoryListScreen(
                 .padding(paddingValues),
             tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = state.selectedTabIndex,
-            onTabClick = { newTab -> onEvent(CategoryListEvent.OnTabClick(newTab)) }
+            onTabClick = { newTab ->
+                onEvent(CategoryListEvent.OnTabClick(newTab))
+            }
         ) {
             CategoryListContent(
                 state = state,

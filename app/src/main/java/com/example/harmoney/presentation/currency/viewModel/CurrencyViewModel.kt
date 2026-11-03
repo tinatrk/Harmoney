@@ -11,6 +11,7 @@ import com.example.harmoney.navigation.NavResultKeys
 import com.example.harmoney.presentation.converters.CurrencyUiConverter
 import com.example.harmoney.presentation.currency.models.CurrencyAction
 import com.example.harmoney.presentation.currency.models.CurrencyEvent
+import com.example.harmoney.presentation.currency.models.CurrencyScreenError
 import com.example.harmoney.presentation.currency.models.CurrencyState
 import com.example.harmoney.presentation.models.ContentState
 import com.example.harmoney.presentation.models.CurrencyUi
@@ -41,19 +42,26 @@ class CurrencyViewModel(
     }
 
     private fun getSupportedCurrencyList(isRefreshRequired: Boolean = false) {
-        writableState.update { it.copy(contentState = ContentState.LOADING) }
+        writableState.update { it.copy(content = ContentState.Loading) }
 
         launchWithErrorHandling(
             errorMessage = GET_SUPPORTED_CURRENCY_LIST_UNEXPECTED_ERROR,
-            onError = { writableState.update { it.copy(contentState = ContentState.ERROR) } }
+            onError = {
+                writableState.update {
+                    it.copy(
+                        content = ContentState.Error(
+                            CurrencyScreenError.UPDATE_DATA_ERROR
+                        )
+                    )
+                }
+            }
         ) {
-            var contentState = ContentState.IDLE
-            val res = getSupportedCurrencyListUseCase.execute(isRefreshRequired)
-
-            when (res) {
+            var contentState: ContentState<List<CurrencyUi>, CurrencyScreenError> =
+                ContentState.Idle
+            when (val res = getSupportedCurrencyListUseCase.execute(isRefreshRequired)) {
                 is Resource.Success -> {
                     initCurrencyList = currencyUiConverter.map(res.data)
-                    contentState = ContentState.SUCCESS
+                    contentState = ContentState.Success(initCurrencyList)
                 }
 
                 is Resource.Error -> {
@@ -61,11 +69,14 @@ class CurrencyViewModel(
 
                     contentState = when (res.error) {
                         is CurrencyListFailure.NetworkConnectionError -> {
-                            ContentState.NETWORK_CONNECTION_ERROR
+                            ContentState.Error(
+                                CurrencyScreenError
+                                    .NETWORK_CONNECTION_ERROR
+                            )
                         }
 
                         else -> {
-                            ContentState.ERROR
+                            ContentState.Error(CurrencyScreenError.UPDATE_DATA_ERROR)
                         }
                     }
                 }
@@ -73,8 +84,7 @@ class CurrencyViewModel(
 
             writableState.update {
                 it.copy(
-                    currencyList = initCurrencyList,
-                    contentState = contentState,
+                    content = contentState,
                     refreshCurrencyListId = state.value.refreshCurrencyListId + 1
                 )
             }
@@ -125,10 +135,14 @@ class CurrencyViewModel(
 
     private fun onClearSearchLineClick() {
         typedQuery.value = ""
+        val content = when (writableState.value.content) {
+            is ContentState.Success -> ContentState.Success(initCurrencyList)
+            else -> writableState.value.content
+        }
         writableState.update {
             it.copy(
                 searchText = "",
-                currencyList = initCurrencyList,
+                content = content,
                 refreshCurrencyListId = state.value.refreshCurrencyListId + 1
             )
         }
@@ -152,7 +166,7 @@ class CurrencyViewModel(
 
         writableState.update {
             it.copy(
-                currencyList = result,
+                content = ContentState.Success(result),
                 refreshCurrencyListId = state.value.refreshCurrencyListId + 1
             )
         }

@@ -18,8 +18,12 @@ import com.example.harmoney.data.core.bd.converter.TotalMoneyDtoConverterImpl
 import com.example.harmoney.data.currencyList.db.converter.CurrencyListDBConverter
 import com.example.harmoney.data.currencyList.db.converter.CurrencyListDBConverterImpl
 import com.example.harmoney.data.currencyList.db.dao.CurrencyListDao
+import com.example.harmoney.data.currencyList.network.SupportedCurrenciesDataSource
+import com.example.harmoney.data.currencyList.network.SupportedCurrenciesDataSourceImpl
 import com.example.harmoney.data.currencyList.network.converter.CurrencyListDtoConverter
 import com.example.harmoney.data.currencyList.network.converter.CurrencyListDtoConverterImpl
+import com.example.harmoney.data.exchangeRate.ExchangeRateProvider
+import com.example.harmoney.data.exchangeRate.ExchangeRateProviderImpl
 import com.example.harmoney.data.exchangeRate.db.converter.ExchangeRateDBConverter
 import com.example.harmoney.data.exchangeRate.db.converter.ExchangeRateDBConverterImpl
 import com.example.harmoney.data.exchangeRate.db.dao.ExchangeRateDao
@@ -127,12 +131,22 @@ val dataModule = module {
     factory<CurrencyListDBConverter> {
         CurrencyListDBConverterImpl()
     }
-    // endregion
-
 
     factory<CurrencyListDtoConverter> {
         CurrencyListDtoConverterImpl()
     }
+
+    // single т.к внутри используется Mutex
+    single<SupportedCurrenciesDataSource> {
+        SupportedCurrenciesDataSourceImpl(
+            database = get<AppDatabase>(),
+            currencyListDao = get(),
+            remoteDataSource = get(),
+            dbConverter = get(),
+            dtoConverter = get()
+        )
+    }
+    // endregion
 
 
     // region account
@@ -174,6 +188,17 @@ val dataModule = module {
 
     factory<ExchangeRateDtoConverter> {
         ExchangeRateDtoConverterImpl()
+    }
+
+    // single т.к. внутри используется Mutex
+    single<ExchangeRateProvider> {
+        ExchangeRateProviderImpl(
+            remoteDataSource = get(),
+            exchangeRateDao = get(),
+            exchangeRateDBConverter = get(),
+            exchangeRateDtoConverter = get(),
+            supportedCurrenciesDataSource = get()
+        )
     }
     // endregion
 }

@@ -69,5 +69,14 @@ interface NumbersFormatter {
      *
      * `56.60` -> `56.6%`
      */
-    fun percentageToString(number: BigDecimal): String
+    fun percentageToString(number: BigDecimal, scale: Int? = null): String
+
+    /**
+     * Examples:
+     *
+     * `numberToString(number = 1,23456789)` -> `"1,23456789"`
+     *
+     * `numberToString(number = 1,23456789, scale = 3)` -> `"1,235"`
+     * */
+    fun numberToString(number: BigDecimal, scale: Int? = null): String
 }

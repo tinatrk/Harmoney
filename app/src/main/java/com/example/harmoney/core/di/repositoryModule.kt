@@ -11,18 +11,18 @@ import com.example.harmoney.data.settings.reportingCurrency.impl.ReportingCurren
 import com.example.harmoney.data.settings.theme.impl.ThemeRepositoryImpl
 import com.example.harmoney.data.statistics.impl.StatisticsRepositoryImpl
 import com.example.harmoney.data.transaction.impl.TransactionRepositoryImpl
+import com.example.harmoney.domain.account.api.repository.AccountRepository
+import com.example.harmoney.domain.account.api.repository.SelectedAccountScopeRepository
 import com.example.harmoney.domain.category.api.reposiory.CategoryRepository
 import com.example.harmoney.domain.currencyList.api.repository.CurrencyListRepository
+import com.example.harmoney.domain.exchangeRate.api.repository.ExchangeRateRepository
 import com.example.harmoney.domain.settings.categorySortingMode.api.repository.CategorySortOptionRepository
 import com.example.harmoney.domain.settings.currency.api.repository.ReportingCurrencyRepository
 import com.example.harmoney.domain.settings.period.api.repository.FirstDayMonthRepository
 import com.example.harmoney.domain.settings.theme.api.repository.ThemeRepository
+import com.example.harmoney.domain.statistics.api.repository.StatisticsRepository
 import com.example.harmoney.domain.transaction.api.repository.TransactionRepository
 import org.koin.dsl.module
-import com.example.harmoney.domain.account.api.repository.AccountRepository
-import com.example.harmoney.domain.account.api.repository.SelectedAccountScopeRepository
-import com.example.harmoney.domain.exchangeRate.api.repository.ExchangeRateRepository
-import com.example.harmoney.domain.statistics.api.repository.StatisticsRepository
 
 val repositoryModule = module {
     factory<ThemeRepository> {
@@ -55,12 +55,7 @@ val repositoryModule = module {
     }
 
     factory<CurrencyListRepository> {
-        CurrencyListRepositoryImpl(
-            currencyListDao = get(),
-            remoteDataSource = get(),
-            currencyListDBConverter = get(),
-            currencyListDtoConverter = get()
-        )
+        CurrencyListRepositoryImpl(supportedCurrenciesDataSource = get())
     }
 
     factory<AccountRepository> {
@@ -80,11 +75,6 @@ val repositoryModule = module {
     }
 
     factory<ExchangeRateRepository> {
-        ExchangeRateRepositoryImpl(
-            remoteDataSource = get(),
-            exchangeRateDao = get(),
-            exchangeRateDBConverter = get(),
-            exchangeRateDtoConverter = get()
-        )
+        ExchangeRateRepositoryImpl(exchangeRateProvider = get())
     }
 }

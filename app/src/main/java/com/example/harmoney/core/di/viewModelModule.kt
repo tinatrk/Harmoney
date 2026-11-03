@@ -8,11 +8,18 @@ import com.example.harmoney.presentation.calculator.viewModel.CalculatorHandler
 import com.example.harmoney.presentation.calculator.viewModel.CalculatorViewModel
 import com.example.harmoney.presentation.category.viewModel.CategoryViewModel
 import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
+import com.example.harmoney.presentation.categoryStatistics.converters.CategoryStatisticsContentConverter
+import com.example.harmoney.presentation.categoryStatistics.converters.CategoryStatisticsContentConverterImpl
+import com.example.harmoney.presentation.categoryStatistics.converters.CategoryStatisticsUiConverter
+import com.example.harmoney.presentation.categoryStatistics.converters.CategoryStatisticsUiConverterImpl
+import com.example.harmoney.presentation.categoryStatistics.flows.CategoryStatisticsAccountFlowsFactory
+import com.example.harmoney.presentation.categoryStatistics.flows.CategoryStatisticsSettingsFlows
+import com.example.harmoney.presentation.categoryStatistics.flows.CategoryStatisticsStatisticsFlowsFactory
 import com.example.harmoney.presentation.categoryStatistics.viewModel.CategoryStatisticsViewModel
+import com.example.harmoney.presentation.converters.AccountContentConverter
+import com.example.harmoney.presentation.converters.AccountContentConverterImpl
 import com.example.harmoney.presentation.converters.AccountScopeUiConverter
 import com.example.harmoney.presentation.converters.AccountScopeUiConverterImpl
-import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverter
-import com.example.harmoney.presentation.converters.CategoryStatisticsUiConverterImpl
 import com.example.harmoney.presentation.converters.CategoryUiConverter
 import com.example.harmoney.presentation.converters.CategoryUiConverterImpl
 import com.example.harmoney.presentation.converters.ConvertedTotalFormatter
@@ -47,27 +54,15 @@ val viewModelModule = module {
     viewModel {
         CategoryStatisticsViewModel(
             savedStateHandle = get(),
-            sessionSateHolder = get(),
-            getStatisticsPeriodsUseCase = get(),
             setThemeUseCase = get(),
-            firstDayMonthInteractor = get(),
-            reportingCurrencyInteractor = get(),
 
-            getAccountListUseCase = get(),
-            selectedAccountScopeInteractor = get(),
-            getAccountScopesUseCase = get(),
+            categoryStatisticsSettingsFlows = get(),
+            categoryStatisticsAccountFlowsFactory = get(),
+            categoryStatisticsStatisticsFlowsFactory = get(),
 
-            getCategoryStatisticsUseCase = get(),
-            getCategoryTotalUseCase = get(),
-            convertCategoryStatisticsUseCase = get(),
-            convertTotalMoneyUseCase = get(),
-
-            numbersFormatter = get(),
-            accountScopeUiConverter = get(),
             statisticsPeriodUiConverter = get(),
-            categoryStatisticsUiConverter = get(),
-            exchangeRateFormatter = get(),
-            convertedTotalFormatter = get(),
+            categoryStatisticsContentConverter = get(),
+            accountContentConverter = get(),
         )
     }
 
@@ -196,11 +191,30 @@ val viewModelModule = module {
     }
 
     factory<ExchangeRateFormatter> {
-        ExchangeRateFormatterImpl(stringProvider = get(), dateFormatter = get())
+        ExchangeRateFormatterImpl(
+            stringProvider = get(),
+            dateFormatter = get(),
+            numbersFormatter = get()
+        )
     }
 
     factory<ConvertedTotalFormatter> {
         ConvertedTotalFormatterImpl(numbersFormatter = get(), stringProvider = get())
+    }
+
+    factory<CategoryStatisticsContentConverter> {
+        CategoryStatisticsContentConverterImpl(
+            numbersFormatter = get(),
+            moneyCalculator = get(),
+            categoryStatisticsUiConverter = get(),
+            convertedTotalFormatter = get()
+        )
+    }
+
+    factory<AccountContentConverter> {
+        AccountContentConverterImpl(
+            accountScopeUiConverter = get(), exchangeRateFormatter = get()
+        )
     }
     // endregion
 
@@ -221,6 +235,32 @@ val viewModelModule = module {
 
     single {
         SavedStateHandle()
+    }
+
+    factory {
+        CategoryStatisticsSettingsFlows(
+            sessionStateHolder = get(),
+            getStatisticsPeriodsUseCase = get(),
+            reportingCurrencyInteractor = get(),
+            firstDayMonthInteractor = get()
+        )
+    }
+
+    factory {
+        CategoryStatisticsAccountFlowsFactory(
+            selectedAccountScopeInteractor = get(),
+            getAccountListUseCase = get(),
+            getAccountScopesUseCase = get(),
+            getAccountScopesWithBalanceInteractor = get()
+        )
+    }
+
+    factory {
+        CategoryStatisticsStatisticsFlowsFactory(
+            getCategoryStatisticsUseCase = get(),
+            getCategoriesTotalUseCase = get(),
+            prepareCategoryStatisticsInteractor = get()
+        )
     }
     // endregion
 }

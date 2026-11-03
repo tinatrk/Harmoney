@@ -1,13 +1,17 @@
 package com.example.harmoney.ui.other
 
+import androidx.compose.material3.Text
 import com.example.harmoney.domain.models.CategoryColors
 import com.example.harmoney.domain.models.CategoryIcon
 import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
+import com.example.harmoney.presentation.categoryStatistics.models.AccountContent
+import com.example.harmoney.presentation.models.AccountScopeUi
 import com.example.harmoney.presentation.models.CategoryStatisticsUi
 import com.example.harmoney.presentation.models.CategoryUi
 import com.example.harmoney.presentation.models.CurrencyUi
+import com.example.harmoney.presentation.models.MenuOption
 import com.example.harmoney.presentation.models.PieChartItem
 import com.example.harmoney.presentation.models.TransactionFilterUi
 import com.example.harmoney.presentation.models.TransactionUi
@@ -80,28 +84,28 @@ object PreviewData {
         TransactionUi(
             id = 1,
             category = expensesCategories[1],
-            amount = "2 000 ₽",
+            amount = "20 €",
             note = "Маме на 8 марта",
             date = "06 Марта"
         ),
         TransactionUi(
             id = 2,
             category = expensesCategories[1],
-            amount = "1 500 ₽",
+            amount = "15 €",
             note = "Бабушке на 8 марта",
             date = "06 Марта"
         ),
         TransactionUi(
             id = 3,
             category = expensesCategories[2],
-            amount = "1 500 ₽",
+            amount = "15 €",
             note = "Чемодан",
             date = "06 Марта"
         ),
         TransactionUi(
             id = 4,
             category = expensesCategories[0],
-            amount = "2 000 ₽",
+            amount = "20 €",
             date = "15 Марта"
         ),
         TransactionUi(
@@ -133,6 +137,76 @@ object PreviewData {
         CurrencyUi(currency = Currency.RUB, name = "Российский рубль"),
         CurrencyUi(currency = Currency.CHF, name = "Швейцарский франк"),
     )
+
+    private val accountScopes: List<AccountScopeUi> = listOf(
+        AccountScopeUi(
+            id = 1L,
+            name = "Основная карта",
+            balance = "30 000 ₽",
+            balanceOriginals = null,
+            isArchivedMark = false
+        ),
+        AccountScopeUi(
+            id = 2L,
+            name = "Наличка",
+            balance = "100 ₽",
+            balanceOriginals = null,
+            isArchivedMark = false
+        ),
+        AccountScopeUi(
+            id = 3L,
+            name = "Иностранная карта",
+            balance = "1 000 $",
+            balanceOriginals = null,
+            isArchivedMark = true
+        ),
+        AccountScopeUi(
+            id = 4L,
+            name = "Активные счета",
+            balance = "30 100 ₽",
+            balanceOriginals = null,
+            isArchivedMark = false
+        ),
+        AccountScopeUi(
+            id = 5L,
+            name = "Все счета",
+            balance = "40 100 ₽",
+            balanceOriginals = "30 100 ₽ = 30 100 ₽\n" + "1000 $ = 10 000 ₽",
+            isArchivedMark = false
+        ),
+    )
+
+    private val accountScopesMenu: List<MenuOption> = listOf(
+        MenuOption(
+            body = { Text("Основная карта") },
+            expanded = true,
+            onClick = {}
+        ),
+        MenuOption(
+            body = { Text("Наличка") },
+            expanded = false,
+            onClick = {}
+        ),
+        MenuOption(
+            body = { Text("Иностранная карта") },
+            expanded = false,
+            onClick = {}
+        ),
+        MenuOption(
+            body = { Text("Все счета") },
+            expanded = false,
+            onClick = {}
+        ),
+    )
+
+    private const val exchangeRateStatus =
+        "Найден актуальный курс:\n" +
+                "1 $ = 80 ₽\n" +
+                "1 € = 100 ₽\n\n" +
+        "Найден только старый курс:\n" +
+                "1 ₸ = 1.5 ₽ [10.05.2026]\n\n" +
+        "Курс не найден:\n" +
+                "¥ -> ₽"
 
     fun getExpensesCategoryStatistics(): ImmutableList<CategoryStatisticsUi> {
         return persistentListOf(
@@ -181,7 +255,9 @@ object PreviewData {
         )
     }
 
-    fun getExpensesTransactions(): ImmutableList<TransactionsPerDayUi> {
+    fun getExpensesTransactions(): ImmutableList<TransactionUi> = expensesTransactions
+
+    fun getExpensesTransactionsPerDay(): ImmutableList<TransactionsPerDayUi> {
         return persistentListOf(
             TransactionsPerDayUi(
                 date = "06 Марта",
@@ -244,4 +320,14 @@ object PreviewData {
                     item.currency.isoCode.contains(query, ignoreCase = true)
         }.toImmutableList()
     }
+
+    fun getAccountScopeMenu(): List<MenuOption> = accountScopesMenu
+
+    fun getAccountContent(): AccountContent = AccountContent(
+        accountScopes = accountScopes.toImmutableList(),
+        accountsExchangeRateStatus = "Найден актуальный курс:\n" + "1 $ = 100 ₽",
+        selectedAccountScope = accountScopes.last()
+    )
+
+    fun getExchangeRateStatus(): String = exchangeRateStatus
 }

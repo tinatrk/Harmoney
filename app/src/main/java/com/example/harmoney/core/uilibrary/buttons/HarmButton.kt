@@ -290,14 +290,12 @@ object HarmButton {
         onMenuClick: () -> Unit,
         onMenuDismiss: () -> Unit,
         modifier: Modifier = Modifier,
-        isNeededHighlightSelectedOption: Boolean = false,
     ) {
         HarmMenu.HarmDropdownMenu(
             expanded = expanded,
             menuOptions = menuOptions,
             onDismissRequest = onMenuDismiss,
             modifier = modifier,
-            isNeededHighlightSelectedOption = isNeededHighlightSelectedOption
         ) {
             HarmCardIconButton(
                 iconRes = iconRes,
@@ -674,8 +672,17 @@ private fun HarmDropdownMenuIcon_DarkPreview() {
             iconRes = R.drawable.ic_menu_24px,
             contentDescription = null,
             menuOptions = persistentListOf(
-                MenuOption(text = stringResource(R.string.ic_edit_desc), onClick = {}),
-                MenuOption(text = stringResource(R.string.ic_delete_desc), onClick = {}),
+                MenuOption(
+                    body = {
+                        HarmMenu.HarmMenuTextItem(stringResource(R.string.ic_edit_desc))
+                    },
+                    onClick = {}),
+                MenuOption(
+                    body = {
+                        HarmMenu
+                            .HarmMenuTextItem(stringResource(R.string.ic_delete_desc))
+                    },
+                    onClick = {}),
             ),
             expanded = true,
             onMenuClick = {},
@@ -692,8 +699,18 @@ private fun HarmDropdownMenuIcon_LightPreview() {
             iconRes = R.drawable.ic_menu_24px,
             contentDescription = null,
             menuOptions = persistentListOf(
-                MenuOption(text = stringResource(R.string.ic_edit_desc), onClick = {}),
-                MenuOption(text = stringResource(R.string.ic_delete_desc), onClick = {}),
+                MenuOption(
+                    body = {
+                        HarmMenu
+                            .HarmMenuTextItem(stringResource(R.string.ic_edit_desc))
+                    },
+                    onClick = {}),
+                MenuOption(
+                    body = {
+                        HarmMenu
+                            .HarmMenuTextItem(stringResource(R.string.ic_delete_desc))
+                    },
+                    onClick = {}),
             ),
             expanded = true,
             onMenuClick = {},

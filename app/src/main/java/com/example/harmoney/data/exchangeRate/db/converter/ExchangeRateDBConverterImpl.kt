@@ -11,7 +11,7 @@ class ExchangeRateDBConverterImpl : ExchangeRateDBConverter {
             baseCurrencyId = exchangeRate.sourceCurrency.id,
             quoteCurrencyId = exchangeRate.targetCurrency.id,
             dateEpochDay = exchangeRate.rateDate.toEpochDay(),
-            rateToBase = exchangeRate.rate
+            rateFromBaseToQuote = exchangeRate.rateValue
         )
     }
 
@@ -19,7 +19,7 @@ class ExchangeRateDBConverterImpl : ExchangeRateDBConverter {
         return ExchangeRate(
             sourceCurrency = Currency.fromId(exchangeRate.baseCurrencyId),
             targetCurrency = Currency.fromId(exchangeRate.quoteCurrencyId),
-            rate = exchangeRate.rateToBase,
+            rateValue = exchangeRate.rateFromBaseToQuote,
             rateDate = LocalDate.ofEpochDay(exchangeRate.dateEpochDay),
         )
     }

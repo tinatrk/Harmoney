@@ -97,7 +97,7 @@ fun TransactionListScreen(
         topBar = {
             HarmTopBar.HarmCommonTopBar(
                 title = state.currentBalance,
-                subtitle = stringResource(R.string.title_balance),
+                subtitle = stringResource(R.string.title_current_balance),
                 navigationIcon = {
                     HarmButton.HarmTopBarIconButton(
                         iconRes = R.drawable.ic_arrow_back_24px,
@@ -105,7 +105,6 @@ fun TransactionListScreen(
                         onClick = { onEvent(TransactionListEvent.OnBackClick) }
                     )
                 },
-                isTitleCenterAlignment = true,
             )
         },
         containerColor = HarmTheme.colors.surface,
@@ -190,7 +189,11 @@ fun TransactionListContent(
                         when (filter) {
                             is TransactionFilterUi.All -> {
                                 MenuOption(
-                                    text = stringResource(R.string.title_all_filters),
+                                    body = {
+                                        HarmMenu.HarmMenuTextItem(
+                                            stringResource(R.string.title_all_filters)
+                                        )
+                                    },
                                     expanded = state.selectedFilter is TransactionFilterUi.All
                                 )
                                 { onEvent(TransactionListEvent.OnFilterMenuChanged(filter)) }
@@ -198,7 +201,7 @@ fun TransactionListContent(
 
                             is TransactionFilterUi.CategoryUi -> {
                                 MenuOption(
-                                    text = filter.name,
+                                    body = { HarmMenu.HarmMenuTextItem(filter.name) },
                                     expanded =
                                         state.selectedFilter is TransactionFilterUi.CategoryUi
                                                 && state.selectedFilter.id == filter.id
@@ -206,7 +209,6 @@ fun TransactionListContent(
                             }
                         }
                     }.toImmutableList(),
-                    isNeededHighlightSelectedOption = true
                 ) {
                     Row(
                         modifier = Modifier
@@ -321,7 +323,7 @@ private fun TransactionListScreen_DarkPreview() {
                     date = "01.03.2026 - 31.03.2026"
                 ),
                 totalAmount = "62 000 ₽",
-                oneDayTransactionsList = PreviewData.getExpensesTransactions(),
+                oneDayTransactionsList = PreviewData.getExpensesTransactionsPerDay(),
                 selectedFilter = TransactionFilterUi.All
             ),
             onEvent = {},
@@ -342,7 +344,7 @@ private fun TransactionListScreen_LightPreview() {
                     date = "01.03.2026 - 31.03.2026"
                 ),
                 totalAmount = "62 000 ₽",
-                oneDayTransactionsList = PreviewData.getExpensesTransactions(),
+                oneDayTransactionsList = PreviewData.getExpensesTransactionsPerDay(),
                 selectedFilter = TransactionFilterUi.All
             ),
             onEvent = {},
@@ -363,7 +365,7 @@ private fun TransactionListScreen_DarkMenuPreview() {
                     date = "01.03.2026 - 31.03.2026"
                 ),
                 totalAmount = "62 000 ₽",
-                oneDayTransactionsList = PreviewData.getExpensesTransactions(),
+                oneDayTransactionsList = PreviewData.getExpensesTransactionsPerDay(),
                 selectedFilter = TransactionFilterUi.All,
                 isFilterMenuOpened = true,
                 transactionsFilters = PreviewData.getExpensesFilters()
@@ -386,7 +388,7 @@ private fun TransactionListScreen_LightMenuPreview() {
                     date = "01.03.2026 - 31.03.2026"
                 ),
                 totalAmount = "62 000 ₽",
-                oneDayTransactionsList = PreviewData.getExpensesTransactions(),
+                oneDayTransactionsList = PreviewData.getExpensesTransactionsPerDay(),
                 selectedFilter = TransactionFilterUi.All,
                 isFilterMenuOpened = true,
                 transactionsFilters = PreviewData.getExpensesFilters()

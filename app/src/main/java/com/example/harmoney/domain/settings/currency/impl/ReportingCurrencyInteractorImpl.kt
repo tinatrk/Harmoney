@@ -6,7 +6,7 @@ import com.example.harmoney.domain.settings.currency.api.useCase.ReportingCurren
 import kotlinx.coroutines.flow.Flow
 
 class ReportingCurrencyInteractorImpl(
-    private val repository: ReportingCurrencyRepository
+    private val repository: ReportingCurrencyRepository,
 ) : ReportingCurrencyInteractor {
     override fun getReportingCurrency(): Flow<Currency> {
         return repository.getReportingCurrency()

@@ -29,7 +29,7 @@ import com.example.harmoney.data.category.entity.CategoryEntity
 data class TransactionEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id") val id: Long,
-    @ColumnInfo("accountId") val accountId: Long,
+    @ColumnInfo(name = "accountId") val accountId: Long,
     @ColumnInfo(name = "categoryId") val categoryId: Long,
     @ColumnInfo(name = "dateMillis") val dateMillis: Long,
     @ColumnInfo(name = "moneyAmountMinorUnits") val moneyAmountMinorUnits: Long,

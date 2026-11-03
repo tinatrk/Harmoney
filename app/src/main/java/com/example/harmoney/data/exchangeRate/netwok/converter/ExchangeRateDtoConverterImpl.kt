@@ -16,7 +16,7 @@ class ExchangeRateDtoConverterImpl : ExchangeRateDtoConverter {
             baseCurrencyId = baseCurrency.id,
             quoteCurrencyId = quoteCurrency.id,
             dateEpochDay = LocalDate.parse(rate.date).toEpochDay(),
-            rateToBase = rate.rate
+            rateFromBaseToQuote = rate.rate
         )
     }
 

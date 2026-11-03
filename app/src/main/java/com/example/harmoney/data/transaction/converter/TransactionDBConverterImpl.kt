@@ -26,7 +26,7 @@ class TransactionDBConverterImpl(
     override fun map(transaction: TransactionDetailsDto): Transaction {
         return Transaction(
             id = transaction.transaction.id,
-            accountId = transaction.account.id,//accountDBConverter.map(transaction.account),
+            accountId = transaction.account.id,
             category = categoryDBConverter.map(transaction.category),
             date = dateConverter.millisToDate(transaction.transaction.dateMillis),
             amount = MoneyAmount(transaction.transaction.moneyAmountMinorUnits),
