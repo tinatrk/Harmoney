@@ -183,8 +183,8 @@ private fun PreviewDrawerItems(
         badge = {
             HarmMenu.HarmDropdownMenu(
                 expanded = isCurrencyMenuOpened,
-                menuOptions = Currency.entries.sortedBy { it.code }.map { currency ->
-                    MenuOption(text = currency.code) {}
+                menuOptions = Currency.entries.sortedBy { it.isoCode }.map { currency ->
+                    MenuOption(body = { HarmMenu.HarmMenuTextItem(currency.isoCode) }) {}
                 }.toImmutableList(),
                 onDismissRequest = {}
             ) {

@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.example.harmoney.R
 import com.example.harmoney.core.uilibrary.buttons.HarmButton
+import com.example.harmoney.core.uilibrary.menus.HarmMenu
 import com.example.harmoney.core.uilibrary.topbars.HarmTopBar
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.SortOption
@@ -48,7 +48,7 @@ import com.example.harmoney.presentation.categoryList.models.CategoryListState
 import com.example.harmoney.presentation.categoryList.viewModel.CategoryListViewModel
 import com.example.harmoney.presentation.models.CategoryUi
 import com.example.harmoney.presentation.models.MenuOption
-import com.example.harmoney.ui.components.EmptyScreen
+import com.example.harmoney.ui.components.HarmMessage
 import com.example.harmoney.ui.components.ScreenWithCategoryTypeTabs
 import com.example.harmoney.ui.mappers.CategoryIconUiMapper.toDrawableRes
 import com.example.harmoney.ui.mappers.SortOptionUiMapper.toDrawableRes
@@ -148,19 +148,24 @@ fun CategoryListScreen(
                         expanded = state.isSortMenuOpened,
                         menuOptions = SortOption.entries.map { sortOption ->
                             MenuOption(
-                                text = stringResource(sortOption.toStringRes()),
+                                body = {
+                                    HarmMenu.HarmMenuTextWithIconItem(
+                                        text = stringResource(sortOption.toStringRes()),
+                                        leadingIconResId = sortOption.toDrawableRes(),
+                                        leadingIconContentDescription = stringResource(
+                                            R.string.ic_sort_option_desc
+                                        ),
+                                    )
+                                },
                                 expanded = state.selectedSortOption.id == sortOption.id,
-                                leadingIconRes = sortOption.toDrawableRes()
                             ) {
                                 onEvent(
                                     CategoryListEvent.OnSortOptionClick(sortOption)
                                 )
                             }
                         }.toImmutableList(),
-                        isNeededHighlightSelectedOption = true
                     )
                 },
-                isTitleCenterAlignment = false
             )
         },
         floatingActionButton = {
@@ -178,7 +183,9 @@ fun CategoryListScreen(
                 .padding(paddingValues),
             tabs = CategoryType.entries.toImmutableList(),
             selectedTabIndex = state.selectedTabIndex,
-            onTabClick = { newTab -> onEvent(CategoryListEvent.OnTabClick(newTab)) }
+            onTabClick = { newTab ->
+                onEvent(CategoryListEvent.OnTabClick(newTab))
+            }
         ) {
             CategoryListContent(
                 state = state,
@@ -194,36 +201,22 @@ fun CategoryListContent(
     onEvent: (CategoryListEvent) -> Unit,
 ) {
     if (state.isDataLoadingError) {
-        ErrorScreen(
+        HarmMessage(
             modifier = Modifier.fillMaxSize(),
-            errorMessage = stringResource(R.string.error_something_went_wrong)
+            message = stringResource(R.string.error_something_went_wrong)
         )
     } else if (state.categories.isEmpty()) {
-        EmptyScreen(message = stringResource(R.string.placeholder_empty_category_list))
+        HarmMessage(
+            modifier = Modifier.fillMaxSize(),
+            message = stringResource(R.string.placeholder_empty_category_list),
+            imageRes = R.drawable.im_empty_screen
+        )
     } else {
         if (state.selectedSortOption == SortOption.USER_ORDER) {
             VerticalReorderableGrid(state = state, onEvent = onEvent)
         } else {
             VerticalCommonGrid(state = state, onEvent = onEvent)
         }
-    }
-}
-
-@Composable
-fun ErrorScreen(
-    errorMessage: String,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = errorMessage,
-            style = HarmTheme.typography.titleLargeSemiBold,
-            color = HarmTheme.colors.onSurface
-        )
     }
 }
 

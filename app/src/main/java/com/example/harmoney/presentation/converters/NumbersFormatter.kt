@@ -1,44 +1,61 @@
 package com.example.harmoney.presentation.converters
 
-import com.example.harmoney.domain.models.Currency
+import com.example.harmoney.domain.models.Money
+import java.math.BigDecimal
 
 interface NumbersFormatter {
     /**
-     * `moneyMinorUnits` - the amount of money in the smallest monetary units for a specific
+     * `moneyInMinorUnits` - the amount of money in the smallest monetary units for a specific
      * currency (cents for USD, kopecks for RUS and so on)
      *
      * Examples:
      *
-     * `123` (cents/kopecks) -> `1.23 ₽` (dollars/rubles)
+     * `123` (kopecks/cents) -> `1.23 ₽` (rubles/dollars)
      *
-     * `123456` (cents/kopecks) -> `1 234.56 ₽` (dollars/rubles)
+     * `123456` (kopecks/cents) -> `1 234.56 ₽` (rubles/dollars)
      *
-     * `12300` (cents/kopecks) -> `123 ₽` (dollars/rubles)
+     * `12300` (kopecks/cents) -> `123 ₽` (rubles/dollars)
      *
-     * `12340` (cents/kopecks) -> `123.4 ₽` (dollars/rubles)
+     * `12340` (kopecks/cents) -> `123.4 ₽` (rubles/dollars)
      *  */
     fun moneyToStringWithCurrency(
-        moneyMinorUnits: Long,
-        currency: Currency
+        moneyInMinorUnits: Money
     ): String
 
     /**
-     * `moneyMinorUnits` - the amount of money in the smallest monetary units for a specific
+     * `moneyList` - list of the amounts of money in the smallest monetary units for a specific
      * currency (cents for USD, kopecks for RUS and so on)
      *
      * Examples:
      *
-     * `123` (cents/kopecks) -> `1.23` (dollars/rubles)
+     * `[123, 456]` (kopecks/cents) -> `1.23 ₽, 4.56 $` (rubles/dollars)
      *
-     * `123456` (cents/kopecks) -> `1 234.56` (dollars/rubles)
+     * `[123456, 789012]` (kopecks/cents) -> `1 234.56 ₽, 7 890.12 $` (rubles/dollars)
      *
-     * `12300` (cents/kopecks) -> `123` (dollars/rubles)
+     * `[12300, 45600]` (kopecks/cents) -> `123 ₽, 456 $` (rubles/dollars)
      *
-     * `12340` (cents/kopecks) -> `123.4` (dollars/rubles)
+     * `[12340, 56780]` (kopecks/cents) -> `123.4 ₽, 567.8 $` (rubles/dollars)
+     *  */
+    fun moneyListToStringWithCurrencies(
+        moneyList: List<Money>
+    ): String
+
+    /**
+     * `moneyInMinorUnits` - the amount of money in the smallest monetary units for a specific
+     * currency (cents for USD, kopecks for RUS and so on)
+     *
+     * Examples:
+     *
+     * `123` (kopecks/cents) -> `1.23` (rubles/dollars)
+     *
+     * `123456` (kopecks/cents) -> `1 234.56` (rubles/dollars)
+     *
+     * `12300` (kopecks/cents) -> `123` (rubles/dollars)
+     *
+     * `12340` (kopecks/cents) -> `123.4` (rubles/dollars)
      *  */
     fun moneyToString(
-        moneyMinorUnits: Long,
-        currency: Currency
+        moneyInMinorUnits: Money
     ): String
 
     /**
@@ -49,6 +66,17 @@ interface NumbersFormatter {
      * `56,66` -> `56.66%`
      *
      * `56.666` -> `56.67%`
+     *
+     * `56.60` -> `56.6%`
      */
-    fun percentageToString(number: Float): String
+    fun percentageToString(number: BigDecimal, scale: Int? = null): String
+
+    /**
+     * Examples:
+     *
+     * `numberToString(number = 1,23456789)` -> `"1,23456789"`
+     *
+     * `numberToString(number = 1,23456789, scale = 3)` -> `"1,235"`
+     * */
+    fun numberToString(number: BigDecimal, scale: Int? = null): String
 }

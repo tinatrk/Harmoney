@@ -1,7 +1,7 @@
 package com.example.harmoney.domain.models
 
-import com.example.harmoney.base.IdEnum
-import com.example.harmoney.base.IdEnumRegistry
+import com.example.harmoney.core.util.IdEnum
+import com.example.harmoney.core.util.IdEnumRegistry
 
 enum class CategoryIcons(
     override val id: Long
@@ -110,7 +110,8 @@ enum class CategoryIcons(
     IC_EULER(id = 83);
 
     companion object {
-        private val registry = IdEnumRegistry(CategoryIcons::class.java) { it.id }
+        private val registry = IdEnumRegistry(CategoryIcons::class.java)
+        /** Throws `IllegalStateException` if id is unknown */
         fun fromId(id: Long) = registry.fromId(id)
     }
 }

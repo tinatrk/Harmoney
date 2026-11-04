@@ -1,10 +1,12 @@
 package com.example.harmoney.presentation.transactionList.viewModel
 
 import androidx.lifecycle.viewModelScope
-import com.example.harmoney.base.BaseViewModel
 import com.example.harmoney.core.session.SessionStateHolder
+import com.example.harmoney.core.util.BaseViewModel
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
+import com.example.harmoney.domain.models.Money
+import com.example.harmoney.domain.models.MoneyAmount
 import com.example.harmoney.domain.models.StatisticsPeriodType
 import com.example.harmoney.domain.settings.period.api.useCase.GetStatisticsPeriodsUseCase
 import com.example.harmoney.presentation.converters.NumbersFormatter
@@ -36,7 +38,6 @@ class TransactionListViewModel(
         selectedTabIndex = sessionStateHolder.state.value.categoryType.ordinal,
     )
 ) {
-    override val tag: String = TransactionListViewModel::class.java.simpleName ?: ""
     private val currency: Currency
     private val selectedFilters: MutableList<Long?>
 
@@ -89,12 +90,10 @@ class TransactionListViewModel(
             writableState.update {
                 it.copy(
                     currentBalance = numberFormatter.moneyToStringWithCurrency(
-                        moneyMinorUnits = balance,
-                        currency = currency,
+                        Money(amount = MoneyAmount(balance), currency)
                     ),
                     totalAmount = numberFormatter.moneyToStringWithCurrency(
-                        moneyMinorUnits = totalAmount,
-                        currency = currency,
+                        Money(amount = MoneyAmount(totalAmount), currency)
                     ),
                     oneDayTransactionsList = oneDayTransactionsUiConverter
                         .map(days = transactions, currency = currency),

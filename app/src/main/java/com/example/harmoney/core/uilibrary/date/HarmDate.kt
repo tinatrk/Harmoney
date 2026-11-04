@@ -57,7 +57,7 @@ object HarmDate {
                 HarmButton.HarmPrimaryButton(
                     text = stringResource(R.string.btn_dialog_select_text),
                     onClick = {
-                        onDateSelected(datePickerState.getSelectedDate())//selectedDateMillis)
+                        onDateSelected(datePickerState.getSelectedDate())
                         onDismiss()
                     }
                 )

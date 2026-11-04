@@ -1,6 +1,7 @@
 package com.example.harmoney.domain.transaction.impl
 
 import com.example.harmoney.core.util.Resource
+import com.example.harmoney.domain.models.Account
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.domain.models.TransactionFilter
@@ -13,10 +14,11 @@ import kotlinx.coroutines.flow.Flow
 class GetTransactionsSummaryUseCaseImpl(private val repository: TransactionRepository) :
     GetTransactionsSummaryUseCase {
     override fun execute(
+        accounts: List<Account>,
         categoryType: CategoryType,
         period: StatisticsPeriod,
         filter: TransactionFilter
     ): Flow<Resource<TransactionsSummary, TransactionFailure>> {
-        return repository.getTransactionsSummary(categoryType, period, filter)
+        return repository.getTransactionsSummary(accounts, categoryType, period, filter)
     }
 }

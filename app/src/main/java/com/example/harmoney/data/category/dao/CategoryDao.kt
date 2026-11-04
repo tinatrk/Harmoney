@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CategoryDao {
-    @Insert(onConflict = OnConflictStrategy.NONE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCategory(category: CategoryEntity)
 
     @Update
@@ -56,27 +56,20 @@ interface CategoryDao {
     @Query("UPDATE category SET userOrder = :newUserOrder WHERE id = :categoryId")
     suspend fun updateCategoryUserOrder(categoryId: Long, newUserOrder: Double)
 
-    // Если вставляем категорию в конец списка
     @Query("SELECT MAX(userOrder) FROM category WHERE typeId = :categoryTypeId")
     suspend fun getMaxUserOrderForOneType(categoryTypeId: Long): Double?
 
-    // Если вставляем категорию в начало списка
-    @Query("SELECT MIN(userOrder) FROM category WHERE typeId = :categoryTypeId")
-    suspend fun getMinUserOrderForOneType(categoryTypeId: Long): Double?
-
+    /** Сохраняет `category`, задавая ей самый большой `userOrder` среди всех categories.
+     * Т.е. category будет в конце списка при сортировке по возрастанию
+     * или в начале списка при сортировке по убыванию */
     @Transaction
     suspend fun insertCategoryWithAutoUserOrder(
         category: CategoryEntity,
         userOrderStep: Double,
-        isInsertToEndOfList: Boolean
     ) {
-        val newUserOrder = if (isInsertToEndOfList) {
-            val maxUserOrder = getMaxUserOrderForOneType(category.typeId) ?: 0.0
-            maxUserOrder + userOrderStep
-        } else {
-            val minUserOrder = getMinUserOrderForOneType(category.typeId) ?: 0.0
-            minUserOrder - userOrderStep
-        }
+        val maxUserOrder = getMaxUserOrderForOneType(category.typeId) ?: 0.0
+        val newUserOrder = maxUserOrder + userOrderStep
+
         insertCategory(category.copy(userOrder = newUserOrder))
     }
 

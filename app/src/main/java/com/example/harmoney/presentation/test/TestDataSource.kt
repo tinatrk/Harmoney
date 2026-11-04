@@ -7,7 +7,7 @@ import com.example.harmoney.domain.models.CategoryIcons
 import com.example.harmoney.domain.models.CategoryStatistics
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.Currency
-import com.example.harmoney.domain.models.Money
+import com.example.harmoney.domain.models.MoneyAmount
 import com.example.harmoney.domain.models.SortOption
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.domain.models.StatisticsPeriodType
@@ -271,99 +271,113 @@ class TestDataSource {
     private val transactions: MutableList<Transaction> = mutableListOf(
         Transaction(
             id = 1,
+            accountId = 1L,
             category = categories.first { it.id == 1L },
             date = parseDateFromString("01.08.2026"),
-            amount = Money(150000L),
+            amount = MoneyAmount(150000L),
             note = "Вкусняшки"
         ),
         Transaction(
             id = 2,
+            accountId = 1L,
             category = categories.first { it.id == 2L },
             date = parseDateFromString("01.08.2026"),
-            amount = Money(50000L),
+            amount = MoneyAmount(50000L),
             note = "8 марта"
         ),
         Transaction(
             id = 3,
+            accountId = 2L,
             category = categories.first { it.id == 3L },
             date = parseDateFromString("05.08.2026"),
-            amount = Money(1500000L),
+            amount = MoneyAmount(1500000L),
             note = "Билеты"
         ),
         Transaction(
             id = 4,
+            accountId = 2L,
             category = categories.first { it.id == 1L },
             date = parseDateFromString("10.08.2026"),
-            amount = Money(200000L),
+            amount = MoneyAmount(200000L),
         ),
         Transaction(
             id = 5,
+            accountId = 1L,
             category = categories.first { it.id == 2L },
             date = parseDateFromString("10.08.2026"),
-            amount = Money(300000L),
+            amount = MoneyAmount(300000L),
             note = "Сумку себе любимой"
         ),
         Transaction(
             id = 6,
+            accountId = 1L,
             category = categories.first { it.id == 2L },
             date = parseDateFromString("12.08.2026"),
-            amount = Money(400000L),
+            amount = MoneyAmount(400000L),
         ),
         //-------------------------------------------------------------
         Transaction(
             id = 7,
+            accountId = 2L,
             category = categories.first { it.id == 1L },
             date = parseDateFromString("05.09.2026"),
-            amount = Money(200000L),
+            amount = MoneyAmount(200000L),
             note = "Продукты к ужину"
         ),
         Transaction(
             id = 8,
+            accountId = 3L,
             category = categories.first { it.id == 3L },
             date = parseDateFromString("05.09.2026"),
-            amount = Money(1500000L),
+            amount = MoneyAmount(1500000L),
             note = "Хата"
         ),
         Transaction(
             id = 9,
+            accountId = 3L,
             category = categories.first { it.id == 2L },
             date = parseDateFromString("07.09.2026"),
-            amount = Money(150000L),
+            amount = MoneyAmount(150000L),
             note = "Валентинка"
         ),
         Transaction(
             id = 10,
+            accountId = 1L,
             category = categories.first { it.id == 1L },
             date = parseDateFromString("16.09.2026"),
-            amount = Money(400000L),
+            amount = MoneyAmount(400000L),
         ),
         Transaction(
             id = 11,
+            accountId = 2L,
             category = categories.first { it.id == 2L },
             date = parseDateFromString("16.09.2026"),
-            amount = Money(100000L),
+            amount = MoneyAmount(100000L),
             note = "Носки"
         ),
         //---------------------------------------------------------------------
         Transaction(
             id = 12,
+            accountId = 1L,
             category = categories.first { it.id == 21L },
             date = parseDateFromString("08.08.2026"),
-            amount = Money(200000L),
+            amount = MoneyAmount(200000L),
             note = "От мамы"
         ),
         Transaction(
             id = 13,
+            accountId = 2L,
             category = categories.first { it.id == 21L },
             date = parseDateFromString("08.08.2026"),
-            amount = Money(150000L),
+            amount = MoneyAmount(150000L),
             note = "От бабушки"
         ),
         Transaction(
             id = 14,
+            accountId = 1L,
             category = categories.first { it.id == 20L },
             date = parseDateFromString("25.09.2026"),
-            amount = Money(2500000L),
+            amount = MoneyAmount(2500000L),
             note = "Зарплата"
         ),
     )
@@ -451,10 +465,10 @@ class TestDataSource {
                     .sumOf { it.amount.minorUnits }
             CategoryStatistics(
                 category = category,
-                totalAmount = Money(categoryTotal),
-                percentage = (categoryTotal.toFloat() / total.toFloat() * 100)
+                totalAmounts = emptyList(),//()MoneyAmount(categoryTotal),
+                //percentage = (categoryTotal.toFloat() / total.toFloat() * 100)
             )
-        }.sortedByDescending { it.percentage }
+        }//.sortedByDescending { it.percentage }
     }
 
     fun getCategories(
@@ -542,7 +556,7 @@ class TestDataSource {
             TransactionsPerDay(
                 date = day,
                 transactions = transactions,
-                totalAmount = Money(transactions.sumOf { it.amount.minorUnits })
+                totalAmount = MoneyAmount(transactions.sumOf { it.amount.minorUnits })
             )
         }
     }
@@ -584,9 +598,9 @@ class TestDataSource {
         localAmount: Long,
         localCurrency: Currency,
         targetCurrency: Currency
-    ): Money {
+    ): MoneyAmount {
         val index = localCurrency.ordinal + targetCurrency.ordinal
-        return Money(
+        return MoneyAmount(
             when (index) {
                 // EUR и RUB
                 1 -> {

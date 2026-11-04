@@ -1,7 +1,7 @@
 package com.example.harmoney.domain.transaction.api.repository
 
 import com.example.harmoney.core.util.Resource
-import com.example.harmoney.domain.models.CategoriesSummary
+import com.example.harmoney.domain.models.Account
 import com.example.harmoney.domain.models.CategoryType
 import com.example.harmoney.domain.models.StatisticsPeriod
 import com.example.harmoney.domain.models.Transaction
@@ -20,15 +20,9 @@ interface TransactionRepository {
     suspend fun getTransaction(transactionId: Long): Resource<Transaction, TransactionFailure>
 
     fun getTransactionsSummary(
+        accounts: List<Account>,
         categoryType: CategoryType,
         period: StatisticsPeriod,
         filter: TransactionFilter
-    )
-            : Flow<Resource<TransactionsSummary, TransactionFailure>>
-
-    // в этом репозитории, т.к. происходит группировка транзакций по категориям
-    fun getCategoriesSummary(
-        categoryType: CategoryType,
-        period: StatisticsPeriod
-    ): Flow<Resource<CategoriesSummary, TransactionFailure>>
+    ): Flow<Resource<TransactionsSummary, TransactionFailure>>
 }

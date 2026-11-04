@@ -1,7 +1,7 @@
 package com.example.harmoney.presentation.categoryList.viewModel
 
-import com.example.harmoney.base.BaseViewModel
 import com.example.harmoney.core.session.SessionStateHolder
+import com.example.harmoney.core.util.BaseViewModel
 import com.example.harmoney.core.util.Resource
 import com.example.harmoney.domain.category.api.useCase.GetCategoryListUseCase
 import com.example.harmoney.domain.category.api.useCase.UpdateCategoryUserOrderUseCase
@@ -33,8 +33,6 @@ class CategoryListViewModel(
         selectedTabIndex = sessionSateHolder.state.value.categoryType.ordinal
     )
 ) {
-    override val tag: String = CategoryListViewModel::class.java.simpleName ?: ""
-
     init {
         combine(
             sessionSateHolder.state.map { it.categoryType }.distinctUntilChanged(),

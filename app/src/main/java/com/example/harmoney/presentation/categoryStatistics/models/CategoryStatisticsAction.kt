@@ -5,6 +5,7 @@ sealed interface CategoryStatisticsAction {
     data object NavigateToTransaction : CategoryStatisticsAction
     data object NavigateToSettings : CategoryStatisticsAction
     data object NavigateToCategoryList : CategoryStatisticsAction
+    data class NavigateToCurrency(val currencyId: Long) : CategoryStatisticsAction
 
-    data object ShowChangeThemeError : CategoryStatisticsAction
+    data class ShowError(val error: CategoryStatisticsScreenError) : CategoryStatisticsAction
 }

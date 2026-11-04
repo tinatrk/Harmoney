@@ -1,7 +1,7 @@
 package com.example.harmoney.domain.models
 
-import com.example.harmoney.base.IdEnum
-import com.example.harmoney.base.IdEnumRegistry
+import com.example.harmoney.core.util.IdEnum
+import com.example.harmoney.core.util.IdEnumRegistry
 
 /** Category colors
  *
@@ -59,7 +59,8 @@ enum class CategoryColors(
     SLATE_T55(id = 38, background = CategoryColor.SLATE_T55);
 
     companion object {
-        private val registry = IdEnumRegistry(CategoryColors::class.java) { it.id }
+        private val registry = IdEnumRegistry(CategoryColors::class.java)
+        /** Throws `IllegalStateException` if id is unknown */
         fun fromId(id: Long) = registry.fromId(id)
     }
 }

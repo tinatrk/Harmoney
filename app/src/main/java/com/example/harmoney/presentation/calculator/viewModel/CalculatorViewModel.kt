@@ -1,6 +1,6 @@
 package com.example.harmoney.presentation.calculator.viewModel
 
-import com.example.harmoney.base.BaseViewModel
+import com.example.harmoney.core.util.BaseViewModel
 import com.example.harmoney.presentation.calculator.models.CalculatorAction
 import com.example.harmoney.presentation.calculator.models.CalculatorEvent
 import com.example.harmoney.presentation.calculator.models.CalculatorOperation
@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.update
 class CalculatorViewModel(
     private val calculatorHandler: CalculatorHandler
 ) : BaseViewModel<CalculatorEvent, CalculatorAction, CalculatorState>(CalculatorState()) {
-
-    override val tag: String = CalculatorViewModel::class.java.simpleName ?: ""
 
     override fun obtainEvent(event: CalculatorEvent) {
         when (event) {

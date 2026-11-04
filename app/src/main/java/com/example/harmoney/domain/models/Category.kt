@@ -1,7 +1,7 @@
 package com.example.harmoney.domain.models
 
 data class Category(
-    val id: Long = 0,
+    val id: Long = 0L,
     val name: String,
     val type: CategoryType,
     val icon: CategoryIcon,
