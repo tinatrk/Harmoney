@@ -4,7 +4,7 @@ import com.example.harmoney.core.util.AsyncResult
 import com.example.harmoney.core.util.Resource
 import com.example.harmoney.domain.account.api.useCase.GetAccountListUseCase
 import com.example.harmoney.domain.account.api.useCase.GetAccountScopesUseCase
-import com.example.harmoney.domain.account.api.useCase.GetAccountScopesWithBalanceInteractor
+import com.example.harmoney.domain.account.api.useCase.GetAccountScopesWithBalanceUseCase
 import com.example.harmoney.domain.account.api.useCase.SelectedAccountScopeInteractor
 import com.example.harmoney.domain.account.models.AccountFailure
 import com.example.harmoney.domain.account.models.AccountScopeWithBalance
@@ -33,7 +33,7 @@ class CategoryStatisticsAccountFlows(
     private val getAccountListUseCase: GetAccountListUseCase,
     private val getAccountScopesUseCase: GetAccountScopesUseCase,
     private val reportingCurrencyFlow: Flow<Currency>,
-    private val getAccountScopesWithBalanceInteractor: GetAccountScopesWithBalanceInteractor,
+    private val getAccountScopesWithBalanceUseCase: GetAccountScopesWithBalanceUseCase,
     private val scope: CoroutineScope,
 ) {
     private val selectedAccountScopeIdFlow =
@@ -125,7 +125,7 @@ class CategoryStatisticsAccountFlows(
 
                 is AsyncResult.Success -> flow {
                     emit(AsyncResult.Loading)
-                    when (val result = getAccountScopesWithBalanceInteractor.execute(
+                    when (val result = getAccountScopesWithBalanceUseCase.execute(
                         scopes = scopesResult.data, targetCurrency = reportingCurrency
                     )) {
                         is Resource.Error -> {

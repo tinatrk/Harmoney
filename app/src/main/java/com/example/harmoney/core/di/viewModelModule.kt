@@ -251,7 +251,7 @@ val viewModelModule = module {
             selectedAccountScopeInteractor = get(),
             getAccountListUseCase = get(),
             getAccountScopesUseCase = get(),
-            getAccountScopesWithBalanceInteractor = get()
+            getAccountScopesWithBalanceUseCase = get()
         )
     }
 

@@ -6,7 +6,7 @@ import com.example.harmoney.domain.exchangeRate.api.useCase.ConvertTotalMoneyUse
 import com.example.harmoney.domain.exchangeRate.models.ExchangeRateFailure
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.statistics.api.useCase.PrepareCategoryStatisticsInteractor
-import com.example.harmoney.domain.statistics.converter.MoneyCalculator
+import com.example.harmoney.domain.statistics.calculator.MoneyCalculator
 import com.example.harmoney.domain.statistics.models.ConvertedStatistics
 import com.example.harmoney.domain.statistics.models.OriginalCategoryStatistics
 import com.example.harmoney.domain.statistics.models.OriginalStatistics

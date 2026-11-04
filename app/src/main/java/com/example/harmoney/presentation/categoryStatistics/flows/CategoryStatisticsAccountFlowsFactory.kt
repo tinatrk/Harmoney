@@ -2,7 +2,7 @@ package com.example.harmoney.presentation.categoryStatistics.flows
 
 import com.example.harmoney.domain.account.api.useCase.GetAccountListUseCase
 import com.example.harmoney.domain.account.api.useCase.GetAccountScopesUseCase
-import com.example.harmoney.domain.account.api.useCase.GetAccountScopesWithBalanceInteractor
+import com.example.harmoney.domain.account.api.useCase.GetAccountScopesWithBalanceUseCase
 import com.example.harmoney.domain.account.api.useCase.SelectedAccountScopeInteractor
 import com.example.harmoney.domain.models.Currency
 import kotlinx.coroutines.CoroutineScope
@@ -12,7 +12,7 @@ class CategoryStatisticsAccountFlowsFactory(
     private val selectedAccountScopeInteractor: SelectedAccountScopeInteractor,
     private val getAccountListUseCase: GetAccountListUseCase,
     private val getAccountScopesUseCase: GetAccountScopesUseCase,
-    private val getAccountScopesWithBalanceInteractor: GetAccountScopesWithBalanceInteractor,
+    private val getAccountScopesWithBalanceUseCase: GetAccountScopesWithBalanceUseCase,
 ) {
     fun create(
         reportingCurrencyFlow: Flow<Currency>,
@@ -23,7 +23,7 @@ class CategoryStatisticsAccountFlowsFactory(
             getAccountListUseCase = getAccountListUseCase,
             getAccountScopesUseCase = getAccountScopesUseCase,
             reportingCurrencyFlow = reportingCurrencyFlow,
-            getAccountScopesWithBalanceInteractor = getAccountScopesWithBalanceInteractor,
+            getAccountScopesWithBalanceUseCase = getAccountScopesWithBalanceUseCase,
             scope = scope,
         )
     }

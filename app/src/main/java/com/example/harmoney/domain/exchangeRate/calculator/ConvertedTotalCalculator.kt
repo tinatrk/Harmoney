@@ -1,6 +1,5 @@
-package com.example.harmoney.domain.exchangeRate.impl
+package com.example.harmoney.domain.exchangeRate.calculator
 
-import com.example.harmoney.domain.exchangeRate.api.useCase.CalculateConvertedTotalUseCase
 import com.example.harmoney.domain.models.ConvertedMoney
 import com.example.harmoney.domain.models.ConvertedTotal
 import com.example.harmoney.domain.models.Currency
@@ -8,8 +7,8 @@ import com.example.harmoney.domain.models.ExchangeRateResult
 import com.example.harmoney.domain.models.Money
 import com.example.harmoney.domain.models.MoneyAmount
 
-class CalculateConvertedTotalUseCaseImpl : CalculateConvertedTotalUseCase {
-    override fun execute(
+class ConvertedTotalCalculator {
+    fun calculate(
         moneyList: List<Money>,
         rates: Set<ExchangeRateResult>,
         targetCurrency: Currency

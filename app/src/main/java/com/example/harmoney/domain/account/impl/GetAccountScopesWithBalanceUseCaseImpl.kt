@@ -1,7 +1,7 @@
 package com.example.harmoney.domain.account.impl
 
 import com.example.harmoney.core.util.Resource
-import com.example.harmoney.domain.account.api.useCase.GetAccountScopesWithBalanceInteractor
+import com.example.harmoney.domain.account.api.useCase.GetAccountScopesWithBalanceUseCase
 import com.example.harmoney.domain.account.models.AccountScopeWithBalance
 import com.example.harmoney.domain.exchangeRate.api.useCase.ConvertTotalMoneyUseCase
 import com.example.harmoney.domain.exchangeRate.models.ExchangeRateFailure
@@ -9,9 +9,9 @@ import com.example.harmoney.domain.models.AccountScope
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.Money
 
-class GetAccountScopesWithBalanceInteractorImpl(
+class GetAccountScopesWithBalanceUseCaseImpl(
     private val convertTotalMoneyUseCase: ConvertTotalMoneyUseCase,
-) : GetAccountScopesWithBalanceInteractor {
+) : GetAccountScopesWithBalanceUseCase {
     override suspend fun execute(
         scopes: List<AccountScope>,
         targetCurrency: Currency

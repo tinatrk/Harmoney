@@ -2,7 +2,7 @@ package com.example.harmoney.domain.exchangeRate.impl
 
 import com.example.harmoney.core.util.Resource
 import com.example.harmoney.domain.converter.ExchangeRateResultConverter
-import com.example.harmoney.domain.exchangeRate.api.useCase.CalculateConvertedTotalUseCase
+import com.example.harmoney.domain.exchangeRate.calculator.ConvertedTotalCalculator
 import com.example.harmoney.domain.exchangeRate.api.useCase.ConvertTotalMoneyUseCase
 import com.example.harmoney.domain.exchangeRate.api.useCase.GetExchangeRatesUseCase
 import com.example.harmoney.domain.exchangeRate.models.ExchangeRateFailure
@@ -12,7 +12,7 @@ import com.example.harmoney.domain.models.Money
 
 class ConvertTotalMoneyUseCaseImpl(
     private val getExchangeRatesUseCase: GetExchangeRatesUseCase,
-    private val calculateConvertedTotalUseCase: CalculateConvertedTotalUseCase,
+    private val convertedTotalCalculator: ConvertedTotalCalculator,
     private val exchangeRateResultConverter: ExchangeRateResultConverter,
 ) : ConvertTotalMoneyUseCase {
     override suspend fun execute(
@@ -32,7 +32,7 @@ class ConvertTotalMoneyUseCaseImpl(
                 val rateResults = ratesResource.data.toSet()
                 val rateStatuses = exchangeRateResultConverter.map(rateResults)
 
-                val total = calculateConvertedTotalUseCase.execute(
+                val total = convertedTotalCalculator.calculate(
                     moneyList,
                     rateResults,
                     targetCurrency

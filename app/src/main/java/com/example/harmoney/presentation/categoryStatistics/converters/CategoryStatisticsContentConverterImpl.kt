@@ -1,6 +1,6 @@
 package com.example.harmoney.presentation.categoryStatistics.converters
 
-import com.example.harmoney.domain.statistics.converter.MoneyCalculator
+import com.example.harmoney.domain.statistics.calculator.MoneyCalculator
 import com.example.harmoney.domain.statistics.models.StatisticsData
 import com.example.harmoney.presentation.categoryStatistics.models.CategoryStatisticsContent
 import com.example.harmoney.presentation.converters.ConvertedTotalFormatter

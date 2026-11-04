@@ -4,7 +4,7 @@ import com.example.harmoney.domain.account.api.useCase.AddAccountUseCase
 import com.example.harmoney.domain.account.api.useCase.DeleteAccountUseCase
 import com.example.harmoney.domain.account.api.useCase.GetAccountListUseCase
 import com.example.harmoney.domain.account.api.useCase.GetAccountScopesUseCase
-import com.example.harmoney.domain.account.api.useCase.GetAccountScopesWithBalanceInteractor
+import com.example.harmoney.domain.account.api.useCase.GetAccountScopesWithBalanceUseCase
 import com.example.harmoney.domain.account.api.useCase.GetAccountUseCase
 import com.example.harmoney.domain.account.api.useCase.SelectedAccountScopeInteractor
 import com.example.harmoney.domain.account.api.useCase.UpdateAccountUseCase
@@ -13,7 +13,7 @@ import com.example.harmoney.domain.account.impl.AddAccountUseCaseImpl
 import com.example.harmoney.domain.account.impl.DeleteAccountUseCaseImpl
 import com.example.harmoney.domain.account.impl.GetAccountListUseCaseImpl
 import com.example.harmoney.domain.account.impl.GetAccountScopesUseCaseImpl
-import com.example.harmoney.domain.account.impl.GetAccountScopesWithBalanceInteractorImpl
+import com.example.harmoney.domain.account.impl.GetAccountScopesWithBalanceUseCaseImpl
 import com.example.harmoney.domain.account.impl.GetAccountUseCaseImpl
 import com.example.harmoney.domain.account.impl.SelectedAccountScopeInteractorImpl
 import com.example.harmoney.domain.account.impl.UpdateAccountUseCaseImpl
@@ -36,13 +36,12 @@ import com.example.harmoney.domain.converter.ExchangeRateResultConverter
 import com.example.harmoney.domain.converter.ExchangeRateResultConverterImpl
 import com.example.harmoney.domain.currencyList.api.useCase.GetSupportedCurrencyListUseCase
 import com.example.harmoney.domain.currencyList.impl.GetSupportedCurrencyListUseCaseImpl
+import com.example.harmoney.domain.exchangeRate.calculator.ConvertedTotalCalculator
 import com.example.harmoney.domain.exchangeRate.api.useCase.ConvertCategoryStatisticsUseCase
 import com.example.harmoney.domain.exchangeRate.api.useCase.ConvertTotalMoneyUseCase
-import com.example.harmoney.domain.exchangeRate.api.useCase.CalculateConvertedTotalUseCase
 import com.example.harmoney.domain.exchangeRate.api.useCase.GetExchangeRatesUseCase
 import com.example.harmoney.domain.exchangeRate.impl.ConvertCategoryStatisticsUseCaseImpl
 import com.example.harmoney.domain.exchangeRate.impl.ConvertTotalMoneyUseCaseImpl
-import com.example.harmoney.domain.exchangeRate.impl.CalculateConvertedTotalUseCaseImpl
 import com.example.harmoney.domain.exchangeRate.impl.GetExchangeRatesUseCaseImpl
 import com.example.harmoney.domain.settings.categorySortingMode.api.useCase.CategorySortOptionInteractor
 import com.example.harmoney.domain.settings.categorySortingMode.impl.CategorySortOptionInteractorImpl
@@ -61,8 +60,8 @@ import com.example.harmoney.domain.statistics.api.useCase.GetCategoriesSummaryUs
 import com.example.harmoney.domain.statistics.api.useCase.GetCategoriesTotalUseCase
 import com.example.harmoney.domain.statistics.api.useCase.GetCategoryStatisticsUseCase
 import com.example.harmoney.domain.statistics.api.useCase.PrepareCategoryStatisticsInteractor
-import com.example.harmoney.domain.statistics.converter.MoneyCalculator
-import com.example.harmoney.domain.statistics.converter.MoneyCalculatorImpl
+import com.example.harmoney.domain.statistics.calculator.MoneyCalculator
+import com.example.harmoney.domain.statistics.calculator.MoneyCalculatorImpl
 import com.example.harmoney.domain.statistics.impl.GetCategoriesSummaryUseCaseImpl
 import com.example.harmoney.domain.statistics.impl.GetCategoriesTotalUseCaseImpl
 import com.example.harmoney.domain.statistics.impl.GetCategoryStatisticsUseCaseImpl
@@ -244,8 +243,8 @@ val useCaseModule = module {
         GetAccountScopesUseCaseImpl()
     }
 
-    factory<GetAccountScopesWithBalanceInteractor> {
-        GetAccountScopesWithBalanceInteractorImpl(convertTotalMoneyUseCase = get())
+    factory<GetAccountScopesWithBalanceUseCase> {
+        GetAccountScopesWithBalanceUseCaseImpl(convertTotalMoneyUseCase = get())
     }
     // endregion
 
@@ -253,7 +252,7 @@ val useCaseModule = module {
     factory<ConvertCategoryStatisticsUseCase> {
         ConvertCategoryStatisticsUseCaseImpl(
             getExchangeRatesUseCase = get(),
-            calculateConvertedTotalUseCase = get(),
+            convertedTotalCalculator = get(),
             exchangeRateResultConverter = get(),
         )
     }
@@ -261,7 +260,7 @@ val useCaseModule = module {
     factory<ConvertTotalMoneyUseCase> {
         ConvertTotalMoneyUseCaseImpl(
             getExchangeRatesUseCase = get(),
-            calculateConvertedTotalUseCase = get(),
+            convertedTotalCalculator = get(),
             exchangeRateResultConverter = get(),
         )
     }
@@ -270,8 +269,8 @@ val useCaseModule = module {
         GetExchangeRatesUseCaseImpl(repository = get())
     }
 
-    factory<CalculateConvertedTotalUseCase> {
-        CalculateConvertedTotalUseCaseImpl()
+    factory {
+        ConvertedTotalCalculator()
     }
 
     factory<ExchangeRateResultConverter> {

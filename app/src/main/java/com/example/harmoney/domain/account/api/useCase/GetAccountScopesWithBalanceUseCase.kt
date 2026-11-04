@@ -6,7 +6,7 @@ import com.example.harmoney.domain.models.AccountScope
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.account.models.AccountScopeWithBalance
 
-interface GetAccountScopesWithBalanceInteractor {
+interface GetAccountScopesWithBalanceUseCase {
     suspend fun execute(
         scopes: List<AccountScope>,
         targetCurrency: Currency,

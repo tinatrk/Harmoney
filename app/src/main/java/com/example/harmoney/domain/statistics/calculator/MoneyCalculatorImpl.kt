@@ -1,4 +1,4 @@
-package com.example.harmoney.domain.statistics.converter
+package com.example.harmoney.domain.statistics.calculator
 
 import com.example.harmoney.domain.models.Currency
 import com.example.harmoney.domain.models.Money
